@@ -45,12 +45,18 @@ const DairyManagement = () => {
   //     key: "email",
   //   },
   // ];
-  const { closeModal, open, openModal } = useModal();
+  const handleModalVisible = useModal();
   return (
     <div>
-      <ButtonComponent onClick={openModal}>Open</ButtonComponent>
-      <ModalComponent onCancel={closeModal} open={open}>
-        A
+      <ButtonComponent type="primary" onClick={handleModalVisible.openModal}>
+        Add new
+      </ButtonComponent>
+      <ModalComponent
+        open={handleModalVisible.open}
+        onCancel={handleModalVisible.closeModal}
+        title="Add"
+      >
+        asa
       </ModalComponent>
     </div>
   );

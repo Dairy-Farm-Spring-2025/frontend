@@ -1,11 +1,10 @@
-import { MenuProps } from "antd";
-import { Dropdown, Layout, Menu, theme } from "antd";
+import { Avatar, Divider, Layout, Menu, MenuProps, theme } from "antd";
 import React, { useState } from "react";
-import { MdOutlineAccountCircle } from "react-icons/md";
+import { BiLogOut } from "react-icons/bi";
+import { PiCow, PiFarmLight } from "react-icons/pi";
 import { Link, Outlet } from "react-router-dom";
-import { MoneyCollectOutlined } from "@ant-design/icons";
-import { IoLogOutSharp } from "react-icons/io5";
-
+import ButtonComponent from "../../components/Button/ButtonComponent";
+import "./index.scss";
 const { Header, Content, Footer, Sider } = Layout;
 
 type MenuItem = Required<MenuProps>["items"][number];
@@ -35,7 +34,8 @@ const siderStyle: React.CSSProperties = {
 };
 
 const items: MenuItem[] = [
-  getItem("Dairy Management", "dairy-management", <MoneyCollectOutlined />),
+  getItem("Dairy Management", "dairy-management", <PiFarmLight />),
+  getItem("Cow Management", "cow-management", <PiCow />),
 ];
 
 const AppDashboard: React.FC = () => {
@@ -44,18 +44,6 @@ const AppDashboard: React.FC = () => {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
 
-  const itemsUser: MenuProps["items"] = [
-    {
-      key: "infor",
-      label: <div className="flex flex-col gap-1">dsad</div>,
-    },
-    {
-      key: "Logout",
-      label: <div className="text-red-500 text-base">Logout</div>,
-      icon: <IoLogOutSharp className="text-red-500" size={20} />,
-    },
-  ];
-
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider
@@ -63,35 +51,45 @@ const AppDashboard: React.FC = () => {
         collapsed={collapsed}
         onCollapse={(value) => setCollapsed(value)}
         width={270}
-        className="bg-green-700"
         style={siderStyle}
+        className="bg-green-800"
       >
         <div className="demo-logo-vertical" />
+        <div className="bg-white p-3 flex flex-col gap-2 items-center">
+          <Avatar size={64} />
+          <div className="w-full text-center">
+            <p className={`font-bold ${collapsed ? "text-xs" : "text-base"}`}>
+              John Doe
+            </p>
+            <p className="text-xs">Role</p>
+          </div>
+          <ButtonComponent
+            icon={<BiLogOut />}
+            variant="outlined"
+            color="danger"
+            className="!w-full !text-base"
+          >
+            {!collapsed && <p>Logout</p>}
+          </ButtonComponent>
+        </div>
+        <Divider className="!m-0 border-white" />
         <Menu
           theme="light"
           defaultSelectedKeys={["1"]}
           mode="inline"
           items={items}
-          className="!text-base bg-green-700"
+          className="!text-base"
         />
       </Sider>
       <Layout
         style={{ marginLeft: collapsed ? 80 : 270 }}
         className="duration-300"
       >
-        <Header style={{ background: colorBgContainer }} className="shadow-md">
-          <div className="w-full h-full flex justify-end items-center gap-4">
-            <Dropdown
-              menu={{ items: itemsUser }}
-              placement="bottomLeft"
-              arrow
-              trigger={["click"]}
-              className="cursor-pointer hover:opacity-70 duration-300"
-              overlayStyle={{ width: 200 }}
-            >
-              <MdOutlineAccountCircle size={40} />
-            </Dropdown>
-          </div>
+        <Header
+          style={{ background: colorBgContainer }}
+          className="!shadow-md !bg-gradient-to-r from-green-800 via-green-700 to-green-600 flex items-center"
+        >
+          <p className="text-2xl font-bold text-white">Dairy Farm Management</p>
         </Header>
         <Content style={{ padding: "0 32px" }} className="!pt-5 !bg-slate-200">
           <div

@@ -9,7 +9,7 @@ interface ModalComponentInterface extends ModalProps {
   title?: string;
   footer?: React.ReactNode | React.ReactNode[];
   onOk?: () => void;
-  onCancel: () => void;
+  onCancel?: () => void;
 }
 const ModalComponent = ({
   children,
@@ -24,9 +24,6 @@ const ModalComponent = ({
       modal={{
         closable: false,
         styles: {
-          header: {
-            backgroundColor: "#1DA57A",
-          },
           content: {
             padding: 0,
           },
@@ -41,10 +38,11 @@ const ModalComponent = ({
     >
       <Modal
         onCancel={onCancel}
+        className="!rounded-lg"
         title={
-          <div className="flex justify-between py-3 px-5">
+          <div className="flex justify-between items-center py-3 px-5 !rounded-lg">
             <Typography.Title
-              className="!m-0 !text-white !font-normal"
+              className="!m-0 !text-white !font-normal !h-fit"
               level={4}
             >
               {title}

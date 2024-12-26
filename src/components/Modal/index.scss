@@ -3,3 +3,8 @@
 .ant-modal-title {
   background-color: $primary-color;
 }
+
+.ant-modal-content {
+  border-radius: 8px !important;
+  overflow: hidden;
+}

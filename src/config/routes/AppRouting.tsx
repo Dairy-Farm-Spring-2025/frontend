@@ -12,6 +12,10 @@ const AppRouting = () => {
           path: "dairy-management",
           element: <DairyManagement />,
         },
+        {
+          path: "cow-management",
+          element: <p>Cow Management</p>,
+        },
       ],
     },
   ]);

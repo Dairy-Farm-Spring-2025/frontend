@@ -1,19 +1,18 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import App from "./App.tsx";
-import "./index.scss";
 import { ConfigProvider } from "antd";
-import { Provider } from "react-redux";
-import { persistor, store } from "./core/store/store.ts";
-import { PersistGate } from "redux-persist/integration/react";
+import { createRoot } from "react-dom/client";
 import { Toaster } from "react-hot-toast";
+import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
+import App from "./App.tsx";
+import { persistor, store } from "./core/store/store.ts";
+import "./index.scss";
 
 createRoot(document.getElementById("root")!).render(
-  <StrictMode>
+  <>
     <ConfigProvider
       theme={{
         token: {
-          colorPrimary: "#1DA57A",
+          colorPrimary: "rgb(22 101 52 / var(--tw-bg-opacity, 1))",
           fontFamily: "Finlandica",
         },
       }}
@@ -25,5 +24,5 @@ createRoot(document.getElementById("root")!).render(
       </Provider>
     </ConfigProvider>
     <Toaster reverseOrder={false} />
-  </StrictMode>
+  </>
 );
