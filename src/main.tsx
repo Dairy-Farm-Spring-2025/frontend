@@ -23,7 +23,7 @@ createRoot(document.getElementById("root")!).render(
           <App />
         </PersistGate>
       </Provider>
-    </ConfigProvider>{" "}
+    </ConfigProvider>
     <Toaster reverseOrder={false} />
   </StrictMode>
 );

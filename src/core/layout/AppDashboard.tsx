@@ -1,4 +1,4 @@
-import type { MenuProps } from "antd";
+import { MenuProps } from "antd";
 import "./index.css";
 import { Dropdown, Layout, Menu, theme } from "antd";
 import React, { useState } from "react";
@@ -6,6 +6,7 @@ import { MdOutlineAccountCircle } from "react-icons/md";
 import { Link, Outlet } from "react-router-dom";
 import { MoneyCollectOutlined } from "@ant-design/icons";
 import { IoLogOutSharp } from "react-icons/io5";
+
 const { Header, Content, Footer, Sider } = Layout;
 
 type MenuItem = Required<MenuProps>["items"][number];
@@ -24,6 +25,16 @@ function getItem(
   } as MenuItem;
 }
 
+const siderStyle: React.CSSProperties = {
+  overflow: "auto",
+  height: "100vh",
+  position: "fixed",
+  top: 0,
+  bottom: 0,
+  left: 0,
+  zIndex: 1,
+};
+
 const items: MenuItem[] = [
   getItem("Dairy Management", "dairy-management", <MoneyCollectOutlined />),
 ];
@@ -33,6 +44,7 @@ const AppDashboard: React.FC = () => {
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
+
   const itemsUser: MenuProps["items"] = [
     {
       key: "infor",
@@ -44,6 +56,7 @@ const AppDashboard: React.FC = () => {
       icon: <IoLogOutSharp className="text-red-500" size={20} />,
     },
   ];
+
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider
@@ -52,6 +65,7 @@ const AppDashboard: React.FC = () => {
         onCollapse={(value) => setCollapsed(value)}
         width={270}
         className="bg-green-700"
+        style={siderStyle}
       >
         <div className="demo-logo-vertical" />
         <Menu
@@ -62,7 +76,10 @@ const AppDashboard: React.FC = () => {
           className="!text-base bg-green-700"
         />
       </Sider>
-      <Layout>
+      <Layout
+        style={{ marginLeft: collapsed ? 80 : 270 }}
+        className="duration-300"
+      >
         <Header style={{ background: colorBgContainer }} className="shadow-md">
           <div className="w-full h-full flex justify-end items-center gap-4">
             <Dropdown
@@ -84,6 +101,7 @@ const AppDashboard: React.FC = () => {
               minHeight: 360,
               background: colorBgContainer,
               borderRadius: borderRadiusLG,
+              overflowY: "auto",
             }}
           >
             <Outlet />

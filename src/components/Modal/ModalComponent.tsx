@@ -1,0 +1,87 @@
+import { Button, ConfigProvider, Modal, ModalProps, Typography } from "antd";
+import { CgClose } from "react-icons/cg";
+import ButtonComponent from "../Button/ButtonComponent";
+
+interface ModalComponentInterface extends ModalProps {
+  children: React.ReactNode;
+  width?: number;
+  title?: string;
+  footer?: React.ReactNode | React.ReactNode[];
+  onOk?: () => void;
+  onCancel: () => void;
+}
+const ModalComponent = ({
+  children,
+  title,
+  onCancel,
+  footer,
+  onOk,
+  ...props
+}: ModalComponentInterface) => {
+  return (
+    <ConfigProvider
+      modal={{
+        closable: false,
+        styles: {
+          header: {
+            backgroundColor: "#1DA57A",
+          },
+          content: {
+            padding: 0,
+          },
+          body: {
+            padding: "0px 30px",
+          },
+          footer: {
+            padding: "15px 30px",
+          },
+        },
+      }}
+    >
+      <Modal
+        onCancel={onCancel}
+        title={
+          <div className="flex justify-between py-3 px-5">
+            <Typography.Title
+              className="!m-0 !text-white !font-normal"
+              level={4}
+            >
+              {title}
+            </Typography.Title>
+            <div>
+              <Button
+                onClick={onCancel}
+                type="primary"
+                shape="circle"
+                className="!shadow-none duration-100"
+                icon={<CgClose />}
+              />
+            </div>
+          </div>
+        }
+        footer={
+          !footer
+            ? [
+                <ButtonComponent
+                  onClick={onCancel}
+                  variant="solid"
+                  color="danger"
+                  key={"cancel"}
+                >
+                  Cancel
+                </ButtonComponent>,
+                <ButtonComponent key={"confirm"} onClick={onOk} type="primary">
+                  Confirm
+                </ButtonComponent>,
+              ]
+            : footer
+        }
+        {...props}
+      >
+        {children}
+      </Modal>
+    </ConfigProvider>
+  );
+};
+
+export default ModalComponent;

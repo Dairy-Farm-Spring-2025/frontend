@@ -9,6 +9,9 @@ export default {
       fontFamily: {
         finlandica: ['Finlandica', 'sans-serif'], // Define Finlandica font
       },
+      colors: {
+        "primary" : "#1DA57A"
+      }
     },
   },
   plugins: [],
