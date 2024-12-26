@@ -1,7 +1,7 @@
 import { ConfigProvider, TabPaneProps } from "antd";
 import { ColumnProps } from "antd/es/table";
 import { Table } from "antd";
-import "./index.css";
+import "./index.scss";
 export interface Column extends ColumnProps {
   title: string;
   dataIndex: string;

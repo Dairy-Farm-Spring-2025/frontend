@@ -1,0 +1,8 @@
+@import "../../styles/colors"; /* Import the color variables */
+
+.ant-table-thead tr th {
+  background-color: $primary-color !important;
+  color: white !important;
+  border-collapse: collapse !important;
+  border-color: $primary-color !important;
+}

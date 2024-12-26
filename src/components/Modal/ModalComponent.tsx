@@ -1,6 +1,7 @@
 import { Button, ConfigProvider, Modal, ModalProps, Typography } from "antd";
 import { CgClose } from "react-icons/cg";
 import ButtonComponent from "../Button/ButtonComponent";
+import "./index.scss";
 
 interface ModalComponentInterface extends ModalProps {
   children: React.ReactNode;

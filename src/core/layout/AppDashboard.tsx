@@ -1,5 +1,4 @@
 import { MenuProps } from "antd";
-import "./index.css";
 import { Dropdown, Layout, Menu, theme } from "antd";
 import React, { useState } from "react";
 import { MdOutlineAccountCircle } from "react-icons/md";
