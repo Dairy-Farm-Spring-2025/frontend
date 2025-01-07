@@ -52,7 +52,7 @@ const AppDashboard: React.FC = () => {
         onCollapse={(value) => setCollapsed(value)}
         width={270}
         style={siderStyle}
-        className="bg-green-800"
+        className="bg-white"
       >
         <div className="demo-logo-vertical" />
         <div className="bg-white p-3 flex flex-col gap-2 items-center">
