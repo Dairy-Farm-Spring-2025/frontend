@@ -1,4 +1,35 @@
-:where(.css-dev-only-do-not-override-1jx9akp).ant-menu-light
-  .ant-menu-item-selected {
-  background-color: #dedede;
+@use "../../styles/colors" as colors; /* Import the color variables */
+
+.layout-dairy {
+  .sider-dairy {
+    .ant-layout-sider-trigger {
+      background-color: colors.$primary-color !important;
+      color: white !important;
+    }
+    .ant-layout-sider-trigger:hover {
+      background-color: #adaeae !important;
+      color: black !important;
+    }
+  }
+  :where(.css-dev-only-do-not-override-1jx9akp).ant-menu-light
+    .ant-menu-item-selected {
+    background-color: #dedede;
+  }
+  :where(.css-dev-only-do-not-override-1jx9akp).ant-layout-sider
+    .ant-layout-sider-children
+    .ant-menu.ant-menu-inline-collapsed
+    .ant-menu-item {
+    padding: 0;
+    svg {
+      width: 100%;
+      margin: 10% 0;
+      font-size: 25px;
+    }
+  }
+  :where(.css-dev-only-do-not-override-1jx9akp).ant-menu-light.ant-menu-inline
+    .ant-menu-item {
+    svg {
+      font-size: 25px;
+    }
+  }
 }
