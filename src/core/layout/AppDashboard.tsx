@@ -1,11 +1,11 @@
-import { Avatar, Divider, Layout, Menu, MenuProps, theme } from "antd";
+import { Avatar, Divider, Dropdown, Layout, Menu, MenuProps } from "antd";
 import React, { useState } from "react";
-import { BiLogOut } from "react-icons/bi";
 import { PiCow, PiFarmLight } from "react-icons/pi";
+import { SiHappycow } from "react-icons/si";
+import { IoIosNotifications } from "react-icons/io";
 import { Link, Outlet } from "react-router-dom";
-import ButtonComponent from "../../components/Button/ButtonComponent";
 import "./index.scss";
-const { Header, Content, Footer, Sider } = Layout;
+const { Header, Content, Sider } = Layout;
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -33,29 +33,72 @@ const siderStyle: React.CSSProperties = {
   zIndex: 1,
 };
 
-const items: MenuItem[] = [
+const itemsMenu: MenuItem[] = [
   getItem("Dairy Management", "dairy-management", <PiFarmLight />),
   getItem("Cow Management", "cow-management", <PiCow />),
 ];
 
+const items: MenuProps["items"] = [
+  {
+    key: "1",
+    label: (
+      <a
+        target="_blank"
+        rel="noopener noreferrer"
+        href="https://www.antgroup.com"
+      >
+        1st menu item
+      </a>
+    ),
+  },
+
+  {
+    key: "3",
+    label: (
+      <a
+        target="_blank"
+        rel="noopener noreferrer"
+        href="https://www.luohanacademy.com"
+      >
+        3rd menu item (disabled)
+      </a>
+    ),
+    disabled: true,
+  },
+  {
+    key: "4",
+    danger: true,
+    label: "a danger item",
+  },
+];
+
 const AppDashboard: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
-  const {
-    token: { colorBgContainer, borderRadiusLG },
-  } = theme.useToken();
 
   return (
-    <Layout style={{ minHeight: "100vh" }}>
+    <Layout style={{ minHeight: "100vh" }} className="layout-dairy">
       <Sider
         collapsible
         collapsed={collapsed}
         onCollapse={(value) => setCollapsed(value)}
         width={270}
         style={siderStyle}
-        className="bg-white"
+        className="sider-dairy bg-white border-r-2"
       >
         <div className="demo-logo-vertical" />
-        <div className="bg-white p-3 flex flex-col gap-2 items-center">
+        <div
+          className={`bg-white p-3 flex ${
+            collapsed ? " justify-center" : "gap-4 justify-start"
+          } items-center`}
+        >
+          <SiHappycow className="text-green-900" size={52} />
+          {collapsed ? (
+            <p></p>
+          ) : (
+            <p className="text-2xl font-bold text-black">Dairy Farm</p>
+          )}
+        </div>
+        {/* <div className="bg-white p-3 flex flex-col gap-2 items-center">
           <Avatar size={64} />
           <div className="w-full text-center">
             <p className={`font-bold ${collapsed ? "text-xs" : "text-base"}`}>
@@ -71,42 +114,46 @@ const AppDashboard: React.FC = () => {
           >
             {!collapsed && <p>Logout</p>}
           </ButtonComponent>
-        </div>
+        </div> */}
         <Divider className="!m-0 border-white" />
         <Menu
           theme="light"
           defaultSelectedKeys={["1"]}
           mode="inline"
-          items={items}
-          className="!text-base"
+          items={itemsMenu}
+          className="menu-sider !text-base"
         />
       </Sider>
       <Layout
         style={{ marginLeft: collapsed ? 80 : 270 }}
         className="duration-300"
       >
-        <Header
-          style={{ background: colorBgContainer }}
-          className="!shadow-md !bg-gradient-to-r from-green-800 via-green-700 to-green-600 flex items-center"
-        >
-          <p className="text-2xl font-bold text-white">Dairy Farm Management</p>
+        <Header className="!bg-white flex items-center gap-5 justify-end">
+          <IoIosNotifications
+            className="cursor-pointer text-orange-600"
+            size={32}
+          />
+          <div>
+            <Dropdown
+              trigger={["click"]}
+              className="cursor-pointer"
+              menu={{ items }}
+            >
+              <Avatar size={32} />
+            </Dropdown>
+          </div>
         </Header>
-        <Content style={{ padding: "0 32px" }} className="!pt-5 !bg-slate-200">
+        <Content style={{ padding: "10px" }} className=" !bg-slate-200">
           <div
             style={{
-              padding: 24,
+              padding: 8,
               minHeight: 360,
-              background: colorBgContainer,
-              borderRadius: borderRadiusLG,
               overflowY: "auto",
             }}
           >
             <Outlet />
           </div>
         </Content>
-        <Footer style={{ textAlign: "center" }}>
-          Ant Design ©{new Date().getFullYear()} Created by Ant UED
-        </Footer>
       </Layout>
     </Layout>
   );
