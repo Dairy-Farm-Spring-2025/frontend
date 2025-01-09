@@ -1,7 +1,7 @@
 import { Button, Divider, Form, Input, Popover } from "antd";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
+import React from "react";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 
 import ButtonComponent from "../../components/Button/ButtonComponent";
@@ -35,7 +35,7 @@ const LoginPage = () => {
                             className="text-blue-500 hover:text-blue-700 font-semibold relative group"
                         >
                             Register here
-                            <Underline />
+
                         </Link>
                     </p>
                 </div>
@@ -96,25 +96,25 @@ const LoginPage = () => {
                                         >
                                             <Input placeholder="example@gmail.com" />
                                         </Form.Item>
-                                        <Button
+                                        <ButtonComponent
                                             type="primary"
                                             htmlType="submit"
                                             block
                                             className="mt-2"
                                         >
                                             Submit
-                                        </Button>
+                                        </ButtonComponent>
                                     </Form>
                                 </div>
                             }
                         >
-                            <Button
-                                type="link"
+                            <ButtonComponent
+
                                 className="text-blue-500 hover:text-blue-700 forgot-password-btn"
-                                style={{ padding: "0", display: "inline-block", fontSize: "14px" }}
+
                             >
                                 Forgot Password?
-                            </Button>
+                            </ButtonComponent>
                         </Popover>
 
                         <Form.Item>
