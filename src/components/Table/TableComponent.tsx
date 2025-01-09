@@ -13,7 +13,11 @@ interface TableComponentProps extends TableProps {
   columns: Column[];
   dataSource: object[];
 }
-const TableComponent = ({ columns, dataSource }: TableComponentProps) => {
+const TableComponent = ({
+  columns,
+  dataSource,
+  ...props
+}: TableComponentProps) => {
   const [searchText, setSearchText] = useState<string>("");
   const [filteredData, setFilteredData] = useState<object[]>(dataSource);
 
@@ -55,6 +59,7 @@ const TableComponent = ({ columns, dataSource }: TableComponentProps) => {
           columns={columns}
           dataSource={filteredData}
           pagination={{ position: ["bottomCenter"] }}
+          {...props}
         />
       </ConfigProvider>
     </div>

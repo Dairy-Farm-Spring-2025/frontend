@@ -5,6 +5,7 @@ import CowManagement from "../../pages/CowManagement";
 import ListCow from "../../pages/CowManagement/components/ListCow";
 
 import LoginPage from "../../pages/Login";
+import CreateCow from "../../pages/CowManagement/components/CreateCow";
 const AppRouting = () => {
   const router = createBrowserRouter([
     {
@@ -15,7 +16,6 @@ const AppRouting = () => {
       path: "",
       element: <AppDashboard />,
       children: [
-
         {
           path: "dairy-management",
           element: <DairyManagement />,
@@ -30,7 +30,7 @@ const AppRouting = () => {
             },
             {
               path: "create-cow",
-              element: <p>Create Cow</p>,
+              element: <CreateCow />,
             },
             {
               path: "health-report",

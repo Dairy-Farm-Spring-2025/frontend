@@ -6,7 +6,7 @@ import { LockOutlined, UserOutlined } from "@ant-design/icons";
 
 import ButtonComponent from "../../components/Button/ButtonComponent";
 import toast from "react-hot-toast";
-import LabelForm from "../../components/LabelForm";
+import LabelForm from "../../components/LabelForm/LabelForm";
 
 
 const LoginPage = () => {

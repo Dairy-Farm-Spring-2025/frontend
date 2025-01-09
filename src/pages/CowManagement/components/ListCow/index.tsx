@@ -6,6 +6,7 @@ import { cows } from "../../../../service/data/cow";
 import { Cow } from "../../../../model/Cow";
 import { Image } from "antd";
 import TextLink from "../../../../components/UI/TextLink";
+import WhiteBackground from "../../../../components/UI/WhiteBackground";
 
 const ListCow = () => {
   const [cow, setCow] = useState<Cow[]>(cows);
@@ -29,9 +30,9 @@ const ListCow = () => {
     },
   ];
   return (
-    <div className="p-4 bg-white rounded-lg">
+    <WhiteBackground>
       <TableComponent columns={columns} dataSource={cow} />
-    </div>
+    </WhiteBackground>
   );
 };
 

@@ -1,16 +1,16 @@
-@import "../../styles/colors"; /* Import the color variables */
+@use "../../styles/colors" as colors; /* Import the color variables */
 
 .table {
   .ant-table-thead tr th {
-    background-color: $primary-color !important;
+    background-color: colors.$primary-color !important;
     color: white !important;
     border-collapse: collapse !important;
-    border-color: $primary-color !important;
+    border-color: colors.$primary-color !important;
   }
 
   .ant-input-search
     :where(.css-dev-only-do-not-override-1jx9akp).ant-input-group
     .ant-input-affix-wrapper:not(:last-child) {
-    border: 1px solid $primary-color;
+    border: 1px solid colors.$primary-color;
   }
 }

@@ -1,5 +1,5 @@
 import React from "react";
-import CalendarComponent from "../../components/Calendar";
+import CalendarComponent from "../../components/Calendar/CalendarComponent";
 
 const DairyManagement: React.FC = () => {
   const events = [
