@@ -4,12 +4,18 @@ import DairyManagement from "../../pages/DairyManagement";
 import CowManagement from "../../pages/CowManagement";
 import ListCow from "../../pages/CowManagement/components/ListCow";
 
+import LoginPage from "../../auth/login";
 const AppRouting = () => {
   const router = createBrowserRouter([
+    {
+      path: "auth/login",
+      element: <LoginPage />,
+    },
     {
       path: "",
       element: <AppDashboard />,
       children: [
+
         {
           path: "dairy-management",
           element: <DairyManagement />,
