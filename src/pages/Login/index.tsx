@@ -7,7 +7,7 @@ import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import ButtonComponent from "../../components/Button/ButtonComponent";
 import toast from "react-hot-toast";
 import LabelForm from "../../components/LabelForm/LabelForm";
-
+import backgroundImage from "../../assets/background.webp";
 
 const LoginPage = () => {
     const navigate = useNavigate();
@@ -23,20 +23,18 @@ const LoginPage = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-200 via-blue-300 to-purple-300">
+        // <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-200 via-blue-300 to-purple-300">
+        <div
+            className="min-h-screen flex items-center justify-center bg-cover bg-center"
+            style={{
+                backgroundImage: `url(${backgroundImage})`,
+            }}
+        >
+
             <div className="w-[450px] p-10 bg-white shadow-2xl rounded-lg border border-gray-200">
                 <div className="text-center">
                     <h2 className="text-3xl font-bold text-darkGreen">Welcome Back</h2>
-                    <p className="text-lg text-gray-600 mt-2">
-                        Don’t have an account?{' '}
-                        <Link
-                            to="/auth/register"
-                            className="text-blue-500 hover:text-blue-700 font-semibold relative group"
-                        >
-                            Register here
 
-                        </Link>
-                    </p>
                 </div>
                 <Divider className="my-5" />
                 <div className="w-full">
@@ -46,6 +44,11 @@ const LoginPage = () => {
                         className="flex flex-col gap-4"
                     >
                         <Form.Item
+                            label={
+                                <span className="text-lg font-semibold">
+                                    Username
+                                </span>
+                            }
                             name="username"
                             rules={[{ required: true, message: "Please enter your username" }]}
                         >
@@ -57,6 +60,11 @@ const LoginPage = () => {
                         </Form.Item>
 
                         <Form.Item
+                            label={
+                                <span className="text-lg font-semibold">
+                                    Password
+                                </span>
+                            }
                             name="password"
                             rules={[{ required: true, message: "Please enter your password" }]}
                         >
@@ -120,7 +128,8 @@ const LoginPage = () => {
                             <ButtonComponent
                                 loading={loading}
                                 htmlType="submit"
-                                className="w-full bg-gradient-to-r from-blue-500 to-green-400 text-white py-3 rounded-lg hover:from-green-500 hover:to-blue-400 hover:shadow-lg"
+                                type="primary"
+                                className="w-full "
                             >
                                 Login
                             </ButtonComponent>
