@@ -12,6 +12,9 @@
     }
   }
   :where(.css-dev-only-do-not-override-1jx9akp).ant-menu-light
+    .ant-menu-item-selected,
+  :where(.css-dev-only-do-not-override-1jx9akp).ant-menu-light
+    > .ant-menu
     .ant-menu-item-selected {
     background-color: #dedede;
   }
@@ -29,6 +32,22 @@
   :where(.css-dev-only-do-not-override-1jx9akp).ant-menu-light.ant-menu-inline
     .ant-menu-item {
     svg {
+      font-size: 25px;
+    }
+  }
+  :where(.css-dev-only-do-not-override-1jx9akp).ant-menu-inline.ant-menu-root
+    .ant-menu-submenu-title {
+    svg {
+      font-size: 25px;
+    }
+  }
+  :where(.css-dev-only-do-not-override-1jx9akp).ant-menu-vertical
+    > .ant-menu-submenu
+    > .ant-menu-submenu-title {
+    padding: 0;
+    svg {
+      width: 100%;
+      margin: 10% 0;
       font-size: 25px;
     }
   }

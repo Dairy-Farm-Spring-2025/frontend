@@ -1,13 +1,27 @@
-import { Avatar, Divider, Dropdown, Layout, Menu, MenuProps } from "antd";
+import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
+import {
+  Avatar,
+  Button,
+  ConfigProvider,
+  Divider,
+  Dropdown,
+  Layout,
+  Menu,
+  MenuProps,
+  theme,
+} from "antd";
 import React, { useState } from "react";
-import { PiCow, PiFarmLight } from "react-icons/pi";
+import { CiBoxList } from "react-icons/ci";
+import { IoIosLogOut, IoIosNotifications } from "react-icons/io";
+import { MdOutlineHealthAndSafety } from "react-icons/md";
+import { PiCow, PiFarmLight, PiPlus } from "react-icons/pi";
 import { SiHappycow } from "react-icons/si";
-import { IoIosNotifications } from "react-icons/io";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
+import ButtonComponent from "../../components/Button/ButtonComponent";
 import "./index.scss";
 const { Header, Content, Sider } = Layout;
-
 type MenuItem = Required<MenuProps>["items"][number];
+const { useToken } = theme;
 
 function getItem(
   label: React.ReactNode,
@@ -33,51 +47,58 @@ const siderStyle: React.CSSProperties = {
   zIndex: 1,
 };
 
-const itemsMenu: MenuItem[] = [
-  getItem("Dairy Management", "dairy-management", <PiFarmLight />),
-  getItem("Cow Management", "cow-management", <PiCow />),
-];
-
-const items: MenuProps["items"] = [
-  {
-    key: "1",
-    label: (
-      <a
-        target="_blank"
-        rel="noopener noreferrer"
-        href="https://www.antgroup.com"
-      >
-        1st menu item
-      </a>
-    ),
-  },
-
-  {
-    key: "3",
-    label: (
-      <a
-        target="_blank"
-        rel="noopener noreferrer"
-        href="https://www.luohanacademy.com"
-      >
-        3rd menu item (disabled)
-      </a>
-    ),
-    disabled: true,
-  },
-  {
-    key: "4",
-    danger: true,
-    label: "a danger item",
-  },
-];
-
 const AppDashboard: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const navigate = useNavigate();
+  const { token } = useToken();
+  const contentStyle: React.CSSProperties = {
+    backgroundColor: token.colorBgElevated,
+    borderRadius: token.borderRadiusLG,
+    boxShadow: token.boxShadowSecondary,
+  };
 
+  const menuStyle: React.CSSProperties = {
+    boxShadow: "none",
+  };
+  const sizeIcon = !collapsed ? 15 : 0;
+
+  const handleNavigate = (link: string) => navigate(link);
+
+  const items: MenuProps["items"] = [
+    {
+      key: "1",
+      label: (
+        <div
+          className="flex flex-col"
+          onClick={() => handleNavigate("profile")}
+        >
+          <p className="text-base font-bold">Nguyen Van A</p>
+          <p className="text-slate-500">Staff</p>
+        </div>
+      ),
+    },
+  ];
+
+  const itemsMenu: MenuItem[] = [
+    getItem("Dairy Management", "dairy-management", <PiFarmLight />),
+    getItem("Cow Management", "cow-management", <PiCow />, [
+      getItem("List Cow", "cow-management", <CiBoxList size={sizeIcon} />),
+      getItem(
+        "Create Cow",
+        "cow-management/create-cow",
+        <PiPlus size={sizeIcon} />
+      ),
+      getItem(
+        "Health Report",
+        "cow-management/health-report",
+        <MdOutlineHealthAndSafety size={sizeIcon} />
+      ),
+    ]),
+  ];
   return (
     <Layout style={{ minHeight: "100vh" }} className="layout-dairy">
       <Sider
+        trigger={null}
         collapsible
         collapsed={collapsed}
         onCollapse={(value) => setCollapsed(value)}
@@ -98,23 +119,6 @@ const AppDashboard: React.FC = () => {
             <p className="text-2xl font-bold text-black">Dairy Farm</p>
           )}
         </div>
-        {/* <div className="bg-white p-3 flex flex-col gap-2 items-center">
-          <Avatar size={64} />
-          <div className="w-full text-center">
-            <p className={`font-bold ${collapsed ? "text-xs" : "text-base"}`}>
-              John Doe
-            </p>
-            <p className="text-xs">Role</p>
-          </div>
-          <ButtonComponent
-            icon={<BiLogOut />}
-            variant="outlined"
-            color="danger"
-            className="!w-full !text-base"
-          >
-            {!collapsed && <p>Logout</p>}
-          </ButtonComponent>
-        </div> */}
         <Divider className="!m-0 border-white" />
         <Menu
           theme="light"
@@ -128,19 +132,65 @@ const AppDashboard: React.FC = () => {
         style={{ marginLeft: collapsed ? 80 : 270 }}
         className="duration-300"
       >
-        <Header className="!bg-white flex items-center gap-5 justify-end">
-          <IoIosNotifications
-            className="cursor-pointer text-orange-600"
-            size={32}
+        <Header
+          className="!bg-white flex items-center gap-5 justify-between"
+          style={{ padding: 0 }}
+        >
+          <Button
+            type="text"
+            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+            onClick={() => setCollapsed(!collapsed)}
+            style={{
+              fontSize: "16px",
+              width: 64,
+              height: 64,
+            }}
           />
-          <div>
-            <Dropdown
-              trigger={["click"]}
-              className="cursor-pointer"
-              menu={{ items }}
-            >
-              <Avatar size={32} />
-            </Dropdown>
+          <div className="flex items-center gap-5 pr-16">
+            <IoIosNotifications
+              className="cursor-pointer text-orange-600"
+              size={32}
+            />
+            <div>
+              <ConfigProvider
+                dropdown={{
+                  style: {
+                    minWidth: 200,
+                  },
+                }}
+              >
+                <Dropdown
+                  trigger={["click"]}
+                  className="cursor-pointer"
+                  menu={{ items }}
+                  dropdownRender={(menu) => (
+                    <div style={contentStyle}>
+                      {React.cloneElement(
+                        menu as React.ReactElement<{
+                          style: React.CSSProperties;
+                        }>,
+                        {
+                          style: menuStyle,
+                        }
+                      )}
+                      <Divider style={{ margin: 0 }} />
+                      <div style={{ padding: 8 }}>
+                        <ButtonComponent
+                          type="primary"
+                          danger
+                          className="!w-full font-bold"
+                          icon={<IoIosLogOut size={20} />}
+                        >
+                          Logout
+                        </ButtonComponent>
+                      </div>
+                    </div>
+                  )}
+                >
+                  <Avatar size={32} />
+                </Dropdown>
+              </ConfigProvider>
+            </div>
           </div>
         </Header>
         <Content style={{ padding: "10px" }} className=" !bg-slate-200">
