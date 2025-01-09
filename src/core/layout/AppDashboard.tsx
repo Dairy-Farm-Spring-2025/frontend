@@ -1,6 +1,7 @@
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import {
   Avatar,
+  Breadcrumb,
   Button,
   ConfigProvider,
   Divider,
@@ -16,9 +17,10 @@ import { IoIosLogOut, IoIosNotifications } from "react-icons/io";
 import { MdOutlineHealthAndSafety } from "react-icons/md";
 import { PiCow, PiFarmLight, PiPlus } from "react-icons/pi";
 import { SiHappycow } from "react-icons/si";
-import { Link, Outlet, useNavigate } from "react-router-dom";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import ButtonComponent from "../../components/Button/ButtonComponent";
 import "./index.scss";
+import { breadcumData } from "../../service/data/breadcumData";
 const { Header, Content, Sider } = Layout;
 type MenuItem = Required<MenuProps>["items"][number];
 const { useToken } = theme;
@@ -49,8 +51,17 @@ const siderStyle: React.CSSProperties = {
 
 const AppDashboard: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const location = useLocation();
+  const pathSegments = location.pathname.split("/").filter(Boolean);
+  const breadcrumbItems = pathSegments.map((segment, index) => ({
+    title:
+      breadcumData[segment] ||
+      segment.charAt(0).toUpperCase() + segment.slice(1),
+    href: "/" + pathSegments.slice(0, index + 1).join("/"),
+  }));
   const navigate = useNavigate();
   const { token } = useToken();
+
   const contentStyle: React.CSSProperties = {
     backgroundColor: token.colorBgElevated,
     borderRadius: token.borderRadiusLG,
@@ -122,10 +133,10 @@ const AppDashboard: React.FC = () => {
         <Divider className="!m-0 border-white" />
         <Menu
           theme="light"
-          defaultSelectedKeys={["1"]}
           mode="inline"
           items={itemsMenu}
           className="menu-sider !text-base"
+          selectedKeys={[location.pathname.slice(1)]} // Dynamically select menu item
         />
       </Sider>
       <Layout
@@ -201,6 +212,16 @@ const AppDashboard: React.FC = () => {
               overflowY: "auto",
             }}
           >
+            <Breadcrumb style={{ margin: "16px 0" }}>
+              <Breadcrumb.Item>
+                <Link to="/">Home</Link>
+              </Breadcrumb.Item>
+              {breadcrumbItems.map((item, index) => (
+                <Breadcrumb.Item key={index}>
+                  <Link to={item.href}>{item.title}</Link>
+                </Breadcrumb.Item>
+              ))}
+            </Breadcrumb>
             <Outlet />
           </div>
         </Content>

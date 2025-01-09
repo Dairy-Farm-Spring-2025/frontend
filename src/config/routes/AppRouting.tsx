@@ -2,6 +2,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import AppDashboard from "../../core/layout/AppDashboard";
 import DairyManagement from "../../pages/DairyManagement";
 import CowManagement from "../../pages/CowManagement";
+import ListCow from "../../pages/CowManagement/components/ListCow";
 
 const AppRouting = () => {
   const router = createBrowserRouter([
@@ -19,7 +20,7 @@ const AppRouting = () => {
           children: [
             {
               path: "",
-              element: <p>List Cow</p>,
+              element: <ListCow />,
             },
             {
               path: "create-cow",
