@@ -12,6 +12,9 @@ import LoginPage from "../../pages/Login";
 import CreateCow from "../../pages/CowManagement/components/CreateCow";
 import LoginForm from "../../pages/Login/components/LoginForm";
 import ForgetPassword from "../../pages/Login/components/ForgetPassword";
+import UserManagement from "../../pages/RoleManagement";
+import ListUser from "../../pages/UserManagement";
+import ListRole from "../../pages/RoleManagement";
 const AppRouting = () => {
   const role = null;
   const router = createBrowserRouter([
@@ -38,6 +41,15 @@ const AppRouting = () => {
       path: "dairy",
       element: <AppDashboard />,
       children: [
+        {
+          path: "user-management",
+          element: <ListUser />
+        },
+        {
+          path: "role-management",
+          element: <ListRole />
+        },
+
         {
           path: "dairy-management",
           element: <DairyManagement />,
