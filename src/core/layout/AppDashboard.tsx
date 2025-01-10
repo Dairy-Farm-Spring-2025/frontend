@@ -186,10 +186,7 @@ const AppDashboard: React.FC = () => {
         className="sider-dairy bg-white border-r-2"
       >
         <div className="demo-logo-vertical" />
-        <div
-          className={`bg-white p-3 flex "gap-4 justify-start"
-           items-center`}
-        >
+        <div className={`bg-white p-3 flex gap-4 justify-start items-center`}>
           <SiHappycow className="text-green-900" size={52} />
           <p className="text-2xl font-bold text-black">Dairy Farm</p>
         </div>

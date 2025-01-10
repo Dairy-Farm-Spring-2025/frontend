@@ -4,4 +4,6 @@ export const breadcumData: { [key: string]: string } = {
   "list-cow": "List Cow",
   "create-cow": "Create Cow",
   "health-report": "Health Report",
+  "user-management": "User Management",
+  "role-management": "Role Management",
 };
