@@ -7,13 +7,13 @@ interface FormComponentProps extends FormProps {
 }
 
 const validateMessages = {
-  required: "${label} is required!",
+  required: "The ${label} is required!",
   types: {
-    email: "${label} is not a valid email!",
-    number: "${label} is not a valid number!",
+    email: "This ${label} is not a valid email!",
+    number: "This ${label} is not a valid number!",
   },
   number: {
-    range: "${label} must be between ${min} and ${max}",
+    range: "The ${label} must be between ${min} and ${max}",
   },
 };
 

@@ -1,8 +1,6 @@
-import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import {
   Avatar,
   Breadcrumb,
-  Button,
   ConfigProvider,
   Divider,
   Dropdown,
@@ -11,16 +9,28 @@ import {
   MenuProps,
   theme,
 } from "antd";
-import React, { useState } from "react";
+import React from "react";
 import { CiBoxList } from "react-icons/ci";
 import { IoIosLogOut, IoIosNotifications } from "react-icons/io";
-import { MdOutlineHealthAndSafety } from "react-icons/md";
-import { PiCow, PiFarmLight, PiPlus } from "react-icons/pi";
+import { LiaChartAreaSolid, LiaProductHunt } from "react-icons/lia";
+import {
+  MdOutlineHealthAndSafety,
+  MdOutlineFastfood,
+  MdSchedule,
+} from "react-icons/md";
+import { PiCow, PiFarmLight, PiPlus, PiWarehouse } from "react-icons/pi";
+import { RiAlignItemLeftLine } from "react-icons/ri";
+import { GiCage } from "react-icons/gi";
 import { SiHappycow } from "react-icons/si";
+import { FaWpforms } from "react-icons/fa";
+import { AiOutlineIssuesClose } from "react-icons/ai";
+import { LuGitPullRequest, LuMilk } from "react-icons/lu";
+import { BiCategory, BiTask, BiUser } from "react-icons/bi";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import ButtonComponent from "../../components/Button/ButtonComponent";
-import "./index.scss";
 import { breadcumData } from "../../service/data/breadcumData";
+import LabelDashboard from "./components/LabelDashboard";
+import "./index.scss";
 const { Header, Content, Sider } = Layout;
 type MenuItem = Required<MenuProps>["items"][number];
 const { useToken } = theme;
@@ -35,7 +45,7 @@ function getItem(
     key,
     icon,
     children,
-    label: <Link to={`/${key}`}>{label}</Link>,
+    label: <Link to={`/dairy/${key}`}>{label}</Link>,
   } as MenuItem;
 }
 
@@ -50,7 +60,6 @@ const siderStyle: React.CSSProperties = {
 };
 
 const AppDashboard: React.FC = () => {
-  const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
   const pathSegments = location.pathname.split("/").filter(Boolean);
   const breadcrumbItems = pathSegments.map((segment, index) => ({
@@ -71,7 +80,7 @@ const AppDashboard: React.FC = () => {
   const menuStyle: React.CSSProperties = {
     boxShadow: "none",
   };
-  const sizeIcon = !collapsed ? 15 : 0;
+  const sizeIcon = 15;
 
   const handleNavigate = (link: string) => navigate(link);
 
@@ -91,44 +100,98 @@ const AppDashboard: React.FC = () => {
   ];
 
   const itemsMenu: MenuItem[] = [
+    {
+      key: "user-group",
+      label: <LabelDashboard>User Management</LabelDashboard>,
+      type: "group",
+      children: [
+        getItem("User", "user-management", <BiUser />),
+        getItem("Role", "role-management", <BiCategory />),
+      ],
+    },
     getItem("Dairy Management", "dairy-management", <PiFarmLight />),
-    getItem("Cow Management", "cow-management", <PiCow />, [
-      getItem("List Cow", "cow-management", <CiBoxList size={sizeIcon} />),
-      getItem(
-        "Create Cow",
-        "cow-management/create-cow",
-        <PiPlus size={sizeIcon} />
-      ),
-      getItem(
-        "Health Report",
-        "cow-management/health-report",
-        <MdOutlineHealthAndSafety size={sizeIcon} />
-      ),
-    ]),
+    {
+      key: "group-cow",
+      label: <LabelDashboard>Dairy Management</LabelDashboard>,
+      type: "group",
+      children: [
+        getItem("Cow", "cow-management", <PiCow />, [
+          getItem("List Cow", "cow-management", <CiBoxList size={sizeIcon} />),
+          getItem(
+            "Cow Type",
+            "cow-type-management",
+            <BiCategory size={sizeIcon} />
+          ),
+          getItem(
+            "Create Cow",
+            "cow-management/create-cow",
+            <PiPlus size={sizeIcon} />
+          ),
+          getItem(
+            "Health Report",
+            "cow-management/health-report",
+            <MdOutlineHealthAndSafety size={sizeIcon} />
+          ),
+        ]),
+        getItem("Feed", "feed-management", <MdOutlineFastfood />),
+        getItem("Area", "area-management", <LiaChartAreaSolid />),
+        getItem("Pen", "pen-management", <GiCage />),
+        getItem("Milk", "milk-management", <LuMilk />),
+        getItem("Warehouse", "warehouse-management", <PiWarehouse />, [
+          getItem(
+            "Category",
+            "category-management",
+            <BiCategory size={sizeIcon} />
+          ),
+          getItem(
+            "Item",
+            "item-management",
+            <RiAlignItemLeftLine size={sizeIcon} />
+          ),
+          getItem(
+            "Supplier",
+            "supplier-management",
+            <LiaProductHunt size={sizeIcon} />
+          ),
+        ]),
+      ],
+    },
+    {
+      key: "group-schedule",
+      label: <LabelDashboard>HR Management</LabelDashboard>,
+      type: "group",
+      children: [
+        getItem("Worker", "worker-management", <BiUser />),
+        getItem("Schedule", "schedule-management", <MdSchedule />),
+        getItem("Task", "task-management", <BiTask />, [
+          getItem("Task Type", "task-type", <BiCategory size={sizeIcon} />),
+        ]),
+        getItem("Application", "application-management", <FaWpforms />),
+        getItem("Issue", "issue-management", <AiOutlineIssuesClose />),
+        getItem(
+          "Request Schedule",
+          "request-schedule-management",
+          <LuGitPullRequest />
+        ),
+      ],
+    },
   ];
   return (
     <Layout style={{ minHeight: "100vh" }} className="layout-dairy">
       <Sider
         trigger={null}
         collapsible
-        collapsed={collapsed}
-        onCollapse={(value) => setCollapsed(value)}
         width={270}
         style={siderStyle}
         className="sider-dairy bg-white border-r-2"
       >
         <div className="demo-logo-vertical" />
         <div
-          className={`bg-white p-3 flex ${
-            collapsed ? " justify-center" : "gap-4 justify-start"
-          } items-center`}
+          className={`bg-white p-3 flex "gap-4 justify-start"
+           items-center`}
         >
           <SiHappycow className="text-green-900" size={52} />
-          {collapsed ? (
-            <p></p>
-          ) : (
-            <p className="text-2xl font-bold text-black">Dairy Farm</p>
-          )}
+          <p className="text-2xl font-bold text-black">Dairy Farm</p>
         </div>
         <Divider className="!m-0 border-white" />
         <Menu
@@ -139,24 +202,11 @@ const AppDashboard: React.FC = () => {
           selectedKeys={[location.pathname.slice(1)]} // Dynamically select menu item
         />
       </Sider>
-      <Layout
-        style={{ marginLeft: collapsed ? 80 : 270 }}
-        className="duration-300"
-      >
+      <Layout style={{ marginLeft: 270 }} className="duration-300">
         <Header
-          className="!bg-white flex items-center gap-5 justify-between"
+          className="!bg-white flex items-center gap-5 justify-end"
           style={{ padding: 0 }}
         >
-          <Button
-            type="text"
-            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-            onClick={() => setCollapsed(!collapsed)}
-            style={{
-              fontSize: "16px",
-              width: 64,
-              height: 64,
-            }}
-          />
           <div className="flex items-center gap-5 pr-16">
             <IoIosNotifications
               className="cursor-pointer text-orange-600"

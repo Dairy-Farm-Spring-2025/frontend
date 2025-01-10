@@ -1,14 +1,12 @@
 @use "../../styles/colors" as colors; /* Import the color variables */
-
+@use "../../styles/fontSize" as fontSize;
 .layout-dairy {
   .sider-dairy {
-    .ant-layout-sider-trigger {
-      background-color: colors.$primary-color !important;
-      color: white !important;
-    }
-    .ant-layout-sider-trigger:hover {
-      background-color: #adaeae !important;
-      color: black !important;
+    overflow-y: auto;
+    scrollbar-width: none;
+    scroll-behavior: smooth;
+    ::-webkit-scrollbar {
+      display: none;
     }
   }
   :where(.css-dev-only-do-not-override-1jx9akp).ant-menu-light
@@ -26,19 +24,19 @@
     svg {
       width: 100%;
       margin: 10% 0;
-      font-size: 25px;
+      font-size: fontSize.$fontIcon;
     }
   }
   :where(.css-dev-only-do-not-override-1jx9akp).ant-menu-light.ant-menu-inline
     .ant-menu-item {
     svg {
-      font-size: 25px;
+      font-size: fontSize.$fontIcon;
     }
   }
   :where(.css-dev-only-do-not-override-1jx9akp).ant-menu-inline.ant-menu-root
     .ant-menu-submenu-title {
     svg {
-      font-size: 25px;
+      font-size: fontSize.$fontIcon;
     }
   }
   :where(.css-dev-only-do-not-override-1jx9akp).ant-menu-vertical
@@ -48,7 +46,14 @@
     svg {
       width: 100%;
       margin: 10% 0;
-      font-size: 25px;
+      font-size: fontSize.$fontIcon;
     }
+  }
+  :where(.css-dev-only-do-not-override-1jx9akp).ant-menu-light.ant-menu-inline
+    .ant-menu-item {
+    margin-bottom: 10px;
+  }
+  :where(.css-dev-only-do-not-override-1jx9akp).ant-menu .ant-menu-submenu {
+    margin-bottom: 10px;
   }
 }
