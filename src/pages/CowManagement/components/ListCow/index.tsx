@@ -7,7 +7,7 @@ import { Cow } from "../../../../model/Cow";
 import { Image } from "antd";
 import TextLink from "../../../../components/UI/TextLink";
 import WhiteBackground from "../../../../components/UI/WhiteBackground";
-
+import React from "react";
 const ListCow = () => {
   const [cow, setCow] = useState<Cow[]>(cows);
   const columns: Column[] = [
