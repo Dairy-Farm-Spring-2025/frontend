@@ -1,4 +1,8 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+} from "react-router-dom";
 import AppDashboard from "../../core/layout/AppDashboard";
 import DairyManagement from "../../pages/DairyManagement";
 import CowManagement from "../../pages/CowManagement";
@@ -6,14 +10,32 @@ import ListCow from "../../pages/CowManagement/components/ListCow";
 
 import LoginPage from "../../pages/Login";
 import CreateCow from "../../pages/CowManagement/components/CreateCow";
+import LoginForm from "../../pages/Login/components/LoginForm";
+import ForgetPassword from "../../pages/Login/components/ForgetPassword";
 const AppRouting = () => {
+  const role = null;
   const router = createBrowserRouter([
+    {
+      path: "/",
+      element: <Navigate to={role ? "/dairy" : "/login"} />, // Redirect to /dashboard or another default path
+    },
     {
       path: "/login",
       element: <LoginPage />,
+      children: [
+        {
+          path: "",
+          index: true,
+          element: <LoginForm />,
+        },
+        {
+          path: "forget-password",
+          element: <ForgetPassword />,
+        },
+      ],
     },
     {
-      path: "",
+      path: "dairy",
       element: <AppDashboard />,
       children: [
         {

@@ -1,7 +1,7 @@
 import { Form, FormItemProps } from "antd";
 import React from "react";
 interface FormItemComponentProps extends FormItemProps {
-  label: string;
+  label: string | React.ReactNode;
   name: string;
   children: React.ReactNode;
 }
