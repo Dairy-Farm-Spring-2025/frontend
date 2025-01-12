@@ -60,6 +60,10 @@ const AppRouting = () => {
           children: [
             {
               path: "",
+              element: <Navigate to={"list-cow"} />,
+            },
+            {
+              path: "list-cow",
               element: <ListCow />,
             },
             {

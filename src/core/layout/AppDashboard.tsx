@@ -9,7 +9,7 @@ import {
   MenuProps,
   theme,
 } from "antd";
-import React from "react";
+import React, { useEffect } from "react";
 import { CiBoxList } from "react-icons/ci";
 import { IoIosLogOut, IoIosNotifications } from "react-icons/io";
 import { LiaChartAreaSolid, LiaProductHunt } from "react-icons/lia";
@@ -45,7 +45,7 @@ function getItem(
     key,
     icon,
     children,
-    label: <Link to={`/dairy/${key}`}>{label}</Link>,
+    label: <Link to={`/${key}`}>{label}</Link>,
   } as MenuItem;
 }
 
@@ -105,52 +105,56 @@ const AppDashboard: React.FC = () => {
       label: <LabelDashboard>User Management</LabelDashboard>,
       type: "group",
       children: [
-        getItem("User", "user-management", <BiUser />),
-        getItem("Role", "role-management", <BiCategory />),
+        getItem("User", "dairy/user-management", <BiUser />),
+        getItem("Role", "dairy/role-management", <BiCategory />),
       ],
     },
-    getItem("Dairy Management", "dairy-management", <PiFarmLight />),
+    getItem("Dairy Management", "dairy/dairy-management", <PiFarmLight />),
     {
       key: "group-cow",
       label: <LabelDashboard>Dairy Management</LabelDashboard>,
       type: "group",
       children: [
-        getItem("Cow", "cow-management", <PiCow />, [
-          getItem("List Cow", "cow-management", <CiBoxList size={sizeIcon} />),
+        getItem("Cow", "dairy/cow-management", <PiCow />, [
+          getItem(
+            "List Cow",
+            "dairy/cow-management/list-cow",
+            <CiBoxList size={sizeIcon} />
+          ),
           getItem(
             "Cow Type",
-            "cow-type-management",
+            "dairy/cow-type-management",
             <BiCategory size={sizeIcon} />
           ),
           getItem(
             "Create Cow",
-            "cow-management/create-cow",
+            "dairy/cow-management/create-cow",
             <PiPlus size={sizeIcon} />
           ),
           getItem(
             "Health Report",
-            "cow-management/health-report",
+            "dairy/cow-management/health-report",
             <MdOutlineHealthAndSafety size={sizeIcon} />
           ),
         ]),
-        getItem("Feed", "feed-management", <MdOutlineFastfood />),
-        getItem("Area", "area-management", <LiaChartAreaSolid />),
-        getItem("Pen", "pen-management", <GiCage />),
-        getItem("Milk", "milk-management", <LuMilk />),
-        getItem("Warehouse", "warehouse-management", <PiWarehouse />, [
+        getItem("Feed", "dairy/feed-management", <MdOutlineFastfood />),
+        getItem("Area", "dairy/area-management", <LiaChartAreaSolid />),
+        getItem("Pen", "dairy/pen-management", <GiCage />),
+        getItem("Milk", "dairy/milk-management", <LuMilk />),
+        getItem("Warehouse", "dairy/warehouse-management", <PiWarehouse />, [
           getItem(
             "Category",
-            "category-management",
+            "dairy/category-management",
             <BiCategory size={sizeIcon} />
           ),
           getItem(
             "Item",
-            "item-management",
+            "dairy/item-management",
             <RiAlignItemLeftLine size={sizeIcon} />
           ),
           getItem(
             "Supplier",
-            "supplier-management",
+            "dairy/supplier-management",
             <LiaProductHunt size={sizeIcon} />
           ),
         ]),
@@ -161,21 +165,28 @@ const AppDashboard: React.FC = () => {
       label: <LabelDashboard>HR Management</LabelDashboard>,
       type: "group",
       children: [
-        getItem("Worker", "worker-management", <BiUser />),
-        getItem("Schedule", "schedule-management", <MdSchedule />),
-        getItem("Task", "task-management", <BiTask />, [
-          getItem("Task Type", "task-type", <BiCategory size={sizeIcon} />),
+        getItem("Worker", "dairy/worker-management", <BiUser />),
+        getItem("Schedule", "dairy/schedule-management", <MdSchedule />),
+        getItem("Task", "dairy/task-management", <BiTask />, [
+          getItem(
+            "Task Type",
+            "dairy/task-type",
+            <BiCategory size={sizeIcon} />
+          ),
         ]),
-        getItem("Application", "application-management", <FaWpforms />),
-        getItem("Issue", "issue-management", <AiOutlineIssuesClose />),
+        getItem("Application", "dairy/application-management", <FaWpforms />),
+        getItem("Issue", "dairy/issue-management", <AiOutlineIssuesClose />),
         getItem(
           "Request Schedule",
-          "request-schedule-management",
+          "dairy/request-schedule-management",
           <LuGitPullRequest />
         ),
       ],
     },
   ];
+  useEffect(() => {
+    console.log(location.pathname.slice(1));
+  }, [location.pathname]);
   return (
     <Layout style={{ minHeight: "100vh" }} className="layout-dairy">
       <Sider

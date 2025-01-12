@@ -2,7 +2,7 @@ import { ConfigProvider, Input } from "antd";
 import { ColumnProps, TableProps } from "antd/es/table";
 import { Table } from "antd";
 import "./index.scss";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 export interface Column extends ColumnProps {
   title: string;
   dataIndex: string;
@@ -11,7 +11,7 @@ export interface Column extends ColumnProps {
 
 interface TableComponentProps extends TableProps {
   columns: Column[];
-  dataSource: object[];
+  dataSource: any;
 }
 const TableComponent = ({
   columns,
@@ -19,7 +19,7 @@ const TableComponent = ({
   ...props
 }: TableComponentProps) => {
   const [searchText, setSearchText] = useState<string>("");
-  const [filteredData, setFilteredData] = useState<object[]>(dataSource);
+  const [filteredData, setFilteredData] = useState<object[]>([]);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.toLowerCase();
@@ -31,6 +31,12 @@ const TableComponent = ({
     );
     setFilteredData(filtered);
   };
+
+  useEffect(() => {
+    if (dataSource) {
+      setFilteredData(dataSource);
+    }
+  }, [dataSource]);
 
   return (
     <div className="table w-full">
