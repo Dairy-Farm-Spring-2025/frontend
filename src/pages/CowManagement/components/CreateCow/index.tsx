@@ -1,11 +1,10 @@
 import { Form, Input, InputNumber } from "antd";
-import FormComponent from "../../../../components/Form/FormComponent";
 import ButtonComponent from "../../../../components/Button/ButtonComponent";
+import FormComponent from "../../../../components/Form/FormComponent";
 import FormItemComponent from "../../../../components/Form/Item/FormItemComponent";
+import ModalComponent from "../../../../components/Modal/ModalComponent";
 import WhiteBackground from "../../../../components/UI/WhiteBackground";
 import useModal from "../../../../hooks/useModal";
-import ModalComponent from "../../../../components/Modal/ModalComponent";
-import React from "react";
 const CreateCow = () => {
   const [form] = Form.useForm();
   const modal = useModal();
