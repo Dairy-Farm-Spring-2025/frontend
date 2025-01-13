@@ -8,6 +8,7 @@ import WhiteBackground from "../../../../components/UI/WhiteBackground";
 import useFetch from "../../../../hooks/useFetcher";
 import { Cow } from "../../../../model/Cow";
 import useToast from "../../../../hooks/useToast";
+import AnimationAppear from "../../../../components/UI/AnimationAppear";
 const ListCow = () => {
   const [cow, setCow] = useState<Cow[]>([]);
   const { data, error, isLoading } = useFetch<Cow[]>("product");
@@ -41,9 +42,15 @@ const ListCow = () => {
     }
   }, [data, error, toast]);
   return (
-    <WhiteBackground>
-      <TableComponent loading={isLoading} columns={columns} dataSource={cow} />
-    </WhiteBackground>
+    <AnimationAppear duration={0.5}>
+      <WhiteBackground>
+        <TableComponent
+          loading={isLoading}
+          columns={columns}
+          dataSource={cow}
+        />
+      </WhiteBackground>
+    </AnimationAppear>
   );
 };
 

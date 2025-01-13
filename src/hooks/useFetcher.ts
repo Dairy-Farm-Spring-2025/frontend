@@ -2,9 +2,25 @@ import useSWR from "swr";
 import api from "../config/axios/axios";
 import { useState } from "react";
 
-const fetcher = async (url: string, method: string, body?: any) => {
-  const config = { method, data: body };
-  const response = await api(url, config);
+const fetcher = async (
+  url: string,
+  method: string,
+  options?: { params?: any; body?: any }
+) => {
+  let finalUrl = url;
+
+  // Handle query parameters for GET requests
+  if (options?.params) {
+    const queryString = new URLSearchParams(options.params).toString();
+    finalUrl += `?${queryString}`;
+  }
+
+  const config = {
+    method,
+    data: options?.body, // Add body for non-GET requests
+  };
+
+  const response = await api(finalUrl, config);
   return response.data;
 };
 
@@ -14,19 +30,19 @@ const useFetcher = <T>(url: string, method: string = "GET") => {
 
   const { data, mutate } = useSWR<T>(
     method === "GET" ? url : null,
-    () => fetcher(url, method)
+    () => fetcher(url, method) // Automatically fetch on mount if it's GET
   );
 
-  const trigger = async (options?: { body?: any }) => {
+  const trigger = async (options?: { params?: any; body?: any }) => {
     setIsLoading(true);
     setError(null);
     try {
-      const result = await fetcher(url, method, options?.body);
+      const result = await fetcher(url, method, options);
       mutate(result, false); // Update SWR cache
       return result;
     } catch (err: any) {
-      setError(err.response.data);
-      throw err.response.data;
+      setError(err.response?.data || err.message || "Unknown error");
+      throw err.response?.data || err;
     } finally {
       setIsLoading(false);
     }

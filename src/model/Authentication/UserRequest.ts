@@ -3,4 +3,8 @@ type UserRequest = {
   password: string;
 };
 
+export type UserRequestForgetPassword = {
+  email: string;
+};
+
 export default UserRequest;

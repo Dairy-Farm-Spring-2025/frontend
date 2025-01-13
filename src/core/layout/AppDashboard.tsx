@@ -10,25 +10,29 @@ import {
   theme,
 } from "antd";
 import React, { useEffect } from "react";
+import { AiOutlineIssuesClose } from "react-icons/ai";
+import { BiCategory, BiTask, BiUser } from "react-icons/bi";
 import { CiBoxList } from "react-icons/ci";
+import { FaWpforms } from "react-icons/fa";
+import { GiCage } from "react-icons/gi";
 import { IoIosLogOut, IoIosNotifications } from "react-icons/io";
 import { LiaChartAreaSolid, LiaProductHunt } from "react-icons/lia";
+import { LuGitPullRequest, LuMilk } from "react-icons/lu";
 import {
-  MdOutlineHealthAndSafety,
   MdOutlineFastfood,
+  MdOutlineHealthAndSafety,
   MdSchedule,
 } from "react-icons/md";
 import { PiCow, PiFarmLight, PiPlus, PiWarehouse } from "react-icons/pi";
 import { RiAlignItemLeftLine } from "react-icons/ri";
-import { GiCage } from "react-icons/gi";
 import { SiHappycow } from "react-icons/si";
-import { FaWpforms } from "react-icons/fa";
-import { AiOutlineIssuesClose } from "react-icons/ai";
-import { LuGitPullRequest, LuMilk } from "react-icons/lu";
-import { BiCategory, BiTask, BiUser } from "react-icons/bi";
+import { useDispatch } from "react-redux";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import ButtonComponent from "../../components/Button/ButtonComponent";
+import AnimationAppear from "../../components/UI/AnimationAppear";
+import useToast from "../../hooks/useToast";
 import { breadcumData } from "../../service/data/breadcumData";
+import { logout } from "../store/slice/userSlice";
 import LabelDashboard from "./components/LabelDashboard";
 import "./index.scss";
 const { Header, Content, Sider } = Layout;
@@ -61,6 +65,7 @@ const siderStyle: React.CSSProperties = {
 
 const AppDashboard: React.FC = () => {
   const location = useLocation();
+  const dispatch = useDispatch();
   const pathSegments = location.pathname.split("/").filter(Boolean);
   const breadcrumbItems = pathSegments.map((segment, index) => ({
     title:
@@ -69,6 +74,7 @@ const AppDashboard: React.FC = () => {
     href: "/" + pathSegments.slice(0, index + 1).join("/"),
   }));
   const navigate = useNavigate();
+  const toast = useToast();
   const { token } = useToken();
 
   const contentStyle: React.CSSProperties = {
@@ -83,6 +89,12 @@ const AppDashboard: React.FC = () => {
   const sizeIcon = 15;
 
   const handleNavigate = (link: string) => navigate(link);
+
+  const handleLogout = () => {
+    dispatch(logout());
+    toast.showSuccess("Login success");
+    handleNavigate("/login");
+  };
 
   const items: MenuProps["items"] = [
     {
@@ -188,103 +200,110 @@ const AppDashboard: React.FC = () => {
     console.log(location.pathname.slice(1));
   }, [location.pathname]);
   return (
-    <Layout style={{ minHeight: "100vh" }} className="layout-dairy">
-      <Sider
-        trigger={null}
-        collapsible
-        width={270}
-        style={siderStyle}
-        className="sider-dairy bg-white border-r-2"
-      >
-        <div className="demo-logo-vertical" />
-        <div className={`bg-white p-3 flex gap-4 justify-start items-center`}>
-          <SiHappycow className="text-green-900" size={52} />
-          <p className="text-2xl font-bold text-black">Dairy Farm</p>
-        </div>
-        <Divider className="!m-0 border-white" />
-        <Menu
-          theme="light"
-          mode="inline"
-          items={itemsMenu}
-          className="menu-sider !text-base"
-          selectedKeys={[location.pathname.slice(1)]} // Dynamically select menu item
-        />
-      </Sider>
-      <Layout style={{ marginLeft: 270 }} className="duration-300">
-        <Header
-          className="!bg-white flex items-center gap-5 justify-end"
-          style={{ padding: 0 }}
+    <AnimationAppear>
+      <Layout style={{ minHeight: "100vh" }} className="layout-dairy">
+        <Sider
+          trigger={null}
+          collapsible
+          width={270}
+          style={siderStyle}
+          className="sider-dairy bg-white border-r-2"
         >
-          <div className="flex items-center gap-5 pr-16">
-            <IoIosNotifications
-              className="cursor-pointer text-orange-600"
-              size={32}
-            />
-            <div>
-              <ConfigProvider
-                dropdown={{
-                  style: {
-                    minWidth: 200,
-                  },
-                }}
-              >
-                <Dropdown
-                  trigger={["click"]}
-                  className="cursor-pointer"
-                  menu={{ items }}
-                  dropdownRender={(menu) => (
-                    <div style={contentStyle}>
-                      {React.cloneElement(
-                        menu as React.ReactElement<{
-                          style: React.CSSProperties;
-                        }>,
-                        {
-                          style: menuStyle,
-                        }
-                      )}
-                      <Divider style={{ margin: 0 }} />
-                      <div style={{ padding: 8 }}>
-                        <ButtonComponent
-                          type="primary"
-                          danger
-                          className="!w-full font-bold"
-                          icon={<IoIosLogOut size={20} />}
-                        >
-                          Logout
-                        </ButtonComponent>
-                      </div>
-                    </div>
-                  )}
-                >
-                  <Avatar size={32} />
-                </Dropdown>
-              </ConfigProvider>
-            </div>
+          <div className="demo-logo-vertical" />
+          <div className={`bg-white p-3 flex gap-4 justify-start items-center`}>
+            <SiHappycow className="text-green-900" size={52} />
+            <p className="text-2xl font-bold text-black">Dairy Farm</p>
           </div>
-        </Header>
-        <Content style={{ padding: "10px" }} className=" !bg-slate-200">
-          <div
-            style={{
-              padding: 8,
-              minHeight: 360,
-              overflowY: "auto",
-            }}
+          <Divider className="!m-0 border-white" />
+          <Menu
+            theme="light"
+            mode="inline"
+            items={itemsMenu}
+            className="menu-sider !text-base"
+            selectedKeys={[location.pathname.slice(1)]} // Dynamically select menu item
+          />
+        </Sider>
+        <Layout style={{ marginLeft: 270 }} className="duration-300">
+          <Header
+            className="!bg-white flex items-center gap-5 justify-end"
+            style={{ padding: 0 }}
           >
-            <Breadcrumb style={{ margin: "16px 0" }}>
-              <Breadcrumb.Item>
-                <Link to="/">Home</Link>
-              </Breadcrumb.Item>
-              {breadcrumbItems.map((item, index) => (
-                <Breadcrumb.Item key={index}>
-                  <Link to={item.href}>{item.title}</Link>
+            <div className="flex items-center gap-5 pr-16">
+              <IoIosNotifications
+                className="cursor-pointer text-orange-600"
+                size={32}
+              />
+              <div>
+                <ConfigProvider
+                  dropdown={{
+                    style: {
+                      minWidth: 200,
+                    },
+                  }}
+                >
+                  <Dropdown
+                    trigger={["click"]}
+                    className="cursor-pointer"
+                    menu={{ items }}
+                    dropdownRender={(menu) => (
+                      <div style={contentStyle}>
+                        {React.cloneElement(
+                          menu as React.ReactElement<{
+                            style: React.CSSProperties;
+                          }>,
+                          {
+                            style: menuStyle,
+                          }
+                        )}
+                        <Divider style={{ margin: 0 }} />
+                        <div style={{ padding: 8 }}>
+                          <ButtonComponent
+                            onClick={handleLogout}
+                            type="primary"
+                            danger
+                            className="!w-full font-bold"
+                            icon={<IoIosLogOut size={20} />}
+                          >
+                            Logout
+                          </ButtonComponent>
+                        </div>
+                      </div>
+                    )}
+                  >
+                    <Avatar size={32} />
+                  </Dropdown>
+                </ConfigProvider>
+              </div>
+            </div>
+          </Header>
+          <Content
+            style={{ padding: "10px" }}
+            className=" !bg-slate-200 !min-h-[90vh]"
+          >
+            <div
+              style={{
+                padding: 8,
+                minHeight: 360,
+                overflowY: "auto",
+              }}
+              className="!h-full"
+            >
+              <Breadcrumb style={{ margin: "16px 0" }}>
+                <Breadcrumb.Item>
+                  <Link to="/">Home</Link>
                 </Breadcrumb.Item>
-              ))}
-            </Breadcrumb>
-            <Outlet />
-          </div>
-        </Content>
+                {breadcrumbItems.map((item, index) => (
+                  <Breadcrumb.Item key={index}>
+                    <Link to={item.href}>{item.title}</Link>
+                  </Breadcrumb.Item>
+                ))}
+              </Breadcrumb>
+              <Outlet />
+            </div>
+          </Content>
+        </Layout>
       </Layout>
-    </Layout>
+    </AnimationAppear>
   );
 };
 
