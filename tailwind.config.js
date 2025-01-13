@@ -10,7 +10,7 @@ export default {
         finlandica: ['Finlandica', 'sans-serif'], // Define Finlandica font
       },
       colors: {
-        "primary" : "#1DA57A"
+        "primary" : "rgb(21 128 61 / var(--tw-text-opacity, 1))"
       }
     },
   },

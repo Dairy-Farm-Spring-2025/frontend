@@ -15,9 +15,14 @@ export const userSlice = createSlice({
   reducers: {
     login: (_, action) => action.payload,
     logout: () => initialState,
-    updateNewAccessToken: (state: any, action) => {
+    updateNewAccessToken: (state, action) => {
       if (state) {
         state.accessToken = action.payload;
+      } else {
+        return {
+          ...initialState,
+          accessToken: action.payload,
+        };
       }
     },
   },

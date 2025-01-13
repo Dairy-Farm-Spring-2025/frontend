@@ -10,6 +10,14 @@ const authenticationApi = {
       throw new Error(error.response.data.message);
     }
   },
+  forgotPassword: async (email: string) => {
+    try {
+      const response = await api.get(`users/forgotpassword?email=${email}`);
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response.data.message);
+    }
+  },
 };
 
 export default authenticationApi;

@@ -21,8 +21,8 @@ const AppRouting = () => {
   const user = useSelector((state: RootState) => state.user);
   const router = createBrowserRouter([
     {
-      path: "/",
-      element: <Navigate to={user ? "/dairy" : "/login"} />, // Redirect to /dashboard or another default path
+      path: "",
+      element: <Navigate to={user.accessToken !== "" ? "/dairy" : "/login"} />, // Redirect to /dashboard or another default path
     },
     {
       path: "/login",
@@ -41,7 +41,8 @@ const AppRouting = () => {
     },
     {
       path: "dairy",
-      element: <AppDashboard />,
+      element:
+        user.accessToken !== "" ? <AppDashboard /> : <Navigate to={"/login"} />,
       children: [
         {
           path: "user-management",
