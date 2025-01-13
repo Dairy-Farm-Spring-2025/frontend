@@ -4,23 +4,25 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import AppDashboard from "../../core/layout/AppDashboard";
-import DairyManagement from "../../pages/DairyManagement";
 import CowManagement from "../../pages/CowManagement";
 import ListCow from "../../pages/CowManagement/components/ListCow";
+import DairyManagement from "../../pages/DairyManagement";
 
-import LoginPage from "../../pages/Login";
 import CreateCow from "../../pages/CowManagement/components/CreateCow";
-import LoginForm from "../../pages/Login/components/LoginForm";
+import LoginPage from "../../pages/Login";
 import ForgetPassword from "../../pages/Login/components/ForgetPassword";
-import UserManagement from "../../pages/RoleManagement";
-import ListUser from "../../pages/UserManagement";
+import LoginForm from "../../pages/Login/components/LoginForm";
+import Profile from "../../pages/Profile";
 import ListRole from "../../pages/RoleManagement";
+import ListUser from "../../pages/UserManagement";
+import { useSelector } from "react-redux";
+import { RootState } from "../../core/store/store";
 const AppRouting = () => {
-  const role = null;
+  const user = useSelector((state: RootState) => state.user);
   const router = createBrowserRouter([
     {
-      path: "/",
-      element: <Navigate to={role ? "/dairy" : "/login"} />, // Redirect to /dashboard or another default path
+      path: "",
+      element: <Navigate to={user.accessToken !== "" ? "/dairy" : "/login"} />, // Redirect to /dashboard or another default path
     },
     {
       path: "/login",
@@ -39,15 +41,16 @@ const AppRouting = () => {
     },
     {
       path: "dairy",
-      element: <AppDashboard />,
+      element:
+        user.accessToken !== "" ? <AppDashboard /> : <Navigate to={"/login"} />,
       children: [
         {
           path: "user-management",
-          element: <ListUser />
+          element: <ListUser />,
         },
         {
           path: "role-management",
-          element: <ListRole />
+          element: <ListRole />,
         },
 
         {
@@ -60,6 +63,10 @@ const AppRouting = () => {
           children: [
             {
               path: "",
+              element: <Navigate to={"list-cow"} />,
+            },
+            {
+              path: "list-cow",
               element: <ListCow />,
             },
             {
@@ -74,7 +81,7 @@ const AppRouting = () => {
         },
         {
           path: "profile",
-          element: <p>Profile</p>,
+          element: <Profile />,
         },
       ],
     },

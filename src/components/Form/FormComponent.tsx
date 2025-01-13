@@ -3,6 +3,7 @@ import React from "react";
 
 interface FormComponentProps extends FormProps {
   form: any;
+  colSpan?: number;
   children: React.ReactNode;
 }
 
@@ -17,11 +18,16 @@ const validateMessages = {
   },
 };
 
-const FormComponent = ({ form, children, ...props }: FormComponentProps) => {
+const FormComponent = ({
+  form,
+  colSpan = 24,
+  children,
+  ...props
+}: FormComponentProps) => {
   return (
     <Form
       form={form}
-      labelCol={{ span: 24 }}
+      labelCol={{ span: colSpan }}
       validateMessages={validateMessages}
       {...props}
     >
