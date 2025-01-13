@@ -1,24 +1,50 @@
-import FormComponent from "../../../components/Form/FormComponent";
-import FormItemComponent from "../../../components/Form/Item/FormItemComponent";
-import ButtonComponent from "../../../components/Button/ButtonComponent";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Divider, Form, Input } from "antd";
-import { useState } from "react";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import ButtonComponent from "../../../components/Button/ButtonComponent";
+import FormComponent from "../../../components/Form/FormComponent";
+import FormItemComponent from "../../../components/Form/Item/FormItemComponent";
+import useFetcher from "../../../hooks/useFetcher";
 import useToast from "../../../hooks/useToast";
+import UserRequest from "../../../model/Authentication/UserRequest";
+import UserResponse from "../../../model/Authentication/UserResponse";
+import { login } from "../../../core/store/slice/userSlice";
 const LoginForm = () => {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
+  const { trigger, isLoading } = useFetcher<UserResponse>(
+    "users/signin",
+    "POST"
+  );
+  const dispatch = useDispatch();
   const toast = useToast();
   const [form] = Form.useForm();
   const handleForgetPassword = () => {
     navigate("forget-password");
   };
-  const handleFinish = (event: any) => {
-    console.log(event);
-    toast.showSuccess("Sign Success with " + event.email);
-    navigate("/dairy");
+  const handleFinish = async (values: UserRequest) => {
+    const data: UserRequest = {
+      email: values.email,
+      password: values.password,
+    };
+    try {
+      const response: UserResponse = await trigger({ body: data });
+      const role = response.data.roleName;
+      if (role !== "Manager" && role !== "Admin") {
+        toast.showError("You do not permission to access");
+      } else {
+        toast.showSuccess("Signin Success");
+        dispatch(login(response.data));
+        navigate("/dairy");
+      }
+    } catch (error: any) {
+      toast.showError(error.message);
+    }
   };
+  useEffect(() => {
+    console.log(isLoading);
+  }, [isLoading]);
   return (
     <div>
       <div className="text-center">
@@ -101,7 +127,7 @@ const LoginForm = () => {
             Forgot Password?
           </ButtonComponent>
           <ButtonComponent
-            loading={loading}
+            loading={isLoading}
             htmlType="submit"
             type="primary"
             className="w-full "

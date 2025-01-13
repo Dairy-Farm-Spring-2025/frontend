@@ -15,12 +15,14 @@ import LoginForm from "../../pages/Login/components/LoginForm";
 import Profile from "../../pages/Profile";
 import ListRole from "../../pages/RoleManagement";
 import ListUser from "../../pages/UserManagement";
+import { useSelector } from "react-redux";
+import { RootState } from "../../core/store/store";
 const AppRouting = () => {
-  const role = null;
+  const user = useSelector((state: RootState) => state.user);
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <Navigate to={role ? "/dairy" : "/login"} />, // Redirect to /dashboard or another default path
+      element: <Navigate to={user ? "/dairy" : "/login"} />, // Redirect to /dashboard or another default path
     },
     {
       path: "/login",
