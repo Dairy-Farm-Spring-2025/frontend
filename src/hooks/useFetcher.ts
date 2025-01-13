@@ -28,9 +28,8 @@ const useFetcher = <T>(url: string, method: string = "GET") => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<any>(null);
 
-  const { data, mutate } = useSWR<T>(
-    method === "GET" ? url : null,
-    () => fetcher(url, method) // Automatically fetch on mount if it's GET
+  const { data, mutate } = useSWR<T>(method === "GET" ? url : null, () =>
+    fetcher(url, method)
   );
 
   const trigger = async (options?: { params?: any; body?: any }) => {
@@ -38,7 +37,7 @@ const useFetcher = <T>(url: string, method: string = "GET") => {
     setError(null);
     try {
       const result = await fetcher(url, method, options);
-      mutate(result, false); // Update SWR cache
+      mutate(result, false);
       return result;
     } catch (err: any) {
       setError(err.response?.data || err.message || "Unknown error");
