@@ -30,13 +30,17 @@ const LoginForm = () => {
     };
     try {
       const response: UserResponse = await trigger({ body: data });
-      const role = response.data.roleName;
-      if (role !== "Manager" && role !== "Admin") {
-        toast.showError("You do not permission to access");
+      if (response.message) {
+        toast.showError(response.message);
       } else {
-        toast.showSuccess("Signin Success");
-        dispatch(login(response.data));
-        navigate("/dairy");
+        const role = response.data.roleName;
+        if (role !== "Manager" && role !== "Admin") {
+          toast.showError("You do not permission to access");
+        } else {
+          toast.showSuccess("Signin Success");
+          dispatch(login(response.data));
+          navigate("/dairy");
+        }
       }
     } catch (error: any) {
       toast.showError(error.message);
