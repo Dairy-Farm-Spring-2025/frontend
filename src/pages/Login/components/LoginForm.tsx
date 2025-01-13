@@ -30,9 +30,8 @@ const LoginForm = () => {
     };
     try {
       const response: UserResponse = await trigger({ body: data });
-      if (response.message) {
-        toast.showError(response.message);
-      } else {
+      console.log(response);
+      if (response.message && response.data) {
         const role = response.data.roleName;
         if (role !== "Manager" && role !== "Admin") {
           toast.showError("You do not permission to access");
@@ -41,6 +40,8 @@ const LoginForm = () => {
           dispatch(login(response.data));
           navigate("/dairy");
         }
+      } else {
+        toast.showError(response.message);
       }
     } catch (error: any) {
       toast.showError(error.message);
