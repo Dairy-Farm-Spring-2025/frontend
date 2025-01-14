@@ -10,7 +10,10 @@ const ButtonComponent = ({
   ...props
 }: ButtonComponentProps) => {
   return (
-    <Button {...props} className={`duration-100 ${className}`}>
+    <Button
+      {...props}
+      className={`duration-100 ${className} shadow-lg text-base px-5`}
+    >
       {children}
     </Button>
   );
