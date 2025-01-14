@@ -15,3 +15,10 @@ export type UserProfileData = {
   status: string;
   roleId: Role;
 };
+
+type CreateUser = {
+  name: string;
+  email: string;
+  roleId: number;
+}
+export default CreateUser;

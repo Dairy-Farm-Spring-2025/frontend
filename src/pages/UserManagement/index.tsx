@@ -1,31 +1,21 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import TableComponent, { Column } from "../../components/Table/TableComponent";
 import TextLink from "../../components/UI/TextLink";
 import WhiteBackground from "../../components/UI/WhiteBackground";
-import { userApi } from "../../service/api/userApi";
-import { User } from "../../model/User";
+import useFetcher from "../../hooks/useFetcher";
+
+import { Divider, Spin } from "antd";
+import BanUnbanUser from "./components/BanUnBanUser/BanUnBanUser";
+import ModalCreateUser from "./components/ModalCreateUser/ModalCreateUser";
+import useModal from "../../hooks/useModal";
+import { formatSTT } from "../../utils/format";
+
 
 const ListUser = () => {
-    const [user, setUser] = useState<User[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
-
-    const fetchAllUsers = async () => {
-        try {
-            const response = await userApi.getAllUser();
-            setUser(response.data);
-        } catch (error: any) {
-            console.error("Error fetching users:", error.message || error);
-            setUser([]);
-        } finally {
-            setLoading(false);
-        }
-    };
+    const { data, isLoading, mutate } = useFetcher<any>("users/all", "GET");
+    const modal = useModal();
 
 
-
-    useEffect(() => {
-        fetchAllUsers();
-    }, []);
 
     const columns: Column[] = [
         {
@@ -36,15 +26,14 @@ const ListUser = () => {
         {
             dataIndex: "employeeNumber",
             key: "employeeNumber",
-            title: "EmployeeNumber",
+            title: "Employee Number",
         },
         {
             dataIndex: "name",
             key: "name",
             title: "Name",
-            render: (element: string) => <TextLink to="">{element}</TextLink>,
-        },
 
+        },
         {
             dataIndex: "email",
             key: "email",
@@ -54,24 +43,35 @@ const ListUser = () => {
             dataIndex: "roleId",
             key: "roleId",
             title: "Role",
-            render: (text) => text.name,
+            render: (role: any) => role?.name,
         },
         {
             dataIndex: "status",
             key: "status",
             title: "Status",
         },
-
-
+        {
+            dataIndex: "action",
+            key: "action",
+            title: "Action",
+            render: (_, record) => (
+                <BanUnbanUser
+                    userId={record.id}
+                    isActive={record.status === "active"}
+                    onStatusChange={mutate}
+                />
+            ),
+        },
     ];
 
     return (
         <WhiteBackground>
-            {loading ? (
-                <p>Loading...</p>
-            ) : (
-                <TableComponent columns={columns} dataSource={user || []} />
-            )}
+            <ModalCreateUser modal={modal} mutate={mutate} />
+            <Divider className="my-4" />
+            <TableComponent
+                columns={columns}
+                dataSource={data ? formatSTT(data) : []}
+                loading={isLoading} />
         </WhiteBackground>
     );
 };
