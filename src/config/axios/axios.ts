@@ -27,7 +27,11 @@ const refreshToken = async (refreshToken: string) => {
   if (!refreshToken) {
     throw new Error("No refresh token available");
   }
-  const response = await axios.post(`${baseURL}/refresh`, refreshToken);
+  const response = await axios.post(`${baseURL}users/refresh`, refreshToken, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
   const { accessToken } = response.data.data;
   return accessToken;
 };

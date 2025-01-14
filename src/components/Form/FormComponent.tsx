@@ -13,6 +13,9 @@ const validateMessages = {
     email: "This ${label} is not a valid email!",
     number: "This ${label} is not a valid number!",
   },
+  string: {
+    len: "The ${label} must be exactly ${len} characters!",
+  },
   number: {
     range: "The ${label} must be between ${min} and ${max}",
   },

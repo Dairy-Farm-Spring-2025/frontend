@@ -1,28 +1,34 @@
 import DescriptionComponent, {
   DescriptionPropsItem,
 } from "../../../../components/Description/DescriptionComponent";
+import { UserProfileData } from "../../../../model/User";
+import { formatDateHour } from "../../../../utils/format";
 
-const ProfileInformation = () => {
+interface ProfileInformationProps {
+  profile: UserProfileData;
+}
+
+const ProfileInformation = ({ profile }: ProfileInformationProps) => {
   const items: DescriptionPropsItem["items"] = [
     {
       key: "email",
       label: "Email",
-      children: "Email",
+      children: profile?.email,
     },
     {
       key: "dob",
       label: "Date of birth",
-      children: "01/01/2020",
+      children: profile?.dob,
     },
     {
       key: "startedDate",
       label: "Started Date",
-      children: "01/01/2020",
+      children: formatDateHour(profile?.createdAt),
     },
     {
       key: "gender",
       label: "Gender",
-      children: "Male",
+      children: profile?.gender,
     },
     {
       key: "status",
@@ -32,12 +38,12 @@ const ProfileInformation = () => {
     {
       key: "phoneNumber",
       label: "Phone Number",
-      children: "0123456789",
+      children: profile?.phoneNumber,
     },
     {
       key: "address",
       label: "Address",
-      children: "Binh Duong",
+      children: profile?.address,
       span: 3,
     },
   ];

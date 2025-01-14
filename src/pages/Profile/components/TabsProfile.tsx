@@ -4,11 +4,16 @@ import TabsComponent, {
 } from "../../../components/Tabs/TabsComponent";
 import WhiteBackground from "../../../components/UI/WhiteBackground";
 import ProfileInformation from "./TabsItem/ProfileInformation";
+import { UserProfileData } from "../../../model/User";
 
-const TabsProfile = () => {
+interface TabsProfileProps {
+  profile: UserProfileData;
+}
+
+const TabsProfile = ({ profile }: TabsProfileProps) => {
   const items: TabsItemProps["items"] = [
     {
-      children: <ProfileInformation />,
+      children: <ProfileInformation profile={profile} />,
       icon: <ProfileOutlined />,
       key: "information",
       label: "Profile",

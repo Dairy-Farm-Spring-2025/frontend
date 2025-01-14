@@ -1,8 +1,13 @@
 import { Avatar } from "antd";
 import WhiteBackground from "../../../components/UI/WhiteBackground";
 import { SiTicktick } from "react-icons/si";
+import { UserProfileData } from "../../../model/User";
 
-const GeneralInformation = () => {
+interface GeneralInformationProps {
+  profile: UserProfileData;
+}
+
+const GeneralInformation = ({ profile }: GeneralInformationProps) => {
   return (
     <WhiteBackground className="w-full flex gap-5 items-center">
       <div className="w-1/4">
@@ -13,9 +18,14 @@ const GeneralInformation = () => {
         />
       </div>
       <div className="flex flex-col gap-5 justify-between py-2">
-        <p className="text-xl font-bold">Nguyen Van A</p>
+        <p className="text-xl font-bold">
+          {profile?.name}{" "}
+          <span className="font-normal text-gray-500">
+            ({profile?.roleId?.name})
+          </span>
+        </p>
         <p className="text-base">
-          <strong>Employee Number: </strong> 23249141249280
+          <strong>Employee Number: </strong> {profile?.employeeNumber}
         </p>
         <p className="text-sm text-gray-500">
           A middle-aged man with a kind demeanor, standing about 5'10" tall,
