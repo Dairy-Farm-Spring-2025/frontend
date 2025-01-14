@@ -12,7 +12,7 @@ const ButtonComponent = ({
   return (
     <Button
       {...props}
-      className={`duration-100 ${className} shadow-lg text-base px-5`}
+      className={`duration-300 ${className} shadow-lg text-base px-5`}
     >
       {children}
     </Button>

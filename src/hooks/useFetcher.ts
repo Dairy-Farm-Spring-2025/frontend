@@ -21,7 +21,11 @@ const fetcher = async (
   };
 
   const response = await api(finalUrl, config);
-  return response.data;
+  let result = response.data;
+  if (method === "GET") {
+    result = response.data.data;
+  }
+  return result;
 };
 
 const useFetcher = <T>(url: string, method: string = "GET") => {
