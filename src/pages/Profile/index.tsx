@@ -13,10 +13,10 @@ const Profile = () => {
     <>
       <div>
         <div>
-          <GeneralInformation profile={data?.data} />
+          <GeneralInformation profile={data} />
         </div>
         <div className="mt-5">
-          <TabsProfile profile={data?.data} />
+          <TabsProfile profile={data} />
         </div>
         <ButtonComponent
           onClick={modal.openModal}
@@ -25,7 +25,7 @@ const Profile = () => {
         >
           Edit
         </ButtonComponent>
-        <ModalEditProfile modal={modal} profile={data?.data} mutate={mutate} />
+        <ModalEditProfile modal={modal} profile={data} mutate={mutate} />
       </div>
     </>
   ) : (

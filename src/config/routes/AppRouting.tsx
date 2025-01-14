@@ -17,6 +17,7 @@ import ListRole from "../../pages/RoleManagement";
 import ListUser from "../../pages/UserManagement";
 import { useSelector } from "react-redux";
 import { RootState } from "../../core/store/store";
+import CowTypeManagement from "../../pages/CowManagement/components/CowTypeManagement";
 const AppRouting = () => {
   const user = useSelector((state: RootState) => state.user);
   const router = createBrowserRouter([
@@ -64,6 +65,10 @@ const AppRouting = () => {
             {
               path: "",
               element: <Navigate to={"list-cow"} />,
+            },
+            {
+              path: "cow-type-management",
+              element: <CowTypeManagement />,
             },
             {
               path: "list-cow",

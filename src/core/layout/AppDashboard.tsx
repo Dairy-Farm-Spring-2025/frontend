@@ -135,7 +135,7 @@ const AppDashboard: React.FC = () => {
           ),
           getItem(
             "Cow Type",
-            "dairy/cow-type-management",
+            "dairy/cow-management/cow-type-management",
             <BiCategory size={sizeIcon} />
           ),
           getItem(
