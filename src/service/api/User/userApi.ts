@@ -1,5 +1,5 @@
-import api from "../../config/axios/axios";
-
+import api from "../../../config/axios/axios";
+import CreateUser from "../../../model/User"
 
 export const userApi = {
     getAllUser: async () => {
@@ -26,7 +26,14 @@ export const userApi = {
             throw error.response.data;
         }
     },
-
+    createUser: async (body: CreateUser) => {
+        try {
+            const response = await api.post("users/create", body);
+            return response.data;
+        } catch (error: any) {
+            throw new Error(error.response.data.message);
+        }
+    },
 
     getRole: async () => {
         try {

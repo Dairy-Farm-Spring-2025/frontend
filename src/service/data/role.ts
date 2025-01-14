@@ -1,26 +1,21 @@
-export const roles = [
+export const role = [
     {
-        id: 1,
-        role: "Admin",
+        value: 1,
+        label: "Admin",
 
     },
     {
-        id: 2,
-        role: "Manager",
+        value: 2,
+        label: "Manager",
     },
     {
-        id: 3,
-        role: "Veterinary",
+        value: 3,
+        label: "Veterinarians",
 
     },
     {
-        id: 4,
-        role: "Worker",
+        value: 4,
+        label: "Worker",
 
-    },
-    {
-        id: 5,
-        role: "System",
-
-    },
+    }
 ];
