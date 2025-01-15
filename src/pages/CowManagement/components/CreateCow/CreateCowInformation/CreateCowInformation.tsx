@@ -1,0 +1,138 @@
+import { DatePicker, SelectProps } from "antd";
+import { useEffect, useState } from "react";
+import FormItemComponent from "../../../../../components/Form/Item/FormItemComponent";
+import InputComponent from "../../../../../components/Input/InputComponent";
+import LabelForm from "../../../../../components/LabelForm/LabelForm";
+import SelectComponent from "../../../../../components/Select/SelectComponent";
+import useFetcher from "../../../../../hooks/useFetcher";
+import { CowType } from "../../../../../model/Cow/CowType";
+import { cowOrigin } from "../../../../../service/data/cowOrigin";
+import { cowStatus } from "../../../../../service/data/cowStatus";
+import { genderData } from "../../../../../service/data/gender";
+const CreateCowInformation = () => {
+  const { data } = useFetcher<any[]>("cow-types", "GET");
+  const [optionsCowType, setOptionsCowType] = useState<SelectProps["options"]>(
+    []
+  );
+
+  useEffect(() => {
+    if (data) {
+      const options = data.map((element: CowType) => ({
+        label: element.name,
+        value: element.cowTypeId,
+      }));
+      setOptionsCowType(options);
+    }
+  }, [data]);
+
+  return (
+    <>
+      <FormItemComponent
+        rules={[{ required: true }]}
+        name="name"
+        label={<LabelForm>Name</LabelForm>}
+      >
+        <InputComponent
+          className="h-14"
+          placeholder="Enter cow name..."
+          styles={{
+            input: {
+              fontSize: 30,
+              border: 0,
+              borderBottom: "1px solid black",
+              borderRadius: 0,
+            },
+          }}
+        />
+      </FormItemComponent>
+      <div className="flex flex-col gap-2">
+        <p className="text-2xl text-primary font-bold">Date information</p>
+        <div className="grid grid-cols-4 gap-5 w-full">
+          <FormItemComponent
+            rules={[{ required: true }]}
+            className="w-full"
+            name="dateOfBirth"
+            label={<LabelForm>Date of birth</LabelForm>}
+          >
+            <DatePicker className="w-full !text-[18px]" />
+          </FormItemComponent>
+          <FormItemComponent
+            rules={[{ required: true }]}
+            className="w-full"
+            name="dateOfEnter"
+            label={<LabelForm>Date of enter</LabelForm>}
+          >
+            <DatePicker className="w-full" />
+          </FormItemComponent>
+        </div>
+      </div>
+      <div className="flex flex-col gap-2">
+        <p className="text-2xl text-primary font-bold">Cow Information</p>
+        <div className="grid grid-cols-4 gap-5 w-full">
+          <FormItemComponent
+            rules={[{ required: true }]}
+            name="gender"
+            className="w-full"
+            label={<LabelForm>Gender</LabelForm>}
+          >
+            <SelectComponent
+              options={genderData}
+              className="w-full"
+              placeholder="Select gender..."
+            />
+          </FormItemComponent>
+          <FormItemComponent
+            name="cowTypeId"
+            rules={[{ required: true }]}
+            className="w-full"
+            label={<LabelForm>Cow Type</LabelForm>}
+          >
+            <SelectComponent
+              options={optionsCowType}
+              className="w-full"
+              placeholder="Select cow type..."
+            />
+          </FormItemComponent>
+          <FormItemComponent
+            rules={[{ required: true }]}
+            className="w-full"
+            name="cowStatus"
+            label={<LabelForm>Cow Status</LabelForm>}
+          >
+            <SelectComponent
+              options={cowStatus}
+              className="w-full"
+              placeholder="Select status..."
+            />
+          </FormItemComponent>
+          <FormItemComponent
+            name="cowOrigin"
+            rules={[{ required: true }]}
+            className="w-full"
+            label={<LabelForm>Cow Origin</LabelForm>}
+          >
+            <SelectComponent
+              options={cowOrigin}
+              placeholder="Enter origin..."
+              className="w-full"
+            />
+          </FormItemComponent>
+          <FormItemComponent
+            className="w-full !col-span-4"
+            name="description"
+            rules={[{ required: true }]}
+            label={<LabelForm>Description</LabelForm>}
+          >
+            <InputComponent.TextArea
+              className="w-full "
+              placeholder="Select status..."
+              rows={4}
+            />
+          </FormItemComponent>
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default CreateCowInformation;
