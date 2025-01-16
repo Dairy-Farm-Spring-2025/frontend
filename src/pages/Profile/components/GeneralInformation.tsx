@@ -1,21 +1,18 @@
-import { Avatar } from "antd";
-import WhiteBackground from "../../../components/UI/WhiteBackground";
 import { SiTicktick } from "react-icons/si";
+import WhiteBackground from "../../../components/UI/WhiteBackground";
 import { UserProfileData } from "../../../model/User";
+import AvatarProfile from "./AvatarProfile";
 
 interface GeneralInformationProps {
   profile: UserProfileData;
+  mutate: any;
 }
 
-const GeneralInformation = ({ profile }: GeneralInformationProps) => {
+const GeneralInformation = ({ profile, mutate }: GeneralInformationProps) => {
   return (
     <WhiteBackground className="w-full flex gap-5 items-center">
-      <div className="w-1/4">
-        <Avatar
-          size={200}
-          src="https://icons.veryicon.com/png/o/miscellaneous/user-avatar/user-avatar-male-5.png"
-          className="shadow-md !object-contain"
-        />
+      <div className="w-1/4 ">
+        <AvatarProfile avatar={profile?.profilePhoto} mutate={mutate} />
       </div>
       <div className="flex flex-col gap-5 justify-between py-2">
         <p className="text-xl font-bold">

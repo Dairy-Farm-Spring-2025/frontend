@@ -35,6 +35,9 @@ import { breadcumData } from "../../service/data/breadcumData";
 import { logout } from "../store/slice/userSlice";
 import LabelDashboard from "./components/LabelDashboard";
 import "./index.scss";
+import useFetcher from "../../hooks/useFetcher";
+import { setAvatarFunction } from "../store/slice/avatarSlice";
+import { getAvatar } from "../../utils/getImage";
 const { Header, Content, Sider } = Layout;
 type MenuItem = Required<MenuProps>["items"][number];
 const { useToken } = theme;
@@ -67,6 +70,14 @@ const AppDashboard: React.FC = () => {
   const location = useLocation();
   const dispatch = useDispatch();
   const pathSegments = location.pathname.split("/").filter(Boolean);
+  const { data, mutate } = useFetcher<any>("users/profile", "GET");
+
+  useEffect(() => {
+    if (data) {
+      dispatch(setAvatarFunction(mutate));
+    }
+  }, []);
+
   const breadcrumbItems = pathSegments.map((segment, index) => ({
     title:
       breadcumData[segment] ||
@@ -282,7 +293,7 @@ const AppDashboard: React.FC = () => {
                       </div>
                     )}
                   >
-                    <Avatar size={32} />
+                    <Avatar size={32} src={getAvatar(data?.profilePhoto)} />
                   </Dropdown>
                 </ConfigProvider>
               </div>

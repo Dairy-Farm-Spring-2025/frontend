@@ -13,7 +13,7 @@ const Profile = () => {
     <>
       <div>
         <div>
-          <GeneralInformation profile={data} />
+          <GeneralInformation profile={data} mutate={mutate} />
         </div>
         <div className="mt-5">
           <TabsProfile profile={data} />

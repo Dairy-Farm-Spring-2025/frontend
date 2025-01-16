@@ -5,7 +5,11 @@ import { useState, useEffect } from "react";
 const fetcher = async (
   url: string,
   method: string,
-  options?: { params?: any; body?: any }
+  options?: {
+    params?: any;
+    body?: any;
+    contentType?: "application/json" | "multipart/form-data"; // Add contentType option
+  }
 ) => {
   let finalUrl = url;
 
@@ -15,8 +19,17 @@ const fetcher = async (
     finalUrl += `?${queryString}`;
   }
 
+  const headers: Record<string, string> = {};
+  if (options?.contentType === "multipart/form-data") {
+    // For multipart, omit setting Content-Type; axios will handle it
+    delete headers["Content-Type"];
+  } else {
+    headers["Content-Type"] = "application/json";
+  }
+
   const config = {
     method,
+    headers,
     data: options?.body, // Add body for non-GET requests
   };
 
@@ -28,7 +41,11 @@ const fetcher = async (
   return result;
 };
 
-const useFetcher = <T>(url: string, method: string = "GET") => {
+const useFetcher = <T>(
+  url: string,
+  method: string = "GET",
+  contentType: "application/json" | "multipart/form-data" = "application/json"
+) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<any>(null);
 
@@ -51,7 +68,7 @@ const useFetcher = <T>(url: string, method: string = "GET") => {
     setIsLoading(true);
     setError(null);
     try {
-      const result = await fetcher(url, method, options);
+      const result = await fetcher(url, method, { ...options, contentType });
       mutate(result, false);
       return result;
     } catch (err: any) {
