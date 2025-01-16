@@ -1,24 +1,37 @@
-import React, { useState } from 'react';
-import { Descriptions, Input, Button } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Descriptions, Input, Button, Select } from 'antd';
 import useFetcher from '../../../../hooks/useFetcher';
 import { Area } from '../../../../model/Area/Area';
-import ButtonComponent from '../../../../components/Button/ButtonComponent';
 import ModalComponent from '../../../../components/Modal/ModalComponent';
+import { AreaType } from '../../../../model/Area/AreaType';
+
+const areaTypes: { label: string; value: AreaType }[] = [
+  { label: 'Cow Housing', value: 'cowHousing' },
+  { label: 'Milking Parlor', value: 'milkingParlor' },
+  { label: 'Warehouse', value: 'warehouse' },
+];
 
 interface ModalAreaDetailProps {
-  area: Area; // The ID of the area to fetch details for
+  areaId: number; // The ID of the area to fetch details for
   modal: any; // Controls the visibility of the modal
 }
 
-const ModalAreaDetail: React.FC<ModalAreaDetailProps> = ({ modal, area }) => {
+const ModalAreaDetail: React.FC<ModalAreaDetailProps> = ({ modal, areaId }) => {
+  const { data } = useFetcher<any>(`areas/${areaId}`, 'GET');
   const { trigger } = useFetcher<any>(
-    `areas/${area.areaId}`,
+    `areas/${areaId}`,
     'PUT' // Or 'PATCH', depending on your API's convention
   );
 
-  const [areaDetails, setAreaDetails] = useState<Area | null>(area);
+  const [areaDetails, setAreaDetails] = useState<Area | null>(data);
   const [isEditing, setIsEditing] = useState(false); // Toggle edit mode
   const [editedDetails, setEditedDetails] = useState<Partial<Area> | null>(null);
+
+  useEffect(() => {
+    if (data) {
+      setAreaDetails(data);
+    }
+  }, [data]);
 
   const onClose = () => {
     modal.closeModal();
@@ -28,6 +41,7 @@ const ModalAreaDetail: React.FC<ModalAreaDetailProps> = ({ modal, area }) => {
 
   const handleEdit = () => {
     setIsEditing(true); // Enable edit mode
+    setEditedDetails({ ...areaDetails });
   };
 
   const handleSave = async () => {
@@ -38,7 +52,7 @@ const ModalAreaDetail: React.FC<ModalAreaDetailProps> = ({ modal, area }) => {
       // Use mutate to update SWR cache and trigger a revalidation
 
       const updatedArea = await trigger({
-        params: area.areaId,
+        params: areaId,
         body: editedDetails,
       });
 
@@ -56,9 +70,6 @@ const ModalAreaDetail: React.FC<ModalAreaDetailProps> = ({ modal, area }) => {
 
   return (
     <>
-      <ButtonComponent onClick={modal.openModal} type='primary'>
-        View Details
-      </ButtonComponent>
       <ModalComponent
         footer={
           isEditing ? (
@@ -125,12 +136,13 @@ const ModalAreaDetail: React.FC<ModalAreaDetailProps> = ({ modal, area }) => {
             </Descriptions.Item>
             <Descriptions.Item label='Area Type'>
               {isEditing ? (
-                <Input
+                <Select
                   value={editedDetails?.areaType || ''}
-                  onChange={(e) => handleInputChange('areaType', e.target.value)}
+                  onChange={(value) => handleInputChange('areaType', value)}
+                  options={areaTypes}
                 />
               ) : (
-                areaDetails.areaType
+                areaTypes.find((type) => type.value === areaDetails.areaType)?.label
               )}
             </Descriptions.Item>
             <Descriptions.Item label='Created At'>

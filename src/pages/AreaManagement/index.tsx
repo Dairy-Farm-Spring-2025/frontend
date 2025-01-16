@@ -8,18 +8,24 @@ import { formatSTT } from '../../utils/format';
 import ModalCreateArea from './components/ModalCreateArea/ModalCreateArea';
 import { AreaType } from '../../model/Area/AreaType';
 import ModalAreaDetail from './components/ModalAreaDetail/ModalAreaDetail';
-import { Area } from '../../model/Area/Area';
+import ButtonComponent from '../../components/Button/ButtonComponent';
 
 const areaTypes: { label: string; value: AreaType }[] = [
   { label: 'Cow Housing', value: 'cowHousing' },
   { label: 'Milking Parlor', value: 'milkingParlor' },
-  { label: 'Warehouse', value: 'wareHouse' },
+  { label: 'Warehouse', value: 'warehouse' },
 ];
 
 const AreaManagement: React.FC = () => {
   const { data, isLoading, mutate } = useFetcher<any>('areas', 'GET');
+  const [areaId, setAreaId] = React.useState<number>(0);
   const modalCreate = useModal();
   const modalViewDetail = useModal();
+
+  const handleOpenEdit = (record: any) => {
+    setAreaId(record.areaId);
+    modalViewDetail.openModal();
+  };
 
   const columns: Column[] = [
     {
@@ -62,7 +68,7 @@ const AreaManagement: React.FC = () => {
       title: 'Action',
       render: (_, record) => (
         <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <ModalAreaDetail modal={modalViewDetail} area={record as Area} />
+          <ButtonComponent onClick={() => handleOpenEdit(record)}>View Detail</ButtonComponent>
         </div>
       ),
     },
@@ -71,6 +77,7 @@ const AreaManagement: React.FC = () => {
   return (
     <WhiteBackground>
       <ModalCreateArea modal={modalCreate} mutate={mutate} />
+      <ModalAreaDetail modal={modalViewDetail} areaId={areaId} />
       <Divider className='my-4' />
       <TableComponent
         columns={columns}

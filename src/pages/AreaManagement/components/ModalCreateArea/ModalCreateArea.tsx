@@ -18,14 +18,14 @@ interface ModalCreateAreaProps {
 const areaTypes: { label: string; value: AreaType }[] = [
   { label: 'Cow Housing', value: 'cowHousing' },
   { label: 'Milking Parlor', value: 'milkingParlor' },
-  { label: 'Warehouse', value: 'wareHouse' },
+  { label: 'Warehouse', value: 'warehouse' },
 ];
 
 // Define minimum dimensions with explicit types
 const minDimensions: Record<AreaType, { length: number; width: number }> = {
   cowHousing: { length: 20, width: 10 },
   milkingParlor: { length: 15, width: 8 },
-  wareHouse: { length: 10, width: 5 },
+  warehouse: { length: 10, width: 5 },
 };
 
 const ModalCreateArea = ({ mutate, modal }: ModalCreateAreaProps) => {
