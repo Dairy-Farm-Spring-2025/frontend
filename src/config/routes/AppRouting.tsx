@@ -93,6 +93,10 @@ const AppRouting = () => {
           ],
         },
         {
+          path: 'area-management',
+          element: <AreaManagement />,
+        },
+        {
           path: 'pen-management',
           element: <PenManageMent />,
         },
