@@ -29,7 +29,11 @@ const ModalEditProfile = ({
   const [ward, setWard] = useState<any[]>([]);
   const [isDistrict, setIsDistrict] = useState(true);
   const [isWard, setIsWard] = useState(true);
-  const { trigger, isLoading } = useFetcher("users/update", "PUT");
+  const { trigger, isLoading } = useFetcher(
+    "users/update",
+    "PUT",
+    "multipart/form-data"
+  );
   const parseAddress = (fullAddress: string) => {
     const [address, ward, district, province] = fullAddress
       .split(",")
@@ -111,21 +115,20 @@ const ModalEditProfile = ({
 
   const handleFinish = async (values: any) => {
     const address = `${values.address}, ${values.ward.label}, ${values.district.label}, ${values.province.label}`;
-    const data = {
-      name: values.name,
-      phoneNumber: values.phoneNumber,
-      address: address,
-      dob: dayjs(values.dob).format("YYYY-MM-DD"),
-      gender: values.gender,
-    };
+
+    const formData = new FormData();
+    formData.append("name", values.name);
+    formData.append("phoneNumber", values.phoneNumber);
+    formData.append("address", address);
+    formData.append("dob", dayjs(values.dob).format("YYYY-MM-DD"));
+    formData.append("gender", values.gender);
     try {
-      const response = await trigger({ body: data });
+      const response = await trigger({ body: formData });
       toast.showSuccess(response.message);
       handleClose();
+      mutate();
     } catch (error: any) {
       toast.showError(error.message);
-    } finally {
-      mutate();
     }
   };
   const handleClose = () => {

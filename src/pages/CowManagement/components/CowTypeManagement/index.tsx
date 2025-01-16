@@ -74,7 +74,9 @@ const CowTypeManagement = () => {
     <AnimationAppear duration={0.5}>
       <WhiteBackground>
         <ModalTypes modal={modal} mutate={mutate} />
-        <ModalEditTypes id={id} modal={modalEdit} mutate={mutate} />
+        {modalEdit.open && (
+          <ModalEditTypes id={id} modal={modalEdit} mutate={mutate} />
+        )}
         <Divider className="my-4" />
         <TableComponent
           columns={columns}
