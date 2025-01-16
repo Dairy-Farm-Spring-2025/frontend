@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Descriptions, Input, Button } from 'antd';
 import useFetcher from '../../../../hooks/useFetcher';
 import { Area } from '../../../../model/Area/Area';
@@ -6,31 +6,24 @@ import ButtonComponent from '../../../../components/Button/ButtonComponent';
 import ModalComponent from '../../../../components/Modal/ModalComponent';
 
 interface ModalAreaDetailProps {
-  areaId: number | null; // The ID of the area to fetch details for
+  area: Area; // The ID of the area to fetch details for
   modal: any; // Controls the visibility of the modal
 }
 
-const ModalAreaDetail: React.FC<ModalAreaDetailProps> = ({ modal, areaId }) => {
-  const { data, isLoading } = useFetcher<any>(`areas/${areaId}`, 'GET');
+const ModalAreaDetail: React.FC<ModalAreaDetailProps> = ({ modal, area }) => {
   const { trigger } = useFetcher<any>(
-    `areas/${areaId}`,
+    `areas/${area.areaId}`,
     'PUT' // Or 'PATCH', depending on your API's convention
   );
 
-  const [areaDetails, setAreaDetails] = useState<Area | null>(data);
+  const [areaDetails, setAreaDetails] = useState<Area | null>(area);
   const [isEditing, setIsEditing] = useState(false); // Toggle edit mode
   const [editedDetails, setEditedDetails] = useState<Partial<Area> | null>(null);
-
-  useEffect(() => {
-    if (data) {
-      setAreaDetails(data);
-      setEditedDetails(data);
-    }
-  }, [data]);
 
   const onClose = () => {
     modal.closeModal();
     setIsEditing(false); // Reset edit mode on close
+    setAreaDetails(null);
   };
 
   const handleEdit = () => {
@@ -45,7 +38,7 @@ const ModalAreaDetail: React.FC<ModalAreaDetailProps> = ({ modal, areaId }) => {
       // Use mutate to update SWR cache and trigger a revalidation
 
       const updatedArea = await trigger({
-        params: areaId,
+        params: area.areaId,
         body: editedDetails,
       });
 
@@ -83,8 +76,7 @@ const ModalAreaDetail: React.FC<ModalAreaDetailProps> = ({ modal, areaId }) => {
         }
         open={modal.open}
         onCancel={onClose}
-        title='Area Details'
-        loading={isLoading}
+        title={`Area Details`}
       >
         {areaDetails && (
           <Descriptions bordered column={1}>

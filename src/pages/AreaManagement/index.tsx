@@ -8,6 +8,7 @@ import { formatSTT } from '../../utils/format';
 import ModalCreateArea from './components/ModalCreateArea/ModalCreateArea';
 import { AreaType } from '../../model/Area/AreaType';
 import ModalAreaDetail from './components/ModalAreaDetail/ModalAreaDetail';
+import { Area } from '../../model/Area/Area';
 
 const areaTypes: { label: string; value: AreaType }[] = [
   { label: 'Cow Housing', value: 'cowHousing' },
@@ -61,7 +62,7 @@ const AreaManagement: React.FC = () => {
       title: 'Action',
       render: (_, record) => (
         <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <ModalAreaDetail modal={modalViewDetail} areaId={record.areaId} />
+          <ModalAreaDetail modal={modalViewDetail} area={record as Area} />
         </div>
       ),
     },
