@@ -4,16 +4,16 @@ import useModal from "../../../hooks/useModal";
 import TableComponent, { Column } from "../../../components/Table/TableComponent";
 import AnimationAppear from "../../../components/UI/AnimationAppear";
 import WhiteBackground from "../../../components/UI/WhiteBackground";
-import ModalCreateUser from "../../UserManagement/components/ModalCreateUser/ModalCreateUser";
 import { Divider } from "antd";
 import { formatSTT } from "../../../utils/format";
+import ModalCreateHuman from "../components/ModalCreateHuman/ModalCreateHuman";
 
 
 
 const ListVeterinarian = () => {
     const { data, isLoading, mutate } = useFetcher<any>("users/veterinarians", "GET");
     const modal = useModal();
-
+    const defaultRole = 3;
 
 
     const columns: Column[] = [
@@ -68,7 +68,13 @@ const ListVeterinarian = () => {
 
 
             <WhiteBackground>
-                <ModalCreateUser modal={modal} mutate={mutate} />
+                <ModalCreateHuman
+                    modal={modal}
+                    mutate={mutate}
+                    title="Create Veterinarian"
+                    defaultValues={{ roleId: defaultRole }}
+
+                />
                 <Divider className="my-4" />
                 <TableComponent
                     columns={columns}

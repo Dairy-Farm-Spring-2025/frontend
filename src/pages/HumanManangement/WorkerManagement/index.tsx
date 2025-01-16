@@ -7,7 +7,7 @@ import WhiteBackground from "../../../components/UI/WhiteBackground";
 import { Divider } from "antd";
 import { formatSTT } from "../../../utils/format";
 import BanUnbanUser from "../../UserManagement/components/BanUnBanUser/BanUnBanUser";
-import ModalCreateHuman from "../Components/ModalCreateHuman/ModalCreateHuman";
+import ModalCreateHuman from "../components/ModalCreateHuman/ModalCreateHuman";
 
 
 
@@ -39,12 +39,12 @@ const ListWorker = () => {
             key: "email",
             title: "Email",
         },
-        {
-            dataIndex: "roleId",
-            key: "roleId",
-            title: "Role",
-            render: (role: any) => role?.name,
-        },
+        // {
+        //     dataIndex: "roleId",
+        //     key: "roleId",
+        //     title: "Role",
+        //     render: (role: any) => role?.name,
+        // },
         {
             dataIndex: "status",
             key: "status",
@@ -72,9 +72,9 @@ const ListWorker = () => {
                 <ModalCreateHuman
                     modal={modal}
                     mutate={mutate}
-                    title="Create Worker" // Cập nhật tiêu đề
-                    defaultValues={{ roleId: defaultRole }} // Giá trị mặc định
-                    hiddenFields={["roleId"]} // Ẩn trường roleId
+                    title="Create Worker"
+                    defaultValues={{ roleId: defaultRole }}
+
                 />
                 <Divider className="my-4" />
                 <TableComponent
