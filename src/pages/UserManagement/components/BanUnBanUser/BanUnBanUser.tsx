@@ -3,6 +3,7 @@ import { Button, message } from "antd";
 import { userApi } from "../../../../service/api/User/userApi";
 
 interface BanUnbanUserProps {
+
     userId: number; 
     isActive: boolean; 
     onStatusChange?: () => void; 
@@ -12,6 +13,8 @@ const BanUnbanUser: React.FC<BanUnbanUserProps> = ({ userId, isActive, onStatusC
     const handleAction = async () => {
         try {
             if (isActive) {
+
+
                 await userApi.banUser(userId); 
                 message.success("User has been banned successfully.");
             } else {

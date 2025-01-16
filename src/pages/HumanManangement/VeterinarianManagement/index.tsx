@@ -1,22 +1,20 @@
 import React, { useState } from "react";
-import TableComponent, { Column } from "../../components/Table/TableComponent";
-import TextLink from "../../components/UI/TextLink";
-import WhiteBackground from "../../components/UI/WhiteBackground";
-import useFetcher from "../../hooks/useFetcher";
-
-import { Divider, Spin } from "antd";
-
-import ModalCreateUser from "./components/ModalCreateUser/ModalCreateUser";
-import useModal from "../../hooks/useModal";
-import { formatSTT } from "../../utils/format";
-import BanUnbanUser from "./components/BanUnBanUser/BanUnBanUser";
-import AnimationAppear from "../../components/UI/AnimationAppear";
+import useFetcher from "../../../hooks/useFetcher";
+import useModal from "../../../hooks/useModal";
+import TableComponent, { Column } from "../../../components/Table/TableComponent";
+import AnimationAppear from "../../../components/UI/AnimationAppear";
+import WhiteBackground from "../../../components/UI/WhiteBackground";
+import { Divider } from "antd";
+import { formatSTT } from "../../../utils/format";
+import ModalCreateHuman from "../components/ModalCreateHuman/ModalCreateHuman";
+import BanUnbanUser from "../../UserManagement/components/BanUnBanUser/BanUnBanUser";
 
 
-const ListUser = () => {
-    const { data, isLoading, mutate } = useFetcher<any>("users/all", "GET");
+
+const ListVeterinarian = () => {
+    const { data, isLoading, mutate } = useFetcher<any>("users/veterinarians", "GET");
     const modal = useModal();
-
+    const defaultRole = 3;
 
 
     const columns: Column[] = [
@@ -71,7 +69,13 @@ const ListUser = () => {
 
 
             <WhiteBackground>
-                <ModalCreateUser modal={modal} mutate={mutate} />
+                <ModalCreateHuman
+                    modal={modal}
+                    mutate={mutate}
+                    title="Create Veterinarian"
+                    defaultValues={{ roleId: defaultRole }}
+
+                />
                 <Divider className="my-4" />
                 <TableComponent
                     columns={columns}
@@ -82,4 +86,4 @@ const ListUser = () => {
     );
 };
 
-export default ListUser;
+export default ListVeterinarian;

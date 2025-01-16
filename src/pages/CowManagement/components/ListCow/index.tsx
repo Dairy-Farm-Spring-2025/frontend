@@ -17,6 +17,7 @@ import { cowStatus } from "../../../../service/data/cowStatus";
 const ListCow = () => {
   const [cow, setCow] = useState<Cow[]>([]);
   const { data, error, isLoading } = useFetch<Cow[]>("cows", "GET");
+  console.log(isLoading);
   const toast = useToast();
   const getLabelByValue = (value: string, listing: any[]) => {
     const item = listing.find((option) => option.value === value);
@@ -33,6 +34,7 @@ const ListCow = () => {
       key: "image",
       title: "Image",
       render: () => <Image width={200} src={cowImage} />,
+      width: 200,
     },
     {
       dataIndex: "createdAt",
@@ -44,7 +46,12 @@ const ListCow = () => {
       dataIndex: "name",
       key: "name",
       title: "Name",
-      render: (element: string) => <TextLink to={""}>{element}</TextLink>,
+      render: (element: string, data) => (
+        <TextLink to={`/dairy/cow-management/${data.cowId}`}>
+          {element}
+        </TextLink>
+      ),
+      width: 200,
     },
     {
       dataIndex: "dateOfBirth",
@@ -100,7 +107,6 @@ const ListCow = () => {
     },
   ];
   useEffect(() => {
-    console.log(data);
     if (data) {
       setCow(data);
     }

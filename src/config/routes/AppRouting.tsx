@@ -15,6 +15,14 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../core/store/store';
 import CowTypeManagement from '../../pages/CowManagement/components/CowTypeManagement';
 import AreaManagement from '../../pages/AreaManagement';
+
+import ListWorker from '../../pages/HumanManangement/WorkerManagement';
+import HumanManagement from '../../pages/HumanManangement';
+import ListVeterinarian from '../../pages/HumanManangement/VeterinarianManagement';
+import PenManageMent from '../../pages/PenManagement';
+
+import CowDetail from '../../pages/CowManagement/components/CowDetail';
+
 const AppRouting = () => {
   const user = useSelector((state: RootState) => state.user);
   const router = createBrowserRouter([
@@ -63,6 +71,10 @@ const AppRouting = () => {
               element: <Navigate to={'list-cow'} />,
             },
             {
+              path: ':id',
+              element: <CowDetail />,
+            },
+            {
               path: 'cow-type-management',
               element: <CowTypeManagement />,
             },
@@ -81,8 +93,30 @@ const AppRouting = () => {
           ],
         },
         {
-          path: 'area-management',
-          element: <AreaManagement />,
+          path: 'pen-management',
+          element: <PenManageMent />,
+        },
+        {
+          path: 'human-management',
+          element: <HumanManagement />,
+          children: [
+            {
+              path: '',
+              element: <Navigate to={'worker'} />,
+            },
+            // {
+            //   path: "cow-type-management",
+            //   element: <CowTypeManagement />,
+            // },
+            {
+              path: 'worker',
+              element: <ListWorker />,
+            },
+            {
+              path: 'veterinarian',
+              element: <ListVeterinarian />,
+            },
+          ],
         },
         {
           path: 'profile',
