@@ -6,10 +6,10 @@ import { Pen } from "../../model/Pen";
 import { useState } from "react";
 import TableComponent, { Column } from "../../components/Table/TableComponent";
 import { formatDateHour, formatSTT } from "../../utils/format";
-import ButtonComponent from "../../components/Button/ButtonComponent";
+
 import AnimationAppear from "../../components/UI/AnimationAppear";
 import WhiteBackground from "../../components/UI/WhiteBackground";
-import ModalEditTypes from "../CowManagement/components/CowTypeManagement/components/ModalEditTypes/ModalEditTypes";
+
 import ModalCreatePen from "./components/ModalCreatePen";
 import ModalEditPens from "./components/ModalEditPen";
 

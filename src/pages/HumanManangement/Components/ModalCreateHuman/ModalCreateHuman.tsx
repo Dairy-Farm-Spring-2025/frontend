@@ -8,7 +8,7 @@ import ModalComponent from "../../../../components/Modal/ModalComponent";
 import FormComponent from "../../../../components/Form/FormComponent";
 import FormItemComponent from "../../../../components/Form/Item/FormItemComponent";
 import LabelForm from "../../../../components/LabelForm/LabelForm";
-import { role } from "../../../../service/data/role";
+
 
 
 
@@ -72,15 +72,15 @@ const ModalCreateHuman = ({ mutate, modal, title, defaultValues, hiddenFields }:
                         <Input />
                     </FormItemComponent>
 
-                    {!hiddenFields?.includes("roleId") && ( // Kiểm tra ẩn trường roleId
-                        <FormItemComponent
-                            rules={[{ required: true }]}
-                            name="roleId"
-                            label={<LabelForm>Role:</LabelForm>}
-                        >
-                            <Select options={role} />
-                        </FormItemComponent>
-                    )}
+
+                    <FormItemComponent hidden
+                        rules={[{ required: true }]}
+                        name="roleId"
+                        label={<LabelForm>Role:</LabelForm>}
+                    >
+                        <Select options={defaultValues} />
+                    </FormItemComponent>
+
 
                 </FormComponent>
             </ModalComponent>
