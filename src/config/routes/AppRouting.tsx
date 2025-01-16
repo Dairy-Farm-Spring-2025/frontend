@@ -1,91 +1,91 @@
-import {
-  createBrowserRouter,
-  Navigate,
-  RouterProvider,
-} from "react-router-dom";
-import AppDashboard from "../../core/layout/AppDashboard";
-import CowManagement from "../../pages/CowManagement";
-import ListCow from "../../pages/CowManagement/components/ListCow";
-import DairyManagement from "../../pages/DairyManagement";
+import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
+import AppDashboard from '../../core/layout/AppDashboard';
+import CowManagement from '../../pages/CowManagement';
+import ListCow from '../../pages/CowManagement/components/ListCow';
+import DairyManagement from '../../pages/DairyManagement';
 
-import CreateCow from "../../pages/CowManagement/components/CreateCow";
-import LoginPage from "../../pages/Login";
-import ForgetPassword from "../../pages/Login/components/ForgetPassword";
-import LoginForm from "../../pages/Login/components/LoginForm";
-import Profile from "../../pages/Profile";
-import ListRole from "../../pages/RoleManagement";
-import ListUser from "../../pages/UserManagement";
-import { useSelector } from "react-redux";
-import { RootState } from "../../core/store/store";
-import CowTypeManagement from "../../pages/CowManagement/components/CowTypeManagement";
+import CreateCow from '../../pages/CowManagement/components/CreateCow';
+import LoginPage from '../../pages/Login';
+import ForgetPassword from '../../pages/Login/components/ForgetPassword';
+import LoginForm from '../../pages/Login/components/LoginForm';
+import Profile from '../../pages/Profile';
+import ListRole from '../../pages/RoleManagement';
+import ListUser from '../../pages/UserManagement';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../core/store/store';
+import CowTypeManagement from '../../pages/CowManagement/components/CowTypeManagement';
+import AreaManagement from '../../pages/AreaManagement';
 const AppRouting = () => {
   const user = useSelector((state: RootState) => state.user);
   const router = createBrowserRouter([
     {
-      path: "",
-      element: <Navigate to={user.accessToken !== "" ? "/dairy" : "/login"} />, // Redirect to /dashboard or another default path
+      path: '',
+      element: <Navigate to={user.accessToken !== '' ? '/dairy' : '/login'} />, // Redirect to /dashboard or another default path
     },
     {
-      path: "/login",
+      path: '/login',
       element: <LoginPage />,
       children: [
         {
-          path: "",
+          path: '',
           index: true,
           element: <LoginForm />,
         },
         {
-          path: "forget-password",
+          path: 'forget-password',
           element: <ForgetPassword />,
         },
       ],
     },
     {
-      path: "dairy",
-      element:
-        user.accessToken !== "" ? <AppDashboard /> : <Navigate to={"/login"} />,
+      path: 'dairy',
+      element: user.accessToken !== '' ? <AppDashboard /> : <Navigate to={'/login'} />,
       children: [
         {
-          path: "user-management",
+          path: 'user-management',
           element: <ListUser />,
         },
         {
-          path: "role-management",
+          path: 'role-management',
           element: <ListRole />,
         },
 
         {
-          path: "dairy-management",
+          path: 'dairy-management',
           element: <DairyManagement />,
         },
         {
-          path: "cow-management",
+          path: 'cow-management',
           element: <CowManagement />,
           children: [
             {
-              path: "",
-              element: <Navigate to={"list-cow"} />,
+              path: '',
+              element: <Navigate to={'list-cow'} />,
             },
             {
-              path: "cow-type-management",
+              path: 'cow-type-management',
               element: <CowTypeManagement />,
             },
             {
-              path: "list-cow",
+              path: 'list-cow',
               element: <ListCow />,
             },
             {
-              path: "create-cow",
+              path: 'create-cow',
               element: <CreateCow />,
             },
             {
-              path: "health-report",
+              path: 'health-report',
               element: <p>Health Report</p>,
             },
           ],
         },
         {
-          path: "profile",
+          path: 'area-management',
+          element: <AreaManagement />,
+        },
+        {
+          path: 'profile',
           element: <Profile />,
         },
       ],
