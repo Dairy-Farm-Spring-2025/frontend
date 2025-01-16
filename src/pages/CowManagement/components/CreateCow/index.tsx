@@ -1,52 +1,93 @@
-import { Form, Input, InputNumber } from "antd";
+import { Form, Steps } from "antd";
+import dayjs from "dayjs";
+import { useState } from "react";
 import ButtonComponent from "../../../../components/Button/ButtonComponent";
 import FormComponent from "../../../../components/Form/FormComponent";
-import FormItemComponent from "../../../../components/Form/Item/FormItemComponent";
-import ModalComponent from "../../../../components/Modal/ModalComponent";
 import WhiteBackground from "../../../../components/UI/WhiteBackground";
-import useModal from "../../../../hooks/useModal";
+import useFetcher from "../../../../hooks/useFetcher";
+import useToast from "../../../../hooks/useToast";
+import { Cow } from "../../../../model/Cow/Cow";
+import CreateCowInformation from "./CreateCowInformation/CreateCowInformation";
+
 const CreateCow = () => {
   const [form] = Form.useForm();
-  const modal = useModal();
-  const handleSubmit = (event: any) => {
-    console.log(event);
+  const [currentStep, setCurrentStep] = useState(0);
+  const [inforData, setInforData] = useState<Cow>();
+  const { trigger, isLoading } = useFetcher("cows/create", "POST");
+  const toast = useToast();
+
+  const steps = [
+    {
+      title: "General Information",
+      content: <CreateCowInformation />,
+    },
+    {
+      title: "Health Information",
+      content: <div>{inforData?.cowId} </div>,
+    },
+  ];
+
+  const handleClear = () => {
+    form.resetFields();
   };
-  const handleConsole = () => console.log("AAAA");
-  const handleOk = () => {
-    console.log("AHAHA");
-    modal.closeModal(handleConsole);
+
+  const handleFinish = async (values: any) => {
+    if (currentStep < steps.length - 1) {
+      if (currentStep === 0) {
+        const data = {
+          name: values.name,
+          cowStatus: values.cowStatus,
+          dateOfBirth: dayjs(values.dateOfBirth).format("YYYY-MM-DD"),
+          dateOfEnter: dayjs(values.dateOfEnter).format("YYYY-MM-DD"),
+          cowOrigin: values.cowOrigin,
+          gender: values.gender,
+          cowTypeId: values.cowTypeId,
+          description: values.description,
+        };
+        try {
+          const response = await trigger({ body: data });
+          setInforData(response.data);
+          toast.showSuccess(response.message);
+          handleClear();
+          setCurrentStep((prev) => prev + 1);
+        } catch (error: any) {
+          toast.showError(error.message);
+        }
+      }
+    }
+    if (currentStep === 1) {
+      setCurrentStep(0);
+      handleClear();
+    }
   };
+
   return (
     <WhiteBackground>
-      <ButtonComponent
-        onClick={() => modal.openModal(handleConsole)}
-        type="primary"
+      <Steps current={currentStep}>
+        {steps.map((element, index) => (
+          <Steps.Step key={index} title={element.title} />
+        ))}
+      </Steps>
+      <FormComponent
+        onFinish={handleFinish}
+        form={form}
+        className="p-2 flex flex-col gap-5"
       >
-        Open modal
-      </ButtonComponent>
-      <ModalComponent
-        open={modal.open}
-        onCancel={() => modal.closeModal(handleConsole)}
-        onOk={handleOk}
-      >
-        Modal
-      </ModalComponent>
-      <FormComponent form={form} onFinish={handleSubmit}>
-        <FormItemComponent
-          name={"name"}
-          label="Name"
-          rules={[{ required: true }]}
-        >
-          <Input />
-        </FormItemComponent>
-        <FormItemComponent
-          name="phoneNumber"
-          label="Phone Number"
-          rules={[{ min: 0, max: 99, required: true, type: "number" }]}
-        >
-          <InputNumber />
-        </FormItemComponent>
-        <ButtonComponent htmlType="submit">Submit</ButtonComponent>
+        {steps[currentStep].content}
+        <div className="flex justify-end gap-5">
+          {currentStep === 0 && (
+            <ButtonComponent
+              onClick={handleClear}
+              type="primary"
+              className="!bg-orange-500"
+            >
+              Clear All
+            </ButtonComponent>
+          )}
+          <ButtonComponent type="primary" htmlType="submit" loading={isLoading}>
+            {currentStep === steps.length - 1 ? "Done" : "Next"}
+          </ButtonComponent>
+        </div>
       </FormComponent>
     </WhiteBackground>
   );

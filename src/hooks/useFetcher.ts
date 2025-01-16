@@ -1,6 +1,6 @@
 import useSWR from "swr";
 import api from "../config/axios/axios";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const fetcher = async (
   url: string,
@@ -32,9 +32,20 @@ const useFetcher = <T>(url: string, method: string = "GET") => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<any>(null);
 
-  const { data, mutate } = useSWR<T>(method === "GET" ? url : null, () =>
-    fetcher(url, method)
+  const { data, mutate, isValidating } = useSWR<T>(
+    method === "GET" ? url : null,
+    () => fetcher(url, method),
+    {
+      revalidateOnFocus: false, // Optional: prevent revalidation on focus
+    }
   );
+
+  // Track loading state for GET requests
+  useEffect(() => {
+    if (method === "GET") {
+      setIsLoading(isValidating);
+    }
+  }, [isValidating, method]);
 
   const trigger = async (options?: { params?: any; body?: any }) => {
     setIsLoading(true);

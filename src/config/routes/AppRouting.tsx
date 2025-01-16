@@ -18,10 +18,14 @@ import ListUser from "../../pages/UserManagement";
 import { useSelector } from "react-redux";
 import { RootState } from "../../core/store/store";
 import CowTypeManagement from "../../pages/CowManagement/components/CowTypeManagement";
+
 import ListWorker from "../../pages/HumanManangement/WorkerManagement";
 import HumanManagement from "../../pages/HumanManangement";
 import ListVeterinarian from "../../pages/HumanManangement/VeterinarianManagement";
 import PenManageMent from "../../pages/PenManagement";
+
+import CowDetail from "../../pages/CowManagement/components/CowDetail";
+
 const AppRouting = () => {
   const user = useSelector((state: RootState) => state.user);
   const router = createBrowserRouter([
@@ -66,6 +70,10 @@ const AppRouting = () => {
             {
               path: "",
               element: <Navigate to={"list-cow"} />,
+            },
+            {
+              path: ":id",
+              element: <CowDetail />,
             },
             {
               path: "cow-type-management",

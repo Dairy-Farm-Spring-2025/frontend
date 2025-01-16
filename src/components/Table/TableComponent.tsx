@@ -39,7 +39,7 @@ const TableComponent = ({
   }, [dataSource]);
 
   return (
-    <div className="table w-full">
+    <div className="table w-full overflow-auto">
       <ConfigProvider
         input={{
           variant: "outlined",
@@ -57,11 +57,12 @@ const TableComponent = ({
       </ConfigProvider>
       <ConfigProvider
         table={{
-          className: "shadow-lg",
+          className: "shadow-lg !overflow-auto",
         }}
       >
         <Table
           bordered
+          scroll={{ x: 1500 }}
           columns={columns}
           dataSource={filteredData}
           pagination={{ position: ["bottomCenter"] }}
