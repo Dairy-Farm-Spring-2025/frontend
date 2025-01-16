@@ -7,8 +7,10 @@ import ModalComponent from "../../../../components/Modal/ModalComponent";
 import FormComponent from "../../../../components/Form/FormComponent";
 import FormItemComponent from "../../../../components/Form/Item/FormItemComponent";
 import LabelForm from "../../../../components/LabelForm/LabelForm";
+import { penStatus, penType } from "../../../../service/data/pen";
 
-import { penStatus, penType } from "../../../../service/data/Pen";
+
+
 
 
 interface ModalCreatePenProps {
