@@ -7,6 +7,7 @@ import WhiteBackground from "../../../components/UI/WhiteBackground";
 import { Divider } from "antd";
 import { formatSTT } from "../../../utils/format";
 import ModalCreateHuman from "../components/ModalCreateHuman/ModalCreateHuman";
+import BanUnbanUser from "../../UserManagement/components/BanUnBanUser/BanUnBanUser";
 
 
 
@@ -49,18 +50,18 @@ const ListVeterinarian = () => {
             key: "status",
             title: "Status",
         },
-        // {
-        //     dataIndex: "action",
-        //     key: "action",
-        //     title: "Action",
-        //     render: (_, record) => (
-        //         <BanUnbanUser
-        //             userId={record.id}
-        //             isActive={record.status === "active"}
-        //             onStatusChange={mutate}
-        //         />
-        //     ),
-        // },
+        {
+            dataIndex: "action",
+            key: "action",
+            title: "Action",
+            render: (_, record) => (
+                <BanUnbanUser
+                    userId={record.id}
+                    isActive={record.status === "active"}
+                    onStatusChange={mutate}
+                />
+            ),
+        },
     ];
 
     return (
