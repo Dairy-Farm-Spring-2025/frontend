@@ -3,22 +3,22 @@ import { Button, message } from "antd";
 import { userApi } from "../../../../service/api/User/userApi";
 
 interface BanUnbanUserProps {
-    userId: number; // ID của người dùng
-    isActive: boolean; // Trạng thái kích hoạt hiện tại của người dùng
-    onStatusChange?: () => void; // Hàm callback để thông báo làm mới dữ liệu
+    userId: number;
+    isActive: boolean;
+    onStatusChange?: () => void;
 }
 
 const BanUnbanUser: React.FC<BanUnbanUserProps> = ({ userId, isActive, onStatusChange }) => {
     const handleAction = async () => {
         try {
             if (isActive) {
-                await userApi.banUser(userId); // Gọi API ban user
+                await userApi.banUser(userId);
                 message.success("User has been banned successfully.");
             } else {
-                await userApi.unBanUser(userId); // Gọi API unban user
+                await userApi.unBanUser(userId);
                 message.success("User has been unbanned successfully.");
             }
-            onStatusChange && onStatusChange(); // Thông báo làm mới dữ liệu nếu có
+            onStatusChange && onStatusChange();
         } catch (error: any) {
             console.error(error);
             message.error(`Failed to ${isActive ? "ban" : "unban"} user.`);
