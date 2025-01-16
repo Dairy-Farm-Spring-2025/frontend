@@ -13,8 +13,8 @@ import LabelForm from "../../../../components/LabelForm/LabelForm";
 
 
 
-const ModalCreateHuman = ({ mutate, modal, title, defaultValues, hiddenFields }: any) => {
-    console.log("Default values:", defaultValues); // Log defaultValues
+const ModalCreateHuman = ({ mutate, modal, title, defaultValues }: any) => {
+
     const toast = useToast();
     const { trigger, isLoading } = useFetcher("users/create", "POST");
     const [form] = Form.useForm();
@@ -78,7 +78,9 @@ const ModalCreateHuman = ({ mutate, modal, title, defaultValues, hiddenFields }:
                         name="roleId"
                         label={<LabelForm>Role:</LabelForm>}
                     >
-                        <Select options={defaultValues} />
+                        <Select options={defaultValues}
+                        />
+
                     </FormItemComponent>
 
 

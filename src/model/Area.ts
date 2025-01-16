@@ -5,6 +5,6 @@ export type Area = {
     length: number;
     width: number;
     areaType: "cowHousing" | "milkingParlor" | "wareHouse";
-
+    areaId: number;
 }
 
