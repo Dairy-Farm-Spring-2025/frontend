@@ -177,7 +177,19 @@ const AppDashboard: React.FC = () => {
       label: <LabelDashboard>HR Management</LabelDashboard>,
       type: "group",
       children: [
-        getItem("Worker", "dairy/worker-management", <BiUser />),
+        getItem("Human", "dairy/human-management", <BiUser />, [
+          getItem(
+            "Worker",
+            "dairy/human-management/worker",
+            <CiBoxList size={sizeIcon} />
+          ),
+          getItem(
+            "Veterinarian",
+            "dairy/human-management/veterinarian",
+            <CiBoxList size={sizeIcon} />
+          ),
+        ]),
+
         getItem("Schedule", "dairy/schedule-management", <MdSchedule />),
         getItem("Task", "dairy/task-management", <BiTask />, [
           getItem(
