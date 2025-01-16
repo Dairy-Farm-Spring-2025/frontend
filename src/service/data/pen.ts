@@ -1,30 +1,30 @@
 export const penType = [
     {
-        label: "CalfPen",
+        label: "Calf Pen",
         value: "calfPen",
     },
     {
-        label: "HeiferPen",
+        label: "Heifer Pen",
         value: "heiferPen",
     },
     {
-        label: "DryCowPen",
+        label: "DryCow Pen",
         value: "dryCowPen",
     },
     {
-        label: "LactatingCowPen",
+        label: "Lactating Cow Pen",
         value: "lactatingCowPen",
     },
     {
-        label: "MaternityPen",
+        label: "Maternity Pen",
         value: "maternityPen",
     },
     {
-        label: "IsolationPen",
+        label: "Isolation Pen",
         value: "isolationPen",
     },
     {
-        label: "HoldingPen",
+        label: "Holding Pen",
         value: "holdingPen",
     },
 
@@ -44,7 +44,7 @@ export const penStatus = [
         value: "reserved",
     },
     {
-        label: "UnderMaintenance",
+        label: "Under Maintenance",
         value: "underMaintenance",
     },
     {
