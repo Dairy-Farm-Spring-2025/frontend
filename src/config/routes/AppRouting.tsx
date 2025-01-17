@@ -1,128 +1,129 @@
-import {
-  createBrowserRouter,
-  Navigate,
-  RouterProvider,
-} from "react-router-dom";
-import AppDashboard from "../../core/layout/AppDashboard";
-import CowManagement from "../../pages/CowManagement";
-import ListCow from "../../pages/CowManagement/components/ListCow";
-import DairyManagement from "../../pages/DairyManagement";
+import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
+import AppDashboard from '../../core/layout/AppDashboard';
+import CowManagement from '../../pages/CowManagement';
+import ListCow from '../../pages/CowManagement/components/ListCow';
+import DairyManagement from '../../pages/DairyManagement';
 
-import CreateCow from "../../pages/CowManagement/components/CreateCow";
-import LoginPage from "../../pages/Login";
-import ForgetPassword from "../../pages/Login/components/ForgetPassword";
-import LoginForm from "../../pages/Login/components/LoginForm";
-import Profile from "../../pages/Profile";
-import ListRole from "../../pages/RoleManagement";
-import ListUser from "../../pages/UserManagement";
-import { useSelector } from "react-redux";
-import { RootState } from "../../core/store/store";
-import CowTypeManagement from "../../pages/CowManagement/components/CowTypeManagement";
+import CreateCow from '../../pages/CowManagement/components/CreateCow';
+import LoginPage from '../../pages/Login';
+import ForgetPassword from '../../pages/Login/components/ForgetPassword';
+import LoginForm from '../../pages/Login/components/LoginForm';
+import Profile from '../../pages/Profile';
+import ListRole from '../../pages/RoleManagement';
+import ListUser from '../../pages/UserManagement';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../core/store/store';
+import CowTypeManagement from '../../pages/CowManagement/components/CowTypeManagement';
+import AreaManagement from '../../pages/AreaManagement';
 
-import ListWorker from "../../pages/HumanManangement/WorkerManagement";
-import HumanManagement from "../../pages/HumanManangement";
-import ListVeterinarian from "../../pages/HumanManangement/VeterinarianManagement";
-import PenManageMent from "../../pages/PenManagement";
+import ListWorker from '../../pages/HumanManangement/WorkerManagement';
+import HumanManagement from '../../pages/HumanManangement';
+import ListVeterinarian from '../../pages/HumanManangement/VeterinarianManagement';
+import PenManageMent from '../../pages/PenManagement';
 
-import CowDetail from "../../pages/CowManagement/components/CowDetail";
+import CowDetail from '../../pages/CowManagement/components/CowDetail';
 
 const AppRouting = () => {
   const user = useSelector((state: RootState) => state.user);
   const router = createBrowserRouter([
     {
-      path: "",
-      element: <Navigate to={user.accessToken !== "" ? "/dairy" : "/login"} />, // Redirect to /dashboard or another default path
+      path: '',
+      element: <Navigate to={user.accessToken !== '' ? '/dairy' : '/login'} />, // Redirect to /dashboard or another default path
     },
     {
-      path: "/login",
+      path: '/login',
       element: <LoginPage />,
       children: [
         {
-          path: "",
+          path: '',
           index: true,
           element: <LoginForm />,
         },
         {
-          path: "forget-password",
+          path: 'forget-password',
           element: <ForgetPassword />,
         },
       ],
     },
     {
-      path: "dairy",
-      element:
-        user.accessToken !== "" ? <AppDashboard /> : <Navigate to={"/login"} />,
+      path: 'dairy',
+      element: user.accessToken !== '' ? <AppDashboard /> : <Navigate to={'/login'} />,
       children: [
         {
-          path: "user-management",
+          path: 'user-management',
           element: <ListUser />,
         },
         {
-          path: "role-management",
+          path: 'role-management',
           element: <ListRole />,
         },
 
-
         {
-          path: "cow-management",
+          path: 'dairy-management',
+          element: <DairyManagement />,
+        },
+        {
+          path: 'cow-management',
           element: <CowManagement />,
           children: [
             {
-              path: "",
-              element: <Navigate to={"list-cow"} />,
+              path: '',
+              element: <Navigate to={'list-cow'} />,
             },
             {
-              path: ":id",
+              path: ':id',
               element: <CowDetail />,
             },
             {
-              path: "cow-type-management",
+              path: 'cow-type-management',
               element: <CowTypeManagement />,
             },
             {
-              path: "list-cow",
+              path: 'list-cow',
               element: <ListCow />,
             },
             {
-              path: "create-cow",
+              path: 'create-cow',
               element: <CreateCow />,
             },
             {
-              path: "health-report",
+              path: 'health-report',
               element: <p>Health Report</p>,
             },
           ],
-
         },
         {
-          path: "pen-management",
+          path: 'area-management',
+          element: <AreaManagement />,
+        },
+        {
+          path: 'pen-management',
           element: <PenManageMent />,
         },
         {
-          path: "human-management",
+          path: 'human-management',
           element: <HumanManagement />,
           children: [
             {
-              path: "",
-              element: <Navigate to={"worker"} />,
+              path: '',
+              element: <Navigate to={'worker'} />,
             },
             // {
             //   path: "cow-type-management",
             //   element: <CowTypeManagement />,
             // },
             {
-              path: "worker",
+              path: 'worker',
               element: <ListWorker />,
             },
             {
-              path: "veterinarian",
+              path: 'veterinarian',
               element: <ListVeterinarian />,
             },
-
           ],
         },
         {
-          path: "profile",
+          path: 'profile',
           element: <Profile />,
         },
       ],
