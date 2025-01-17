@@ -1,6 +1,6 @@
-import { Form, FormItemProps } from "antd";
-import React from "react";
-import "./index.scss";
+import { Form, FormItemProps } from 'antd';
+import React from 'react';
+import './index.scss';
 interface FormItemComponentProps extends FormItemProps {
   label?: string | React.ReactNode;
   name: string;

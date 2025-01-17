@@ -1,13 +1,11 @@
-import React from 'react'
+import React from 'react';
 
 interface LabelFormProps {
-    children: string | string[] | null | React.ReactElement | any
+  children: string | string[] | null | React.ReactElement | any;
 }
 
 const LabelForm = ({ children }: LabelFormProps) => {
-    return (
-        <p className="text-base">{children}</p>
-    )
-}
+  return <p className='text-base'>{children}</p>;
+};
 
-export default LabelForm
+export default LabelForm;

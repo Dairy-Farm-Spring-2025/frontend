@@ -1,5 +1,5 @@
 // slice/avatarSlice.ts
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface AvatarState {
   avatarFunction: (() => void) | null; // Store the function
@@ -10,7 +10,7 @@ const initialState: AvatarState = {
 };
 
 const avatarSlice = createSlice({
-  name: "avatar",
+  name: 'avatar',
   initialState,
   reducers: {
     setAvatarFunction: (state, action: PayloadAction<() => void>) => {

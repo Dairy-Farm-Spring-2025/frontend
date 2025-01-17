@@ -1,16 +1,16 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { UserResponseData } from "../../../model/Authentication/UserResponse";
+import { createSlice } from '@reduxjs/toolkit';
+import { UserResponseData } from '../../../model/Authentication/UserResponse';
 
 const initialState: UserResponseData | null = {
-  accessToken: "",
-  fullName: "",
-  refreshToken: "",
-  roleName: "",
+  accessToken: '',
+  fullName: '',
+  refreshToken: '',
+  roleName: '',
   userId: 0,
 };
 
 export const userSlice = createSlice({
-  name: "user",
+  name: 'user',
   initialState,
   reducers: {
     login: (_, action) => action.payload,

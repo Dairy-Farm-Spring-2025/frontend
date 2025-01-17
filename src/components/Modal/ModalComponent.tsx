@@ -1,7 +1,7 @@
-import { Button, ConfigProvider, Modal, ModalProps, Typography } from "antd";
-import { CgClose } from "react-icons/cg";
-import ButtonComponent from "../Button/ButtonComponent";
-import "./index.scss";
+import { Button, ConfigProvider, Modal, ModalProps, Typography } from 'antd';
+import { CgClose } from 'react-icons/cg';
+import ButtonComponent from '../Button/ButtonComponent';
+import './index.scss';
 
 interface ModalComponentInterface extends ModalProps {
   children: React.ReactNode;
@@ -28,21 +28,21 @@ const ModalComponent = ({
             padding: 0,
           },
           body: {
-            padding: "0px 30px",
+            padding: '0px 30px',
           },
           footer: {
-            padding: "15px 30px",
+            padding: '15px 30px',
           },
         },
       }}
     >
       <Modal
         onCancel={onCancel}
-        className="!rounded-lg"
+        className='!rounded-lg'
         title={
-          <div className="flex justify-between items-center py-3 px-5 !rounded-lg">
+          <div className='flex justify-between items-center py-3 px-5 !rounded-lg'>
             <Typography.Title
-              className="!m-0 !text-white !font-normal !h-fit"
+              className='!m-0 !text-white !font-normal !h-fit'
               level={4}
             >
               {title}
@@ -50,9 +50,9 @@ const ModalComponent = ({
             <div>
               <Button
                 onClick={onCancel}
-                type="primary"
-                shape="circle"
-                className="!shadow-none duration-100"
+                type='primary'
+                shape='circle'
+                className='!shadow-none duration-100'
                 icon={<CgClose />}
               />
             </div>
@@ -63,13 +63,13 @@ const ModalComponent = ({
             ? [
                 <ButtonComponent
                   onClick={onCancel}
-                  variant="solid"
-                  color="danger"
-                  key={"cancel"}
+                  variant='solid'
+                  color='danger'
+                  key={'cancel'}
                 >
                   Cancel
                 </ButtonComponent>,
-                <ButtonComponent key={"confirm"} onClick={onOk} type="primary">
+                <ButtonComponent key={'confirm'} onClick={onOk} type='primary'>
                   Confirm
                 </ButtonComponent>,
               ]

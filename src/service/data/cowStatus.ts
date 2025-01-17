@@ -1,38 +1,38 @@
 export const cowStatus = [
   {
-    value: "milkingCow",
-    label: "Milking Cow",
+    value: 'milkingCow',
+    label: 'Milking Cow',
   },
   {
-    value: "dryCow",
-    label: "Dry Cow",
+    value: 'dryCow',
+    label: 'Dry Cow',
   },
   {
-    value: "pregnantCow",
-    label: "Pregnant Cow",
+    value: 'pregnantCow',
+    label: 'Pregnant Cow',
   },
   {
-    value: "openCow",
-    label: "Open Cow",
+    value: 'openCow',
+    label: 'Open Cow',
   },
   {
-    value: "calvingCow",
-    label: "Calving Cow",
+    value: 'calvingCow',
+    label: 'Calving Cow',
   },
   {
-    value: "sickCow",
-    label: "Sick Cow",
+    value: 'sickCow',
+    label: 'Sick Cow',
   },
   {
-    value: "breedingCow",
-    label: "Breeding Cow",
+    value: 'breedingCow',
+    label: 'Breeding Cow',
   },
   {
-    value: "quarantinedCow",
-    label: "Quarantined Cow",
+    value: 'quarantinedCow',
+    label: 'Quarantined Cow',
   },
   {
-    value: "culling",
-    label: "Culling",
+    value: 'culling',
+    label: 'Culling',
   },
 ];

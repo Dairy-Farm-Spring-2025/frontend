@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion } from 'framer-motion';
 
 interface AnimationAppearProps {
   duration?: number;
@@ -13,7 +13,7 @@ const AnimationAppear = ({
       initial={{ y: 50, opacity: 0.7 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: duration }}
-      className="box-border w-full"
+      className='box-border w-full'
     >
       {children}
     </motion.div>
