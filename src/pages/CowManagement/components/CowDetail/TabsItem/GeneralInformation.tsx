@@ -1,29 +1,37 @@
-import { DatePicker, Form, SelectProps } from "antd";
-import { useEffect, useState } from "react";
-import dayjs from "dayjs";
-import useFetcher from "../../../../../hooks/useFetcher";
-import useToast from "../../../../../hooks/useToast";
-import { CowType } from "../../../../../model/Cow/CowType";
-import FormComponent from "../../../../../components/Form/FormComponent";
-import FormItemComponent from "../../../../../components/Form/Item/FormItemComponent";
-import LabelForm from "../../../../../components/LabelForm/LabelForm";
-import InputComponent from "../../../../../components/Input/InputComponent";
-import SelectComponent from "../../../../../components/Select/SelectComponent";
-import { genderData } from "../../../../../service/data/gender";
-import { cowStatus } from "../../../../../service/data/cowStatus";
-import { cowOrigin } from "../../../../../service/data/cowOrigin";
-import ButtonComponent from "../../../../../components/Button/ButtonComponent";
-import { Cow } from "../../../../../model/Cow/Cow";
+import { DatePicker, Form, SelectProps, Spin } from 'antd';
+import dayjs from 'dayjs';
+import { useEffect, useState } from 'react';
+import ButtonComponent from '../../../../../components/Button/ButtonComponent';
+import FormComponent from '../../../../../components/Form/FormComponent';
+import FormItemComponent from '../../../../../components/Form/Item/FormItemComponent';
+import InputComponent from '../../../../../components/Input/InputComponent';
+import LabelForm from '../../../../../components/LabelForm/LabelForm';
+import SelectComponent from '../../../../../components/Select/SelectComponent';
+import useFetcher from '../../../../../hooks/useFetcher';
+import useToast from '../../../../../hooks/useToast';
+import { CowType } from '../../../../../model/Cow/CowType';
+import { cowOrigin } from '../../../../../service/data/cowOrigin';
+import { cowStatus } from '../../../../../service/data/cowStatus';
+import { genderData } from '../../../../../service/data/gender';
+import { Cow } from '../../../../../model/Cow/Cow';
 
 interface CowGeneralInformationProps {
-  detail: Cow;
+  id: string;
+  dataDetail: Cow;
+  isLoadingDetail: boolean;
+  mutateDetail: any;
 }
 
-const CowGeneralInformation = ({ detail }: CowGeneralInformationProps) => {
+const CowGeneralInformation = ({
+  id,
+  dataDetail,
+  isLoadingDetail,
+  mutateDetail,
+}: CowGeneralInformationProps) => {
   const [form] = Form.useForm();
-  const { trigger, isLoading } = useFetcher(`cows/${detail?.cowId}`, "PUT");
-  const { data } = useFetcher<any[]>("cow-types", "GET");
-  const [optionsCowType, setOptionsCowType] = useState<SelectProps["options"]>(
+  const { trigger, isLoading } = useFetcher(`cows/${id}`, 'PUT');
+  const { data } = useFetcher<any[]>('cow-types', 'GET');
+  const [optionsCowType, setOptionsCowType] = useState<SelectProps['options']>(
     []
   );
   const toast = useToast();
@@ -39,26 +47,26 @@ const CowGeneralInformation = ({ detail }: CowGeneralInformationProps) => {
   }, [data]);
 
   useEffect(() => {
-    if (detail) {
+    if (dataDetail) {
       form.setFieldsValue({
-        name: detail.name,
-        cowStatus: detail.cowStatus,
-        dateOfBirth: dayjs(detail.dateOfBirth),
-        dateOfEnter: dayjs(detail.dateOfEnter),
-        cowOrigin: detail.cowOrigin,
-        gender: detail.gender,
-        cowTypeId: detail.cowType.cowTypeId,
-        description: detail.description,
+        name: dataDetail.name,
+        cowStatus: dataDetail.cowStatus,
+        dateOfBirth: dayjs(dataDetail.dateOfBirth),
+        dateOfEnter: dayjs(dataDetail.dateOfEnter),
+        cowOrigin: dataDetail.cowOrigin,
+        gender: dataDetail.gender,
+        cowTypeId: dataDetail.cowType.cowTypeId,
+        description: dataDetail.description,
       });
     }
-  }, [detail, form]);
+  }, [dataDetail, form]);
 
   const handleFinish = async (values: any) => {
     const data = {
       name: values.name,
       cowStatus: values.cowStatus,
-      dateOfBirth: dayjs(values.dateOfBirth).format("YYYY-MM-DD"),
-      dateOfEnter: dayjs(values.dateOfEnter).format("YYYY-MM-DD"),
+      dateOfBirth: dayjs(values.dateOfBirth).format('YYYY-MM-DD'),
+      dateOfEnter: dayjs(values.dateOfEnter).format('YYYY-MM-DD'),
       cowOrigin: values.cowOrigin,
       gender: values.gender,
       cowTypeId: values.cowTypeId,
@@ -67,10 +75,15 @@ const CowGeneralInformation = ({ detail }: CowGeneralInformationProps) => {
     try {
       const response = await trigger({ body: data });
       toast.showSuccess(response.message);
+      mutateDetail();
     } catch (error: any) {
       toast.showError(error.message);
     }
   };
+
+  if (isLoadingDetail) {
+    return <Spin />;
+  }
 
   return (
     <FormComponent
@@ -90,7 +103,7 @@ const CowGeneralInformation = ({ detail }: CowGeneralInformationProps) => {
             input: {
               fontSize: 30,
               border: 0,
-              borderBottom: "1px solid black",
+              borderBottom: '1px solid black',
               borderRadius: 0,
             },
           }}

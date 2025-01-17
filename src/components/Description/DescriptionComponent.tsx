@@ -1,29 +1,31 @@
-import { Descriptions, DescriptionsProps } from "antd";
-import "./index.scss";
+import { Descriptions, DescriptionsProps } from 'antd';
+import './index.scss';
 export interface DescriptionPropsItem extends DescriptionsProps {
   key: string;
   label: string;
   children: string | React.ReactNode;
 }
-interface DescriptionComponentProps {
-  items: DescriptionPropsItem["items"];
+interface DescriptionComponentProps extends DescriptionsProps {
+  items: DescriptionPropsItem['items'];
   title?: string;
-  layout?: "vertical" | "horizontal";
+  layout?: 'vertical' | 'horizontal';
+  className?: string;
 }
 const DescriptionComponent = ({
   items,
   title,
-  layout = "vertical",
+  className,
+  layout = 'vertical',
   ...props
 }: DescriptionComponentProps) => {
   return (
     <Descriptions
-      className="description-component"
+      className={`description-component !bg-white !rounded-lg !shadow-lg ${className}`}
       title={title}
       items={items}
       layout={layout}
       labelStyle={{
-        fontWeight: "bold",
+        fontWeight: 'bold',
       }}
       bordered
       {...props}

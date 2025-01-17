@@ -1,8 +1,8 @@
-import { ConfigProvider, Input } from "antd";
-import { ColumnProps, TableProps } from "antd/es/table";
-import { Table } from "antd";
-import "./index.scss";
-import { useEffect, useState } from "react";
+import { ConfigProvider, Input } from 'antd';
+import { ColumnProps, TableProps } from 'antd/es/table';
+import { Table } from 'antd';
+import './index.scss';
+import { useEffect, useState } from 'react';
 export interface Column extends ColumnProps {
   title: string;
   dataIndex: string;
@@ -18,7 +18,7 @@ const TableComponent = ({
   dataSource,
   ...props
 }: TableComponentProps) => {
-  const [searchText, setSearchText] = useState<string>("");
+  const [searchText, setSearchText] = useState<string>('');
   const [filteredData, setFilteredData] = useState<object[]>([]);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,25 +39,25 @@ const TableComponent = ({
   }, [dataSource]);
 
   return (
-    <div className="table w-full overflow-auto">
+    <div className='table w-full overflow-auto'>
       <ConfigProvider
         input={{
-          variant: "outlined",
+          variant: 'outlined',
         }}
       >
         <Input.Search
-          placeholder="Enter name..."
+          placeholder='Enter name...'
           value={searchText}
           onChange={handleSearch}
           style={{ marginBottom: 16 }}
           allowClear
           enterButton
-          className="w-1/5 input-with-bold-outline"
+          className='w-1/5 input-with-bold-outline'
         />
       </ConfigProvider>
       <ConfigProvider
         table={{
-          className: "shadow-lg !overflow-auto",
+          className: 'shadow-lg !overflow-auto',
         }}
       >
         <Table
@@ -65,7 +65,7 @@ const TableComponent = ({
           scroll={{ x: 1500 }}
           columns={columns}
           dataSource={filteredData}
-          pagination={{ position: ["bottomCenter"] }}
+          pagination={{ position: ['bottomCenter'] }}
           {...props}
         />
       </ConfigProvider>

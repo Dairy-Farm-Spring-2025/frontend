@@ -1,10 +1,10 @@
 export const cowTypesStatus = [
   {
-    label: "Exist",
-    value: "exist",
+    label: 'Exist',
+    value: 'exist',
   },
   {
-    label: "Not Exist",
-    value: "notExist",
+    label: 'Not Exist',
+    value: 'notExist',
   },
 ];

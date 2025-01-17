@@ -1,9 +1,9 @@
-import { Select, SelectProps } from "antd";
-import "./index.scss";
+import { Select, SelectProps } from 'antd';
+import './index.scss';
 
 interface SelectComponentProps extends SelectProps {
   className?: string;
-  options: SelectProps["options"];
+  options: SelectProps['options'];
 }
 
 const SelectComponent = ({

@@ -1,4 +1,4 @@
-@use "../../styles/colors" as colors; /* Import the color variables */
+@use '../../styles/colors' as colors; /* Import the color variables */
 
 .table {
   overflow-x: auto !important; // Add a scroll bar when content overflows

@@ -1,34 +1,34 @@
 export const cowOrigin = [
   {
-    value: "european",
-    label: "European",
+    value: 'european',
+    label: 'European',
   },
   {
-    value: "indian",
-    label: "Indian",
+    value: 'indian',
+    label: 'Indian',
   },
   {
-    value: "african",
-    label: "African",
+    value: 'african',
+    label: 'African',
   },
   {
-    value: "american",
-    label: "American",
+    value: 'american',
+    label: 'American',
   },
   {
-    value: "australian",
-    label: "Australian",
+    value: 'australian',
+    label: 'Australian',
   },
   {
-    value: "exotic",
-    label: "Exotic",
+    value: 'exotic',
+    label: 'Exotic',
   },
   {
-    value: "indigenous",
-    label: "Indigenous",
+    value: 'indigenous',
+    label: 'Indigenous',
   },
   {
-    value: "crossbreed",
-    label: "Crossbreed",
+    value: 'crossbreed',
+    label: 'Crossbreed',
   },
 ];

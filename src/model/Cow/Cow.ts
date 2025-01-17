@@ -20,6 +20,7 @@ export type Cow = {
   cowOrigin: string;
   gender: "male" | "female";
   cowType: CowType;
+  cowTypeEntity: CowType;
   createdAt: string;
   updatedAt: string;
 };

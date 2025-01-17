@@ -1,4 +1,4 @@
-@use "../../styles/colors" as colors; /* Import the color variables */
+@use '../../styles/colors' as colors; /* Import the color variables */
 
 .ant-modal-title {
   background-color: colors.$primary-color;

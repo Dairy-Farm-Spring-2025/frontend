@@ -1,5 +1,5 @@
-import { Form, FormProps } from "antd";
-import React from "react";
+import { Form, FormProps } from 'antd';
+import React from 'react';
 
 interface FormComponentProps extends FormProps {
   form: any;
@@ -8,16 +8,16 @@ interface FormComponentProps extends FormProps {
 }
 
 const validateMessages = {
-  required: "The ${label} is required!",
+  required: 'This field is required!',
   types: {
-    email: "This ${label} is not a valid email!",
-    number: "This ${label} is not a valid number!",
+    email: 'This is not a valid email!',
+    number: 'This is not a valid number!',
   },
   string: {
-    len: "The ${label} must be exactly ${len} characters!",
+    len: 'This field must be exactly ${len} characters!',
   },
   number: {
-    range: "The ${label} must be between ${min} and ${max}",
+    range: 'The field must be between ${min} and ${max}',
   },
 };
 

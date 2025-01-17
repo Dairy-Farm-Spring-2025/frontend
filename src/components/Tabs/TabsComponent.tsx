@@ -1,4 +1,4 @@
-import { Tabs, TabsProps } from "antd";
+import { Tabs, TabsProps } from 'antd';
 
 export interface TabsItemProps extends TabsProps {
   key: string;
@@ -7,11 +7,11 @@ export interface TabsItemProps extends TabsProps {
   icon: React.ReactNode;
 }
 
-interface TabsComponentProps {
-  items: TabsItemProps["items"];
+interface TabsComponentProps extends TabsProps {
+  items: TabsItemProps['items'];
 }
-const TabsComponent = ({ items = [] }: TabsComponentProps) => {
-  return <Tabs defaultActiveKey={items[0].key} items={items} />;
+const TabsComponent = ({ items = [], ...props }: TabsComponentProps) => {
+  return <Tabs defaultActiveKey={items[0].key} items={items} {...props} />;
 };
 
 export default TabsComponent;
