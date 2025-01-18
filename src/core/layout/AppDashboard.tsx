@@ -38,6 +38,7 @@ import "./index.scss";
 import useFetcher from "../../hooks/useFetcher";
 import { setAvatarFunction } from "../store/slice/avatarSlice";
 import { getAvatar } from "../../utils/getImage";
+import { WalletOutlined } from '@ant-design/icons';
 const { Header, Content, Sider } = Layout;
 type MenuItem = Required<MenuProps>["items"][number];
 const { useToken } = theme;
@@ -163,7 +164,13 @@ const AppDashboard: React.FC = () => {
         getItem("Feed", "dairy/feed-management", <MdOutlineFastfood />),
         getItem("Area", "dairy/area-management", <LiaChartAreaSolid />),
         getItem("Pen", "dairy/pen-management", <GiCage />),
-        getItem("Milk", "dairy/milk-management", <LuMilk />),
+        getItem("Milk", "dairy/milk-management", <LuMilk />, [
+          getItem(
+            "MilkBatch",
+            "dairy/milk-management/milk-batch",
+            <WalletOutlined size={sizeIcon} />
+          )
+        ]),
         getItem("Warehouse", "dairy/warehouse-management", <PiWarehouse />, [
           getItem(
             "Category",

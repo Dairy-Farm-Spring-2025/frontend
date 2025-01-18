@@ -11,12 +11,14 @@ import LabelForm from "../../../../components/LabelForm/LabelForm";
 import { penStatus, penType } from "../../../../service/data/pen";
 import { Area } from "../../../../model/Area";
 import { Pen } from "../../../../model/Pen";
+import { formatAreaType, validateInput } from "../../../../utils/format";
 
 interface ModalCreatePenProps {
     mutate: any;
     modal: any;
     areaId: number | null;
 }
+
 
 const ModalCreatePen = ({ mutate, modal, areaId }: ModalCreatePenProps) => {
     const toast = useToast();
@@ -25,6 +27,8 @@ const ModalCreatePen = ({ mutate, modal, areaId }: ModalCreatePenProps) => {
 
     const [form] = Form.useForm();
     const [selectedAreaDetails, setSelectedAreaDetails] = useState<Area | null>(null);
+
+
 
     const areas = data
         ? data.map((area) => ({
@@ -66,7 +70,7 @@ const ModalCreatePen = ({ mutate, modal, areaId }: ModalCreatePenProps) => {
                     title="Create New Pen"
                     loading={isLoading}
                     footer={isLoading ? <Spin tip="Submitting..." /> : null}
-                    width={1200}
+                    width={1000}
                 >
                     {isAreasLoading ? (
                         <Spin tip="Loading areas..." />
@@ -83,9 +87,12 @@ const ModalCreatePen = ({ mutate, modal, areaId }: ModalCreatePenProps) => {
                                         className="col-span-4"
                                         name="name"
                                         label={<LabelForm>Pen Name:</LabelForm>}
-                                        rules={[{ required: true, message: "Please enter the pen name" }]}
+                                        rules={[{ required: true, message: "Please enter the pen name" },
+                                        { validator: validateInput },
+
+                                        ]}
                                     >
-                                        <Input placeholder="Enter pen name" />
+                                        <Input placeholder="Enter pen name , eg: ABC-Pen-123 " />
                                     </FormItemComponent>
                                     <FormItemComponent
                                         name="areaId"
@@ -129,7 +136,7 @@ const ModalCreatePen = ({ mutate, modal, areaId }: ModalCreatePenProps) => {
                                     >
                                         <div>
                                             <p className="dimensions"><strong>Dimensions:</strong> {selectedAreaDetails.length} x {selectedAreaDetails.width} m</p>
-                                            <p className="type"><strong>Type:</strong> {selectedAreaDetails.areaType}</p>
+                                            <p className="type"><strong>Type:</strong> {formatAreaType(selectedAreaDetails.areaType)}</p>
                                             <p className="description"><strong>Description:</strong> {selectedAreaDetails.description}</p>
                                         </div>
                                     </Card>

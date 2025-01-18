@@ -22,6 +22,8 @@ import ListVeterinarian from '../../pages/HumanManangement/VeterinarianManagemen
 import PenManageMent from '../../pages/PenManagement';
 
 import CowDetail from '../../pages/CowManagement/components/CowDetail';
+import MilkBatchManagement from '../../pages/MilkManagement/MilkBatchManagement';
+import MilkManagement from '../../pages/MilkManagement';
 
 const AppRouting = () => {
   const user = useSelector((state: RootState) => state.user);
@@ -101,6 +103,21 @@ const AppRouting = () => {
           element: <PenManageMent />,
         },
         {
+          path: 'milk-management',
+          element: <MilkManagement />,
+          children: [
+            {
+              path: '',
+              element: <Navigate to={'milk-batch'} />,
+            },
+
+            {
+              path: ':id',
+              element: <MilkBatchManagement />,
+            },
+          ],
+        },
+        {
           path: 'human-management',
           element: <HumanManagement />,
           children: [
@@ -108,10 +125,7 @@ const AppRouting = () => {
               path: '',
               element: <Navigate to={'worker'} />,
             },
-            // {
-            //   path: "cow-type-management",
-            //   element: <CowTypeManagement />,
-            // },
+
             {
               path: 'worker',
               element: <ListWorker />,

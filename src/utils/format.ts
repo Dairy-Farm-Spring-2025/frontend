@@ -16,3 +16,16 @@ export const formatAreaType = (type: string) => {
     .replace(/^./, (str) => str.toUpperCase()) // Viết hoa chữ cái đầu tiên
     .trim();  // Loại bỏ khoảng trắng dư thừa
 };
+
+
+export const validateInput = (rule: any, value: string) => {
+  const regex = /^[A-Z]+-Pen-[0-9]+$/;
+
+  if (!value) {
+    return Promise.reject('');
+  }
+  if (!regex.test(value)) {
+    return Promise.reject('Input does not match the required format (A-Z)-Pen-(1-0), eg: ABC-Pen-123');
+  }
+  return Promise.resolve();
+};
