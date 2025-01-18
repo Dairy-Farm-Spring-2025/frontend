@@ -14,9 +14,10 @@ const areaTypes: { label: string; value: AreaType }[] = [
 interface ModalAreaDetailProps {
   areaId: number; // The ID of the area to fetch details for
   modal: any; // Controls the visibility of the modal
+  mutate: any;
 }
 
-const ModalAreaDetail: React.FC<ModalAreaDetailProps> = ({ modal, areaId }) => {
+const ModalAreaDetail: React.FC<ModalAreaDetailProps> = ({ modal, areaId, mutate }) => {
   const { data } = useFetcher<any>(`areas/${areaId}`, 'GET');
   const { trigger } = useFetcher<any>(
     `areas/${areaId}`,
@@ -31,7 +32,7 @@ const ModalAreaDetail: React.FC<ModalAreaDetailProps> = ({ modal, areaId }) => {
     if (data) {
       setAreaDetails(data);
     }
-  }, [data]);
+  }, [areaId, data, modal.open]);
 
   const onClose = () => {
     modal.closeModal();
@@ -56,8 +57,11 @@ const ModalAreaDetail: React.FC<ModalAreaDetailProps> = ({ modal, areaId }) => {
         body: editedDetails,
       });
 
+      setAreaDetails(updatedArea.data);
+
       setIsEditing(false);
-      console.log('Updated successfully:', editedDetails);
+      // Trigger a re-fetch after successful update
+      mutate();
       return updatedArea; // Return the updated data for SWR cache
     } catch (err) {
       console.error('Error updating area:', err);
