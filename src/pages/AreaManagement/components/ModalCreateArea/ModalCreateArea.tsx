@@ -15,6 +15,20 @@ interface ModalCreateAreaProps {
   modal: any;
 }
 
+const validateInput = (rule: any, value: string) => {
+  const regex = /^[A-Z]+-area-[0-9]+$/;
+
+  if (!value) {
+    return Promise.reject('Please input the value!');
+  }
+  if (!regex.test(value)) {
+    return Promise.reject(
+      'Input does not match the required format (A-Z)-area-(1-0), eg: ABC-area-123'
+    );
+  }
+  return Promise.resolve();
+};
+
 const areaTypes: { label: string; value: AreaType }[] = [
   { label: 'Cow Housing', value: 'cowHousing' },
   { label: 'Milking Parlor', value: 'milkingParlor' },
@@ -147,10 +161,7 @@ const ModalCreateArea = ({ mutate, modal }: ModalCreateAreaProps) => {
             </FormItemComponent>
           </div>
           <FormItemComponent
-            rules={[
-              { required: true, message: 'Name is required' },
-              { min: 3, message: 'Name must be at least 3 characters' },
-            ]}
+            rules={[{ required: true, message: 'Name is required' }, { validator: validateInput }]}
             name='name'
             label={<LabelForm>Name:</LabelForm>}
           >

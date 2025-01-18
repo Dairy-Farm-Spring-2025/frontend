@@ -77,7 +77,7 @@ const AreaManagement: React.FC = () => {
   return (
     <WhiteBackground>
       <ModalCreateArea modal={modalCreate} mutate={mutate} />
-      <ModalAreaDetail modal={modalViewDetail} areaId={areaId} />
+      <ModalAreaDetail modal={modalViewDetail} areaId={areaId} mutate={mutate} />
       <Divider className='my-4' />
       <TableComponent
         columns={columns}
