@@ -5,8 +5,8 @@ import {
   InputNumberProps,
   InputProps,
 } from 'antd';
-import './index.scss';
 import { TextAreaProps } from 'antd/es/input';
+import './index.scss';
 type SearchProps = GetProps<typeof Input.Search>;
 interface InputComponentProps extends InputProps {
   className?: string;
@@ -20,6 +20,10 @@ interface NumberProps extends InputNumberProps {
 }
 
 interface SearchComponentProps extends SearchProps {
+  className?: string;
+}
+
+interface PasswordProps extends InputProps {
   className?: string;
 }
 
@@ -45,6 +49,12 @@ const Number = ({ className, ...props }: NumberProps) => {
   );
 };
 
+const Password = ({ className, ...props }: PasswordProps) => {
+  return (
+    <Input.Password className={`input-component ${className}`} {...props} />
+  );
+};
+
 const Search = ({ className, ...props }: SearchComponentProps) => {
   return <Input.Search className={`input-component ${className}`} {...props} />;
 };
@@ -52,5 +62,6 @@ const Search = ({ className, ...props }: SearchComponentProps) => {
 InputComponent.TextArea = TextArea;
 InputComponent.Number = Number;
 InputComponent.Search = Search;
+InputComponent.Password = Password;
 
 export default InputComponent;

@@ -64,6 +64,9 @@ const CowDetail = () => {
   return (
     <AnimationAppear>
       <WhiteBackground>
+        <p className="text-4xl font-bold !h-fit my-4 text-primary">
+          {dataDetail?.name}
+        </p>
         <TabsComponent items={items} destroyInactiveTabPane />
       </WhiteBackground>
     </AnimationAppear>
