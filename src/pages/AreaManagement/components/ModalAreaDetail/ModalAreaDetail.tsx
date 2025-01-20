@@ -19,6 +19,7 @@ interface ModalAreaDetailProps {
 
 const ModalAreaDetail: React.FC<ModalAreaDetailProps> = ({ modal, areaId, mutate }) => {
   const { data } = useFetcher<any>(`areas/${areaId}`, 'GET');
+  console.log("check data by areaId: ", data)
   const { trigger } = useFetcher<any>(
     `areas/${areaId}`,
     'PUT' // Or 'PATCH', depending on your API's convention

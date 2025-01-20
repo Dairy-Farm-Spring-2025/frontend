@@ -69,7 +69,6 @@ const ListUser = () => {
     return (
         <AnimationAppear duration={0.5}>
 
-
             <WhiteBackground>
                 <ModalCreateUser modal={modal} mutate={mutate} />
                 <Divider className="my-4" />
