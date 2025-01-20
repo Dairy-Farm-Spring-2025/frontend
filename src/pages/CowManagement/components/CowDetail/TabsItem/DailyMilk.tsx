@@ -16,7 +16,6 @@ import useToast from '../../../../../hooks/useToast';
 import { Cow } from '../../../../../model/Cow/Cow';
 import { DailyMilkModel } from '../../../../../model/DailyMilk/DailyMilk';
 import CreateDailyMilkModal from './components/CreateDailyMilkModal';
-import CreateMilkBatchModal from './components/CreateMilkBatchModal';
 
 interface DailyMilkProps {
   id: string;
@@ -36,7 +35,6 @@ const DailyMilk = ({
   detailCow,
 }: DailyMilkProps) => {
   const modal = useModal();
-  const modalBatch = useModal();
   const toast = useToast();
   const { trigger } = useFetcher(`dailymilks`, 'DELETE');
   const { trigger: triggerEdit, isLoading: isLoadingEdit } = useFetcher(
@@ -119,10 +117,6 @@ const DailyMilk = ({
     }
   };
 
-  const openModalBatch = () => {
-    modalBatch.openModal();
-  };
-
   if (isLoading) {
     return <Spin />;
   }
@@ -135,17 +129,9 @@ const DailyMilk = ({
             Create Daily Milk
           </ButtonComponent>
         )}
-        <ButtonComponent
-          onClick={openModalBatch}
-          type="primary"
-          className="bg-orange-600 !text-white hover:bg-opacity-60 hover:!bg-orange-600 hover:!text-white"
-        >
-          Create Milk Batch
-        </ButtonComponent>
       </div>
 
       <CreateDailyMilkModal id={id} modal={modal} mutate={mutateDaily} />
-      <CreateMilkBatchModal modal={modalBatch} id={id} />
       <CalendarComponent
         events={events}
         initialView="dayGridMonth"
