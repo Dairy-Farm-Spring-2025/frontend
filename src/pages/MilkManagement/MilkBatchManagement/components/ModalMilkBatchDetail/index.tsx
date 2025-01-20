@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Descriptions, Input, Button, Divider } from 'antd';
+import { Descriptions, Input, Button, Divider, message } from 'antd';
 import useFetcher from '../../../../../hooks/useFetcher';
 import ModalComponent from '../../../../../components/Modal/ModalComponent';
 
@@ -28,30 +28,57 @@ interface Milk {
     };
 }
 const ModalMilkBatchDetail: React.FC<ModalMilkBatchDetailProps> = ({ modal, milkBatchId, mutate }) => {
-    const { data } = useFetcher<any>(`MilkBatch/${milkBatchId}`, 'GET');
-    console.log('check data by milkbatchID: ', data);
+    const { data, error, isLoading, mutate: localMutate } = useFetcher<any>(`MilkBatch/${milkBatchId}`, 'GET');
+    console.log("check data by milkBatchID: ", data)
     const { trigger } = useFetcher<any>(`MilkBatch/${milkBatchId}`, 'PUT');
 
-    const [isEditing, setIsEditing] = useState(false); // Toggle edit mode
+    const [isEditing, setIsEditing] = useState(false);
     const [editedDetails, setEditedDetails] = useState({ dailyMilkIdsToAdd: [], dailyMilkIdsToRemove: [] });
 
     useEffect(() => {
         if (data) {
             setEditedDetails({ dailyMilkIdsToAdd: [], dailyMilkIdsToRemove: [] });
         }
-    }, [data, milkBatchId]);
+    }, [data, milkBatchId, modal.open, mutate]);
+
 
     const onClose = () => {
         modal.closeModal();
-        setIsEditing(false); // Reset edit mode on close
+        setIsEditing(false);
     };
-
-    const handleSave = async () => {
+    const refreshData = async () => {
         try {
-            await trigger({ body: editedDetails });
-            setIsEditing(false);
-            mutate();
+            await localMutate(); // Gọi mutate() để làm mới dữ liệu
+            // message.success('Milk batch refreshed successfully!');
         } catch (err) {
+            message.error('Error refreshing milk batch data.');
+            console.error('Error refreshing data:', err);
+        }
+    };
+    const handleSave = async () => {
+        if (
+            editedDetails.dailyMilkIdsToAdd.length === 0 ||
+            editedDetails.dailyMilkIdsToRemove.length === 0
+        ) {
+            message.error('Please fill in at least one of the fields before saving.');
+            return;
+        }
+        try {
+            const payload: any = {};
+            if (editedDetails.dailyMilkIdsToAdd.length > 0) {
+                payload.dailyMilkIdsToAdd = editedDetails.dailyMilkIdsToAdd;
+            }
+            if (editedDetails.dailyMilkIdsToRemove.length > 0) {
+                payload.dailyMilkIdsToRemove = editedDetails.dailyMilkIdsToRemove;
+            }
+
+            await trigger({ body: payload });
+            message.success('Milk batch updated successfully!');
+            await refreshData(); // Làm mới dữ liệu sau khi chỉnh sửa thành công
+            // mutate(); // Fetch lại dữ liệu sau khi update
+            setIsEditing(false);
+        } catch (err) {
+            message.error('Error updating milk batch. Please try again.');
             console.error('Error updating milk batch:', err);
         }
     };
@@ -85,7 +112,7 @@ const ModalMilkBatchDetail: React.FC<ModalMilkBatchDetailProps> = ({ modal, milk
                 <div>
                     <Input.TextArea
                         rows={4}
-                        placeholder="Daily Milk IDs to Add"
+                        placeholder="Enter Daily Milk IDs to Add (e.g., 1, 2, 3)"
                         value={editedDetails.dailyMilkIdsToAdd.join(', ')}
                         onChange={(e) =>
                             handleInputChange(
@@ -94,9 +121,11 @@ const ModalMilkBatchDetail: React.FC<ModalMilkBatchDetailProps> = ({ modal, milk
                             )
                         }
                     />
+                    <Divider>OR</Divider>
                     <Input.TextArea
                         rows={4}
-                        placeholder="Daily Milk IDs to Remove"
+                        placeholder="Enter Daily Milk IDs to Remove (e.g., 4, 5, 6)"
+
                         value={editedDetails.dailyMilkIdsToRemove.join(', ')}
                         onChange={(e) =>
                             handleInputChange(
