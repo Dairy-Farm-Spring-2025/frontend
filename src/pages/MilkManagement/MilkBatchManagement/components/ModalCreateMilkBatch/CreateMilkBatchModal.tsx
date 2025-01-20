@@ -1,22 +1,22 @@
 import { ConfigProvider, Table } from 'antd';
 import { TableRowSelection } from 'antd/es/table/interface';
 import { useEffect, useState } from 'react';
-import ModalComponent from '../../../../../../components/Modal/ModalComponent';
-import SelectComponent from '../../../../../../components/Select/SelectComponent';
-import { Column } from '../../../../../../components/Table/TableComponent';
-import useFetcher from '../../../../../../hooks/useFetcher';
-import useToast from '../../../../../../hooks/useToast';
-import { Area } from '../../../../../../model/Area';
-import { cowStatus } from '../../../../../../service/data/cowStatus';
-import { getLabelByValue } from '../../../../../../utils/getLabel';
-import { dailyMilkApi } from '../../../../../../service/api/DailyMilk/dailyMilkApi';
+import useToast from '../../../../../hooks/useToast';
+import useFetcher from '../../../../../hooks/useFetcher';
+import { Area } from '../../../../../model/Area';
+import { dailyMilkApi } from '../../../../../service/api/DailyMilk/dailyMilkApi';
+import { Column } from '../../../../../components/Table/TableComponent';
+import ModalComponent from '../../../../../components/Modal/ModalComponent';
+import SelectComponent from '../../../../../components/Select/SelectComponent';
+import { getLabelByValue } from '../../../../../utils/getLabel';
+import { cowStatus } from '../../../../../service/data/cowStatus';
 
 interface CreateMilkBatchModalProps {
   modal: any;
-  id: string;
+  mutate: any;
 }
 
-const CreateMilkBatchModal = ({ modal }: CreateMilkBatchModalProps) => {
+const CreateMilkBatchModal = ({ modal, mutate }: CreateMilkBatchModalProps) => {
   const toast = useToast();
   const [dataDaily, setDataDaily] = useState([]);
   const [selectArea, setSelectArea] = useState([]);
@@ -131,11 +131,11 @@ const CreateMilkBatchModal = ({ modal }: CreateMilkBatchModalProps) => {
         .join('&');
       try {
         await trigger({ url: `MilkBatch?${queryParams}` });
+        mutate();
         toast.showSuccess('Success');
       } catch (error: any) {
         toast.showError(error.message);
       }
-      console.log('haha');
     }
   };
 
