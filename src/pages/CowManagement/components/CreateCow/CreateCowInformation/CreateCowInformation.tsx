@@ -1,17 +1,17 @@
-import { DatePicker, SelectProps } from "antd";
-import { useEffect, useState } from "react";
-import FormItemComponent from "../../../../../components/Form/Item/FormItemComponent";
-import InputComponent from "../../../../../components/Input/InputComponent";
-import LabelForm from "../../../../../components/LabelForm/LabelForm";
-import SelectComponent from "../../../../../components/Select/SelectComponent";
-import useFetcher from "../../../../../hooks/useFetcher";
-import { CowType } from "../../../../../model/Cow/CowType";
-import { cowOrigin } from "../../../../../service/data/cowOrigin";
-import { cowStatus } from "../../../../../service/data/cowStatus";
-import { genderData } from "../../../../../service/data/gender";
+import { DatePicker, SelectProps } from 'antd';
+import { useEffect, useState } from 'react';
+import FormItemComponent from '../../../../../components/Form/Item/FormItemComponent';
+import InputComponent from '../../../../../components/Input/InputComponent';
+import LabelForm from '../../../../../components/LabelForm/LabelForm';
+import SelectComponent from '../../../../../components/Select/SelectComponent';
+import useFetcher from '../../../../../hooks/useFetcher';
+import { CowType } from '../../../../../model/Cow/CowType';
+import { cowOrigin } from '../../../../../service/data/cowOrigin';
+import { cowStatus } from '../../../../../service/data/cowStatus';
+import { genderData } from '../../../../../service/data/gender';
 const CreateCowInformation = () => {
-  const { data } = useFetcher<any[]>("cow-types", "GET");
-  const [optionsCowType, setOptionsCowType] = useState<SelectProps["options"]>(
+  const { data } = useFetcher<any[]>('cow-types', 'GET');
+  const [optionsCowType, setOptionsCowType] = useState<SelectProps['options']>(
     []
   );
 
@@ -26,25 +26,7 @@ const CreateCowInformation = () => {
   }, [data]);
 
   return (
-    <>
-      <FormItemComponent
-        rules={[{ required: true }]}
-        name="name"
-        label={<LabelForm>Name</LabelForm>}
-      >
-        <InputComponent
-          className="h-14"
-          placeholder="Enter cow name..."
-          styles={{
-            input: {
-              fontSize: 30,
-              border: 0,
-              borderBottom: "1px solid black",
-              borderRadius: 0,
-            },
-          }}
-        />
-      </FormItemComponent>
+    <div className="mt-5">
       <div className="flex flex-col gap-2">
         <p className="text-2xl text-primary font-bold">Date information</p>
         <div className="grid grid-cols-4 gap-5 w-full">
@@ -131,7 +113,7 @@ const CreateCowInformation = () => {
           </FormItemComponent>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

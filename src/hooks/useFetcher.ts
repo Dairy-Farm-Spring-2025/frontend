@@ -1,6 +1,6 @@
-import useSWR from "swr";
-import api from "../config/axios/axios";
-import { useState, useEffect } from "react";
+import useSWR from 'swr';
+import api from '../config/axios/axios';
+import { useState, useEffect } from 'react';
 
 const fetcher = async (
   url: string,
@@ -8,7 +8,7 @@ const fetcher = async (
   options?: {
     params?: any;
     body?: any;
-    contentType?: "application/json" | "multipart/form-data"; // Add contentType option
+    contentType?: 'application/json' | 'multipart/form-data'; // Add contentType option
   }
 ) => {
   let finalUrl = url;
@@ -20,11 +20,11 @@ const fetcher = async (
   }
 
   const headers: Record<string, string> = {};
-  if (options?.contentType === "multipart/form-data") {
+  if (options?.contentType === 'multipart/form-data') {
     // For multipart, omit setting Content-Type; axios will handle it
-    delete headers["Content-Type"];
+    delete headers['Content-Type'];
   } else {
-    headers["Content-Type"] = "application/json";
+    headers['Content-Type'] = 'application/json';
   }
 
   const config = {
@@ -35,7 +35,7 @@ const fetcher = async (
 
   const response = await api(finalUrl, config);
   let result = response.data;
-  if (method === "GET") {
+  if (method === 'GET') {
     result = response.data.data;
   }
   return result;
@@ -43,14 +43,14 @@ const fetcher = async (
 
 const useFetcher = <T>(
   url: string,
-  method: string = "GET",
-  contentType: "application/json" | "multipart/form-data" = "application/json"
+  method: string = 'GET',
+  contentType: 'application/json' | 'multipart/form-data' = 'application/json'
 ) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<any>(null);
 
   const { data, mutate, isValidating } = useSWR<T>(
-    method === "GET" ? url : null,
+    method === 'GET' ? url : null,
     () => fetcher(url, method),
     {
       revalidateOnFocus: false, // Optional: prevent revalidation on focus
@@ -59,20 +59,23 @@ const useFetcher = <T>(
 
   // Track loading state for GET requests
   useEffect(() => {
-    if (method === "GET") {
+    if (method === 'GET') {
       setIsLoading(isValidating);
     }
   }, [isValidating, method]);
 
-  const trigger = async (options?: { params?: any; body?: any }) => {
+  const trigger = async (options?: { url?: string; body?: any }) => {
     setIsLoading(true);
     setError(null);
     try {
-      const result = await fetcher(url, method, { ...options, contentType });
+      const result = await fetcher(options?.url || url, method, {
+        body: options?.body,
+        contentType,
+      });
       mutate(result, false);
       return result;
     } catch (err: any) {
-      setError(err.response?.data || err.message || "Unknown error");
+      setError(err.response?.data || err.message || 'Unknown error');
       throw err.response?.data || err;
     } finally {
       setIsLoading(false);

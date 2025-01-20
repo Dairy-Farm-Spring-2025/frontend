@@ -63,7 +63,6 @@ const CowGeneralInformation = ({
 
   const handleFinish = async (values: any) => {
     const data = {
-      name: values.name,
       cowStatus: values.cowStatus,
       dateOfBirth: dayjs(values.dateOfBirth).format('YYYY-MM-DD'),
       dateOfEnter: dayjs(values.dateOfEnter).format('YYYY-MM-DD'),

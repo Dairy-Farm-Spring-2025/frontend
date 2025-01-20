@@ -5,6 +5,6 @@ export const shiftData = [
   },
   {
     value: 'shiftTwo',
-    label: 'Shift One (18h - 0h)',
+    label: 'Shift Two (18h - 0h)',
   },
 ];
