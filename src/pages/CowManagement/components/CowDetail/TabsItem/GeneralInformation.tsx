@@ -49,7 +49,6 @@ const CowGeneralInformation = ({
   useEffect(() => {
     if (dataDetail) {
       form.setFieldsValue({
-        name: dataDetail.name,
         cowStatus: dataDetail.cowStatus,
         dateOfBirth: dayjs(dataDetail.dateOfBirth),
         dateOfEnter: dayjs(dataDetail.dateOfEnter),
@@ -90,24 +89,6 @@ const CowGeneralInformation = ({
       form={form}
       className="p-2 flex flex-col gap-5"
     >
-      <FormItemComponent
-        rules={[{ required: true }]}
-        name="name"
-        label={<LabelForm>Name</LabelForm>}
-      >
-        <InputComponent
-          className="h-14"
-          placeholder="Enter cow name..."
-          styles={{
-            input: {
-              fontSize: 30,
-              border: 0,
-              borderBottom: '1px solid black',
-              borderRadius: 0,
-            },
-          }}
-        />
-      </FormItemComponent>
       <div className="flex flex-col gap-2">
         <p className="text-2xl text-primary font-bold">Date information</p>
         <div className="grid grid-cols-4 gap-5 w-full">
@@ -193,7 +174,10 @@ const CowGeneralInformation = ({
             />
           </FormItemComponent>
         </div>
-        <div className="flex justify-end gap-5">
+        <div className="flex justify-end items-center gap-3">
+          <p className="text-lg text-orange-600 font-semibold">
+            (You can edit cow's information)
+          </p>
           <ButtonComponent loading={isLoading} htmlType="submit" type="primary">
             Save
           </ButtonComponent>
