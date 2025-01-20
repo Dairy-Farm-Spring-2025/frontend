@@ -1,18 +1,22 @@
-import { ConfigProvider, Input } from 'antd';
+import { ConfigProvider, Table } from 'antd';
 import { ColumnProps, TableProps } from 'antd/es/table';
-import { Table } from 'antd';
-import './index.scss';
 import { useEffect, useState } from 'react';
+import InputComponent from '../Input/InputComponent';
+import './index.scss';
+
 export interface Column extends ColumnProps {
   title: string;
   dataIndex: string;
   key: string;
+  searchable?: boolean;
+  render?: (value: any, record: any, index: number) => React.ReactNode; // Rendered value
 }
 
 interface TableComponentProps extends TableProps {
   columns: Column[];
   dataSource: any;
 }
+
 const TableComponent = ({
   columns,
   dataSource,
@@ -24,11 +28,22 @@ const TableComponent = ({
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.toLowerCase();
     setSearchText(value);
+
     const filtered = dataSource.filter((record: any) =>
-      columns.some((column) =>
-        record[column.dataIndex]?.toString().toLowerCase().includes(value)
-      )
+      columns
+        .filter((column) => column.searchable !== false)
+        .some((column) => {
+          const rawValue =
+            record[column.dataIndex]?.toString().toLowerCase() ?? '';
+          const renderedValue =
+            column
+              .render?.(record[column.dataIndex], record, 0)
+              ?.toString()
+              .toLowerCase() ?? '';
+          return rawValue.includes(value) || renderedValue.includes(value);
+        })
     );
+
     setFilteredData(filtered);
   };
 
@@ -39,30 +54,29 @@ const TableComponent = ({
   }, [dataSource]);
 
   return (
-    <div className='table w-full overflow-auto'>
+    <div className="table !w-full !max-w-full overflow-auto">
       <ConfigProvider
         input={{
           variant: 'outlined',
         }}
       >
-        <Input.Search
-          placeholder='Enter name...'
+        <InputComponent.Search
+          placeholder="Enter name..."
           value={searchText}
           onChange={handleSearch}
           style={{ marginBottom: 16 }}
           allowClear
           enterButton
-          className='w-1/5 input-with-bold-outline'
+          className="w-2/5 input-with-bold-outline"
         />
       </ConfigProvider>
       <ConfigProvider
         table={{
-          className: 'shadow-lg !overflow-auto',
+          className: 'shadow-lg !overflow-auto !w-full',
         }}
       >
         <Table
           bordered
-          scroll={{ x: 1500 }}
           columns={columns}
           dataSource={filteredData}
           pagination={{ position: ['bottomCenter'] }}
