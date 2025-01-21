@@ -115,10 +115,10 @@ const PenManageMent = () => {
         <Tooltip className="tooltip-content"
           color="#87d068"
           placement="top"
-          title={<div className="dimensions"><strong>Length: </strong> {data.length} m,<strong> Width: </strong>{data.width} m </div>}
+          title={<div className="dimensions"><strong>Length: </strong> {data.area.penLength} m,<strong> Width: </strong>{data.area.penWidth} m </div>}
         >
           <span>
-            {data.length} x {data.width} m
+            {data.area.penLength} x {data.area.penWidth} m
           </span>
         </Tooltip>
       ),

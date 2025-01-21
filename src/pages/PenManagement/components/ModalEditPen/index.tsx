@@ -141,7 +141,7 @@ const ModalEditPens = ({ mutate, modal, id }: ModalTypesProps) => {
                             )}
                         </div>
 
-                        <div className="flex flex-col gap-4">
+                        {/* <div className="flex flex-col gap-4">
                             <p className="text-2xl text-primary font-bold">Dimensions</p>
                             <div className="grid grid-cols-2 gap-5 w-full">
                                 <FormItemComponent
@@ -160,7 +160,7 @@ const ModalEditPens = ({ mutate, modal, id }: ModalTypesProps) => {
                                     <InputNumber placeholder="Enter width in m" min={1} style={{ width: "100%" }} />
                                 </FormItemComponent>
                             </div>
-                        </div>
+                        </div> */}
                         <div className="flex flex-col gap-4">
                             <p className="text-2xl text-primary font-bold">Description</p>
                             <div className="grid gap-5 w-full">

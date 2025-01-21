@@ -4,6 +4,8 @@ export type Area = {
     description: string;
     length: number;
     width: number;
+    penLength: number;
+    penWidth: number;
     areaType: "cowHousing" | "milkingParlor" | "wareHouse";
     areaId: number;
 }
