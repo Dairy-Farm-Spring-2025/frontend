@@ -1,4 +1,8 @@
-import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+} from 'react-router-dom';
 import AppDashboard from '../../core/layout/AppDashboard';
 import CowManagement from '../../pages/CowManagement';
 import ListCow from '../../pages/CowManagement/components/ListCow';
@@ -24,6 +28,8 @@ import PenManageMent from '../../pages/PenManagement';
 import CowDetail from '../../pages/CowManagement/components/CowDetail';
 import MilkBatchManagement from '../../pages/MilkManagement/MilkBatchManagement';
 import MilkManagement from '../../pages/MilkManagement';
+import WarehouseManagement from '../../pages/WarehouseManagement';
+import Warehouse from '../../pages/WarehouseManagement/components/Warehouse';
 
 const AppRouting = () => {
   const user = useSelector((state: RootState) => state.user);
@@ -49,7 +55,8 @@ const AppRouting = () => {
     },
     {
       path: 'dairy',
-      element: user.accessToken !== '' ? <AppDashboard /> : <Navigate to={'/login'} />,
+      element:
+        user.accessToken !== '' ? <AppDashboard /> : <Navigate to={'/login'} />,
       children: [
         {
           path: 'user-management',
@@ -97,6 +104,16 @@ const AppRouting = () => {
         {
           path: 'area-management',
           element: <AreaManagement />,
+        },
+        {
+          path: 'warehouse-management',
+          element: <WarehouseManagement />,
+          children: [
+            {
+              path: 'warehouse',
+              element: <Warehouse />,
+            },
+          ],
         },
         {
           path: 'pen-management',

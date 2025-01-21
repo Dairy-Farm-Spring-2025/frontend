@@ -8,39 +8,39 @@ import {
   Menu,
   MenuProps,
   theme,
-} from "antd";
-import React, { useEffect } from "react";
-import { AiOutlineIssuesClose } from "react-icons/ai";
-import { BiCategory, BiTask, BiUser } from "react-icons/bi";
-import { CiBoxList } from "react-icons/ci";
-import { FaWpforms } from "react-icons/fa";
-import { GiCage } from "react-icons/gi";
-import { IoIosLogOut, IoIosNotifications } from "react-icons/io";
-import { LiaChartAreaSolid, LiaProductHunt } from "react-icons/lia";
-import { LuGitPullRequest, LuMilk } from "react-icons/lu";
+} from 'antd';
+import React, { useEffect } from 'react';
+import { AiOutlineIssuesClose } from 'react-icons/ai';
+import { BiCategory, BiTask, BiUser } from 'react-icons/bi';
+import { CiBoxList } from 'react-icons/ci';
+import { FaWpforms } from 'react-icons/fa';
+import { GiCage } from 'react-icons/gi';
+import { IoIosLogOut, IoIosNotifications } from 'react-icons/io';
+import { LiaChartAreaSolid, LiaProductHunt } from 'react-icons/lia';
+import { LuGitPullRequest, LuMilk } from 'react-icons/lu';
 import {
   MdOutlineFastfood,
   MdOutlineHealthAndSafety,
   MdSchedule,
-} from "react-icons/md";
-import { PiCow, PiFarmLight, PiPlus, PiWarehouse } from "react-icons/pi";
-import { RiAlignItemLeftLine } from "react-icons/ri";
-import { SiHappycow } from "react-icons/si";
-import { useDispatch } from "react-redux";
-import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
-import ButtonComponent from "../../components/Button/ButtonComponent";
-import AnimationAppear from "../../components/UI/AnimationAppear";
-import useToast from "../../hooks/useToast";
-import { breadcumData } from "../../service/data/breadcumData";
-import { logout } from "../store/slice/userSlice";
-import LabelDashboard from "./components/LabelDashboard";
-import "./index.scss";
-import useFetcher from "../../hooks/useFetcher";
-import { setAvatarFunction } from "../store/slice/avatarSlice";
-import { getAvatar } from "../../utils/getImage";
+} from 'react-icons/md';
+import { PiCow, PiFarmLight, PiPlus, PiWarehouse } from 'react-icons/pi';
+import { RiAlignItemLeftLine } from 'react-icons/ri';
+import { SiHappycow } from 'react-icons/si';
+import { useDispatch } from 'react-redux';
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import ButtonComponent from '../../components/Button/ButtonComponent';
+import AnimationAppear from '../../components/UI/AnimationAppear';
+import useToast from '../../hooks/useToast';
+import { breadcumData } from '../../service/data/breadcumData';
+import { logout } from '../store/slice/userSlice';
+import LabelDashboard from './components/LabelDashboard';
+import './index.scss';
+import useFetcher from '../../hooks/useFetcher';
+import { setAvatarFunction } from '../store/slice/avatarSlice';
+import { getAvatar } from '../../utils/getImage';
 import { WalletOutlined } from '@ant-design/icons';
 const { Header, Content, Sider } = Layout;
-type MenuItem = Required<MenuProps>["items"][number];
+type MenuItem = Required<MenuProps>['items'][number];
 const { useToken } = theme;
 
 function getItem(
@@ -58,9 +58,9 @@ function getItem(
 }
 
 const siderStyle: React.CSSProperties = {
-  overflow: "auto",
-  height: "100vh",
-  position: "fixed",
+  overflow: 'auto',
+  height: '100vh',
+  position: 'fixed',
   top: 0,
   bottom: 0,
   left: 0,
@@ -70,8 +70,8 @@ const siderStyle: React.CSSProperties = {
 const AppDashboard: React.FC = () => {
   const location = useLocation();
   const dispatch = useDispatch();
-  const pathSegments = location.pathname.split("/").filter(Boolean);
-  const { data, mutate } = useFetcher<any>("users/profile", "GET");
+  const pathSegments = location.pathname.split('/').filter(Boolean);
+  const { data, mutate } = useFetcher<any>('users/profile', 'GET');
 
   useEffect(() => {
     if (data) {
@@ -83,7 +83,7 @@ const AppDashboard: React.FC = () => {
     title:
       breadcumData[segment] ||
       segment.charAt(0).toUpperCase() + segment.slice(1),
-    href: "/" + pathSegments.slice(0, index + 1).join("/"),
+    href: '/' + pathSegments.slice(0, index + 1).join('/'),
   }));
   const navigate = useNavigate();
   const toast = useToast();
@@ -96,7 +96,7 @@ const AppDashboard: React.FC = () => {
   };
 
   const menuStyle: React.CSSProperties = {
-    boxShadow: "none",
+    boxShadow: 'none',
   };
   const sizeIcon = 15;
 
@@ -104,17 +104,17 @@ const AppDashboard: React.FC = () => {
 
   const handleLogout = () => {
     dispatch(logout());
-    toast.showSuccess("Login success");
-    handleNavigate("/login");
+    toast.showSuccess('Login success');
+    handleNavigate('/login');
   };
 
-  const items: MenuProps["items"] = [
+  const items: MenuProps['items'] = [
     {
-      key: "1",
+      key: '1',
       label: (
         <div
           className="flex flex-col"
-          onClick={() => handleNavigate("profile")}
+          onClick={() => handleNavigate('profile')}
         >
           <p className="text-base font-bold">Nguyen Van A</p>
           <p className="text-slate-500">Staff</p>
@@ -125,102 +125,107 @@ const AppDashboard: React.FC = () => {
 
   const itemsMenu: MenuItem[] = [
     {
-      key: "user-group",
+      key: 'user-group',
       label: <LabelDashboard>User Management</LabelDashboard>,
-      type: "group",
+      type: 'group',
       children: [
-        getItem("User", "dairy/user-management", <BiUser />),
-        getItem("Role", "dairy/role-management", <BiCategory />),
+        getItem('User', 'dairy/user-management', <BiUser />),
+        getItem('Role', 'dairy/role-management', <BiCategory />),
       ],
     },
-    getItem("Dairy Management", "dairy/dairy-management", <PiFarmLight />),
+    getItem('Dairy Management', 'dairy/dairy-management', <PiFarmLight />),
     {
-      key: "group-cow",
+      key: 'group-cow',
       label: <LabelDashboard>Dairy Management</LabelDashboard>,
-      type: "group",
+      type: 'group',
       children: [
-        getItem("Cow", "dairy/cow-management", <PiCow />, [
+        getItem('Cow', 'dairy/cow-management', <PiCow />, [
           getItem(
-            "List Cow",
-            "dairy/cow-management/list-cow",
+            'List Cow',
+            'dairy/cow-management/list-cow',
             <CiBoxList size={sizeIcon} />
           ),
           getItem(
-            "Cow Type",
-            "dairy/cow-management/cow-type-management",
+            'Cow Type',
+            'dairy/cow-management/cow-type-management',
             <BiCategory size={sizeIcon} />
           ),
           getItem(
-            "Create Cow",
-            "dairy/cow-management/create-cow",
+            'Create Cow',
+            'dairy/cow-management/create-cow',
             <PiPlus size={sizeIcon} />
           ),
           getItem(
-            "Health Report",
-            "dairy/cow-management/health-report",
+            'Health Report',
+            'dairy/cow-management/health-report',
             <MdOutlineHealthAndSafety size={sizeIcon} />
           ),
         ]),
-        getItem("Feed", "dairy/feed-management", <MdOutlineFastfood />),
-        getItem("Area", "dairy/area-management", <LiaChartAreaSolid />),
-        getItem("Pen", "dairy/pen-management", <GiCage />),
-        getItem("Milk", "dairy/milk-management", <LuMilk />, [
+        getItem('Feed', 'dairy/feed-management', <MdOutlineFastfood />),
+        getItem('Area', 'dairy/area-management', <LiaChartAreaSolid />),
+        getItem('Pen', 'dairy/pen-management', <GiCage />),
+        getItem('Milk', 'dairy/milk-management', <LuMilk />, [
           getItem(
-            "MilkBatch",
-            "dairy/milk-management/milk-batch",
+            'MilkBatch',
+            'dairy/milk-management/milk-batch',
             <WalletOutlined size={sizeIcon} />
-          )
+          ),
         ]),
-        getItem("Warehouse", "dairy/warehouse-management", <PiWarehouse />, [
+        getItem('Warehouse', 'dairy/warehouse-management', <PiWarehouse />, [
           getItem(
-            "Category",
-            "dairy/category-management",
+            'Warehouse ',
+            'dairy/warehouse-management/warehouse',
+            <PiWarehouse size={sizeIcon} />
+          ),
+          getItem(
+            'Category',
+            'dairy/category-management',
             <BiCategory size={sizeIcon} />
           ),
           getItem(
-            "Item",
-            "dairy/item-management",
+            'Item',
+            'dairy/item-management',
             <RiAlignItemLeftLine size={sizeIcon} />
           ),
           getItem(
-            "Supplier",
-            "dairy/supplier-management",
+            'Supplier',
+            'dairy/supplier-management',
             <LiaProductHunt size={sizeIcon} />
           ),
         ]),
       ],
     },
     {
-      key: "group-schedule",
+      key: 'group-schedule',
       label: <LabelDashboard>HR Management</LabelDashboard>,
-      type: "group",
+      type: 'group',
       children: [
-        getItem("Human", "dairy/human-management", <BiUser />, [
+        getItem('Human', 'dairy/human-management', <BiUser />, [
           getItem(
-            "Worker",
-            "dairy/human-management/worker",
+            'Worker',
+            'dairy/human-management/worker',
             <CiBoxList size={sizeIcon} />
           ),
           getItem(
-            "Veterinarian",
-            "dairy/human-management/veterinarian",
+            'Veterinarian',
+            'dairy/human-management/veterinarian',
             <CiBoxList size={sizeIcon} />
           ),
         ]),
 
-        getItem("Schedule", "dairy/schedule-management", <MdSchedule />),
-        getItem("Task", "dairy/task-management", <BiTask />, [
+        getItem('Schedule', 'dairy/schedule-management', <MdSchedule />),
+        getItem('Task', 'dairy/task-management', <BiTask />, [
           getItem(
-            "Task Type",
-            "dairy/task-type",
+            'Task Type',
+            'dairy/task-type',
             <BiCategory size={sizeIcon} />
           ),
         ]),
-        getItem("Application", "dairy/application-management", <FaWpforms />),
-        getItem("Issue", "dairy/issue-management", <AiOutlineIssuesClose />),
+        getItem('Application', 'dairy/application-management', <FaWpforms />),
+        getItem('Issue', 'dairy/issue-management', <AiOutlineIssuesClose />),
         getItem(
-          "Request Schedule",
-          "dairy/request-schedule-management",
+          'Request Schedule',
+          'dairy/request-schedule-management',
           <LuGitPullRequest />
         ),
       ],
@@ -231,7 +236,7 @@ const AppDashboard: React.FC = () => {
   }, [location.pathname]);
   return (
     <AnimationAppear>
-      <Layout style={{ minHeight: "100vh" }} className="layout-dairy">
+      <Layout style={{ minHeight: '100vh' }} className="layout-dairy">
         <Sider
           trigger={null}
           collapsible
@@ -272,7 +277,7 @@ const AppDashboard: React.FC = () => {
                   }}
                 >
                   <Dropdown
-                    trigger={["click"]}
+                    trigger={['click']}
                     className="cursor-pointer"
                     menu={{ items }}
                     dropdownRender={(menu) => (
@@ -307,18 +312,18 @@ const AppDashboard: React.FC = () => {
             </div>
           </Header>
           <Content
-            style={{ padding: "10px" }}
+            style={{ padding: '10px' }}
             className=" !bg-slate-200 !min-h-[90vh]"
           >
             <div
               style={{
                 padding: 8,
                 minHeight: 360,
-                overflowY: "auto",
+                overflowY: 'auto',
               }}
               className="!h-full"
             >
-              <Breadcrumb style={{ margin: "16px 0" }}>
+              <Breadcrumb style={{ margin: '16px 0' }}>
                 <Breadcrumb.Item>
                   <Link to="/">Home</Link>
                 </Breadcrumb.Item>
