@@ -1,10 +1,18 @@
 export const shiftData = [
   {
     value: 'shiftOne',
-    label: 'Shift One (8h - 14h)',
+    label: 'Shift 1 (0h - 6h)',
   },
   {
     value: 'shiftTwo',
-    label: 'Shift Two (18h - 0h)',
+    label: 'Shift 2 (6h - 12h)',
+  },
+  {
+    value: 'shiftThree',
+    label: 'Shift 3 (12h - 18h)',
+  },
+  {
+    value: 'shiftFour',
+    label: 'Shift 4 (18h - 24h)',
   },
 ];

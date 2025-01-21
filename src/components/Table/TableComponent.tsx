@@ -3,7 +3,8 @@ import { ColumnProps, TableProps } from 'antd/es/table';
 import { useEffect, useState } from 'react';
 import InputComponent from '../Input/InputComponent';
 import './index.scss';
-
+import ButtonComponent from '../Button/ButtonComponent';
+import { FilterOutlined } from '@ant-design/icons';
 export interface Column extends ColumnProps {
   title: string;
   dataIndex: string;
@@ -55,21 +56,26 @@ const TableComponent = ({
 
   return (
     <div className="table !w-full !max-w-full overflow-auto">
-      <ConfigProvider
-        input={{
-          variant: 'outlined',
-        }}
-      >
-        <InputComponent.Search
-          placeholder="Enter name..."
-          value={searchText}
-          onChange={handleSearch}
-          style={{ marginBottom: 16 }}
-          allowClear
-          enterButton
-          className="w-2/5 input-with-bold-outline"
-        />
-      </ConfigProvider>
+      <div className="flex gap-2">
+        <ConfigProvider
+          input={{
+            variant: 'outlined',
+          }}
+        >
+          <InputComponent.Search
+            placeholder="Enter name..."
+            value={searchText}
+            onChange={handleSearch}
+            style={{ marginBottom: 16 }}
+            allowClear
+            enterButton
+            className="w-2/5 input-with-bold-outline"
+          />
+        </ConfigProvider>
+        <ButtonComponent className="!duration-150" type="primary">
+          <FilterOutlined />
+        </ButtonComponent>
+      </div>
       <ConfigProvider
         table={{
           className: 'shadow-lg !overflow-auto !w-full',
