@@ -7,6 +7,9 @@ import { Input, Button, Divider, message, Table, Popconfirm, Row, Col, Tooltip }
 import useFetcher from '../../../../../hooks/useFetcher';
 import ModalComponent from '../../../../../components/Modal/ModalComponent';
 import TableComponent, { Column } from '../../../../../components/Table/TableComponent';
+import AnimationAppear from '../../../../../components/UI/AnimationAppear';
+import WhiteBackground from '../../../../../components/UI/WhiteBackground';
+import { formatAreaType } from '../../../../../utils/format';
 
 interface ModalMilkBatchDetailProps {
     milkBatchId: number;
@@ -96,6 +99,9 @@ const ModalMilkBatchDetail: React.FC<ModalMilkBatchDetailProps> = ({ modal, milk
             title: 'Shift',
             dataIndex: 'shift',
             key: 'shift',
+            render: (shift: string) => (
+                formatAreaType(shift)
+            )
         },
         {
             title: 'Milk Date',
@@ -110,7 +116,7 @@ const ModalMilkBatchDetail: React.FC<ModalMilkBatchDetailProps> = ({ modal, milk
                 <Tooltip
                     title={
                         <>
-                            <div><strong>EmployeeNumber:</strong> {record.worker?.employeeNumber || 'N/A'}</div>
+                            <div><strong>Employee Number:</strong> {formatAreaType(record.worker?.employeeNumber || 'N/A')}</div>
                             <div><strong>Phone:</strong> {record.worker?.phoneNumber || 'N/A'}</div>
                             <div><strong>Role:</strong> {record.worker?.roleId?.name || 'N/A'}</div>
                         </>
@@ -134,9 +140,9 @@ const ModalMilkBatchDetail: React.FC<ModalMilkBatchDetailProps> = ({ modal, milk
                         <>
                             <div><strong>Cow Id:</strong> {record.cow?.cowId || 'N/A'}</div>
                             <div><strong>Type:</strong> {record.cow?.cowTypeEntity?.name || 'N/A'}</div>
-                            <div><strong>Origin:</strong> {record.cow?.cowOrigin || 'N/A'}</div>
+                            <div><strong>Origin:</strong> {formatAreaType(record.cow?.cowOrigin || 'N/A')}</div>
                             <div><strong>Cow Type:</strong> {record.cow?.cowTypeEntity?.name || 'N/A'}</div>
-                            <div><strong>Gender:</strong> {record.cow?.gender || 'N/A'}</div>
+                            <div><strong>Gender:</strong> {formatAreaType(record.cow?.gender || 'N/A')}</div>
                         </>
                     }
                     color="#87d068"
@@ -182,7 +188,7 @@ const ModalMilkBatchDetail: React.FC<ModalMilkBatchDetailProps> = ({ modal, milk
             width={1500}
         >
             {/* Add Daily Milk ID Section */}
-            <Row gutter={16} style={{ marginBottom: 20 }}>
+            <Row gutter={16} style={{ marginBottom: 10 }}>
                 <Col span={8}>
                     <Input
                         placeholder="Enter Daily Milk ID"
@@ -199,12 +205,17 @@ const ModalMilkBatchDetail: React.FC<ModalMilkBatchDetailProps> = ({ modal, milk
             </Row>
 
             {/* Table */}
-            <TableComponent
-                columns={columns}
-                dataSource={data?.dailyMilks || []}
-                rowKey="dailyMilkId"
-                loading={isLoading}
-            />
+            <AnimationAppear duration={0.5}>
+                <WhiteBackground>
+                    <TableComponent
+                        columns={columns}
+                        dataSource={data?.dailyMilks || []}
+
+                        rowKey="dailyMilkId"
+                        loading={isLoading}
+                    />
+                </WhiteBackground>
+            </AnimationAppear>
         </ModalComponent>
     );
 };
