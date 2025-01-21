@@ -6,4 +6,7 @@ export const breadcumData: { [key: string]: string } = {
   'health-report': 'Health Report',
   'user-management': 'User Management',
   'role-management': 'Role Management',
+  'warehouse-management': 'Warehouse Management',
+  'milk-management': 'Milk Management',
+  'milk-batch': 'Milk Batch',
 };
