@@ -14,4 +14,22 @@ export const dailyMilkApi = {
       throw Error(error.response.data.message);
     }
   },
+  recordDailyMilkOfCowByMonth: async (id: string, year: number) => {
+    try {
+      const response = await api.get(
+        `dailymilks/total/${id}/month?year=${year}`
+      );
+      return response.data;
+    } catch (error: any) {
+      throw Error(error.response.data.message);
+    }
+  },
+  recordDailyMilkCowByDate: async (id: string, date: string) => {
+    try {
+      const response = await api.get(`dailymilks/total/${id}/day?date=${date}`);
+      return response.data;
+    } catch (error: any) {
+      throw Error(error.response.data.message);
+    }
+  },
 };

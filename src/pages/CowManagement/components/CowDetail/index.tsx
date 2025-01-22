@@ -2,6 +2,7 @@ import {
   FunnelPlotOutlined,
   PlusCircleOutlined,
   ProfileOutlined,
+  SaveOutlined,
 } from '@ant-design/icons';
 import { useParams } from 'react-router-dom';
 import TabsComponent, {
@@ -13,6 +14,7 @@ import DailyMilk from './TabsItem/DailyMilk';
 import CowGeneralInformation from './TabsItem/GeneralInformation';
 import useFetcher from '../../../../hooks/useFetcher';
 import { DailyMilkModel } from '../../../../model/DailyMilk/DailyMilk';
+import DailyMilkRecord from './TabsItem/DailyMilkRecord';
 
 const CowDetail = () => {
   const { id } = useParams();
@@ -60,14 +62,24 @@ const CowDetail = () => {
       ),
       icon: <FunnelPlotOutlined />,
     },
+    {
+      key: 'record',
+      label: 'Daily Milk Record',
+      children: <DailyMilkRecord id={id} />,
+      icon: <SaveOutlined />,
+    },
   ];
   return (
     <AnimationAppear>
-      <WhiteBackground>
+      <WhiteBackground className="min-h-[70vh]">
         <p className="text-4xl font-bold !h-fit my-4 text-primary">
           {dataDetail?.name}
         </p>
-        <TabsComponent items={items} destroyInactiveTabPane />
+        <TabsComponent
+          items={items}
+          destroyInactiveTabPane
+          className="!h-full"
+        />
       </WhiteBackground>
     </AnimationAppear>
   );
