@@ -88,6 +88,8 @@ const ModalCreateArea = ({ mutate, modal }: ModalCreateAreaProps) => {
         onCancel={onClose}
         title='Create New Area'
         loading={isLoading}
+        width={800}
+        style={{ overflow: 'none' }}
       >
         <FormComponent form={form} onFinish={onFinish}>
           <FormItemComponent
@@ -97,7 +99,7 @@ const ModalCreateArea = ({ mutate, modal }: ModalCreateAreaProps) => {
           >
             <Select options={areaTypes} onChange={(value) => setAreaTypeSelected(value)} />
           </FormItemComponent>
-          <div className='flex justify-between '>
+          <div className='flex justify-between'>
             <FormItemComponent
               rules={[
                 { required: true, message: 'Length is required' },
@@ -160,6 +162,64 @@ const ModalCreateArea = ({ mutate, modal }: ModalCreateAreaProps) => {
               />
             </FormItemComponent>
           </div>
+          <div className='flex justify-between'>
+            <FormItemComponent
+              rules={[
+                { required: true, message: 'Pen Length is required' },
+                { type: 'number', min: 1, message: 'Pen Length must be a positive number' },
+                ({ getFieldValue }) => ({
+                  validator(_, value) {
+                    const penWidth = getFieldValue('penWidth');
+                    if (!value || !penWidth || value >= penWidth) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(
+                      new Error('Pen Length must be greater than or equal to the Pen Width')
+                    );
+                  },
+                }),
+              ]}
+              name='penLength'
+              label={<LabelForm>Pen Length (m):</LabelForm>}
+            >
+              <InputNumber
+                className='w-[50%]'
+                min={1}
+                disabled={!areaTypeSelected}
+                onChange={(value) => {
+                  form.setFieldsValue({ penLength: value });
+                }}
+              />
+            </FormItemComponent>
+            <FormItemComponent
+              rules={[
+                { required: true, message: 'Pen Width is required' },
+                { type: 'number', min: 1, message: 'Pen Width must be a positive number' },
+                ({ getFieldValue }) => ({
+                  validator(_, value) {
+                    const penLength = getFieldValue('penLength');
+                    if (!value || !penLength || value <= penLength) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(
+                      new Error('Pen Width must be smaller than or equal to the Pen Length')
+                    );
+                  },
+                }),
+              ]}
+              name='penWidth'
+              label={<LabelForm>Pen Width (m):</LabelForm>}
+            >
+              <InputNumber
+                className='w-[50%]'
+                min={1}
+                disabled={!areaTypeSelected}
+                onChange={(value) => {
+                  form.setFieldsValue({ penWidth: value });
+                }}
+              />
+            </FormItemComponent>
+          </div>
           <FormItemComponent
             rules={[{ required: true, message: 'Name is required' }, { validator: validateInput }]}
             name='name'
@@ -172,7 +232,7 @@ const ModalCreateArea = ({ mutate, modal }: ModalCreateAreaProps) => {
             name='description'
             label={<LabelForm>Description:</LabelForm>}
           >
-            <Input.TextArea style={{ height: 120 }} placeholder='Enter a description' />
+            <Input.TextArea style={{ height: 80 }} placeholder='Enter a description' />
           </FormItemComponent>
         </FormComponent>
         <div className='mb-4 text-sm text-gray-700'>
