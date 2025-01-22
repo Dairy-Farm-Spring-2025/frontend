@@ -24,6 +24,8 @@ import PenManageMent from '../../pages/PenManagement';
 import CowDetail from '../../pages/CowManagement/components/CowDetail';
 import MilkBatchManagement from '../../pages/MilkManagement/MilkBatchManagement';
 import MilkManagement from '../../pages/MilkManagement';
+import { MoveCowManagement } from '../../pages/CowPenManagement/components/MoveCowManagement';
+import { CowPenManagement } from '../../pages/CowPenManagement';
 
 const AppRouting = () => {
   const user = useSelector((state: RootState) => state.user);
@@ -101,6 +103,16 @@ const AppRouting = () => {
         {
           path: 'pen-management',
           element: <PenManageMent />,
+        },
+        {
+          path: 'move-cow-management',
+          element: <CowPenManagement />,
+          children: [
+            {
+              path: '',
+              element: <MoveCowManagement />,
+            },
+          ],
         },
         {
           path: 'milk-management',
