@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { toast } from 'react-hot-toast';
 import { Descriptions, Input, Button, Select } from 'antd';
 import useFetcher from '../../../../hooks/useFetcher';
 import { Area } from '../../../../model/Area/Area';
@@ -32,6 +33,7 @@ const ModalAreaDetail: React.FC<ModalAreaDetailProps> = ({ modal, areaId, mutate
   useEffect(() => {
     if (data) {
       setAreaDetails(data);
+      console.log('this is datat', data);
     }
   }, [areaId, data, modal.open]);
 
@@ -48,11 +50,42 @@ const ModalAreaDetail: React.FC<ModalAreaDetailProps> = ({ modal, areaId, mutate
 
   const handleSave = async () => {
     try {
+      // Validation: Ensure penWidth and penLength are positive numbers greater than zero
+      if (
+        (editedDetails?.penWidth !== undefined && editedDetails?.penWidth <= 0) ||
+        (editedDetails?.penLength !== undefined && editedDetails?.penLength <= 0)
+      ) {
+        toast.error('Pen width and pen length must be positive numbers greater than zero.');
+        return; // Stop saving if validation fails
+      }
+
+      // Validation: Ensure penWidth and penLength do not exceed area dimensions
+      if (
+        (editedDetails?.penWidth !== undefined &&
+          editedDetails?.penWidth > (areaDetails?.width || 0)) ||
+        (editedDetails?.penLength !== undefined &&
+          editedDetails?.penLength > (areaDetails?.length || 0))
+      ) {
+        toast.error(
+          `Pen dimensions cannot exceed the area's dimensions (Width: ${areaDetails?.width} m, Length: ${areaDetails?.length} m).`
+        );
+        return; // Stop saving if validation fails
+      }
+
+      // Validation: Ensure penWidth is smaller than or equal to penLength
+      if (
+        editedDetails?.penWidth !== undefined &&
+        editedDetails?.penLength !== undefined &&
+        editedDetails.penWidth > editedDetails.penLength
+      ) {
+        toast.error('Width of the pen must be smaller than or equal to the length of the pen.');
+        return; // Stop saving if validation fails
+      }
+
       // Optimistically update the local state
       setAreaDetails((prev) => ({ ...prev, ...editedDetails } as Area));
 
       // Use mutate to update SWR cache and trigger a revalidation
-
       const updatedArea = await trigger({
         params: areaId,
         body: editedDetails,
@@ -63,8 +96,10 @@ const ModalAreaDetail: React.FC<ModalAreaDetailProps> = ({ modal, areaId, mutate
       setIsEditing(false);
       // Trigger a re-fetch after successful update
       mutate();
+      toast.success('Area updated successfully!');
       return updatedArea; // Return the updated data for SWR cache
     } catch (err) {
+      toast.error('Error updating area. Please try again.');
       console.error('Error updating area:', err);
     }
   };
@@ -137,6 +172,28 @@ const ModalAreaDetail: React.FC<ModalAreaDetailProps> = ({ modal, areaId, mutate
                 />
               ) : (
                 `${areaDetails.width} m`
+              )}
+            </Descriptions.Item>
+            <Descriptions.Item label='Pen Length'>
+              {isEditing ? (
+                <Input
+                  type='number'
+                  value={editedDetails?.penLength || 0}
+                  onChange={(e) => handleInputChange('penLength', Number(e.target.value))}
+                />
+              ) : (
+                `${areaDetails.penLength} m`
+              )}
+            </Descriptions.Item>
+            <Descriptions.Item label='Pen Width'>
+              {isEditing ? (
+                <Input
+                  type='number'
+                  value={editedDetails?.penWidth || 0}
+                  onChange={(e) => handleInputChange('penWidth', Number(e.target.value))}
+                />
+              ) : (
+                `${areaDetails.penWidth} m`
               )}
             </Descriptions.Item>
             <Descriptions.Item label='Area Type'>

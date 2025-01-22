@@ -18,6 +18,7 @@ const areaTypes: { label: string; value: AreaType }[] = [
 
 const AreaManagement: React.FC = () => {
   const { data, isLoading, mutate } = useFetcher<any>('areas', 'GET');
+  console.log(data);
   const [areaId, setAreaId] = React.useState<number>(0);
   const modalCreate = useModal();
   const modalViewDetail = useModal();
@@ -52,6 +53,16 @@ const AreaManagement: React.FC = () => {
       dataIndex: 'width',
       key: 'width',
       title: 'Width (m)',
+    },
+    {
+      dataIndex: 'penLength',
+      key: 'penLength',
+      title: 'Pen Length (m)',
+    },
+    {
+      dataIndex: 'penWidth',
+      key: 'penWidth',
+      title: 'Pen Width (m)',
     },
     {
       dataIndex: 'areaType',
