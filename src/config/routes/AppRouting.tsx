@@ -6,8 +6,11 @@ import {
 import AppDashboard from '../../core/layout/AppDashboard';
 import CowManagement from '../../pages/CowManagement';
 import ListCow from '../../pages/CowManagement/components/ListCow';
-import DairyManagement from '../../pages/DairyManagement';
 
+import { useSelector } from 'react-redux';
+import { RootState } from '../../core/store/store';
+import AreaManagement from '../../pages/AreaManagement';
+import CowTypeManagement from '../../pages/CowManagement/components/CowTypeManagement';
 import CreateCow from '../../pages/CowManagement/components/CreateCow';
 import LoginPage from '../../pages/Login';
 import ForgetPassword from '../../pages/Login/components/ForgetPassword';
@@ -15,19 +18,17 @@ import LoginForm from '../../pages/Login/components/LoginForm';
 import Profile from '../../pages/Profile';
 import ListRole from '../../pages/RoleManagement';
 import ListUser from '../../pages/UserManagement';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../core/store/store';
-import CowTypeManagement from '../../pages/CowManagement/components/CowTypeManagement';
-import AreaManagement from '../../pages/AreaManagement';
 
-import ListWorker from '../../pages/HumanManangement/WorkerManagement';
 import HumanManagement from '../../pages/HumanManangement';
 import ListVeterinarian from '../../pages/HumanManangement/VeterinarianManagement';
+import ListWorker from '../../pages/HumanManangement/WorkerManagement';
 import PenManageMent from '../../pages/PenManagement';
 
 import CowDetail from '../../pages/CowManagement/components/CowDetail';
-import MilkBatchManagement from '../../pages/MilkManagement/MilkBatchManagement';
+import Dashboard from '../../pages/Dashboard';
+import DailyMilkDashboard from '../../pages/Dashboard/components/DailyMilk';
 import MilkManagement from '../../pages/MilkManagement';
+import MilkBatchManagement from '../../pages/MilkManagement/MilkBatchManagement';
 import WarehouseManagement from '../../pages/WarehouseManagement';
 import Warehouse from '../../pages/WarehouseManagement/components/Warehouse';
 
@@ -68,8 +69,18 @@ const AppRouting = () => {
         },
 
         {
-          path: 'dairy-management',
-          element: <DairyManagement />,
+          path: 'dashboard',
+          element: <Dashboard />,
+          children: [
+            {
+              path: '',
+              element: <Navigate to={'daily-milk'} />,
+            },
+            {
+              path: 'daily-milk',
+              element: <DailyMilkDashboard />,
+            },
+          ],
         },
         {
           path: 'cow-management',
