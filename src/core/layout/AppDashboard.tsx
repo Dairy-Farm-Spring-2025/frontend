@@ -1,3 +1,4 @@
+import { WalletOutlined } from '@ant-design/icons';
 import {
   Avatar,
   Breadcrumb,
@@ -10,7 +11,7 @@ import {
   theme,
 } from 'antd';
 import React, { useEffect } from 'react';
-import { AiOutlineIssuesClose } from 'react-icons/ai';
+import { AiOutlineDashboard, AiOutlineIssuesClose } from 'react-icons/ai';
 import { BiCategory, BiTask, BiUser } from 'react-icons/bi';
 import { CiBoxList } from 'react-icons/ci';
 import { FaWpforms } from 'react-icons/fa';
@@ -23,22 +24,21 @@ import {
   MdOutlineHealthAndSafety,
   MdSchedule,
 } from 'react-icons/md';
-import { PiCow, PiFarmLight, PiPlus, PiWarehouse } from 'react-icons/pi';
+import { PiCow, PiPlus, PiWarehouse } from 'react-icons/pi';
 import { RiAlignItemLeftLine } from 'react-icons/ri';
 import { SiHappycow } from 'react-icons/si';
 import { useDispatch } from 'react-redux';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import ButtonComponent from '../../components/Button/ButtonComponent';
 import AnimationAppear from '../../components/UI/AnimationAppear';
+import useFetcher from '../../hooks/useFetcher';
 import useToast from '../../hooks/useToast';
 import { breadcumData } from '../../service/data/breadcumData';
+import { getAvatar } from '../../utils/getImage';
+import { setAvatarFunction } from '../store/slice/avatarSlice';
 import { logout } from '../store/slice/userSlice';
 import LabelDashboard from './components/LabelDashboard';
 import './index.scss';
-import useFetcher from '../../hooks/useFetcher';
-import { setAvatarFunction } from '../store/slice/avatarSlice';
-import { getAvatar } from '../../utils/getImage';
-import { WalletOutlined } from '@ant-design/icons';
 const { Header, Content, Sider } = Layout;
 type MenuItem = Required<MenuProps>['items'][number];
 const { useToken } = theme;
@@ -133,7 +133,9 @@ const AppDashboard: React.FC = () => {
         getItem('Role', 'dairy/role-management', <BiCategory />),
       ],
     },
-    getItem('Dairy Management', 'dairy/dairy-management', <PiFarmLight />),
+    getItem('Dashboard', 'dairy/dashboard', <AiOutlineDashboard />, [
+      getItem('Daily Milk', 'dairy/dashboard/daily-milk', <LuMilk />),
+    ]),
     {
       key: 'group-cow',
       label: <LabelDashboard>Dairy Management</LabelDashboard>,
