@@ -32,6 +32,7 @@ const CalendarComponent: React.FC<CustomCalendarProps> = ({
   slotMinTime = '00:00:00',
   slotMaxTime = '24:00:00',
   eventContentRenderer,
+  ...props
 }) => {
   const mainCalendarRef = useRef<FullCalendar>(null);
   const [currentView, setCurrentView] = useState(initialView);
@@ -89,6 +90,7 @@ const CalendarComponent: React.FC<CustomCalendarProps> = ({
             eventContentRenderer ? eventContentRenderer(eventInfo) : null
           }
           datesSet={(dateInfo) => handleViewChange(dateInfo.view.type)}
+          {...props}
         />
       </div>
     </div>

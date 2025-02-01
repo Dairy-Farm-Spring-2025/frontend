@@ -37,7 +37,7 @@ const AppRouting = () => {
   const router = createBrowserRouter([
     {
       path: '',
-      element: <Navigate to={user.accessToken !== '' ? '/dairy' : '/login'} />, // Redirect to /dashboard or another default path
+      element: <Navigate to={user !== null ? '/dairy' : '/login'} />, // Redirect to /dashboard or another default path
     },
     {
       path: '/login',
@@ -56,8 +56,7 @@ const AppRouting = () => {
     },
     {
       path: 'dairy',
-      element:
-        user.accessToken !== '' ? <AppDashboard /> : <Navigate to={'/login'} />,
+      element: user !== null ? <AppDashboard /> : <Navigate to={'/login'} />,
       children: [
         {
           path: 'user-management',
