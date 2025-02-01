@@ -10,3 +10,57 @@ export type CowPen = {
   createdAt: string;
   updatedAt: string;
 };
+
+interface AreaBelongto {
+  areaId: number;
+  name: string;
+  description: string;
+  length: number;
+  width: number;
+  penLength: number | null;
+  penWidth: number | null;
+  areaType: string;
+}
+
+export type PenEntity = {
+  penId: number;
+  name: string;
+  description: string;
+  penType: string;
+  penStatus: string;
+  areaBelongto: AreaBelongto;
+};
+
+interface CowEntity {
+  cowId: number;
+  name: string;
+  cowStatus: string;
+  dateOfBirth: string;
+  dateOfEnter: string;
+  dateOfOut: string | null;
+  description: string;
+  cowOrigin: string;
+  gender: string;
+  cowTypeEntity: CowTypeEntity;
+}
+
+interface CowTypeEntity {
+  cowTypeId: number;
+  name: string;
+  description: string;
+  status: string;
+}
+
+interface DataItem {
+  penEntity: PenEntity;
+  cowEntity: CowEntity;
+  fromDate: string;
+  toDate: string | null;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type RootData = {
+  data: DataItem[];
+};
