@@ -5,6 +5,7 @@ import { CowPen } from '../../../../model/CowPen/CowPen';
 import MoveCowToPenForm from './components/MoveCowToPenForm';
 import TableComponent, { Column } from '../../../../components/Table/TableComponent';
 import useModal from '../../../../hooks/useModal';
+import dayjs from 'dayjs';
 import ModalPenDetail from './components/PenEntityDetail/ModalPenDetail';
 import ButtonComponent from '../../../../components/Button/ButtonComponent';
 
@@ -13,6 +14,9 @@ const { confirm } = Modal;
 
 export const MoveCowManagement: React.FC = () => {
   const { data: cowPenData, mutate } = useFetcher<any>('cow-pens', 'GET');
+  const { data: availablePens } = useFetcher<any>('pens/available', 'GET');
+  const { trigger, isLoading } = useFetcher('cow-pens', 'POST');
+
   const [selectedCow, setSelectedCow] = useState<string | null>(null);
   const [selectedPen, setSelectedPen] = useState<string | null>(null);
   const [penId, setPenId] = React.useState<number>(0);
@@ -78,26 +82,37 @@ export const MoveCowManagement: React.FC = () => {
     },
   ];
 
-  const handleMove = () => {
-    if (selectedCow && selectedPen) {
+  const handleMove = (fromDate: dayjs.Dayjs | null, toDate: dayjs.Dayjs | null) => {
+    if (selectedCow && selectedPen && fromDate) {
       confirm({
         title: 'Are you sure you want to move this cow?',
         content: 'This action will move the selected cow to the chosen pen.',
         onOk() {
-          console.log(`Moving Cow ${selectedCow} to Pen ${selectedPen}`);
+          console.log(
+            `Moving Cow ${selectedCow} to Pen ${selectedPen} from ${fromDate?.format(
+              'YYYY-MM-DD'
+            )} to ${toDate?.format('YYYY-MM-DD')}`
+          );
+
           // Add API call here
+          trigger({
+            body: {
+              cowId: selectedCow,
+              penId: selectedPen,
+              fromDate: fromDate.format('YYYY-MM-DD'), // Ensure it's formatted correctly
+              toDate: toDate ? toDate.format('YYYY-MM-DD') : null, // Handle optional toDate
+            },
+          });
+          mutate();
         },
         onCancel() {
           console.log('Move canceled');
         },
       });
     } else {
-      alert('Please select both a cow and a pen.');
+      alert('Please select a cow, a pen, and a valid fromDate.');
     }
   };
-
-  const availablePens =
-    cowPenData?.filter((item: CowPen) => item.penEntity.penStatus !== 'occupied') ?? [];
 
   return (
     <Tabs defaultActiveKey='1'>
@@ -115,7 +130,7 @@ export const MoveCowManagement: React.FC = () => {
       </TabPane>
 
       {/* Tab 2: Move Cow to Pen */}
-      <TabPane tab='Move Cow to Pen' key='2'>
+      <TabPane className='flex justify-center items-center' tab='Move Cow to Pen' key='2'>
         <MoveCowToPenForm
           cowPenData={cowPenData}
           availablePens={availablePens}

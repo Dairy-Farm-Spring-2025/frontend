@@ -1,17 +1,19 @@
-import React, { FC } from 'react';
-import { Form, Select, Button } from 'antd';
-import { CowPen } from '../../../../../model/CowPen/CowPen';
+import React, { FC, useState } from 'react';
+import { Form, Select, Button, DatePicker, message } from 'antd';
+import dayjs from 'dayjs';
+import { CowPen, PenEntity } from '../../../../../model/CowPen/CowPen';
 
 const { Option } = Select;
+const { RangePicker } = DatePicker;
 
 interface MoveCowToPenFormProps {
   cowPenData: CowPen[];
-  availablePens: CowPen[];
+  availablePens: PenEntity[];
   selectedCow: string | null;
   setSelectedCow: (value: string | null) => void;
   selectedPen: string | null;
   setSelectedPen: (value: string | null) => void;
-  handleMove: () => void;
+  handleMove: (fromDate: dayjs.Dayjs | null, toDate: dayjs.Dayjs | null) => void;
 }
 
 const MoveCowToPenForm: FC<MoveCowToPenFormProps> = ({
@@ -23,13 +25,30 @@ const MoveCowToPenForm: FC<MoveCowToPenFormProps> = ({
   setSelectedPen,
   handleMove,
 }) => {
+  const [dates, setDates] = useState<[dayjs.Dayjs | null, dayjs.Dayjs | null]>([null, null]);
+
+  const handleDateChange = (dates: [dayjs.Dayjs | null, dayjs.Dayjs | null] | null) => {
+    if (!dates) return;
+    const [fromDate, toDate] = dates;
+
+    if (fromDate?.isBefore(dayjs(), 'day')) {
+      message.error('From Date must be today or in the future.');
+      setDates([null, null]);
+    } else if (toDate && fromDate?.isAfter(toDate, 'day')) {
+      message.error('To Date must be after From Date.');
+      setDates([null, null]);
+    } else {
+      setDates([fromDate, toDate]);
+    }
+  };
+
   return (
     <div className='w-full max-w-lg bg-white shadow-md rounded-lg p-6'>
       <Form layout='vertical'>
         <Form.Item label={<span className='font-semibold'>Select Cow</span>}>
           <Select
             placeholder='Choose a cow'
-            onChange={(value) => setSelectedCow(value)}
+            onChange={setSelectedCow}
             allowClear
             size='large'
             className='rounded-lg'
@@ -41,40 +60,56 @@ const MoveCowToPenForm: FC<MoveCowToPenFormProps> = ({
             ))}
           </Select>
         </Form.Item>
+
         <Form.Item label={<span className='font-semibold'>Select Pen</span>}>
           <Select
             placeholder='Choose a pen'
-            onChange={(value) => setSelectedPen(value)}
+            onChange={setSelectedPen}
             allowClear
             size='large'
             className='rounded-lg'
           >
             {availablePens.map((item) => (
-              <Option key={item.penEntity.penId} value={item.penEntity.penId.toString()}>
-                🏠 {item.penEntity.name} ({item.penEntity.penType})
+              <Option key={item.penId} value={item.penId.toString()}>
+                🏠 {item.name} ({item.penType})
               </Option>
             ))}
           </Select>
         </Form.Item>
+
+        <Form.Item label={<span className='font-semibold'>Select Date Range</span>}>
+          <RangePicker
+            size='large'
+            className='rounded-lg w-full'
+            disabledDate={(date) => date.isBefore(dayjs(), 'day')}
+            onChange={handleDateChange}
+          />
+        </Form.Item>
+
         <Button
           type='primary'
           size='large'
-          onClick={handleMove}
+          onClick={() => handleMove(dates[0], dates[1])}
           className='w-full rounded-lg'
-          disabled={!selectedCow || !selectedPen}
+          disabled={!selectedCow || !selectedPen || !dates[0]}
         >
           Move Cow to Pen
         </Button>
       </Form>
+
       <div className='mt-6'>
         <div className='text-lg font-medium mb-4'>Current Selection</div>
-        <div className='flex justify-between items-center'>
-          <div className='text-gray-700'>
-            <strong>Cow:</strong> {selectedCow || 'None'}
-          </div>
-          <div className='text-gray-700'>
-            <strong>Pen:</strong> {selectedPen || 'None'}
-          </div>
+        <div className='text-gray-700'>
+          <strong>Cow:</strong> {selectedCow || 'None'}
+        </div>
+        <div className='text-gray-700'>
+          <strong>Pen:</strong> {selectedPen || 'None'}
+        </div>
+        <div className='text-gray-700'>
+          <strong>From Date:</strong> {dates[0] ? dates[0].format('YYYY-MM-DD') : 'None'}
+        </div>
+        <div className='text-gray-700'>
+          <strong>To Date:</strong> {dates[1] ? dates[1].format('YYYY-MM-DD') : 'None'}
         </div>
       </div>
     </div>
