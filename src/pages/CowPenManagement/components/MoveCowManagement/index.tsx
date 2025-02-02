@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
 import { Tabs, Modal, Tag } from 'antd';
 import useFetcher from '../../../../hooks/useFetcher';
-import { CowPen } from '../../../../model/CowPen/CowPen';
-import MoveCowToPenForm from './components/MoveCowToPenForm';
+import MoveCowToPenForm from './components/MoveCowToPen/MoveCowToPenForm';
 import TableComponent, { Column } from '../../../../components/Table/TableComponent';
 import useModal from '../../../../hooks/useModal';
 import dayjs from 'dayjs';
 import ModalPenDetail from './components/PenEntityDetail/ModalPenDetail';
 import ButtonComponent from '../../../../components/Button/ButtonComponent';
+import { getLabelByValue } from '../../../../utils/getLabel';
+import { penStatus, penType } from '../../../../service/data/pen';
+import { cowStatus } from '../../../../service/data/cowStatus';
+import ListCowNotInPen from './components/ListCowNotInPen/ListCowNotInPen';
+import CreateBulkModal from './components/ListCowNotInPen/components/CreateBulk/CreateBulk';
 
 const { TabPane } = Tabs;
 const { confirm } = Modal;
@@ -15,11 +19,11 @@ const { confirm } = Modal;
 export const MoveCowManagement: React.FC = () => {
   const { data: cowPenData, mutate } = useFetcher<any>('cow-pens', 'GET');
   const { data: availablePens } = useFetcher<any>('pens/available', 'GET');
-  const { trigger, isLoading } = useFetcher('cow-pens', 'POST');
+  const { trigger } = useFetcher('cow-pens', 'POST');
 
   const [selectedCow, setSelectedCow] = useState<string | null>(null);
   const [selectedPen, setSelectedPen] = useState<string | null>(null);
-  const [penId, setPenId] = React.useState<number>(0);
+  const [penId, setPenId] = useState<number>(0);
   const modal = useModal();
   const handleOpenEdit = (record: any) => {
     if (record.penEntity) {
@@ -40,16 +44,16 @@ export const MoveCowManagement: React.FC = () => {
       searchable: true,
     },
     {
-      title: 'Pen Name',
+      title: 'In Pen Name',
       dataIndex: ['penEntity', 'name'],
       key: 'penName',
-      sorter: (a, b) => a.penEntity.name.localeCompare(b.penEntity.name),
       searchable: true,
     },
     {
       title: 'Pen Type',
       dataIndex: ['penEntity', 'penType'],
       key: 'penType',
+      render: (data) => getLabelByValue(data, penType),
       searchable: true,
     },
     {
@@ -57,7 +61,9 @@ export const MoveCowManagement: React.FC = () => {
       dataIndex: ['cowEntity', 'cowStatus'],
       key: 'cowStatus',
       render: (status: string) => (
-        <Tag color={status === 'healthy' ? 'green' : 'red'}>{status}</Tag>
+        <Tag color={status === 'healthy' ? 'green' : 'red'}>
+          {getLabelByValue(status, cowStatus)}
+        </Tag>
       ),
       searchable: true,
     },
@@ -66,7 +72,9 @@ export const MoveCowManagement: React.FC = () => {
       dataIndex: ['penEntity', 'penStatus'],
       key: 'penStatus',
       render: (status: string) => (
-        <Tag color={status === 'occupied' ? 'red' : 'green'}>{status}</Tag>
+        <Tag color={status === 'occupied' ? 'red' : 'green'}>
+          {getLabelByValue(status, penStatus)}
+        </Tag>
       ),
       searchable: true,
     },
@@ -118,7 +126,7 @@ export const MoveCowManagement: React.FC = () => {
     <Tabs defaultActiveKey='1'>
       {/* Tab 1: View Data */}
       <TabPane tab='View Cows & Pens' key='1'>
-        {penId != 0 && <ModalPenDetail penId={penId} modal={modal} mutate={mutate} />}
+        {penId != 0 && <ModalPenDetail penId={penId} modal={modal} />}
         <TableComponent
           columns={columns}
           dataSource={cowPenData}
@@ -129,8 +137,11 @@ export const MoveCowManagement: React.FC = () => {
         />
       </TabPane>
 
+      <TabPane className='flex justify-center items-center' tab='Move Bulk to Pen' key='2'>
+        <ListCowNotInPen />
+      </TabPane>
       {/* Tab 2: Move Cow to Pen */}
-      <TabPane className='flex justify-center items-center' tab='Move Cow to Pen' key='2'>
+      <TabPane className='flex justify-center items-center' tab='Move Cow to Pen' key='3'>
         <MoveCowToPenForm
           cowPenData={cowPenData}
           availablePens={availablePens}

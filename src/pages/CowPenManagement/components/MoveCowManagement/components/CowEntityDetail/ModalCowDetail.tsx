@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Descriptions, Input, Button, Select, DatePicker } from 'antd';
 import useFetcher from '../../../../../../hooks/useFetcher';
 import ModalComponent from '../../../../../../components/Modal/ModalComponent';
+import { getLabelByValue } from '../../../../../../utils/getLabel';
+import { cowStatus } from '../../../../../../service/data/cowStatus';
 
 const cowStatuses = [
   { label: 'Milking Cow', value: 'milkingCow' },
@@ -112,7 +114,7 @@ const ModalCowDetail: React.FC<ModalCowDetailProps> = ({ modal, cowId, mutate })
                 options={cowStatuses}
               />
             ) : (
-              cowStatuses.find((status) => status.value === cowDetails.cowEntity.cowStatus)?.label
+              getLabelByValue(cowDetails.cowEntity.cowStatus, cowStatus)
             )}
           </Descriptions.Item>
           <Descriptions.Item label='Date of Birth'>

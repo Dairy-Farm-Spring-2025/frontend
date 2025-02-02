@@ -2,6 +2,8 @@ import React from 'react';
 import { Descriptions, Input, Select } from 'antd';
 import { PenEntity } from '../../../../../../model/CowPen/CowPen';
 import Title from 'antd/es/typography/Title';
+import { getLabelByValue } from '../../../../../../utils/getLabel';
+import { areaType } from '../../../../../../service/data/areaType';
 
 interface PenEntityDetailProps {
   penEntity: PenEntity;
@@ -73,7 +75,9 @@ const PenEntityDetail: React.FC<PenEntityDetailProps> = ({
           )}
         </Descriptions.Item>
         <Descriptions.Item label='Area Belong To'>{penEntity.areaBelongto?.name}</Descriptions.Item>
-        <Descriptions.Item label='Area Type'>{penEntity.areaBelongto?.areaType}</Descriptions.Item>
+        <Descriptions.Item label='Area Type'>
+          {getLabelByValue(penEntity.areaBelongto?.areaType, areaType)}
+        </Descriptions.Item>
         <Descriptions.Item label='Area Description'>
           {penEntity.areaBelongto?.description}
         </Descriptions.Item>

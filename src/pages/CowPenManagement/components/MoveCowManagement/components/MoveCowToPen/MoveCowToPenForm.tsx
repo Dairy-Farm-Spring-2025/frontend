@@ -1,7 +1,7 @@
 import React, { FC, useState } from 'react';
 import { Form, Select, Button, DatePicker, message } from 'antd';
 import dayjs from 'dayjs';
-import { CowPen, PenEntity } from '../../../../../model/CowPen/CowPen';
+import { CowPen, PenEntity } from '../../../../../../model/CowPen/CowPen';
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;

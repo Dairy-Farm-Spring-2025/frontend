@@ -34,7 +34,16 @@ export type PenEntity = {
 interface CowEntity {
   cowId: number;
   name: string;
-  cowStatus: string;
+  cowStatus:
+    | 'milkingCow'
+    | 'dryCow'
+    | 'pregnantCow'
+    | 'openCow'
+    | 'calvingCow'
+    | 'sickCow'
+    | 'breedingCow'
+    | 'quarantinedCow'
+    | 'culling';
   dateOfBirth: string;
   dateOfEnter: string;
   dateOfOut: string | null;

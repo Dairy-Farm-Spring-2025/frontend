@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { Button } from 'antd';
 import useFetcher from '../../../../../../hooks/useFetcher';
 import ModalComponent from '../../../../../../components/Modal/ModalComponent';
 import PenEntityDetail from './PenEntityDetail';
@@ -26,12 +25,10 @@ const penStatuses = [
 interface ModalPenDetailProps {
   penId: number;
   modal: any;
-  mutate: any;
 }
 
-const ModalPenDetail: React.FC<ModalPenDetailProps> = ({ modal, penId, mutate }) => {
+const ModalPenDetail: React.FC<ModalPenDetailProps> = ({ modal, penId }) => {
   const { data } = useFetcher<any>(`cow-pens/pen/${penId}`, 'GET');
-  const { trigger } = useFetcher<any>(`pens/${penId}`, 'PUT');
 
   const [isEditing, setIsEditing] = useState(false);
   const [editedDetails, setEditedDetails] = useState<Partial<any>>({});
@@ -50,43 +47,12 @@ const ModalPenDetail: React.FC<ModalPenDetailProps> = ({ modal, penId, mutate })
     setIsEditing(false);
   };
 
-  const handleEdit = () => {
-    setIsEditing(true);
-  };
-
-  const handleSave = async () => {
-    try {
-      await trigger({
-        params: penId,
-        body: editedDetails,
-      });
-      setIsEditing(false);
-      mutate();
-    } catch (err) {
-      console.error('Error updating pen:', err);
-    }
-  };
-
   const handleInputChange = (key: string, value: string | number) => {
     setEditedDetails((prev) => ({ ...prev, [key]: value }));
   };
 
   return (
     <ModalComponent
-      // footer={
-      //   isEditing ? (
-      //     <>
-      //       <Button onClick={handleSave} type='primary'>
-      //         Save
-      //       </Button>
-      //       <Button onClick={() => setIsEditing(false)}>Cancel</Button>
-      //     </>
-      //   ) : (
-      //     <Button onClick={handleEdit} type='primary'>
-      //       Edit
-      //     </Button>
-      //   )
-      // }
       footer={<></>}
       width={1000}
       open={modal.open}

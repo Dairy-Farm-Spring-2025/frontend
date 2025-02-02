@@ -1,6 +1,9 @@
 import React from 'react';
 import { Descriptions } from 'antd';
 import Title from 'antd/es/typography/Title';
+import { getLabelByValue } from '../../../../../../utils/getLabel';
+import { cowStatus } from '../../../../../../service/data/cowStatus';
+import { cowOrigin } from '../../../../../../service/data/cowOrigin';
 
 interface CowEntityDetailProps {
   cowEntity: {
@@ -29,14 +32,21 @@ const CowEntityDetail: React.FC<CowEntityDetailProps> = ({ cowEntity }) => {
       <Descriptions bordered column={1}>
         <Descriptions.Item label='ID'>{cowEntity.cowId}</Descriptions.Item>
         <Descriptions.Item label='Name'>{cowEntity.name}</Descriptions.Item>
-        <Descriptions.Item label='Status'>{cowEntity.cowStatus}</Descriptions.Item>
+        <Descriptions.Item label='Status'>
+          {getLabelByValue(cowEntity.cowStatus, cowStatus)}
+        </Descriptions.Item>
         <Descriptions.Item label='Date of Birth'>{cowEntity.dateOfBirth}</Descriptions.Item>
         <Descriptions.Item label='Date of Enter'>{cowEntity.dateOfEnter}</Descriptions.Item>
         <Descriptions.Item label='Date of Out'>{cowEntity.dateOfOut || 'N/A'}</Descriptions.Item>
         <Descriptions.Item label='Description'>{cowEntity.description}</Descriptions.Item>
-        <Descriptions.Item label='Origin'>{cowEntity.cowOrigin}</Descriptions.Item>
+        <Descriptions.Item label='Origin'>
+          {getLabelByValue(cowEntity.cowOrigin, cowOrigin)}
+        </Descriptions.Item>
         <Descriptions.Item label='Gender'>{cowEntity.gender}</Descriptions.Item>
         <Descriptions.Item label='Cow Type'>{cowEntity.cowTypeEntity.name}</Descriptions.Item>
+        <Descriptions.Item label='Cow Type Status'>
+          {cowEntity.cowTypeEntity.status}
+        </Descriptions.Item>
       </Descriptions>
     </div>
   );

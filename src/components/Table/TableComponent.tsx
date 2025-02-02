@@ -17,11 +17,7 @@ interface TableComponentProps extends TableProps {
   dataSource: any;
 }
 
-const TableComponent = ({
-  columns,
-  dataSource,
-  ...props
-}: TableComponentProps) => {
+const TableComponent = ({ columns, dataSource, ...props }: TableComponentProps) => {
   const [searchText, setSearchText] = useState<string>('');
   const [filteredData, setFilteredData] = useState<object[]>([]);
 
@@ -33,13 +29,9 @@ const TableComponent = ({
       columns
         .filter((column) => column.searchable !== false)
         .some((column) => {
-          const rawValue =
-            record[column.dataIndex]?.toString().toLowerCase() ?? '';
+          const rawValue = record[column.dataIndex]?.toString().toLowerCase() ?? '';
           const renderedValue =
-            column
-              .render?.(record[column.dataIndex], record, 0)
-              ?.toString()
-              .toLowerCase() ?? '';
+            column.render?.(record[column.dataIndex], record, 0)?.toString().toLowerCase() ?? '';
           return rawValue.includes(value) || renderedValue.includes(value);
         })
     );
@@ -54,20 +46,20 @@ const TableComponent = ({
   }, [dataSource]);
 
   return (
-    <div className="table !w-full !max-w-full overflow-auto">
+    <div className='table !w-full !max-w-full overflow-auto'>
       <ConfigProvider
         input={{
           variant: 'outlined',
         }}
       >
         <InputComponent.Search
-          placeholder="Enter name..."
+          placeholder='Enter name...'
           value={searchText}
           onChange={handleSearch}
           style={{ marginBottom: 16 }}
           allowClear
           enterButton
-          className="w-2/5 input-with-bold-outline"
+          className='w-2/5 input-with-bold-outline'
         />
       </ConfigProvider>
       <ConfigProvider
