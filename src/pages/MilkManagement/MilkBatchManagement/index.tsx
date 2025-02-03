@@ -13,7 +13,7 @@ import React from 'react';
 import ButtonComponent from '../../../components/Button/ButtonComponent';
 import useModal from '../../../hooks/useModal';
 import { MilkBatch } from '../../../model/DailyMilk/MilkBatch';
-import { formatDateHour, formatSTT } from '../../../utils/format';
+import { formatAreaType, formatDateHour, formatSTT } from '../../../utils/format';
 import CreateMilkBatchModal from './components/ModalCreateMilkBatch/CreateMilkBatchModal';
 import ModalMilkBatchDetail from './components/ModalMilkBatchDetail';
 
@@ -72,6 +72,7 @@ const MilkBatchManagement = () => {
       dataIndex: 'status',
       key: 'status',
       title: 'Status',
+      render: (data) => formatAreaType(data),
     },
     {
       dataIndex: 'action',
