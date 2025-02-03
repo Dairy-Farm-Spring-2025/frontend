@@ -10,6 +10,8 @@ import useFetcher from '../../../../hooks/useFetcher';
 import useModal from '../../../../hooks/useModal';
 import useToast from '../../../../hooks/useToast';
 import ModalAddCategory from './components/ModalAddCategory';
+import ModalDetailCategory from './components/ModalDetailCategory';
+
 
 
 const Category = () => {
@@ -56,7 +58,7 @@ const Category = () => {
             render: (data) => <p className="text-base font-bold">{data}</p>,
         },
         {
-            dataIndex: 'warehouseLocationId',
+            dataIndex: 'categoryId',
             key: 'action',
             title: 'Action',
             render: (data) => (
@@ -98,9 +100,9 @@ const Category = () => {
                     />
                 </div>
                 <ModalAddCategory modal={modal} mutate={mutate} />
-                {/* {id !== '' && (
-          <ModalDetailWarehouse id={id} modal={modalDetail} mutate={mutate} />
-        )} */}
+                {id !== '' && (
+                    <ModalDetailCategory id={id} modal={modalDetail} mutate={mutate} />
+                )}
             </WhiteBackground>
         </AnimationAppear>
     );
