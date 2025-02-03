@@ -181,7 +181,7 @@ const AppDashboard: React.FC = () => {
           ),
           getItem(
             'Category',
-            'dairy/category-management',
+            'dairy/warehouse-management/category',
             <BiCategory size={sizeIcon} />
           ),
           getItem(

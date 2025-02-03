@@ -31,6 +31,7 @@ import MilkManagement from '../../pages/MilkManagement';
 import MilkBatchManagement from '../../pages/MilkManagement/MilkBatchManagement';
 import WarehouseManagement from '../../pages/WarehouseManagement';
 import Warehouse from '../../pages/WarehouseManagement/components/Warehouse';
+import Category from '../../pages/WarehouseManagement/components/Category';
 
 const AppRouting = () => {
   const user = useSelector((state: RootState) => state.user);
@@ -122,6 +123,10 @@ const AppRouting = () => {
             {
               path: 'warehouse',
               element: <Warehouse />,
+            },
+            {
+              path: 'category',
+              element: <Category />,
             },
           ],
         },
