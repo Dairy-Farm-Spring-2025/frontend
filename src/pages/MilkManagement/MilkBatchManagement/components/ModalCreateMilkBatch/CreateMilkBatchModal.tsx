@@ -10,6 +10,7 @@ import ModalComponent from '../../../../../components/Modal/ModalComponent';
 import SelectComponent from '../../../../../components/Select/SelectComponent';
 import { getLabelByValue } from '../../../../../utils/getLabel';
 import { cowStatus } from '../../../../../service/data/cowStatus';
+import { shiftData } from '../../../../../service/data/shiftData';
 
 interface CreateMilkBatchModalProps {
   modal: any;
@@ -20,7 +21,8 @@ const CreateMilkBatchModal = ({ modal, mutate }: CreateMilkBatchModalProps) => {
   const toast = useToast();
   const [dataDaily, setDataDaily] = useState([]);
   const [selectArea, setSelectArea] = useState([]);
-  const [selectedArea, setSelectedArea] = useState('');
+  const [selectedArea, setSelectedArea] = useState<string>('');
+  const [selectedShift, setSelectedShift] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const { data: dataArea, isLoading: isLoadingArea } = useFetcher<any>('areas');
@@ -40,10 +42,13 @@ const CreateMilkBatchModal = ({ modal, mutate }: CreateMilkBatchModalProps) => {
   }, [dataArea, modal.open]);
 
   useEffect(() => {
-    const fetchData = async (areaId: string) => {
+    const fetchData = async (areaId?: string, shift?: string) => {
       try {
         setLoading(true);
-        const response = await dailyMilkApi.searchDailyMilk(areaId);
+        const response = await dailyMilkApi.searchDailyMilk(
+          areaId ? areaId : '',
+          shift ? shift : ''
+        );
         setDataDaily(response.data);
       } catch (error: any) {
         toast.showError(error.message);
@@ -51,10 +56,10 @@ const CreateMilkBatchModal = ({ modal, mutate }: CreateMilkBatchModalProps) => {
         setLoading(false);
       }
     };
-    if (modal.open && selectedArea) {
-      fetchData(selectedArea);
+    if (modal.open && (selectedArea || selectedShift)) {
+      fetchData(selectedArea, selectedShift);
     }
-  }, [modal.open, selectedArea]);
+  }, [modal.open, selectedArea, selectedShift]);
 
   const columns: Column[] = [
     {
@@ -105,6 +110,10 @@ const CreateMilkBatchModal = ({ modal, mutate }: CreateMilkBatchModalProps) => {
     setSelectedArea(areaId);
   };
 
+  const onChangeShift = (shiftValue: string) => {
+    setSelectedShift(shiftValue);
+  };
+
   const rowSelection: TableRowSelection = {
     selectedRowKeys,
     onChange: onSelectChange,
@@ -115,12 +124,13 @@ const CreateMilkBatchModal = ({ modal, mutate }: CreateMilkBatchModalProps) => {
     setSelectArea([]);
     setDataDaily([]);
     setSelectedArea('');
+    setSelectedShift('');
     modal.closeModal();
   };
 
   const handleConfirm = async () => {
-    if (selectedArea === '') {
-      toast.showError('Please choose the area');
+    if (selectedArea === '' && selectedShift === '') {
+      toast.showError('Please choose at least 1 select');
       return;
     } else if (selectedRowKeys.length === 0) {
       toast.showError('Please select at least one row');
@@ -135,6 +145,9 @@ const CreateMilkBatchModal = ({ modal, mutate }: CreateMilkBatchModalProps) => {
         toast.showSuccess('Success');
       } catch (error: any) {
         toast.showError(error.message);
+      } finally {
+        setSelectedArea('');
+        setSelectedShift('');
       }
     }
   };
@@ -149,18 +162,33 @@ const CreateMilkBatchModal = ({ modal, mutate }: CreateMilkBatchModalProps) => {
       onCancel={handleCancel}
       onOk={handleConfirm}
     >
-      <div className="flex flex-col gap-2">
-        <label className="text-base font-bold">
-          Select Area<sup className="text-red-500">*</sup>:
-        </label>
-        <SelectComponent
-          className="!w-1/3"
-          placeholder={selectedArea === '' && 'Select Area...'}
-          options={selectArea}
-          onChange={onChangeArea}
-          loading={isLoadingArea}
-          value={selectedArea}
-        />
+      <div className="flex justify-evenly items-center gap-5 w-4/5">
+        <div className="flex flex-col gap-2 w-1/2">
+          <label className="text-base font-bold">
+            Select Area<sup className="text-red-500">*</sup>:
+          </label>
+          <SelectComponent
+            placeholder={selectedArea === '' && 'Select Area...'}
+            options={selectArea}
+            onChange={onChangeArea}
+            loading={isLoadingArea}
+            value={selectedArea}
+            allowClear
+          />
+        </div>
+        <p className="mt-8">or</p>
+        <div className="flex flex-col gap-2 w-1/2">
+          <label className="text-base font-bold">
+            Select Shift<sup className="text-red-500">*</sup>:
+          </label>
+          <SelectComponent
+            placeholder={selectedArea === '' && 'Select Area...'}
+            options={shiftData}
+            onChange={onChangeShift}
+            value={selectedShift}
+            allowClear
+          />
+        </div>
       </div>
       <ConfigProvider
         table={{
@@ -173,7 +201,9 @@ const CreateMilkBatchModal = ({ modal, mutate }: CreateMilkBatchModalProps) => {
           rowKey="dailyMilkId"
           rowSelection={rowSelection}
           columns={columns}
-          dataSource={dataDaily}
+          dataSource={dataDaily.filter(
+            (element: any) => element?.milkBatch === null
+          )}
         />
       </ConfigProvider>
     </ModalComponent>

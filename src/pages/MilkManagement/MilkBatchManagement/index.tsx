@@ -1,4 +1,4 @@
-import { Divider } from 'antd';
+import { Divider, message } from 'antd';
 
 import useFetcher from '../../../hooks/useFetcher';
 
@@ -13,7 +13,7 @@ import React from 'react';
 import ButtonComponent from '../../../components/Button/ButtonComponent';
 import useModal from '../../../hooks/useModal';
 import { MilkBatch } from '../../../model/DailyMilk/MilkBatch';
-import { formatDateHour, formatSTT } from '../../../utils/format';
+import { formatAreaType, formatDateHour, formatSTT } from '../../../utils/format';
 import CreateMilkBatchModal from './components/ModalCreateMilkBatch/CreateMilkBatchModal';
 import ModalMilkBatchDetail from './components/ModalMilkBatchDetail';
 
@@ -32,6 +32,19 @@ const MilkBatchManagement = () => {
     setMilkBatchId(record.milkBatchId);
     modalViewDetail.openModal();
   };
+
+  // const handleDelete = async (milkBatchId: number) => {
+  //   try {
+  //     await fetch(`MilkBatch/${milkBatchId}`, {
+  //       method: 'DELETE',
+  //     });
+  //     message.success('Milk batch deleted successfully!');
+  //     mutate(); // Refresh the data
+  //   } catch (error) {
+  //     message.error('Failed to delete milk batch.');
+  //     console.error(error);
+  //   }
+  // };
   const columns: Column[] = [
     {
       dataIndex: 'milkBatchId',
@@ -59,6 +72,7 @@ const MilkBatchManagement = () => {
       dataIndex: 'status',
       key: 'status',
       title: 'Status',
+      render: (data) => formatAreaType(data),
     },
     {
       dataIndex: 'action',
@@ -68,6 +82,13 @@ const MilkBatchManagement = () => {
         <div>
           <ButtonComponent onClick={() => handleOpenEdit(record)}>
             View Detail
+          </ButtonComponent>
+          <ButtonComponent
+            danger
+            onClick={() => console.log(record.milkBatchId)}
+            style={{ marginLeft: 8 }}
+          >
+            Delete
           </ButtonComponent>
         </div>
       ),

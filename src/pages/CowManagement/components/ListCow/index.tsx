@@ -1,19 +1,20 @@
 import { Image } from 'antd';
 import { useEffect, useState } from 'react';
+import { IoMdFemale, IoMdMale } from 'react-icons/io';
+import cowImage from '../../../../assets/cow.jpg';
+import ButtonComponent from '../../../../components/Button/ButtonComponent';
 import TableComponent, {
   Column,
 } from '../../../../components/Table/TableComponent';
+import AnimationAppear from '../../../../components/UI/AnimationAppear';
 import TextLink from '../../../../components/UI/TextLink';
 import WhiteBackground from '../../../../components/UI/WhiteBackground';
 import useFetch from '../../../../hooks/useFetcher';
-import { Cow } from '../../../../model/Cow/Cow';
 import useToast from '../../../../hooks/useToast';
-import AnimationAppear from '../../../../components/UI/AnimationAppear';
-import { formatDateHour, formatSTT } from '../../../../utils/format';
-import cowImage from '../../../../assets/cow.jpg';
-import ButtonComponent from '../../../../components/Button/ButtonComponent';
+import { Cow } from '../../../../model/Cow/Cow';
 import { cowOrigin } from '../../../../service/data/cowOrigin';
 import { cowStatus } from '../../../../service/data/cowStatus';
+import { formatDateHour, formatSTT } from '../../../../utils/format';
 import { getLabelByValue } from '../../../../utils/getLabel';
 const ListCow = () => {
   const [cow, setCow] = useState<Cow[]>([]);
@@ -25,6 +26,7 @@ const ListCow = () => {
       dataIndex: 'cowId',
       key: 'cowId',
       title: '#',
+      render: (__, _, index) => <p className="text-base">{index + 1}</p>,
     },
     {
       dataIndex: 'image',
@@ -44,11 +46,13 @@ const ListCow = () => {
       key: 'name',
       title: 'Name',
       render: (element: string, data) => (
-        <TextLink to={`/dairy/cow-management/${data.cowId}`}>
+        <TextLink
+          to={`/dairy/cow-management/${data.cowId}`}
+          className="!text-base font-bold"
+        >
           {element}
         </TextLink>
       ),
-      width: 200,
     },
     {
       dataIndex: 'dateOfBirth',
@@ -78,7 +82,12 @@ const ListCow = () => {
       dataIndex: 'gender',
       key: 'gender',
       title: 'Gender',
-      render: (data) => (data === 'male' ? 'Male' : 'Female'),
+      render: (data) =>
+        data === 'male' ? (
+          <IoMdMale className="text-blue-600" size={20} />
+        ) : (
+          <IoMdFemale className="text-pink-600" size={20} />
+        ),
     },
     {
       dataIndex: 'cowType',

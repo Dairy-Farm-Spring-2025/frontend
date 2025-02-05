@@ -1,16 +1,23 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState } from 'react';
+
+export interface ModalActionProps {
+  open: boolean;
+  openModal: () => void;
+  closeModal: () => void;
+  toogleModal: () => void;
+}
 
 const useModal = () => {
   const [open, setOpen] = useState(false);
 
   const openModal = useCallback((beforeOpenFunction?: any) => {
-    if (beforeOpenFunction && typeof beforeOpenFunction === "function")
+    if (beforeOpenFunction && typeof beforeOpenFunction === 'function')
       beforeOpenFunction();
     setOpen(true);
   }, []);
 
   const closeModal = useCallback((beforeCloseFunction?: any) => {
-    if (beforeCloseFunction && typeof beforeCloseFunction === "function")
+    if (beforeCloseFunction && typeof beforeCloseFunction === 'function')
       beforeCloseFunction();
     setOpen(false);
   }, []);

@@ -1,13 +1,22 @@
+
+
+
+
 import React, { useEffect, useState } from 'react';
-import { Descriptions, Input, Button, Divider } from 'antd';
+import { Input, Button, Divider, message, Table, Popconfirm, Row, Col, Tooltip } from 'antd';
 import useFetcher from '../../../../../hooks/useFetcher';
 import ModalComponent from '../../../../../components/Modal/ModalComponent';
+import TableComponent, { Column } from '../../../../../components/Table/TableComponent';
+import AnimationAppear from '../../../../../components/UI/AnimationAppear';
+import WhiteBackground from '../../../../../components/UI/WhiteBackground';
+import { formatAreaType } from '../../../../../utils/format';
 
 interface ModalMilkBatchDetailProps {
     milkBatchId: number;
     modal: any;
     mutate: any;
 }
+
 interface Milk {
     dailyMilkId: number;
     shift: string;
@@ -18,114 +27,195 @@ interface Milk {
         roleId: {
             name: string;
         };
+        employeeNumber: string;
     };
     cow: {
+        cowId: string;
         name: string;
         cowTypeEntity: {
             name: string;
         };
+        cowStatus: string;
         cowOrigin: string;
+        gender: string;
     };
 }
+
 const ModalMilkBatchDetail: React.FC<ModalMilkBatchDetailProps> = ({ modal, milkBatchId, mutate }) => {
-    const { data } = useFetcher<any>(`MilkBatch/${milkBatchId}`, 'GET');
-    console.log('check data by milkbatchID: ', data);
+    const { data, error, isLoading, mutate: localMutate } = useFetcher<any>(`MilkBatch/${milkBatchId}`, 'GET');
     const { trigger } = useFetcher<any>(`MilkBatch/${milkBatchId}`, 'PUT');
 
-    const [isEditing, setIsEditing] = useState(false); // Toggle edit mode
-    const [editedDetails, setEditedDetails] = useState({ dailyMilkIdsToAdd: [], dailyMilkIdsToRemove: [] });
+    const [dailyMilkIdToAdd, setDailyMilkIdToAdd] = useState<number | null>(null);
 
-    useEffect(() => {
-        if (data) {
-            setEditedDetails({ dailyMilkIdsToAdd: [], dailyMilkIdsToRemove: [] });
+    const refreshData = async () => {
+        try {
+            await localMutate();
+        } catch (err) {
+            message.error('Error refreshing milk batch data.');
         }
-    }, [data, milkBatchId]);
+    };
+
+    const handleAddDailyMilkId = async () => {
+        if (!dailyMilkIdToAdd) {
+            message.warning('Please enter a valid Daily Milk ID.');
+            return;
+        }
+
+        try {
+            const payload = { dailyMilkIdsToAdd: [dailyMilkIdToAdd] };
+            await trigger({ body: payload });
+            message.success(`Daily Milk ID ${dailyMilkIdToAdd} added successfully!`);
+            setDailyMilkIdToAdd(null); // Clear the input
+            await refreshData();
+        } catch (err) {
+            message.error('Error adding Daily Milk ID. Please try again.');
+        }
+    };
+    const handleDelete = async (dailyMilkId: number) => {
+        try {
+            const payload = {
+                dailyMilkIdsToRemove: [dailyMilkId],
+            };
+
+            await trigger({ body: payload });
+            message.success(`Successfully removed Daily Milk ID: ${dailyMilkId}`);
+            await refreshData();
+        } catch (err) {
+            message.error(`Error removing Daily Milk ID: ${dailyMilkId}`);
+        }
+    };
+    const columns: Column[] = [
+        {
+            title: 'Daily Milk ID',
+            dataIndex: 'dailyMilkId',
+            key: 'dailyMilkId',
+        },
+        {
+            title: 'Volume',
+            dataIndex: 'volume',
+            key: 'volume',
+        },
+        {
+            title: 'Shift',
+            dataIndex: 'shift',
+            key: 'shift',
+            render: (shift: string) => (
+                formatAreaType(shift)
+            )
+        },
+        {
+            title: 'Milk Date',
+            dataIndex: 'milkDate',
+            key: 'milkDate',
+        },
+        {
+            title: 'Worker Name',
+            dataIndex: 'workerName',
+            key: 'workerName',
+            render: (_: any, record: Milk) => (
+                <Tooltip
+                    title={
+                        <>
+                            <div><strong>Employee Number:</strong> {formatAreaType(record.worker?.employeeNumber || 'N/A')}</div>
+                            <div><strong>Phone:</strong> {record.worker?.phoneNumber || 'N/A'}</div>
+                            <div><strong>Role:</strong> {record.worker?.roleId?.name || 'N/A'}</div>
+                        </>
+                    }
+                    color="#87d068"
+                    placement="top"
+                >
+                    <span className="text-blue-600">
+                        {record.worker?.name || 'N/A'}
+                    </span>
+                </Tooltip>
+            ),
+        },
+        {
+            title: 'Cow Name',
+            dataIndex: 'cowName',
+            key: 'cowName',
+            render: (_: any, record: Milk) => (
+                <Tooltip
+                    title={
+                        <>
+                            <div><strong>Cow Id:</strong> {record.cow?.cowId || 'N/A'}</div>
+                            <div><strong>Type:</strong> {record.cow?.cowTypeEntity?.name || 'N/A'}</div>
+                            <div><strong>Origin:</strong> {formatAreaType(record.cow?.cowOrigin || 'N/A')}</div>
+                            <div><strong>Cow Type:</strong> {record.cow?.cowTypeEntity?.name || 'N/A'}</div>
+                            <div><strong>Gender:</strong> {formatAreaType(record.cow?.gender || 'N/A')}</div>
+                        </>
+                    }
+                    color="#87d068"
+                    placement="top"
+                >
+                    <span className="text-blue-600">
+                        {record.cow?.name || 'N/A'}
+                    </span>
+                </Tooltip>
+            ),
+        },
+        {
+            title: 'Actions',
+            dataIndex: 'actions',
+            key: 'actions',
+            render: (_: any, record: Milk) => (
+                <Popconfirm
+                    title={`Are you sure you want to delete Daily Milk ID: ${record.dailyMilkId}?`}
+                    onConfirm={() => handleDelete(record.dailyMilkId)}
+                    okText="Yes"
+                    cancelText="No"
+                >
+                    <Button danger>Delete</Button>
+                </Popconfirm>
+            ),
+        },
+    ];
 
     const onClose = () => {
         modal.closeModal();
-        setIsEditing(false); // Reset edit mode on close
-    };
-
-    const handleSave = async () => {
-        try {
-            await trigger({ body: editedDetails });
-            setIsEditing(false);
-            mutate();
-        } catch (err) {
-            console.error('Error updating milk batch:', err);
-        }
-    };
-
-    const handleInputChange = (key: string, value: any) => {
-        setEditedDetails((prev) => ({ ...prev, [key]: value }));
     };
 
     return (
         <ModalComponent
             footer={
-                isEditing ? (
-                    <>
-                        <Button onClick={handleSave} type="primary">
-                            Save
-                        </Button>
-                        <Button onClick={() => setIsEditing(false)}>Cancel</Button>
-                    </>
-                ) : (
-                    <Button onClick={() => setIsEditing(true)} type="primary">
-                        Edit
-                    </Button>
-                )
+                <Button onClick={onClose} type="primary">
+                    Close
+                </Button>
             }
             open={modal.open}
             onCancel={onClose}
             title={`MilkBatch Details`}
-            width={1000}
+            width={1500}
         >
-            {isEditing ? (
-                <div>
-                    <Input.TextArea
-                        rows={4}
-                        placeholder="Daily Milk IDs to Add"
-                        value={editedDetails.dailyMilkIdsToAdd.join(', ')}
-                        onChange={(e) =>
-                            handleInputChange(
-                                'dailyMilkIdsToAdd',
-                                e.target.value.split(',').map((id) => id.trim())
-                            )
-                        }
+            {/* Add Daily Milk ID Section */}
+            <Row gutter={16} style={{ marginBottom: 10 }}>
+                <Col span={8}>
+                    <Input
+                        placeholder="Enter Daily Milk ID"
+                        value={dailyMilkIdToAdd || ''}
+                        onChange={(e) => setDailyMilkIdToAdd(Number(e.target.value))}
+                        type="number"
                     />
-                    <Input.TextArea
-                        rows={4}
-                        placeholder="Daily Milk IDs to Remove"
-                        value={editedDetails.dailyMilkIdsToRemove.join(', ')}
-                        onChange={(e) =>
-                            handleInputChange(
-                                'dailyMilkIdsToRemove',
-                                e.target.value.split(',').map((id) => id.trim())
-                            )
-                        }
+                </Col>
+                <Col span={4}>
+                    <Button type="primary" onClick={handleAddDailyMilkId}>
+                        Add Daily Milk
+                    </Button>
+                </Col>
+            </Row>
+
+            {/* Table */}
+            <AnimationAppear duration={0.5}>
+                <WhiteBackground>
+                    <TableComponent
+                        columns={columns}
+                        dataSource={data?.dailyMilks || []}
+
+                        rowKey="dailyMilkId"
+                        loading={isLoading}
                     />
-                </div>
-            ) : data?.dailyMilks?.length > 0 ? (
-                data.dailyMilks.map((milk: Milk) => (
-                    <div key={milk.dailyMilkId}>
-                        <Descriptions bordered column={3}>
-                            <Descriptions.Item label="Daily Milk ID">{milk.dailyMilkId}</Descriptions.Item>
-                            <Descriptions.Item label="Shift">{milk.shift}</Descriptions.Item>
-                            <Descriptions.Item label="Milk Date">{milk.milkDate}</Descriptions.Item>
-                            <Descriptions.Item label="Worker Name">{milk.worker?.name}</Descriptions.Item>
-                            <Descriptions.Item label="Phone Number">{milk.worker?.phoneNumber}</Descriptions.Item>
-                            <Descriptions.Item label="Role">{milk.worker?.roleId?.name}</Descriptions.Item>
-                            <Descriptions.Item label="Cow Name">{milk.cow?.name}</Descriptions.Item>
-                            <Descriptions.Item label="Cow Type">{milk.cow?.cowTypeEntity?.name}</Descriptions.Item>
-                            <Descriptions.Item label="Cow Origin">{milk.cow?.cowOrigin}</Descriptions.Item>
-                        </Descriptions>
-                        <Divider />
-                    </div>
-                ))
-            ) : (
-                <p>No data available for this Milk Batch.</p>
-            )}
+                </WhiteBackground>
+            </AnimationAppear>
         </ModalComponent>
     );
 };
