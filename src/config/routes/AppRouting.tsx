@@ -1,8 +1,4 @@
-import {
-  createBrowserRouter,
-  Navigate,
-  RouterProvider,
-} from 'react-router-dom';
+import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
 import AppDashboard from '../../core/layout/AppDashboard';
 import CowManagement from '../../pages/CowManagement';
 import ListCow from '../../pages/CowManagement/components/ListCow';
@@ -35,6 +31,9 @@ import ItemManagement from '../../pages/WarehouseManagement/components/Item';
 import ListItemManagement from '../../pages/WarehouseManagement/components/Item/components/ListItem';
 import Warehouse from '../../pages/WarehouseManagement/components/Warehouse';
 import ItemDetail from '../../pages/WarehouseManagement/components/Item/components/ItemDetail';
+import { MoveCowManagement } from '../../pages/CowPenManagement/components/MoveCowManagement';
+import { CowPenManagement } from '../../pages/CowPenManagement';
+import Supplier from '../../pages/WarehouseManagement/components/Supplier';
 
 const AppRouting = () => {
   const user = useSelector((state: RootState) => state.user);
@@ -130,6 +129,9 @@ const AppRouting = () => {
             {
               path: 'category',
               element: <Category />,
+            }, {
+              path: 'supplier',
+              element: <Supplier />,
             },
             {
               path: 'item-management',
@@ -150,6 +152,16 @@ const AppRouting = () => {
         {
           path: 'pen-management',
           element: <PenManageMent />,
+        },
+        {
+          path: 'move-cow-management',
+          element: <CowPenManagement />,
+          children: [
+            {
+              path: '',
+              element: <MoveCowManagement />,
+            },
+          ],
         },
         {
           path: 'milk-management',

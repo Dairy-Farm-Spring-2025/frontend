@@ -30,14 +30,12 @@ const TableComponent = ({
     const value = e.target.value.toLowerCase();
     setSearchText(value);
     setIsSearching(!!value);
-
     if (!value) {
       setFilteredData(dataSource);
       return;
     }
     const flattenTree = (nodes: any[]): any[] => {
       const flatList: any[] = [];
-
       const searchAndFlatten = (node: any) => {
         const nodeMatches = columns
           .filter((column) => column.searchable !== false)
@@ -75,7 +73,11 @@ const TableComponent = ({
   return (
     <div className="table !w-full !max-w-full overflow-auto">
       <div className="flex gap-2">
-        <ConfigProvider input={{ variant: 'outlined' }}>
+        <ConfigProvider
+          input={{
+            variant: 'outlined',
+          }}
+        >
           <InputComponent.Search
             placeholder="Enter name..."
             value={searchText}

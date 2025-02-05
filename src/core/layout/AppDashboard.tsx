@@ -11,6 +11,7 @@ import {
   theme,
 } from 'antd';
 import React, { useEffect } from 'react';
+import { MdSwapVert } from 'react-icons/md';
 import { AiOutlineDashboard, AiOutlineIssuesClose } from 'react-icons/ai';
 import { BiCategory, BiTask, BiUser } from 'react-icons/bi';
 import { CiBoxList } from 'react-icons/ci';
@@ -158,6 +159,11 @@ const AppDashboard: React.FC = () => {
             <PiPlus size={sizeIcon} />
           ),
           getItem(
+            'Create Cow',
+            'dairy/cow-management/create-cow',
+            <PiPlus size={sizeIcon} />
+          ),
+          getItem(
             'Health Report',
             'dairy/cow-management/health-report',
             <MdOutlineHealthAndSafety size={sizeIcon} />
@@ -166,6 +172,7 @@ const AppDashboard: React.FC = () => {
         getItem('Feed', 'dairy/feed-management', <MdOutlineFastfood />),
         getItem('Area', 'dairy/area-management', <LiaChartAreaSolid />),
         getItem('Pen', 'dairy/pen-management', <GiCage />),
+        getItem('Move Cow', 'dairy/move-cow-management', <MdSwapVert />),
         getItem('Milk', 'dairy/milk-management', <LuMilk />, [
           getItem(
             'MilkBatch',
@@ -192,6 +199,16 @@ const AppDashboard: React.FC = () => {
           getItem(
             'Supplier',
             'dairy/supplier-management',
+            <LiaProductHunt size={sizeIcon} />
+          ),
+          getItem(
+            'Item',
+            'dairy/item-management',
+            <RiAlignItemLeftLine size={sizeIcon} />
+          ),
+          getItem(
+            'Supplier',
+            'dairy/warehouse-management/supplier',
             <LiaProductHunt size={sizeIcon} />
           ),
         ]),

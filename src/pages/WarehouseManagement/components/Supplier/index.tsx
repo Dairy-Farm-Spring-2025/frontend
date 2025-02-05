@@ -9,17 +9,18 @@ import WhiteBackground from '../../../../components/UI/WhiteBackground';
 import useFetcher from '../../../../hooks/useFetcher';
 import useModal from '../../../../hooks/useModal';
 import useToast from '../../../../hooks/useToast';
-import ModalAddCategory from './components/ModalAddCategory';
-import ModalDetailCategory from './components/ModalDetailCategory';
+import ModalAddSupplier from './components/ModalAddSupplier';
+import ModalDetailSupplier from './components/ModalDetailSupplier';
 
 
 
-const Category = () => {
-    const { data, isLoading, mutate } = useFetcher('categories', 'GET');
+
+const Supplier = () => {
+    const { data, isLoading, mutate } = useFetcher('suppliers', 'GET');
     const [id, setId] = useState('');
     const toast = useToast();
     const { trigger, isLoading: loadingDelete } = useFetcher(
-        'categories',
+        'suppliers',
         'DELETE'
     );
     const modal = useModal();
@@ -27,7 +28,7 @@ const Category = () => {
 
     const onConfirm = async (id: string) => {
         try {
-            await trigger({ url: `categories/${id}` });
+            await trigger({ url: `suppliers/${id}` });
             toast.showSuccess('Delete success');
             mutate();
         } catch (error: any) {
@@ -46,8 +47,8 @@ const Category = () => {
 
     const column: Column[] = [
         {
-            dataIndex: 'categoryId',
-            key: 'categoryId',
+            dataIndex: 'supplierId',
+            key: 'supplierId',
             title: '#',
             render: (_, __, index) => index + 1,
         },
@@ -58,7 +59,28 @@ const Category = () => {
             render: (data) => <p className="text-base font-bold">{data}</p>,
         },
         {
-            dataIndex: 'categoryId',
+            dataIndex: 'address',
+            key: 'address',
+            title: 'Address',
+            render: (data) => <p className="text-base font-bold">{data}</p>,
+        },
+        {
+            dataIndex: 'phone',
+            key: 'phone',
+            title: 'Phone',
+            render: (data) => <p className="text-base font-bold">{data}</p>,
+        },
+        {
+            dataIndex: 'email',
+            key: 'email',
+            title: 'Email',
+            render: (data) => <p className="text-base font-bold">{data}</p>,
+        },
+
+
+
+        {
+            dataIndex: 'supplierId',
             key: 'action',
             title: 'Action',
             render: (data) => (
@@ -91,7 +113,7 @@ const Category = () => {
                         type="primary"
                         onClick={handleOpenModalAdd}
                     >
-                        Add Category
+                        Add Supplier
                     </ButtonComponent>
                     <TableComponent
                         dataSource={data}
@@ -99,13 +121,13 @@ const Category = () => {
                         loading={isLoading}
                     />
                 </div>
-                <ModalAddCategory modal={modal} mutate={mutate} />
+                <ModalAddSupplier modal={modal} mutate={mutate} />
                 {id !== '' && (
-                    <ModalDetailCategory id={id} modal={modalDetail} mutate={mutate} />
+                    <ModalDetailSupplier id={id} modal={modalDetail} mutate={mutate} />
                 )}
             </WhiteBackground>
         </AnimationAppear>
     );
 };
 
-export default Category;
+export default Supplier;

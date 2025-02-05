@@ -50,4 +50,8 @@ export const penStatus = [
     label: 'Decommissioned',
     value: 'decommissioned',
   },
+  {
+    label: 'In Planing',
+    value: 'inPlaning',
+  },
 ];

@@ -39,7 +39,7 @@ const ModalEditItem = ({ modal, data, mutate }: ModalEditItemProps) => {
   const { isLoading, trigger } = useFetcher<Warehouse>('');
   const [warehouse, setWarehouse] = useState<Warehouse>();
   const { isLoading: isLoadingEdit, trigger: triggerEdit } = useFetcher<any>(
-    `items/${data.itemId}`,
+    `items/${data?.itemId}`,
     'PUT'
   );
 
