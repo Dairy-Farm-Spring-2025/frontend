@@ -3,24 +3,7 @@ import useFetcher from '../../../../../../hooks/useFetcher';
 import ModalComponent from '../../../../../../components/Modal/ModalComponent';
 import PenEntityDetail from './PenEntityDetail';
 import CowEntityDetail from '../CowEntityDetail/CowEntityDetail';
-
-const penTypes = [
-  { label: 'Calf Pen', value: 'calfPen' },
-  { label: 'Heifer Pen', value: 'heiferPen' },
-  { label: 'Dry Cow Pen', value: 'dryCowPen' },
-  { label: 'Lactating Cow Pen', value: 'lactatingCowPen' },
-  { label: 'Maternity Pen', value: 'maternityPen' },
-  { label: 'Isolation Pen', value: 'isolationPen' },
-  { label: 'Holding Pen', value: 'holdingPen' },
-];
-
-const penStatuses = [
-  { label: 'Occupied', value: 'occupied' },
-  { label: 'Empty', value: 'empty' },
-  { label: 'Reserved', value: 'reserved' },
-  { label: 'Under Maintenance', value: 'underMaintenance' },
-  { label: 'Decommissioned', value: 'decommissioned' },
-];
+import { penStatus, penType } from '../../../../../../service/data/pen';
 
 interface ModalPenDetailProps {
   penId: number;
@@ -66,8 +49,8 @@ const ModalPenDetail: React.FC<ModalPenDetailProps> = ({ modal, penId }) => {
             isEditing={isEditing}
             editedDetails={editedDetails}
             handleInputChange={handleInputChange}
-            penTypes={penTypes}
-            penStatuses={penStatuses}
+            penTypes={penType}
+            penStatuses={penStatus}
           />
           <CowEntityDetail cowEntity={data[0].cowEntity} />
         </div>

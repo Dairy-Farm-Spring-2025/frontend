@@ -11,7 +11,6 @@ import { getLabelByValue } from '../../../../utils/getLabel';
 import { penStatus, penType } from '../../../../service/data/pen';
 import { cowStatus } from '../../../../service/data/cowStatus';
 import ListCowNotInPen from './components/ListCowNotInPen/ListCowNotInPen';
-import CreateBulkModal from './components/ListCowNotInPen/components/CreateBulk/CreateBulk';
 
 const { TabPane } = Tabs;
 const { confirm } = Modal;
@@ -138,7 +137,7 @@ export const MoveCowManagement: React.FC = () => {
       </TabPane>
 
       <TabPane className='flex justify-center items-center' tab='Move Bulk to Pen' key='2'>
-        <ListCowNotInPen />
+        <ListCowNotInPen mutate={mutate} availablePens={availablePens} />
       </TabPane>
       {/* Tab 2: Move Cow to Pen */}
       <TabPane className='flex justify-center items-center' tab='Move Cow to Pen' key='3'>

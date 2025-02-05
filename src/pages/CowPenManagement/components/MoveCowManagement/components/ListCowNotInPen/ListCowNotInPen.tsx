@@ -15,11 +15,16 @@ import WhiteBackground from '../../../../../../components/UI/WhiteBackground';
 import useToast from '../../../../../../hooks/useToast';
 import CreateBulkModal from './components/CreateBulk/CreateBulk';
 import useModal from '../../../../../../hooks/useModal';
+import { Pen } from '../../../../../../model/Pen';
+import { PenEntity } from '../../../../../../model/CowPen/CowPen';
 
-const ListCowNotInPen: React.FC = () => {
-  const { data, error, isLoading } = useFetcher<Cow[]>('cows', 'GET');
-  const { data: availablePens } = useFetcher<Cow[]>('pens/available', 'GET');
+interface ListCowNotInPenProps {
+  availablePens: PenEntity[];
+  mutate: any;
+}
 
+const ListCowNotInPen: React.FC<ListCowNotInPenProps> = ({ availablePens, mutate }) => {
+  const { data, error, isLoading, mutate: mutateCows } = useFetcher<Cow[]>('cows', 'GET');
   const [cow, setCow] = useState<Cow[]>([]);
   const toast = useToast();
   const modal = useModal();
@@ -122,7 +127,13 @@ const ListCowNotInPen: React.FC = () => {
   return (
     <AnimationAppear duration={0.5}>
       <WhiteBackground>
-        <CreateBulkModal modal={modal} avalableCows={filteredCows} availablePens={availablePens} />
+        <CreateBulkModal
+          modal={modal}
+          avalableCows={filteredCows}
+          availablePens={availablePens || []}
+          mutate={mutate}
+          mutateCows={mutateCows}
+        />
         <TableComponent loading={isLoading} columns={columns} dataSource={formatSTT(cow)} />
       </WhiteBackground>
     </AnimationAppear>
