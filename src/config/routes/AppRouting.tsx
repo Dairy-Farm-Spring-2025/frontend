@@ -1,8 +1,4 @@
-import {
-  createBrowserRouter,
-  Navigate,
-  RouterProvider,
-} from 'react-router-dom';
+import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
 import AppDashboard from '../../core/layout/AppDashboard';
 import CowManagement from '../../pages/CowManagement';
 import ListCow from '../../pages/CowManagement/components/ListCow';
@@ -32,6 +28,8 @@ import MilkBatchManagement from '../../pages/MilkManagement/MilkBatchManagement'
 import WarehouseManagement from '../../pages/WarehouseManagement';
 import Warehouse from '../../pages/WarehouseManagement/components/Warehouse';
 import Category from '../../pages/WarehouseManagement/components/Category';
+import { MoveCowManagement } from '../../pages/CowPenManagement/components/MoveCowManagement';
+import { CowPenManagement } from '../../pages/CowPenManagement';
 
 const AppRouting = () => {
   const user = useSelector((state: RootState) => state.user);
@@ -133,6 +131,16 @@ const AppRouting = () => {
         {
           path: 'pen-management',
           element: <PenManageMent />,
+        },
+        {
+          path: 'move-cow-management',
+          element: <CowPenManagement />,
+          children: [
+            {
+              path: '',
+              element: <MoveCowManagement />,
+            },
+          ],
         },
         {
           path: 'milk-management',
