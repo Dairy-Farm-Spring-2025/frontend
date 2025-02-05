@@ -171,7 +171,7 @@ const AppDashboard: React.FC = () => {
             <BiCategory size={sizeIcon} />
           ),
           getItem('Item', 'dairy/item-management', <RiAlignItemLeftLine size={sizeIcon} />),
-          getItem('Supplier', 'dairy/supplier-management', <LiaProductHunt size={sizeIcon} />),
+          getItem('Supplier', 'dairy/warehouse-management/supplier', <LiaProductHunt size={sizeIcon} />),
         ]),
       ],
     },

@@ -30,6 +30,7 @@ import Warehouse from '../../pages/WarehouseManagement/components/Warehouse';
 import Category from '../../pages/WarehouseManagement/components/Category';
 import { MoveCowManagement } from '../../pages/CowPenManagement/components/MoveCowManagement';
 import { CowPenManagement } from '../../pages/CowPenManagement';
+import Supplier from '../../pages/WarehouseManagement/components/Supplier';
 
 const AppRouting = () => {
   const user = useSelector((state: RootState) => state.user);
@@ -125,6 +126,9 @@ const AppRouting = () => {
             {
               path: 'category',
               element: <Category />,
+            }, {
+              path: 'supplier',
+              element: <Supplier />,
             },
           ],
         },

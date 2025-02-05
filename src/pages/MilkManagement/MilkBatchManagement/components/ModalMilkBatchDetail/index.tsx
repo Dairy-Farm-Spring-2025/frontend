@@ -3,7 +3,7 @@
 
 
 import React, { useEffect, useState } from 'react';
-import { Input, Button, Divider, message, Table, Popconfirm, Row, Col, Tooltip } from 'antd';
+import { Input, Button, Divider, message, Table, Popconfirm, Row, Col, Tooltip, Select } from 'antd';
 import useFetcher from '../../../../../hooks/useFetcher';
 import ModalComponent from '../../../../../components/Modal/ModalComponent';
 import TableComponent, { Column } from '../../../../../components/Table/TableComponent';
@@ -44,9 +44,9 @@ interface Milk {
 const ModalMilkBatchDetail: React.FC<ModalMilkBatchDetailProps> = ({ modal, milkBatchId, mutate }) => {
     const { data, error, isLoading, mutate: localMutate } = useFetcher<any>(`MilkBatch/${milkBatchId}`, 'GET');
     const { trigger } = useFetcher<any>(`MilkBatch/${milkBatchId}`, 'PUT');
-
+    const { data: dataDailyMilkAvailable, mutate: fetchDataDailymilkIdAvailable } = useFetcher<any>(`dailymilks/search_available`, 'GET');
     const [dailyMilkIdToAdd, setDailyMilkIdToAdd] = useState<number | null>(null);
-
+    console.log("check data dailymilkid: ", dataDailyMilkAvailable)
     const refreshData = async () => {
         try {
             await localMutate();
@@ -57,7 +57,7 @@ const ModalMilkBatchDetail: React.FC<ModalMilkBatchDetailProps> = ({ modal, milk
 
     const handleAddDailyMilkId = async () => {
         if (!dailyMilkIdToAdd) {
-            message.warning('Please enter a valid Daily Milk ID.');
+            message.warning('Please select a valid Daily Milk ID.');
             return;
         }
 
@@ -65,7 +65,7 @@ const ModalMilkBatchDetail: React.FC<ModalMilkBatchDetailProps> = ({ modal, milk
             const payload = { dailyMilkIdsToAdd: [dailyMilkIdToAdd] };
             await trigger({ body: payload });
             message.success(`Daily Milk ID ${dailyMilkIdToAdd} added successfully!`);
-            setDailyMilkIdToAdd(null); // Clear the input
+            // setDailyMilkIdToAdd(null);
             await refreshData();
         } catch (err) {
             message.error('Error adding Daily Milk ID. Please try again.');
@@ -190,11 +190,21 @@ const ModalMilkBatchDetail: React.FC<ModalMilkBatchDetailProps> = ({ modal, milk
             {/* Add Daily Milk ID Section */}
             <Row gutter={16} style={{ marginBottom: 10 }}>
                 <Col span={8}>
-                    <Input
-                        placeholder="Enter Daily Milk ID"
-                        value={dailyMilkIdToAdd || ''}
-                        onChange={(e) => setDailyMilkIdToAdd(Number(e.target.value))}
-                        type="number"
+                    <Select
+                        style={{ width: '100%' }}
+                        placeholder="Select a Daily Milk ID"
+                        value={dailyMilkIdToAdd}
+                        onChange={(value) => setDailyMilkIdToAdd(value)}
+                        options={dataDailyMilkAvailable?.map((milk: Milk) => ({
+                            value: milk.dailyMilkId,
+                            label: `Daily Milk ID: ${milk.dailyMilkId} - ${milk.milkDate} (${formatAreaType(milk.shift)})`,
+                        }))}
+
+                        onDropdownVisibleChange={(open) => {
+                            if (open) {
+                                fetchDataDailymilkIdAvailable(); // Gọi API khi mở dropdown
+                            }
+                        }}
                     />
                 </Col>
                 <Col span={4}>
