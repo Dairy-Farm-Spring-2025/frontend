@@ -44,6 +44,7 @@ const Number = ({ className, ...props }: NumberProps) => {
       className={`input-component text-area-component !w-full ${
         className || ''
       }`}
+      placeholder="Enter..."
       {...props}
     />
   );
@@ -51,12 +52,22 @@ const Number = ({ className, ...props }: NumberProps) => {
 
 const Password = ({ className, ...props }: PasswordProps) => {
   return (
-    <Input.Password className={`input-component ${className}`} {...props} />
+    <Input.Password
+      placeholder="Enter Password..."
+      className={`input-component ${className}`}
+      {...props}
+    />
   );
 };
 
 const Search = ({ className, ...props }: SearchComponentProps) => {
-  return <Input.Search className={`input-component ${className}`} {...props} />;
+  return (
+    <Input.Search
+      placeholder="Search..."
+      className={`input-component ${className}`}
+      {...props}
+    />
+  );
 };
 
 InputComponent.TextArea = TextArea;

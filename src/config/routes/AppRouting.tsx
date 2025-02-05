@@ -26,8 +26,11 @@ import DailyMilkDashboard from '../../pages/Dashboard/components/DailyMilk';
 import MilkManagement from '../../pages/MilkManagement';
 import MilkBatchManagement from '../../pages/MilkManagement/MilkBatchManagement';
 import WarehouseManagement from '../../pages/WarehouseManagement';
-import Warehouse from '../../pages/WarehouseManagement/components/Warehouse';
 import Category from '../../pages/WarehouseManagement/components/Category';
+import ItemManagement from '../../pages/WarehouseManagement/components/Item';
+import ListItemManagement from '../../pages/WarehouseManagement/components/Item/components/ListItem';
+import Warehouse from '../../pages/WarehouseManagement/components/Warehouse';
+import ItemDetail from '../../pages/WarehouseManagement/components/Item/components/ItemDetail';
 import { MoveCowManagement } from '../../pages/CowPenManagement/components/MoveCowManagement';
 import { CowPenManagement } from '../../pages/CowPenManagement';
 import Supplier from '../../pages/WarehouseManagement/components/Supplier';
@@ -129,6 +132,20 @@ const AppRouting = () => {
             }, {
               path: 'supplier',
               element: <Supplier />,
+            },
+            {
+              path: 'item-management',
+              element: <ItemManagement />,
+              children: [
+                {
+                  path: '',
+                  element: <ListItemManagement />,
+                },
+                {
+                  path: ':id',
+                  element: <ItemDetail />,
+                },
+              ],
             },
           ],
         },

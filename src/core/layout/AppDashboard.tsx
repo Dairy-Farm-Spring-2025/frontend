@@ -20,7 +20,11 @@ import { GiCage } from 'react-icons/gi';
 import { IoIosLogOut, IoIosNotifications } from 'react-icons/io';
 import { LiaChartAreaSolid, LiaProductHunt } from 'react-icons/lia';
 import { LuGitPullRequest, LuMilk } from 'react-icons/lu';
-import { MdOutlineFastfood, MdOutlineHealthAndSafety, MdSchedule } from 'react-icons/md';
+import {
+  MdOutlineFastfood,
+  MdOutlineHealthAndSafety,
+  MdSchedule,
+} from 'react-icons/md';
 import { PiCow, PiPlus, PiWarehouse } from 'react-icons/pi';
 import { RiAlignItemLeftLine } from 'react-icons/ri';
 import { SiHappycow } from 'react-icons/si';
@@ -77,7 +81,9 @@ const AppDashboard: React.FC = () => {
   }, []);
 
   const breadcrumbItems = pathSegments.map((segment, index) => ({
-    title: breadcumData[segment] || segment.charAt(0).toUpperCase() + segment.slice(1),
+    title:
+      breadcumData[segment] ||
+      segment.charAt(0).toUpperCase() + segment.slice(1),
     href: '/' + pathSegments.slice(0, index + 1).join('/'),
   }));
   const navigate = useNavigate();
@@ -107,9 +113,12 @@ const AppDashboard: React.FC = () => {
     {
       key: '1',
       label: (
-        <div className='flex flex-col' onClick={() => handleNavigate('profile')}>
-          <p className='text-base font-bold'>Nguyen Van A</p>
-          <p className='text-slate-500'>Staff</p>
+        <div
+          className="flex flex-col"
+          onClick={() => handleNavigate('profile')}
+        >
+          <p className="text-base font-bold">Nguyen Van A</p>
+          <p className="text-slate-500">Staff</p>
         </div>
       ),
     },
@@ -134,14 +143,26 @@ const AppDashboard: React.FC = () => {
       type: 'group',
       children: [
         getItem('Cow', 'dairy/cow-management', <PiCow />, [
-          getItem('List Cow', 'dairy/cow-management/list-cow', <CiBoxList size={sizeIcon} />),
+          getItem(
+            'List Cow',
+            'dairy/cow-management/list-cow',
+            <CiBoxList size={sizeIcon} />
+          ),
           getItem(
             'Cow Type',
             'dairy/cow-management/cow-type-management',
             <BiCategory size={sizeIcon} />
           ),
-          getItem('Create Cow', 'dairy/cow-management/create-cow', <PiPlus size={sizeIcon} />),
-          getItem('Create Cow', 'dairy/cow-management/create-cow', <PiPlus size={sizeIcon} />),
+          getItem(
+            'Create Cow',
+            'dairy/cow-management/create-cow',
+            <PiPlus size={sizeIcon} />
+          ),
+          getItem(
+            'Create Cow',
+            'dairy/cow-management/create-cow',
+            <PiPlus size={sizeIcon} />
+          ),
           getItem(
             'Health Report',
             'dairy/cow-management/health-report',
@@ -170,8 +191,26 @@ const AppDashboard: React.FC = () => {
             'dairy/warehouse-management/category',
             <BiCategory size={sizeIcon} />
           ),
-          getItem('Item', 'dairy/item-management', <RiAlignItemLeftLine size={sizeIcon} />),
-          getItem('Supplier', 'dairy/warehouse-management/supplier', <LiaProductHunt size={sizeIcon} />),
+          getItem(
+            'Item',
+            'dairy/warehouse-management/item-management',
+            <RiAlignItemLeftLine size={sizeIcon} />
+          ),
+          getItem(
+            'Supplier',
+            'dairy/supplier-management',
+            <LiaProductHunt size={sizeIcon} />
+          ),
+          getItem(
+            'Item',
+            'dairy/item-management',
+            <RiAlignItemLeftLine size={sizeIcon} />
+          ),
+          getItem(
+            'Supplier',
+            'dairy/warehouse-management/supplier',
+            <LiaProductHunt size={sizeIcon} />
+          ),
         ]),
       ],
     },
@@ -181,7 +220,11 @@ const AppDashboard: React.FC = () => {
       type: 'group',
       children: [
         getItem('Human', 'dairy/human-management', <BiUser />, [
-          getItem('Worker', 'dairy/human-management/worker', <CiBoxList size={sizeIcon} />),
+          getItem(
+            'Worker',
+            'dairy/human-management/worker',
+            <CiBoxList size={sizeIcon} />
+          ),
           getItem(
             'Veterinarian',
             'dairy/human-management/veterinarian',
@@ -191,11 +234,19 @@ const AppDashboard: React.FC = () => {
 
         getItem('Schedule', 'dairy/schedule-management', <MdSchedule />),
         getItem('Task', 'dairy/task-management', <BiTask />, [
-          getItem('Task Type', 'dairy/task-type', <BiCategory size={sizeIcon} />),
+          getItem(
+            'Task Type',
+            'dairy/task-type',
+            <BiCategory size={sizeIcon} />
+          ),
         ]),
         getItem('Application', 'dairy/application-management', <FaWpforms />),
         getItem('Issue', 'dairy/issue-management', <AiOutlineIssuesClose />),
-        getItem('Request Schedule', 'dairy/request-schedule-management', <LuGitPullRequest />),
+        getItem(
+          'Request Schedule',
+          'dairy/request-schedule-management',
+          <LuGitPullRequest />
+        ),
       ],
     },
   ];
@@ -204,32 +255,38 @@ const AppDashboard: React.FC = () => {
   }, [location.pathname]);
   return (
     <AnimationAppear>
-      <Layout style={{ minHeight: '100vh' }} className='layout-dairy'>
+      <Layout style={{ minHeight: '100vh' }} className="layout-dairy">
         <Sider
           trigger={null}
           collapsible
           width={270}
           style={siderStyle}
-          className='sider-dairy bg-white border-r-2'
+          className="sider-dairy bg-white border-r-2"
         >
-          <div className='demo-logo-vertical' />
+          <div className="demo-logo-vertical" />
           <div className={`bg-white p-3 flex gap-4 justify-start items-center`}>
-            <SiHappycow className='text-green-900' size={52} />
-            <p className='text-2xl font-bold text-black'>Dairy Farm</p>
+            <SiHappycow className="text-green-900" size={52} />
+            <p className="text-2xl font-bold text-black">Dairy Farm</p>
           </div>
-          <Divider className='!m-0 border-white' />
+          <Divider className="!m-0 border-white" />
           <Menu
-            theme='light'
-            mode='inline'
+            theme="light"
+            mode="inline"
             items={itemsMenu}
-            className='menu-sider !text-base'
+            className="menu-sider !text-base"
             selectedKeys={[location.pathname.slice(1)]} // Dynamically select menu item
           />
         </Sider>
-        <Layout style={{ marginLeft: 270 }} className='duration-300'>
-          <Header className='!bg-white flex items-center gap-5 justify-end' style={{ padding: 0 }}>
-            <div className='flex items-center gap-5 pr-16'>
-              <IoIosNotifications className='cursor-pointer text-orange-600' size={32} />
+        <Layout style={{ marginLeft: 270 }} className="duration-300">
+          <Header
+            className="!bg-white flex items-center gap-5 justify-end"
+            style={{ padding: 0 }}
+          >
+            <div className="flex items-center gap-5 pr-16">
+              <IoIosNotifications
+                className="cursor-pointer text-orange-600"
+                size={32}
+              />
               <div>
                 <ConfigProvider
                   dropdown={{
@@ -240,7 +297,7 @@ const AppDashboard: React.FC = () => {
                 >
                   <Dropdown
                     trigger={['click']}
-                    className='cursor-pointer'
+                    className="cursor-pointer"
                     menu={{ items }}
                     dropdownRender={(menu) => (
                       <div style={contentStyle}>
@@ -256,9 +313,9 @@ const AppDashboard: React.FC = () => {
                         <div style={{ padding: 8 }}>
                           <ButtonComponent
                             onClick={handleLogout}
-                            type='primary'
+                            type="primary"
                             danger
-                            className='!w-full font-bold'
+                            className="!w-full font-bold"
                             icon={<IoIosLogOut size={20} />}
                           >
                             Logout
@@ -273,18 +330,21 @@ const AppDashboard: React.FC = () => {
               </div>
             </div>
           </Header>
-          <Content style={{ padding: '10px' }} className=' !bg-slate-200 !min-h-[90vh]'>
+          <Content
+            style={{ padding: '10px' }}
+            className=" !bg-slate-200 !min-h-[90vh]"
+          >
             <div
               style={{
                 padding: 8,
                 minHeight: 360,
                 overflowY: 'auto',
               }}
-              className='!h-full'
+              className="!h-full"
             >
               <Breadcrumb style={{ margin: '16px 0' }}>
                 <Breadcrumb.Item>
-                  <Link to='/'>Home</Link>
+                  <Link to="/">Home</Link>
                 </Breadcrumb.Item>
                 {breadcrumbItems.map((item, index) => (
                   <Breadcrumb.Item key={index}>

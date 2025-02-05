@@ -8,12 +8,11 @@ const fetcher = async (
   options?: {
     params?: any;
     body?: any;
-    contentType?: 'application/json' | 'multipart/form-data'; // Add contentType option
+    contentType?: 'application/json' | 'multipart/form-data';
   }
 ) => {
   let finalUrl = url;
 
-  // Handle query parameters for GET requests
   if (options?.params) {
     const queryString = new URLSearchParams(options.params).toString();
     finalUrl += `?${queryString}`;
@@ -21,7 +20,6 @@ const fetcher = async (
 
   const headers: Record<string, string> = {};
   if (options?.contentType === 'multipart/form-data') {
-    // For multipart, omit setting Content-Type; axios will handle it
     delete headers['Content-Type'];
   } else {
     headers['Content-Type'] = 'application/json';
@@ -30,15 +28,15 @@ const fetcher = async (
   const config = {
     method,
     headers,
-    data: options?.body, // Add body for non-GET requests
+    data: options?.body,
   };
 
-  const response = await api(finalUrl, config);
-  let result = response.data;
-  if (method === 'GET') {
-    result = response.data.data;
+  try {
+    const response = await api(finalUrl, config);
+    return method === 'GET' ? response.data.data : response.data;
+  } catch (error: any) {
+    throw error.response?.data || error.message || 'Unknown error';
   }
-  return result;
 };
 
 const useFetcher = <T>(
@@ -49,20 +47,29 @@ const useFetcher = <T>(
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<any>(null);
 
-  const { data, mutate, isValidating } = useSWR<T>(
-    method === 'GET' ? url : null,
-    () => fetcher(url, method),
-    {
-      revalidateOnFocus: false, // Optional: prevent revalidation on focus
-    }
-  );
+  const {
+    data,
+    mutate,
+    isValidating,
+    error: swrError,
+  } = useSWR<T>(method === 'GET' ? url : null, () => fetcher(url, method), {
+    revalidateOnFocus: false,
+    onError: (err) => {
+      setError(err);
+    },
+  });
 
-  // Track loading state for GET requests
   useEffect(() => {
     if (method === 'GET') {
       setIsLoading(isValidating);
     }
   }, [isValidating, method]);
+
+  useEffect(() => {
+    if (swrError) {
+      setError(swrError); // Set error state when SWR encounters an error
+    }
+  }, [swrError]);
 
   const trigger = async (options?: { url?: string; body?: any }) => {
     setIsLoading(true);
@@ -75,8 +82,8 @@ const useFetcher = <T>(
       mutate(result, false);
       return result;
     } catch (err: any) {
-      setError(err.response?.data || err.message || 'Unknown error');
-      throw err.response?.data || err;
+      setError(err);
+      throw err;
     } finally {
       setIsLoading(false);
     }

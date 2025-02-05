@@ -4,16 +4,19 @@ import storage from 'redux-persist/lib/storage';
 import userReducer from './slice/userSlice';
 import avatarReducer from './slice/avatarSlice';
 import mutateReducer from './slice/mutateSlice';
+import itemManagementReducer from './slice/itemManagementSlice';
 
 const persistConfig = {
   key: 'root',
   storage,
+  blacklist: ['itemManagement'], // Không lưu itemManagement
 };
 
 const rootReducer = combineReducers({
   user: userReducer,
   avatar: avatarReducer,
   mutate: mutateReducer,
+  itemManagement: itemManagementReducer, // Không áp dụng persist
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
