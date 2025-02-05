@@ -14,6 +14,7 @@ const SelectComponent = ({
   return (
     <Select
       className={`select-component ${className}`}
+      placeholder={'Select...'}
       options={options}
       {...props}
     />

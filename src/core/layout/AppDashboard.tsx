@@ -186,7 +186,7 @@ const AppDashboard: React.FC = () => {
           ),
           getItem(
             'Item',
-            'dairy/item-management',
+            'dairy/warehouse-management/item-management',
             <RiAlignItemLeftLine size={sizeIcon} />
           ),
           getItem(

@@ -30,8 +30,11 @@ import DailyMilkDashboard from '../../pages/Dashboard/components/DailyMilk';
 import MilkManagement from '../../pages/MilkManagement';
 import MilkBatchManagement from '../../pages/MilkManagement/MilkBatchManagement';
 import WarehouseManagement from '../../pages/WarehouseManagement';
-import Warehouse from '../../pages/WarehouseManagement/components/Warehouse';
 import Category from '../../pages/WarehouseManagement/components/Category';
+import ItemManagement from '../../pages/WarehouseManagement/components/Item';
+import ListItemManagement from '../../pages/WarehouseManagement/components/Item/components/ListItem';
+import Warehouse from '../../pages/WarehouseManagement/components/Warehouse';
+import ItemDetail from '../../pages/WarehouseManagement/components/Item/components/ItemDetail';
 
 const AppRouting = () => {
   const user = useSelector((state: RootState) => state.user);
@@ -127,6 +130,20 @@ const AppRouting = () => {
             {
               path: 'category',
               element: <Category />,
+            },
+            {
+              path: 'item-management',
+              element: <ItemManagement />,
+              children: [
+                {
+                  path: '',
+                  element: <ListItemManagement />,
+                },
+                {
+                  path: ':id',
+                  element: <ItemDetail />,
+                },
+              ],
             },
           ],
         },
