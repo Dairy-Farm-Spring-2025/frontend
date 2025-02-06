@@ -15,6 +15,10 @@ import ListAllItem from './components/ListAllItem';
 import ListItemCategory from './components/ListItemCategory';
 import ListItemWarehouse from './components/ListItemWarehouse';
 import TextLink from '../../../../../../components/UI/TextLink';
+import useToast from '../../../../../../hooks/useToast';
+import PopconfirmComponent from '../../../../../../components/Popconfirm/PopconfirmComponent';
+import ButtonComponent from '../../../../../../components/Button/ButtonComponent';
+import { useEffect, useState } from 'react';
 
 const convertToTreeDataByWarehouse = (items: Item[]) => {
   const warehouseMap = new Map();
@@ -44,15 +48,25 @@ const convertToTreeDataByWarehouse = (items: Item[]) => {
 };
 
 const ListItemManagement = () => {
+  const [activeTab, setActiveTab] = useState<string>('all'); // Track active tab key
+  const toast = useToast();
   const {
     data: itemData,
     isLoading: isLoadingItem,
     mutate: mutateItem,
   } = useFetcher<Item[] | any>('items', 'GET');
-  const { isLoading: isLoadingWarehouse, trigger: triggerWarehouse } =
-    useFetcher('items/warehouse');
-  const { isLoading: isLoadingCategory, trigger: triggerCategory } =
-    useFetcher('items/category');
+  const {
+    isLoading: isLoadingWarehouse,
+    trigger: triggerWarehouse,
+    mutate: mutateWarehouseItem,
+  } = useFetcher('items/warehouse');
+  const {
+    isLoading: isLoadingCategory,
+    trigger: triggerCategory,
+    mutate: mutateCategoryItem,
+  } = useFetcher('items/category');
+  const { isLoading: isLoadingDeleteItem, trigger: triggerDeleteItem } =
+    useFetcher(`items/delete`, 'DELETE');
 
   const column: Column[] = [
     {
@@ -93,6 +107,21 @@ const ListItemManagement = () => {
       dataIndex: 'status',
       title: 'Status',
     },
+    // {
+    //   key: 'action',
+    //   dataIndex: 'itemId',
+    //   title: 'Action',
+    //   render: (data) => (
+    //     <PopconfirmComponent
+    //       title={'Delete this item?'}
+    //       onConfirm={() => handleDelete(data)}
+    //     >
+    //       <ButtonComponent danger type="primary">
+    //         Delete
+    //       </ButtonComponent>
+    //     </PopconfirmComponent>
+    //   ),
+    // },
   ];
 
   const columnsItemByWarehouse: Column[] = [
@@ -136,6 +165,26 @@ const ListItemManagement = () => {
       dataIndex: 'status',
       key: 'status',
       width: 120,
+    },
+    {
+      key: 'action',
+      dataIndex: 'itemId',
+      title: 'Action',
+      render: (data) =>
+        data && (
+          <PopconfirmComponent
+            title={'Delete this item?'}
+            onConfirm={() => handleDelete(data)}
+          >
+            <ButtonComponent
+              danger
+              type="primary"
+              loading={isLoadingDeleteItem}
+            >
+              Delete
+            </ButtonComponent>
+          </PopconfirmComponent>
+        ),
     },
   ];
 
@@ -181,10 +230,37 @@ const ListItemManagement = () => {
     },
   ];
 
+  const handleDelete = async (id: string) => {
+    try {
+      const response = await triggerDeleteItem({ url: `items/${id}` });
+      toast.showSuccess(response?.message);
+      if (activeTab === 'all') {
+        mutateItem();
+      }
+      if (activeTab === 'view-by-category') {
+        mutateCategoryItem();
+      }
+      if (activeTab === 'view-by-warehouse') {
+        mutateWarehouseItem();
+      }
+    } catch (error: any) {
+      toast.showError(error?.message);
+    }
+  };
+
+  useEffect(() => {
+    console.log(activeTab);
+  }, [activeTab]);
+
   return (
     <AnimationAppear>
       <WhiteBackground>
-        <TabsComponent items={items} destroyInactiveTabPane />
+        <TabsComponent
+          activeKey={activeTab}
+          onChange={setActiveTab}
+          items={items}
+          destroyInactiveTabPane
+        />
       </WhiteBackground>
     </AnimationAppear>
   );

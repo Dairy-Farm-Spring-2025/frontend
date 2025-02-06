@@ -159,11 +159,6 @@ const AppDashboard: React.FC = () => {
             <PiPlus size={sizeIcon} />
           ),
           getItem(
-            'Create Cow',
-            'dairy/cow-management/create-cow',
-            <PiPlus size={sizeIcon} />
-          ),
-          getItem(
             'Health Report',
             'dairy/cow-management/health-report',
             <MdOutlineHealthAndSafety size={sizeIcon} />
@@ -194,16 +189,6 @@ const AppDashboard: React.FC = () => {
           getItem(
             'Item',
             'dairy/warehouse-management/item-management',
-            <RiAlignItemLeftLine size={sizeIcon} />
-          ),
-          getItem(
-            'Supplier',
-            'dairy/supplier-management',
-            <LiaProductHunt size={sizeIcon} />
-          ),
-          getItem(
-            'Item',
-            'dairy/item-management',
             <RiAlignItemLeftLine size={sizeIcon} />
           ),
           getItem(

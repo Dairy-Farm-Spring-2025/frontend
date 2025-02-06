@@ -1,7 +1,7 @@
-@use '../../styles/colors' as colors; /* Import the color variables */
+@use '../../styles/colors' as colors;
 
 .table {
-  overflow-x: auto !important; // Add a scroll bar when content overflows
+  overflow-x: auto !important;
   .ant-table-thead tr th {
     background-color: colors.$primary-color !important;
     color: white !important;
