@@ -25,6 +25,16 @@ const CreateDailyMilkModal = ({ modal, id, mutate }: DailMilkModalProps) => {
     modal.closeModal();
   };
 
+  const getCurrentShift = () => {
+    const currentHour = new Date().getHours();
+    const currentMinutes = new Date().getMinutes();
+    return shiftData.map((shift) => ({
+      ...shift,
+      disabled: shift.end <= currentHour,
+      title: `The shift is passed (${currentHour}:${currentMinutes})`,
+    }));
+  };
+
   const handleFinish = async (values: DailyMilkRequest) => {
     const data: DailyMilkRequest = {
       shift: values.shift,
@@ -51,21 +61,24 @@ const CreateDailyMilkModal = ({ modal, id, mutate }: DailMilkModalProps) => {
       <FormComponent form={form} onFinish={handleFinish}>
         <FormItemComponent
           label={<LabelForm>Shift</LabelForm>}
-          name='shift'
+          name="shift"
           rules={[{ required: true }]}
         >
-          <SelectComponent placeholder='Select shift...' options={shiftData} />
+          <SelectComponent
+            placeholder="Select shift..."
+            options={getCurrentShift()}
+          />
         </FormItemComponent>
         <FormItemComponent
-          name='volume'
+          name="volume"
           rules={[{ required: true }]}
           label={
             <LabelForm>
-              Volume <span className='text-orange-500'>(lit)</span>
+              Volume <span className="text-orange-500">(lit)</span>
             </LabelForm>
           }
         >
-          <InputComponent.Number placeholder='Enter volume...' />
+          <InputComponent.Number placeholder="Enter volume..." />
         </FormItemComponent>
       </FormComponent>
     </ModalComponent>
