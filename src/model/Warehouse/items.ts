@@ -1,18 +1,8 @@
 export type Item = {
   itemId: number;
   name: string;
-  status: 'available' | 'outOfStock' | 'damaged' | 'expired' | 'reserved';
-  unit:
-    | 'kilogram'
-    | 'gram'
-    | 'liter'
-    | 'milliliter'
-    | 'piece'
-    | 'pack'
-    | 'squareMeter'
-    | 'bottle'
-    | 'bag'
-    | 'box';
+  status: StatusItem;
+  unit: Unit;
   quantity: number;
   categoryEntity: {
     categoryId: number;
@@ -28,18 +18,27 @@ export type Item = {
 export type ItemRequestBody = {
   name: string;
   status: 'available' | 'outOfStock' | 'damaged' | 'expired' | 'reserved';
-  unit:
-    | 'kilogram'
-    | 'gram'
-    | 'liter'
-    | 'milliliter'
-    | 'piece'
-    | 'pack'
-    | 'squareMeter'
-    | 'bottle'
-    | 'bag'
-    | 'box';
+  unit: Unit;
   quantity: number;
   categoryId: number;
   locationId: number;
 };
+
+export type Unit =
+  | 'kilogram'
+  | 'gram'
+  | 'liter'
+  | 'milliliter'
+  | 'piece'
+  | 'pack'
+  | 'squareMeter'
+  | 'bottle'
+  | 'bag'
+  | 'box';
+
+export type StatusItem =
+  | 'available'
+  | 'outOfStock'
+  | 'damaged'
+  | 'expired'
+  | 'reserved';
