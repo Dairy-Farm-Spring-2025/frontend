@@ -1,12 +1,10 @@
-
-
-
-
-import React, { useEffect, useState } from 'react';
-import { Input, Button, Divider, message, Table, Popconfirm, Row, Col, Tooltip, Select } from 'antd';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import { Button, message, Table, Popconfirm, Row, Col, Tooltip, Select } from 'antd';
+import type { ColumnsType } from 'antd/es/table';
+import type { Key } from 'react';
 import useFetcher from '../../../../../hooks/useFetcher';
 import ModalComponent from '../../../../../components/Modal/ModalComponent';
-import TableComponent, { Column } from '../../../../../components/Table/TableComponent';
+import TableComponent from '../../../../../components/Table/TableComponent';
 import AnimationAppear from '../../../../../components/UI/AnimationAppear';
 import WhiteBackground from '../../../../../components/UI/WhiteBackground';
 import { formatAreaType } from '../../../../../utils/format';
@@ -17,213 +15,233 @@ interface ModalMilkBatchDetailProps {
     mutate: any;
 }
 
+interface Worker {
+    name: string;
+    phoneNumber: string;
+    roleId: { name: string };
+    employeeNumber: string;
+}
+
+interface Cow {
+    cowId: string;
+    name: string;
+    cowTypeEntity: { name: string };
+    cowStatus: string;
+    cowOrigin: string;
+    gender: string;
+}
+
 interface Milk {
     dailyMilkId: number;
     shift: string;
     milkDate: string;
-    worker: {
-        name: string;
-        phoneNumber: string;
-        roleId: {
-            name: string;
-        };
-        employeeNumber: string;
-    };
-    cow: {
-        cowId: string;
-        name: string;
-        cowTypeEntity: {
-            name: string;
-        };
-        cowStatus: string;
-        cowOrigin: string;
-        gender: string;
-    };
+    volume: number;
+    worker: Worker;
+    cow: Cow;
 }
 
 const ModalMilkBatchDetail: React.FC<ModalMilkBatchDetailProps> = ({ modal, milkBatchId, mutate }) => {
-    const { data, error, isLoading, mutate: localMutate } = useFetcher<any>(`MilkBatch/${milkBatchId}`, 'GET');
+    const { data, isLoading, mutate: refreshData } = useFetcher<any>(`MilkBatch/${milkBatchId}`, 'GET');
     const { trigger } = useFetcher<any>(`MilkBatch/${milkBatchId}`, 'PUT');
-    const { data: dataDailyMilkAvailable, mutate: fetchDataDailymilkIdAvailable } = useFetcher<any>(`dailymilks/search_available`, 'GET');
-    const [dailyMilkIdToAdd, setDailyMilkIdToAdd] = useState<number | null>(null);
-    console.log("check data dailymilkid: ", dataDailyMilkAvailable)
-    const refreshData = async () => {
-        try {
-            await localMutate();
-        } catch (err) {
-            message.error('Error refreshing milk batch data.');
-        }
+    const { data: availableDailyMilk, mutate: fetchAvailableDailyMilk } = useFetcher<any>(`dailymilks/search_available`, 'GET');
+
+    const [selectedMilkIds, setSelectedMilkIds] = useState<number[]>([]);
+    const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
+    const [tempSelectedMilks, setTempSelectedMilks] = useState<Milk[]>([]);
+
+    /** Chọn Daily Milk từ Select */
+    const handleSelectDailyMilk = (selectedIds: number[]) => {
+        setSelectedMilkIds(selectedIds);
+        if (!availableDailyMilk) return;
+
+        const milkMap = new Map(availableDailyMilk.map((milk: Milk) => [milk.dailyMilkId, milk]));
+        setTempSelectedMilks(selectedIds.map(id => milkMap.get(id)).filter(Boolean) as Milk[]);
     };
 
-    const handleAddDailyMilkId = async () => {
-        if (!dailyMilkIdToAdd) {
-            message.warning('Please select a valid Daily Milk ID.');
+    /** Thêm Daily Milk vào batch */
+    // const handleAddDailyMilkIds = async () => {
+    //     if (!tempSelectedMilks.length) {
+    //         message.warning('Please select at least one Daily Milk ID.');
+    //         return;
+    //     }
+
+    //     try {
+    //         await trigger({ body: { dailyMilkIdsToAdd: tempSelectedMilks.map(milk => milk.dailyMilkId) } });
+    //         message.success(`Added ${tempSelectedMilks.length} Daily Milk ID(s)!`);
+    //         setSelectedMilkIds([]);
+    //         setTempSelectedMilks([]);
+    //         await refreshData();
+    //     } catch {
+    //         message.error('Error adding Daily Milk IDs.');
+    //     }
+    // };
+
+    /** Xóa Daily Milk khỏi batch */
+    // const handleBatchDelete = async () => {
+    //     if (!selectedRowKeys.length) {
+    //         message.warning('Please select at least one Daily Milk ID to delete.');
+    //         return;
+    //     }
+
+    //     try {
+    //         await trigger({ body: { dailyMilkIdsToRemove: selectedRowKeys } });
+    //         message.success(`Removed ${selectedRowKeys.length} Daily Milk ID(s)!`);
+    //         setSelectedRowKeys([]);
+    //         await refreshData();
+    //     } catch {
+    //         message.error('Error removing Daily Milk IDs.');
+    //     }
+    // };
+    /** Cập nhật Daily Milk (thêm & xóa cùng lúc) */
+    const handleBatchUpdate = async () => {
+        if (!tempSelectedMilks.length && !selectedRowKeys.length) {
+            message.warning('Please select at least one Daily Milk ID to add or remove.');
             return;
         }
 
         try {
-            const payload = { dailyMilkIdsToAdd: [dailyMilkIdToAdd] };
-            await trigger({ body: payload });
-            message.success(`Daily Milk ID ${dailyMilkIdToAdd} added successfully!`);
-            // setDailyMilkIdToAdd(null);
-            await refreshData();
-        } catch (err) {
-            message.error('Error adding Daily Milk ID. Please try again.');
-        }
-    };
-    const handleDelete = async (dailyMilkId: number) => {
-        try {
-            const payload = {
-                dailyMilkIdsToRemove: [dailyMilkId],
-            };
+            await trigger({
+                body: {
+                    dailyMilkIdsToAdd: tempSelectedMilks.map(milk => milk.dailyMilkId),
+                    dailyMilkIdsToRemove: selectedRowKeys,
+                },
+            });
 
-            await trigger({ body: payload });
-            message.success(`Successfully removed Daily Milk ID: ${dailyMilkId}`);
+            message.success(`Updated Daily Milk Batch!`);
+
+            // Reset các danh sách đã chọn
+            setSelectedMilkIds([]);
+            setTempSelectedMilks([]);
+            setSelectedRowKeys([]);
+
+            // Cập nhật lại dữ liệu
             await refreshData();
-        } catch (err) {
-            message.error(`Error removing Daily Milk ID: ${dailyMilkId}`);
+        } catch {
+            message.error('Error updating Daily Milk Batch.');
         }
     };
-    const columns: Column[] = [
+    useEffect(() => {
+        if (!modal.open) {
+            setTempSelectedMilks([]);
+            setSelectedMilkIds([]);
+        }
+    }, [modal.open]);
+    /** Cấu hình chọn hàng trong bảng */
+    const rowSelection: any = useMemo(() => ({
+        selectedRowKeys,
+        onChange: (keys: Key[]) => {
+            // Lọc các dòng chỉ thuộc danh sách API (không phải tạm thời)
+            const validKeys = keys.filter(key => data?.dailyMilks?.some((milk: Milk) => milk.dailyMilkId === key));
+            setSelectedRowKeys(validKeys);
+        },
+        getCheckboxProps: (record: Milk) => ({
+            disabled: !data?.dailyMilks?.some((milk: Milk) => milk.dailyMilkId === record.dailyMilkId),
+        }),
+    }), [selectedRowKeys, data]);
+    /** Kết hợp dữ liệu từ API và tạm thời */
+    const combinedData = useMemo(() => [...(data?.dailyMilks || []), ...tempSelectedMilks], [data, tempSelectedMilks]);
+
+    /** Cấu trúc cột bảng */
+    const columns: any = useMemo(() => [
         {
             title: 'Daily Milk ID',
             dataIndex: 'dailyMilkId',
-            key: 'dailyMilkId',
+            key: 'dailyMilkId'
         },
         {
             title: 'Volume',
             dataIndex: 'volume',
-            key: 'volume',
+            key: 'volume'
         },
         {
             title: 'Shift',
             dataIndex: 'shift',
-            key: 'shift',
-            render: (shift: string) => (
-                formatAreaType(shift)
-            )
+            key: 'shift', render: formatAreaType
         },
         {
             title: 'Milk Date',
             dataIndex: 'milkDate',
-            key: 'milkDate',
+            key: 'milkDate'
         },
         {
             title: 'Worker Name',
-            dataIndex: 'workerName',
             key: 'workerName',
-            render: (_: any, record: Milk) => (
-                <Tooltip
-                    title={
-                        <>
-                            <div><strong>Employee Number:</strong> {formatAreaType(record.worker?.employeeNumber || 'N/A')}</div>
-                            <div><strong>Phone:</strong> {record.worker?.phoneNumber || 'N/A'}</div>
-                            <div><strong>Role:</strong> {record.worker?.roleId?.name || 'N/A'}</div>
-                        </>
-                    }
-                    color="#87d068"
-                    placement="top"
-                >
-                    <span className="text-blue-600">
-                        {record.worker?.name || 'N/A'}
-                    </span>
+            dataIndex: 'worker',
+            render: (worker: Worker) => (
+                <Tooltip title={<>Employee Number: {worker?.employeeNumber}</>}>
+                    <span className="text-blue-600">{worker?.name || 'N/A'}</span>
                 </Tooltip>
             ),
         },
         {
             title: 'Cow Name',
-            dataIndex: 'cowName',
             key: 'cowName',
-            render: (_: any, record: Milk) => (
-                <Tooltip
-                    title={
-                        <>
-                            <div><strong>Cow Id:</strong> {record.cow?.cowId || 'N/A'}</div>
-                            <div><strong>Type:</strong> {record.cow?.cowTypeEntity?.name || 'N/A'}</div>
-                            <div><strong>Origin:</strong> {formatAreaType(record.cow?.cowOrigin || 'N/A')}</div>
-                            <div><strong>Cow Type:</strong> {record.cow?.cowTypeEntity?.name || 'N/A'}</div>
-                            <div><strong>Gender:</strong> {formatAreaType(record.cow?.gender || 'N/A')}</div>
-                        </>
-                    }
-                    color="#87d068"
-                    placement="top"
-                >
-                    <span className="text-blue-600">
-                        {record.cow?.name || 'N/A'}
-                    </span>
+            dataIndex: 'cow',
+            render: (cow: Cow) => (
+                <Tooltip title={<>Cow ID: {cow?.cowId}</>}>
+                    <span className="text-blue-600">{cow?.name || 'N/A'}</span>
                 </Tooltip>
             ),
         },
-        {
-            title: 'Actions',
-            dataIndex: 'actions',
-            key: 'actions',
-            render: (_: any, record: Milk) => (
-                <Popconfirm
-                    title={`Are you sure you want to delete Daily Milk ID: ${record.dailyMilkId}?`}
-                    onConfirm={() => handleDelete(record.dailyMilkId)}
-                    okText="Yes"
-                    cancelText="No"
-                >
-                    <Button danger>Delete</Button>
-                </Popconfirm>
-            ),
-        },
-    ];
-
-    const onClose = () => {
-        modal.closeModal();
-    };
+    ], []);
 
     return (
         <ModalComponent
-            footer={
-                <Button onClick={onClose} type="primary">
-                    Close
-                </Button>
-            }
+            footer={<Button onClick={modal.closeModal} type="primary">Close</Button>}
             open={modal.open}
-            onCancel={onClose}
-            title={`MilkBatch Details`}
+            onCancel={modal.closeModal}
+            title="MilkBatch Details"
             width={1500}
         >
-            {/* Add Daily Milk ID Section */}
             <Row gutter={16} style={{ marginBottom: 10 }}>
-                <Col span={8}>
+                <Col span={16}>
                     <Select
+                        mode="multiple"
                         style={{ width: '100%' }}
-                        placeholder="Select a Daily Milk ID"
-                        value={dailyMilkIdToAdd}
-                        onChange={(value) => setDailyMilkIdToAdd(value)}
-                        options={dataDailyMilkAvailable?.map((milk: Milk) => ({
-                            value: milk.dailyMilkId,
-                            label: `Daily Milk ID: ${milk.dailyMilkId} - ${milk.milkDate} (${formatAreaType(milk.shift)})`,
-                        }))}
-
-                        onDropdownVisibleChange={(open) => {
-                            if (open) {
-                                fetchDataDailymilkIdAvailable(); // Gọi API khi mở dropdown
-                            }
-                        }}
+                        placeholder="Select Daily Milk ID(s)"
+                        value={selectedMilkIds}
+                        onChange={handleSelectDailyMilk}
+                        options={
+                            Array.isArray(availableDailyMilk)
+                                ? availableDailyMilk.map((milk: Milk) => ({
+                                    value: milk.dailyMilkId,
+                                    label: `ID: ${milk.dailyMilkId} - Volume: ${milk.volume} - Milk Date: ${milk.milkDate} (${formatAreaType(milk.shift)})`,
+                                }))
+                                : []
+                        }
+                        onFocus={fetchAvailableDailyMilk} // Gọi API khi nhấn vào Select
                     />
+
                 </Col>
-                <Col span={4}>
-                    <Button type="primary" onClick={handleAddDailyMilkId}>
-                        Add Daily Milk
-                    </Button>
-                </Col>
+                {/* <Col span={4}>
+                    <Button type="primary" onClick={handleAddDailyMilkIds}>Add Daily Milk</Button>
+                </Col> */}
             </Row>
 
-            {/* Table */}
             <AnimationAppear duration={0.5}>
                 <WhiteBackground>
                     <TableComponent
+                        rowSelection={rowSelection}
                         columns={columns}
-                        dataSource={data?.dailyMilks || []}
-
+                        dataSource={combinedData}
                         rowKey="dailyMilkId"
                         loading={isLoading}
+
                     />
+                    <Row style={{ margin: 20, textAlign: 'right' }}>
+                        <Col span={24}>
+                            <Popconfirm
+                                title="Are you sure you want to update Daily Milk Batch?"
+                                onConfirm={handleBatchUpdate}
+                                okText="Yes"
+                                cancelText="No"
+                            >
+                                <Button type="primary" disabled={!tempSelectedMilks.length && !selectedRowKeys.length}>
+                                    Update Daily Milk
+                                </Button>
+                            </Popconfirm>
+                        </Col>
+                    </Row>
                 </WhiteBackground>
             </AnimationAppear>
         </ModalComponent>

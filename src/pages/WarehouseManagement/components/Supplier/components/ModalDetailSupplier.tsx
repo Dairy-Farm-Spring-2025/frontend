@@ -91,7 +91,7 @@ const ModalDetailSupplier = ({
                 )
             ) : (
                 <FormItemComponent name="address" rules={[{ required: true }]}>
-                    <InputComponent.TextArea />
+                    <InputComponent />
                 </FormItemComponent>
             ),
             span: 3,
@@ -107,7 +107,7 @@ const ModalDetailSupplier = ({
                 )
             ) : (
                 <FormItemComponent name="phone" rules={[{ required: true }]}>
-                    <InputComponent.TextArea />
+                    <InputComponent />
                 </FormItemComponent>
             ),
             span: 3,
@@ -123,7 +123,7 @@ const ModalDetailSupplier = ({
                 )
             ) : (
                 <FormItemComponent name="email" rules={[{ required: true }]}>
-                    <InputComponent.TextArea />
+                    <InputComponent />
                 </FormItemComponent>
             ),
             span: 3,

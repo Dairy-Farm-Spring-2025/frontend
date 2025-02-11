@@ -56,25 +56,25 @@ const Supplier = () => {
             dataIndex: 'name',
             key: 'name',
             title: 'Name',
-            render: (data) => <p className="text-base font-bold">{data}</p>,
+            // render: (data) => <p className="text-base font-bold">{data}</p>,
         },
         {
             dataIndex: 'address',
             key: 'address',
             title: 'Address',
-            render: (data) => <p className="text-base font-bold">{data}</p>,
+            // render: (data) => <p className="text-base font-bold">{data}</p>,
         },
         {
             dataIndex: 'phone',
             key: 'phone',
             title: 'Phone',
-            render: (data) => <p className="text-base font-bold">{data}</p>,
+            // render: (data) => <p className="text-base font-bold">{data}</p>,
         },
         {
             dataIndex: 'email',
             key: 'email',
             title: 'Email',
-            render: (data) => <p className="text-base font-bold">{data}</p>,
+            // render: (data) => <p className="text-base font-bold">{data}</p>,
         },
 
 
