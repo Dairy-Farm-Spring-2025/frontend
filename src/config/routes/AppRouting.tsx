@@ -34,6 +34,7 @@ import ItemDetail from '../../pages/WarehouseManagement/components/Item/componen
 import { MoveCowManagement } from '../../pages/CowPenManagement/components/MoveCowManagement';
 import { CowPenManagement } from '../../pages/CowPenManagement';
 import Supplier from '../../pages/WarehouseManagement/components/Supplier';
+import HealthReport from '../../pages/CowManagement/components/HeathReport';
 
 const AppRouting = () => {
   const user = useSelector((state: RootState) => state.user);
@@ -110,7 +111,7 @@ const AppRouting = () => {
             },
             {
               path: 'health-report',
-              element: <p>Health Report</p>,
+              element: <HealthReport />,
             },
           ],
         },

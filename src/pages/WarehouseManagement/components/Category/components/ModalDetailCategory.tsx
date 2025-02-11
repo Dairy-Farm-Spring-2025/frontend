@@ -81,7 +81,7 @@ const ModalDetailCategory = ({
 
     return (
         <ModalComponent
-            title="Create Category"
+            title="Edit Category"
             open={modal.open}
             onCancel={handleClose}
             loading={isLoadingDetail}

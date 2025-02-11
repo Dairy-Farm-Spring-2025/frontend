@@ -46,7 +46,8 @@ const ModalAddCategory = ({ modal, mutate }: ModalAddCategoryProps) => {
           label={<LabelForm>Name</LabelForm>}
           rules={[{ required: true }]}
         >
-          <InputComponent />
+          <InputComponent
+            placeholder='Enter name of Category' />
         </FormItemComponent>
 
       </FormComponent>
