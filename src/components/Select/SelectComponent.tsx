@@ -3,7 +3,7 @@ import './index.scss';
 
 interface SelectComponentProps extends SelectProps {
   className?: string;
-  options: (SelectProps['options'] & { searchLabel?: string })[];
+  options: (SelectProps['options'] & { searchLabel?: string })[] | any;
   search?: boolean;
 }
 

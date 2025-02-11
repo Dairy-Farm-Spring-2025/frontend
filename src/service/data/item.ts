@@ -18,3 +18,11 @@ export const unitOptions = [
   { value: 'bag', label: 'Bag' },
   { value: 'box', label: 'Box' },
 ];
+
+export const ITEM_BATCH_OPTIONS = [
+  { label: 'Available', value: 'available' },
+  { label: 'In Use', value: 'inUse' },
+  { label: 'Depleted', value: 'depleted' },
+  { label: 'Expired', value: 'expired' },
+  { label: 'Quarantined', value: 'quarantined' },
+];
