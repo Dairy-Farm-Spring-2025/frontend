@@ -1,4 +1,8 @@
-import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+} from 'react-router-dom';
 import AppDashboard from '../../core/layout/AppDashboard';
 import CowManagement from '../../pages/CowManagement';
 import ListCow from '../../pages/CowManagement/components/ListCow';
@@ -35,6 +39,10 @@ import { MoveCowManagement } from '../../pages/CowPenManagement/components/MoveC
 import { CowPenManagement } from '../../pages/CowPenManagement';
 import Supplier from '../../pages/WarehouseManagement/components/Supplier';
 import HealthReport from '../../pages/CowManagement/components/HeathReport';
+import ItemBatchManagement from '../../pages/WarehouseManagement/components/Item/components/ItemBatch';
+import ListItemBatch from '../../pages/WarehouseManagement/components/Item/components/ItemBatch/components/ListItemBatch';
+import DetailItemBatch from '../../pages/WarehouseManagement/components/Item/components/ItemBatch/components/DetailItemBatch';
+
 
 const AppRouting = () => {
   const user = useSelector((state: RootState) => state.user);
@@ -130,7 +138,8 @@ const AppRouting = () => {
             {
               path: 'category',
               element: <Category />,
-            }, {
+            },
+            {
               path: 'supplier',
               element: <Supplier />,
             },
@@ -145,6 +154,20 @@ const AppRouting = () => {
                 {
                   path: ':id',
                   element: <ItemDetail />,
+                },
+                {
+                  path: 'item-batch',
+                  element: <ItemBatchManagement />,
+                  children: [
+                    {
+                      path: '',
+                      element: <ListItemBatch />,
+                    },
+                    {
+                      path: ':id',
+                      element: <DetailItemBatch />, 
+                    },
+                  ],
                 },
               ],
             },

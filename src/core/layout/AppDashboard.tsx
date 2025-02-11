@@ -170,7 +170,7 @@ const AppDashboard: React.FC = () => {
         getItem('Move Cow', 'dairy/move-cow-management', <MdSwapVert />),
         getItem('Milk', 'dairy/milk-management', <LuMilk />, [
           getItem(
-            'MilkBatch',
+            'Milk Batch',
             'dairy/milk-management/milk-batch',
             <WalletOutlined size={sizeIcon} />
           ),
@@ -189,7 +189,19 @@ const AppDashboard: React.FC = () => {
           getItem(
             'Item',
             'dairy/warehouse-management/item-management',
-            <RiAlignItemLeftLine size={sizeIcon} />
+            <RiAlignItemLeftLine size={sizeIcon} />,
+            [
+              getItem(
+                'Item List',
+                'dairy/warehouse-management/item-management',
+                <CiBoxList size={sizeIcon} />
+              ),
+              getItem(
+                'Item Batch',
+                'dairy/warehouse-management/item-management/item-batch',
+                <BiCategory size={sizeIcon} />
+              ),
+            ]
           ),
           getItem(
             'Supplier',
