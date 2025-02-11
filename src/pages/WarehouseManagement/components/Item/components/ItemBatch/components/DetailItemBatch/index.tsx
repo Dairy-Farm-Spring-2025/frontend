@@ -1,9 +1,9 @@
+import { Spin } from 'antd';
 import { useParams } from 'react-router-dom';
 import AnimationAppear from '../../../../../../../../components/UI/AnimationAppear';
 import WhiteBackground from '../../../../../../../../components/UI/WhiteBackground';
 import useFetcher from '../../../../../../../../hooks/useFetcher';
 import { ItemBatch } from '../../../../../../../../model/Warehouse/itemBatch';
-import { Spin } from 'antd';
 import ItemBatchInformation from './components/ItemBatchInformation';
 
 const DetailItemBatch = () => {
