@@ -42,6 +42,8 @@ import HealthReport from '../../pages/CowManagement/components/HeathReport';
 import ItemBatchManagement from '../../pages/WarehouseManagement/components/Item/components/ItemBatch';
 import ListItemBatch from '../../pages/WarehouseManagement/components/Item/components/ItemBatch/components/ListItemBatch';
 import DetailItemBatch from '../../pages/WarehouseManagement/components/Item/components/ItemBatch/components/DetailItemBatch';
+import VaccineCycleManagement from '../../pages/VaccineCycleManagement';
+import ListVaccineCycle from '../../pages/VaccineCycleManagement/components/ListVaccineCycle';
 
 
 const AppRouting = () => {
@@ -165,7 +167,7 @@ const AppRouting = () => {
                     },
                     {
                       path: ':id',
-                      element: <DetailItemBatch />, 
+                      element: <DetailItemBatch />,
                     },
                   ],
                 },
@@ -176,6 +178,11 @@ const AppRouting = () => {
         {
           path: 'pen-management',
           element: <PenManageMent />,
+        },
+        {
+          path: 'vaccine-cycle-management',
+          element: <VaccineCycleManagement />,
+          children: [{ path: '', element: <ListVaccineCycle /> }],
         },
         {
           path: 'move-cow-management',

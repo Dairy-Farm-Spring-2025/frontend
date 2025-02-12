@@ -10,4 +10,5 @@ export const breadcumData: { [key: string]: string } = {
   'item-management': 'Item Management',
   'milk-management': 'Milk Management',
   'milk-batch': 'Milk Batch',
+  'vaccine-cycle-management': 'Vaccine Cycle Management',
 };

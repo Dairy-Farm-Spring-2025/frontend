@@ -44,6 +44,7 @@ const Number = ({ className, ...props }: NumberProps) => {
       className={`input-component text-area-component !w-full ${
         className || ''
       }`}
+      min={0}
       placeholder="Enter..."
       {...props}
     />
