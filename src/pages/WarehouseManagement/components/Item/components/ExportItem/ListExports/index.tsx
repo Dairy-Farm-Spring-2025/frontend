@@ -183,9 +183,6 @@ const ListExports = () => {
     <AnimationAppear>
       <WhiteBackground>
         <div className='flex justify-between items-center mb-4'>
-          <ButtonComponent type='primary' onClick={modal.openModal}>
-            Create Export
-          </ButtonComponent>
           {/* <Tooltip
             title={
               isBulkActionDisabled
