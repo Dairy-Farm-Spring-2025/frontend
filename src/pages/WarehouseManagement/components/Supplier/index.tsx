@@ -85,6 +85,12 @@ const Supplier = () => {
             title: 'Action',
             render: (data) => (
                 <div className="flex gap-5">
+                    <ButtonComponent
+                        type="primary"
+                        onClick={() => handleOpenModalDetail(data)}
+                    >
+                        View detail
+                    </ButtonComponent>
                     <PopconfirmComponent
                         title={'Delete?'}
                         onConfirm={() => onConfirm(data)}
@@ -93,12 +99,7 @@ const Supplier = () => {
                             Delete
                         </ButtonComponent>
                     </PopconfirmComponent>
-                    <ButtonComponent
-                        type="primary"
-                        onClick={() => handleOpenModalDetail(data)}
-                    >
-                        View detail
-                    </ButtonComponent>
+
                 </div>
             ),
         },

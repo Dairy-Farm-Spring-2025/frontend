@@ -1,11 +1,15 @@
-import { Form } from 'antd';
+import { DatePicker, Form, Select } from 'antd';
 import FormComponent from '../../../../../components/Form/FormComponent';
 import FormItemComponent from '../../../../../components/Form/Item/FormItemComponent';
 import InputComponent from '../../../../../components/Input/InputComponent';
 import LabelForm from '../../../../../components/LabelForm/LabelForm';
 import ModalComponent from '../../../../../components/Modal/ModalComponent';
-import useFetcher from '../../../../../hooks/useFetcher';
+
 import useToast from '../../../../../hooks/useToast';
+import { healthSeverity } from '../../../../../service/data/health';
+import { Cow } from '../../../../../model/Cow/Cow';
+import useFetcher from '../../../../../hooks/useFetcher';
+import { useState } from 'react';
 
 interface ModalCreateHealthReportProps {
     modal: any;
@@ -15,7 +19,8 @@ interface ModalCreateHealthReportProps {
 const ModalCreateHealthReport = ({ modal, mutate }: ModalCreateHealthReportProps) => {
     const [form] = Form.useForm();
     const toast = useToast();
-    const { trigger, isLoading } = useFetcher('suppliers/create', 'POST');
+    const { trigger, isLoading } = useFetcher('illness/create', 'POST');
+    const { data: dataCows } = useFetcher<any>(`cows`, 'GET');
 
     const handleFinish = async (values: any) => {
         try {
@@ -41,44 +46,67 @@ const ModalCreateHealthReport = ({ modal, mutate }: ModalCreateHealthReportProps
             onOk={() => form.submit()}
         >
             <FormComponent form={form} onFinish={handleFinish}>
+
+                <FormItemComponent
+                    name="cowId"
+                    label={<LabelForm>Cow</LabelForm>}
+                    rules={[{ required: true }]}
+                >
+                    <Select
+                        placeholder="Select a cow"
+                        options={dataCows?.map((cow: Cow) => ({
+                            value: cow.cowId,
+                            label: cow.name
+                        })) || []}
+
+                    />
+                </FormItemComponent>
                 <FormItemComponent
                     name="symptoms"
                     label={<LabelForm>Symptoms</LabelForm>}
                     rules={[{ required: true }]}
                 >
+
                     <InputComponent
-                        placeholder='Enter name of symptoms' />
+                        placeholder='Enter symptoms' />
                 </FormItemComponent>
                 <FormItemComponent
-                    name="address"
-                    label={<LabelForm>Address</LabelForm>}
+                    name="severity"
+                    label={<LabelForm>Severity</LabelForm>}
                     rules={[{ required: true }]}
 
                 >
-                    <InputComponent
-                        placeholder='Enter email of supplier' />
+                    <Select options={healthSeverity}
+                        placeholder="Select severity " />
+
                 </FormItemComponent>
                 <FormItemComponent
-                    name="phone"
-                    label={<LabelForm>Phone</LabelForm>}
+                    name="prognosis"
+                    label={<LabelForm>Prognosis</LabelForm>}
+                    rules={[{ required: true }]}
+                >
+
+                    <InputComponent
+                        placeholder='Enter prognosis' />
+                </FormItemComponent>
+
+                <FormItemComponent
+                    name="startDate"
+                    label={<LabelForm>Start Date</LabelForm>}
                     rules={[
-                        { required: true, message: 'Please enter phone of supplier' },
-                        { pattern: /^\d{10}$/, message: 'phone must have 10 numbers' }
+                        { required: true }
                     ]}
                 >
-                    <InputComponent
-                        placeholder='Enter phone of supplier' />
+                    <DatePicker className="w-full" />
                 </FormItemComponent>
                 <FormItemComponent
-                    name="email"
-                    label={<LabelForm>Email</LabelForm>}
+                    name="endDate"
+                    label={<LabelForm>End Date</LabelForm>}
                     rules={[
-                        { required: true, message: 'Please enter email of supplier' },
-                        { type: 'email', message: 'Email is invalid!' }
+                        { required: true, }
                     ]}
                 >
-                    <InputComponent
-                        placeholder='Enter email of supplier' />
+                    <DatePicker className="w-full" />
                 </FormItemComponent>
             </FormComponent>
         </ModalComponent>

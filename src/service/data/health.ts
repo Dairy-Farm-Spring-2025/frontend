@@ -2,19 +2,19 @@
 
 export const healthSeverity = [
     {
-        value: 1,
-        label: 'mild',
+        value: 'mild',
+        label: 'Mild',
     },
     {
-        value: 2,
-        label: 'moderate',
+        value: 'moderate',
+        label: 'Moderate',
     },
     {
-        value: 3,
-        label: 'severe',
+        value: 'severe',
+        label: 'Severe',
     },
     {
-        value: 4,
-        label: 'critical',
+        value: 'critical',
+        label: 'Critical',
     },
 ];

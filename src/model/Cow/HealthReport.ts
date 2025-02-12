@@ -20,4 +20,5 @@ export type Health = {
     createdAt: string;
     updatedAt: string;
     inPen: boolean;
+    cowId: string;
 };
