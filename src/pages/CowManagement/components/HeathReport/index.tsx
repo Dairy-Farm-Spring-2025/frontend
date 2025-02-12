@@ -1,4 +1,4 @@
-import { Image, Tooltip } from 'antd';
+import { Divider, Image, Tooltip } from 'antd';
 import { useEffect, useState } from 'react';
 import { IoMdFemale, IoMdMale } from 'react-icons/io';
 import cowImage from '../../../../assets/cow.jpg';
@@ -18,12 +18,43 @@ import { formatAreaType, formatDateHour, formatSTT } from '../../../../utils/for
 import { getLabelByValue } from '../../../../utils/getLabel';
 import { Health } from '../../../../model/Cow/HealthReport';
 import "./index.scss"
+import ModalCreateHealthReport from './components/ModalCreateHealthReport';
+import useModal from '../../../../hooks/useModal';
+import ModalViewDetailHealthReport from './components/ModalViewDetailHealthReport';
+import useFetcher from '../../../../hooks/useFetcher';
+import PopconfirmComponent from '../../../../components/Popconfirm/PopconfirmComponent';
 
 const HealthReport = () => {
     const [healthReport, setHealthReport] = useState<Health[]>([]);
-    const { data, error, isLoading } = useFetch<Health[]>('illness', 'GET');
+    const { data, error, isLoading, mutate } = useFetch<Health[]>('illness', 'GET');
+
+    const { trigger, isLoading: loadingDelete } = useFetcher(
+        'suppliers',
+        'DELETE'
+    );
+    const [modalOpen, setModalOpen] = useState(false)
     console.log(isLoading);
     const toast = useToast();
+
+    const onConfirm = async (id: string) => {
+        try {
+            await trigger({ url: `illness/${id}` });
+            toast.showSuccess('Delete success');
+            mutate();
+        } catch (error: any) {
+            toast.showError(error.message);
+        }
+    };
+    const [id, setId] = useState('');
+    const modalViewDetail = useModal();
+
+    const handleOpenModalDetail = (id: string) => {
+        setId(id);
+        modalViewDetail.openModal();
+    };
+
+
+
     const columns: Column[] = [
         {
             dataIndex: 'illnessId',
@@ -131,13 +162,26 @@ const HealthReport = () => {
                 </Tooltip>,
         },
         {
-            dataIndex: 'cowId',
+            dataIndex: 'illnessId',
             key: 'action',
             title: 'Action',
-            render: () => (
-                <ButtonComponent type="primary" danger>
-                    Delete
+            render: (data, record) => (<div className="flex gap-5">
+
+                <ButtonComponent
+                    type="primary"
+                    onClick={() => handleOpenModalDetail(data)}
+                >
+                    View detail
                 </ButtonComponent>
+                <PopconfirmComponent
+                    title={'Delete?'}
+                    onConfirm={() => onConfirm(data)}
+                >
+                    <ButtonComponent type="primary" danger>
+                        Delete
+                    </ButtonComponent>
+                </PopconfirmComponent>
+            </div>
             ),
         },
     ];
@@ -152,11 +196,23 @@ const HealthReport = () => {
     return (
         <AnimationAppear duration={0.5}>
             <WhiteBackground>
+                <ButtonComponent type="primary" onClick={() => setModalOpen(true)}>
+                    Create Health Report
+                </ButtonComponent>
+                <Divider className="my-4" />
                 <TableComponent
                     loading={isLoading}
                     columns={columns}
                     dataSource={formatSTT(healthReport)}
                 />
+                {/* Modal Create Health Report */}
+                <ModalCreateHealthReport
+                    modal={{ open: modalOpen, closeModal: () => setModalOpen(false) }}
+                    mutate={mutate}
+                />
+                {id !== '' && (
+                    <ModalViewDetailHealthReport id={id} modal={modalViewDetail} mutate={mutate} />
+                )}
             </WhiteBackground>
         </AnimationAppear>
     );
