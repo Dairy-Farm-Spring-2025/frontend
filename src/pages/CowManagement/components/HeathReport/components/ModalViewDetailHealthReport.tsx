@@ -1,4 +1,4 @@
-import { Form } from 'antd';
+import { DatePicker, Form, Select } from 'antd';
 import { useEffect, useState } from 'react';
 import ButtonComponent from '../../../../../components/Button/ButtonComponent';
 import DescriptionComponent, {
@@ -11,37 +11,41 @@ import ModalComponent from '../../../../../components/Modal/ModalComponent';
 import useFetcher from '../../../../../hooks/useFetcher';
 import useToast from '../../../../../hooks/useToast';
 
-import { Supplier } from '../../../../../model/Warehouse/supplier';
+import { Health } from '../../../../../model/Cow/HealthReport';
+import { healthSeverity } from '../../../../../service/data/health';
+import dayjs from 'dayjs';
 
 
-interface ModalDetailSupplierProps {
+interface ModalViewDetailHealthReportProps {
     modal: any;
     mutate: any;
     id: string;
 }
 
-const ModalDetailSupplier = ({
+const ModalViewDetailHealthReport = ({
     modal,
     mutate,
     id,
-}: ModalDetailSupplierProps) => {
+}: ModalViewDetailHealthReportProps) => {
     const [form] = Form.useForm();
     const toast = useToast();
-    const { trigger, isLoading } = useFetcher(`suppliers/${id}`, 'PUT');
+    const { trigger, isLoading } = useFetcher(`illness/${id}`, 'PUT');
     const [edit, setEdit] = useState(false);
     const {
         data,
         isLoading: isLoadingDetail,
         mutate: mutateEdit,
-    } = useFetcher<Supplier>(`suppliers/${id}`, 'GET');
+    } = useFetcher<Health>(`illness/${id}`, 'GET');
 
     useEffect(() => {
         if (data) {
             form.setFieldsValue({
-                name: data.name,
-                address: data.address,
-                phone: data.phone,
-                email: data.email
+                symptoms: data.symptoms,
+                severity: data.severity,
+                startDate: data.startDate ? dayjs(data.startDate) : null,
+                endDate: data.endDate ? dayjs(data.endDate) : null,
+                prognosis: data.prognosis,
+
             });
         }
     }, [data, form]);
@@ -53,6 +57,7 @@ const ModalDetailSupplier = ({
             mutate();
             mutateEdit();
             setEdit(false);
+            modal.closeModal();
         } catch (error: any) {
             toast.showSuccess(error.message);
         }
@@ -65,65 +70,82 @@ const ModalDetailSupplier = ({
 
     const items: DescriptionPropsItem['items'] = [
         {
-            key: 'name',
-            label: 'Name',
+            key: 'symptoms',
+            label: 'Symptoms',
             children: !edit ? (
                 data ? (
-                    data?.name
+                    data?.symptoms
                 ) : (
                     ''
                 )
             ) : (
-                <FormItemComponent name="name" rules={[{ required: true }]}>
+                <FormItemComponent name="symptoms" rules={[{ required: true }]}>
                     <InputComponent />
                 </FormItemComponent>
             ),
             span: 3,
         },
         {
-            key: 'address',
-            label: 'Address',
+            key: 'severity',
+            label: 'Severity',
             children: !edit ? (
                 data ? (
-                    data?.address
+                    data?.severity
                 ) : (
                     ''
                 )
             ) : (
-                <FormItemComponent name="address" rules={[{ required: true }]}>
-                    <InputComponent />
+                <FormItemComponent name="severity" rules={[{ required: true }]}>
+                    <Select options={healthSeverity} />
                 </FormItemComponent>
             ),
             span: 3,
         },
         {
-            key: 'phone',
-            label: 'Phone',
+            key: 'prognosis',
+            label: 'Prognosis',
             children: !edit ? (
                 data ? (
-                    data?.phone
+                    data?.severity
                 ) : (
                     ''
                 )
             ) : (
-                <FormItemComponent name="phone" rules={[{ required: true }]}>
+                <FormItemComponent name="prognosis" rules={[{ required: true }]}>
                     <InputComponent />
                 </FormItemComponent>
             ),
             span: 3,
         },
+
         {
-            key: 'email',
-            label: 'Email',
+            key: 'startDate',
+            label: 'Start Date',
             children: !edit ? (
                 data ? (
-                    data?.email
+                    data?.startDate
                 ) : (
                     ''
                 )
             ) : (
-                <FormItemComponent name="email" rules={[{ required: true }]}>
-                    <InputComponent />
+                <FormItemComponent name="startDate" rules={[{ required: true }]}>
+                    <DatePicker value={form.getFieldValue('startDate') ? dayjs(form.getFieldValue('startDate')) : null} />
+                </FormItemComponent>
+            ),
+            span: 3,
+        },
+        {
+            key: 'endDate',
+            label: 'EndDate',
+            children: !edit ? (
+                data ? (
+                    data?.endDate
+                ) : (
+                    ''
+                )
+            ) : (
+                <FormItemComponent name="endDate" rules={[{ required: true }]}>
+                    <DatePicker value={form.getFieldValue('endDate') ? dayjs(form.getFieldValue('endDate')) : null} />
                 </FormItemComponent>
             ),
             span: 3,
@@ -133,7 +155,7 @@ const ModalDetailSupplier = ({
 
     return (
         <ModalComponent
-            title="Edit Supplier"
+            title="Edit Health Report"
             open={modal.open}
             onCancel={handleClose}
             loading={isLoadingDetail}
@@ -166,4 +188,4 @@ const ModalDetailSupplier = ({
     );
 };
 
-export default ModalDetailSupplier;
+export default ModalViewDetailHealthReport;

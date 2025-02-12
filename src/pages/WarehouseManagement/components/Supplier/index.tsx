@@ -56,25 +56,25 @@ const Supplier = () => {
             dataIndex: 'name',
             key: 'name',
             title: 'Name',
-            render: (data) => <p className="text-base font-bold">{data}</p>,
+            // render: (data) => <p className="text-base font-bold">{data}</p>,
         },
         {
             dataIndex: 'address',
             key: 'address',
             title: 'Address',
-            render: (data) => <p className="text-base font-bold">{data}</p>,
+            // render: (data) => <p className="text-base font-bold">{data}</p>,
         },
         {
             dataIndex: 'phone',
             key: 'phone',
             title: 'Phone',
-            render: (data) => <p className="text-base font-bold">{data}</p>,
+            // render: (data) => <p className="text-base font-bold">{data}</p>,
         },
         {
             dataIndex: 'email',
             key: 'email',
             title: 'Email',
-            render: (data) => <p className="text-base font-bold">{data}</p>,
+            // render: (data) => <p className="text-base font-bold">{data}</p>,
         },
 
 
@@ -85,6 +85,12 @@ const Supplier = () => {
             title: 'Action',
             render: (data) => (
                 <div className="flex gap-5">
+                    <ButtonComponent
+                        type="primary"
+                        onClick={() => handleOpenModalDetail(data)}
+                    >
+                        View detail
+                    </ButtonComponent>
                     <PopconfirmComponent
                         title={'Delete?'}
                         onConfirm={() => onConfirm(data)}
@@ -93,12 +99,7 @@ const Supplier = () => {
                             Delete
                         </ButtonComponent>
                     </PopconfirmComponent>
-                    <ButtonComponent
-                        type="primary"
-                        onClick={() => handleOpenModalDetail(data)}
-                    >
-                        View detail
-                    </ButtonComponent>
+
                 </div>
             ),
         },
