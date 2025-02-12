@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
   warehouses: [],
   categories: [],
+  exportItems: [],
 };
 
 const itemManagementSlice = createSlice({
@@ -15,10 +16,13 @@ const itemManagementSlice = createSlice({
     setCategories: (state, action) => {
       state.categories = action.payload;
     },
+    setExportItems: (state, action) => {
+      state.exportItems = action.payload;
+    },
     resetItemManagement: () => initialState,
   },
 });
 
-export const { setWarehouses, setCategories, resetItemManagement } =
+export const { setWarehouses, setCategories, resetItemManagement, setExportItems } =
   itemManagementSlice.actions;
 export default itemManagementSlice.reducer;

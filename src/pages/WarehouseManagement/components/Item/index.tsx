@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import {
   resetItemManagement,
   setCategories,
+  setExportItems,
   setWarehouses,
 } from '../../../../core/store/slice/itemManagementSlice';
 import { useEffect } from 'react';
@@ -13,6 +14,7 @@ const ItemManagement = () => {
   const dispatch = useDispatch();
   const { data: warehousesData } = useFetcher<Warehouse[]>('warehouses', 'GET');
   const { data: categoryData } = useFetcher<any[]>('categories', 'GET');
+  const { data: exportItemsData } = useFetcher<any[]>('export_items', 'GET');
   useEffect(() => {
     if (warehousesData) {
       const filteredData = warehousesData.map((element) => ({
@@ -28,10 +30,17 @@ const ItemManagement = () => {
       }));
       dispatch(setCategories(filteredData));
     }
+    if (exportItemsData) {
+      const filteredData = exportItemsData.map((element) => ({
+        value: element.exportItemId,
+        label: element.name,
+      }));
+      dispatch(setExportItems(filteredData));
+    }
     return () => {
       dispatch(resetItemManagement());
     };
-  }, [warehousesData, categoryData, dispatch]);
+  }, [warehousesData, categoryData, exportItemsData, dispatch]);
   return <Outlet />;
 };
 

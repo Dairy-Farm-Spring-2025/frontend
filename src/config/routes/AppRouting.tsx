@@ -1,8 +1,4 @@
-import {
-  createBrowserRouter,
-  Navigate,
-  RouterProvider,
-} from 'react-router-dom';
+import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
 import AppDashboard from '../../core/layout/AppDashboard';
 import CowManagement from '../../pages/CowManagement';
 import ListCow from '../../pages/CowManagement/components/ListCow';
@@ -44,7 +40,9 @@ import ListItemBatch from '../../pages/WarehouseManagement/components/Item/compo
 import DetailItemBatch from '../../pages/WarehouseManagement/components/Item/components/ItemBatch/components/DetailItemBatch';
 import VaccineCycleManagement from '../../pages/VaccineCycleManagement';
 import ListVaccineCycle from '../../pages/VaccineCycleManagement/components/ListVaccineCycle';
-
+import ExportItem from '../../pages/WarehouseManagement/components/Item/components/ExportItem';
+import ListExports from '../../pages/WarehouseManagement/components/Item/components/ExportItem/ListExports';
+import DetailExport from '../../pages/WarehouseManagement/components/Item/components/ExportItem/DetailExport';
 
 const AppRouting = () => {
   const user = useSelector((state: RootState) => state.user);
@@ -168,6 +166,20 @@ const AppRouting = () => {
                     {
                       path: ':id',
                       element: <DetailItemBatch />,
+                    },
+                  ],
+                },
+                {
+                  path: 'export-item',
+                  element: <ExportItem />,
+                  children: [
+                    {
+                      path: '',
+                      element: <ListExports />,
+                    },
+                    {
+                      path: ':id',
+                      element: <DetailExport />,
                     },
                   ],
                 },
