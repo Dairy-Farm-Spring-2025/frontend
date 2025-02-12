@@ -120,6 +120,12 @@ const HealthReport = () => {
 
         },
         {
+            dataIndex: 'prognosis',
+            key: 'prognosis',
+            title: 'Prognosis',
+            //   render: (data) => getLabelByValue(data, cowOrigin),
+        },
+        {
             dataIndex: 'startDate',
             key: 'startDate',
             title: 'Start Date',
@@ -131,12 +137,7 @@ const HealthReport = () => {
             title: 'End Date',
             render: (data) => (data ? formatDateHour(data) : 'Not Out'),
         },
-        {
-            dataIndex: 'prognosis',
-            key: 'prognosis',
-            title: 'Prognosis',
-            //   render: (data) => getLabelByValue(data, cowOrigin),
-        },
+
 
         {
             dataIndex: 'userEntity',
