@@ -10,18 +10,38 @@ import { formatDateHour } from '../../../../utils/format';
 import ButtonComponent from '../../../../components/Button/ButtonComponent';
 import useModal from '../../../../hooks/useModal';
 import CreateVaccineCycleModal from './components/CreateVaccineCycleModal';
+import PopconfirmComponent from '../../../../components/Popconfirm/PopconfirmComponent';
+import useToast from '../../../../hooks/useToast';
+import { useNavigate } from 'react-router-dom';
 
 const ListVaccineCycle = () => {
+  const navigate = useNavigate();
   const {
     data: vaccineCycle,
     isLoading: isLoadingVaccine,
     mutate,
   } = useFetcher<VaccineCycle[]>('vaccinecycles', 'GET');
+  const { isLoading: isLoadingDelete, trigger } = useFetcher(
+    'vaccinecycles/delete',
+    'DELETE'
+  );
   const modal = useModal();
+  const toast = useToast();
+
+  const handleDelete = async (id: number) => {
+    try {
+      const response = await trigger({ url: `vaccinecycles/${id}` });
+      toast.showSuccess(response.message);
+      mutate();
+    } catch (error: any) {
+      toast.showError(error.message);
+    }
+  };
+
   const columns: Column[] = [
     {
-      dataIndex: 'vaccineCycleID',
-      key: 'vaccineCycleID',
+      dataIndex: 'vaccineCycleId',
+      key: 'vaccineCycleId',
       title: '#',
       render: (_, __, index) => index + 1,
     },
@@ -35,6 +55,29 @@ const ListVaccineCycle = () => {
       dataIndex: 'name',
       key: 'name',
       title: 'Name',
+    },
+    {
+      dataIndex: 'vaccineCycleId',
+      key: 'action',
+      title: 'Action',
+      render: (data) => (
+        <div className="flex gap-5">
+          <ButtonComponent
+            type="primary"
+            onClick={() => navigate(`../${data}`)}
+          >
+            View Detail
+          </ButtonComponent>
+          <PopconfirmComponent
+            onConfirm={() => handleDelete(data)}
+            title={'Are you sure to delete this?'}
+          >
+            <ButtonComponent loading={isLoadingDelete} danger type="primary">
+              Delete
+            </ButtonComponent>
+          </PopconfirmComponent>
+        </div>
+      ),
     },
   ];
   return (

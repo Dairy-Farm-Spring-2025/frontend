@@ -1,4 +1,8 @@
-import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+} from 'react-router-dom';
 import AppDashboard from '../../core/layout/AppDashboard';
 import CowManagement from '../../pages/CowManagement';
 import ListCow from '../../pages/CowManagement/components/ListCow';
@@ -43,6 +47,7 @@ import ListVaccineCycle from '../../pages/VaccineCycleManagement/components/List
 import ExportItem from '../../pages/WarehouseManagement/components/Item/components/ExportItem';
 import ListExports from '../../pages/WarehouseManagement/components/Item/components/ExportItem/ListExports';
 import DetailExport from '../../pages/WarehouseManagement/components/Item/components/ExportItem/DetailExport';
+import DetailVaccineCycle from '../../pages/VaccineCycleManagement/components/DetailVaccineCycle';
 
 const AppRouting = () => {
   const user = useSelector((state: RootState) => state.user);
@@ -132,6 +137,10 @@ const AppRouting = () => {
           element: <WarehouseManagement />,
           children: [
             {
+              path: '',
+              element: <Navigate to={'warehouse'} />,
+            },
+            {
               path: 'warehouse',
               element: <Warehouse />,
             },
@@ -194,7 +203,11 @@ const AppRouting = () => {
         {
           path: 'vaccine-cycle-management',
           element: <VaccineCycleManagement />,
-          children: [{ path: '', element: <ListVaccineCycle /> }],
+          children: [
+            { path: '', element: <Navigate to={'list'} /> },
+            { path: 'list', element: <ListVaccineCycle /> },
+            { path: ':id', element: <DetailVaccineCycle /> },
+          ],
         },
         {
           path: 'move-cow-management',

@@ -4,16 +4,16 @@ import { useEffect, useState } from 'react';
 import ButtonComponent from '../../../../../components/Button/ButtonComponent';
 import FormComponent from '../../../../../components/Form/FormComponent';
 import FormItemComponent from '../../../../../components/Form/Item/FormItemComponent';
-import InputComponent from '../../../../../components/Input/InputComponent';
 import LabelForm from '../../../../../components/LabelForm/LabelForm';
+import ReactQuillComponent from '../../../../../components/ReactQuill/ReactQuillComponent';
 import SelectComponent from '../../../../../components/Select/SelectComponent';
 import useFetcher from '../../../../../hooks/useFetcher';
 import useToast from '../../../../../hooks/useToast';
+import { Cow } from '../../../../../model/Cow/Cow';
 import { CowType } from '../../../../../model/Cow/CowType';
 import { cowOrigin } from '../../../../../service/data/cowOrigin';
 import { cowStatus } from '../../../../../service/data/cowStatus';
 import { genderData } from '../../../../../service/data/gender';
-import { Cow } from '../../../../../model/Cow/Cow';
 
 interface CowGeneralInformationProps {
   id: string;
@@ -167,11 +167,7 @@ const CowGeneralInformation = ({
             rules={[{ required: true }]}
             label={<LabelForm>Description</LabelForm>}
           >
-            <InputComponent.TextArea
-              className="w-full "
-              placeholder="Select status..."
-              rows={4}
-            />
+            <ReactQuillComponent />
           </FormItemComponent>
         </div>
         <div className="flex justify-end items-center gap-3">

@@ -18,6 +18,7 @@ import { injectionSiteOptions } from '../../../../../service/data/vaccine';
 import { Item } from '../../../../../model/Warehouse/items';
 import { VaccineCyclePayload } from '../../../../../model/Vaccine/VaccineCycle/vaccineCycle';
 import useToast from '../../../../../hooks/useToast';
+import ReactQuillComponent from '../../../../../components/ReactQuill/ReactQuillComponent';
 
 interface CreateVaccineCycleModalProps {
   modal: any;
@@ -124,7 +125,7 @@ const CreateVaccineCycleModal = ({
             name="description"
             label={<LabelForm>Description</LabelForm>}
           >
-            <InputComponent.TextArea />
+            <ReactQuillComponent />
           </FormItemComponent>
         </FormComponent>
       ),
@@ -147,6 +148,7 @@ const CreateVaccineCycleModal = ({
                 dosageUnit: '',
                 injectionSite: '',
                 ageInMonths: '',
+                description: '',
               },
             ], // Initial field
           }}
@@ -237,6 +239,20 @@ const CreateVaccineCycleModal = ({
                           ]}
                         >
                           <InputComponent.Number />
+                        </Form.Item>
+                        <Form.Item
+                          {...restField}
+                          label={<LabelForm>Description</LabelForm>}
+                          className="col-span-4"
+                          name={[name, 'description']}
+                          rules={[
+                            {
+                              required: true,
+                              message: 'This field is required!',
+                            },
+                          ]}
+                        >
+                          <ReactQuillComponent />
                         </Form.Item>
                       </div>
                       <div className="flex justify-center w-[10%]">

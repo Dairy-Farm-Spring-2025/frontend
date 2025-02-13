@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import { InjectionSite } from '../model/Vaccine/VaccineCycle/vaccineCycle';
 
 export const formatDateHour = (data: any) => {
   return dayjs(data).format('YYYY-MM-DD');
@@ -35,3 +36,9 @@ export const validateInput = (rule: any, value: string) => {
   }
   return Promise.resolve();
 };
+
+export function formatInjectionSite(site: InjectionSite): string {
+  return site
+    .replace(/([a-z])([A-Z])/g, '$1 $2') // Add a space before each capital letter
+    .replace(/^./, (str) => str.toUpperCase()); // Capitalize the first letter
+}

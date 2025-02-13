@@ -1,39 +1,20 @@
 import { Tag } from 'antd';
 import CardComponent from '../../../../../../../../../components/Card/CardComponent';
 import { ItemBatch } from '../../../../../../../../../model/Warehouse/itemBatch';
+import TextTitle from '../../../../../../../../../components/UI/TextTitle';
 
 interface ItemBatchInformationProps {
   data: ItemBatch;
 }
-
-const TitleItemBatch = ({ children }: any) => {
-  return <p className="text-base font-bold">{children}</p>;
-};
-
-const TextItemBatch = ({ children }: any) => {
-  return <p className="">{children}</p>;
-};
-
-const TextInformation = ({ title, description }: any) => {
-  return (
-    <div className="flex flex-col gap-2">
-      <TitleItemBatch>{title}: </TitleItemBatch>
-      <TextItemBatch>{description}</TextItemBatch>
-    </div>
-  );
-};
 
 const ItemBatchInformation = ({ data }: ItemBatchInformationProps) => {
   return (
     <div className="flex gap-5">
       <CardComponent className="w-1/3 h-fit" title={'Item Batch Information'}>
         <div className="flex justify-between items-center">
-          <TextInformation title="Quantity" description={data?.quantity} />
-          <TextInformation title="Import Date" description={data?.importDate} />
-          <TextInformation
-            title="Expired Date"
-            description={data?.expiryDate}
-          />
+          <TextTitle title="Quantity" description={data?.quantity} />
+          <TextTitle title="Import Date" description={data?.importDate} />
+          <TextTitle title="Expired Date" description={data?.expiryDate} />
         </div>
         <div className="mt-5">
           <Tag className="px-5 text-base w-full text-center py-1">
@@ -44,19 +25,16 @@ const ItemBatchInformation = ({ data }: ItemBatchInformationProps) => {
       <div className="w-2/3 flex flex-col gap-5">
         <CardComponent title={'Item'}>
           <div className="flex justify-between items-center">
-            <TextInformation
-              title="Name"
-              description={data?.itemEntity?.name}
-            />
-            <TextInformation
+            <TextTitle title="Name" description={data?.itemEntity?.name} />
+            <TextTitle
               title="Quantity"
               description={`${data?.itemEntity?.quantity} (${data?.itemEntity?.unit})`}
             />
-            <TextInformation
+            <TextTitle
               title="Category"
               description={data?.itemEntity?.categoryEntity?.name}
             />
-            <TextInformation
+            <TextTitle
               title="Status"
               description={
                 <Tag className="px-5 py-1">{data?.itemEntity?.status}</Tag>
@@ -72,21 +50,21 @@ const ItemBatchInformation = ({ data }: ItemBatchInformationProps) => {
         </CardComponent>
         <CardComponent title={'Supplier'}>
           <div className="flex justify-between items-center w-2/3">
-            <TextInformation
+            <TextTitle
               title="Worker name"
               description={data?.supplierEntity?.name}
             />
-            <TextInformation
+            <TextTitle
               title="Phone"
               description={data?.supplierEntity?.phone}
             />
-            <TextInformation
+            <TextTitle
               title="Email"
               description={data?.supplierEntity?.email}
             />
           </div>
           <div className="mt-5">
-            <TextInformation
+            <TextTitle
               title="Address"
               description={data?.supplierEntity?.address}
             />
