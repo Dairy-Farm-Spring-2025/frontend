@@ -17,6 +17,34 @@ export type VaccineCyclePayload = {
   ];
 };
 
+export type VaccineCycleDetails = {
+  vaccineCycleDetailId: number;
+  name: string;
+  description: string;
+  dosageUnit: Unit;
+  dosage: 0;
+  injectionSite: InjectionSite;
+  ageInMonths: 0;
+  itemEntity: {
+    itemId: 0;
+    name: string;
+    description: string;
+    status: StatusItem;
+    unit: Unit;
+    quantity: number;
+    categoryEntity: {
+      categoryId: number;
+      name: string;
+    };
+    warehouseLocationEntity: {
+      warehouseLocationId: number;
+      name: string;
+      description: string;
+    };
+  };
+  vaccineCycleEntity: string;
+};
+
 export type VaccineCycle = {
   vaccineCycleId: number;
   name: string;
@@ -27,35 +55,7 @@ export type VaccineCycle = {
     description: string;
     status: 'exist' | 'notExist';
   };
-  vaccineCycleDetails: [
-    {
-      vaccineCycleDetailId: number;
-      name: string;
-      description: string;
-      dosageUnit: Unit;
-      dosage: 0;
-      injectionSite: InjectionSite;
-      ageInMonths: 0;
-      itemEntity: {
-        itemId: 0;
-        name: string;
-        description: string;
-        status: StatusItem;
-        unit: Unit;
-        quantity: number;
-        categoryEntity: {
-          categoryId: number;
-          name: string;
-        };
-        warehouseLocationEntity: {
-          warehouseLocationId: number;
-          name: string;
-          description: string;
-        };
-      };
-      vaccineCycleEntity: string;
-    }
-  ];
+  vaccineCycleDetails: VaccineCycleDetails[];
 };
 
 export type InjectionSite =

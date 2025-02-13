@@ -9,7 +9,7 @@ const CardComponent = ({
   ...props
 }: CardComponentProps) => {
   return (
-    <Card className={`!shadow-lg ${className}`} {...props}>
+    <Card className={`!shadow-lg !h-fit ${className}`} {...props}>
       {children}
     </Card>
   );
