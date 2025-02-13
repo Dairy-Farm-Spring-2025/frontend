@@ -1,8 +1,8 @@
 import { DatePicker, SelectProps } from 'antd';
 import { useEffect, useState } from 'react';
 import FormItemComponent from '../../../../../components/Form/Item/FormItemComponent';
-import InputComponent from '../../../../../components/Input/InputComponent';
 import LabelForm from '../../../../../components/LabelForm/LabelForm';
+import ReactQuillComponent from '../../../../../components/ReactQuill/ReactQuillComponent';
 import SelectComponent from '../../../../../components/Select/SelectComponent';
 import useFetcher from '../../../../../hooks/useFetcher';
 import { CowType } from '../../../../../model/Cow/CowType';
@@ -105,11 +105,7 @@ const CreateCowInformation = () => {
             rules={[{ required: true }]}
             label={<LabelForm>Description</LabelForm>}
           >
-            <InputComponent.TextArea
-              className="w-full "
-              placeholder="Select status..."
-              rows={4}
-            />
+            <ReactQuillComponent />
           </FormItemComponent>
         </div>
       </div>

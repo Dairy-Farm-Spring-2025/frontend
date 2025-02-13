@@ -11,7 +11,7 @@ import {
   theme,
 } from 'antd';
 import React, { useEffect } from 'react';
-import { MdSwapVert } from 'react-icons/md';
+import { MdOutlineVaccines, MdSwapVert } from 'react-icons/md';
 import { AiOutlineDashboard, AiOutlineIssuesClose } from 'react-icons/ai';
 import { BiCategory, BiTask, BiUser } from 'react-icons/bi';
 import { CiBoxList } from 'react-icons/ci';
@@ -26,6 +26,7 @@ import {
   MdSchedule,
 } from 'react-icons/md';
 import { PiCow, PiPlus, PiWarehouse } from 'react-icons/pi';
+import { CiExport } from 'react-icons/ci';
 import { RiAlignItemLeftLine } from 'react-icons/ri';
 import { SiHappycow } from 'react-icons/si';
 import { useDispatch } from 'react-redux';
@@ -175,6 +176,18 @@ const AppDashboard: React.FC = () => {
             <WalletOutlined size={sizeIcon} />
           ),
         ]),
+        getItem(
+          'Vaccine Cycle',
+          'dairy/vaccine-cycle-management',
+          <MdOutlineVaccines />,
+          [
+            getItem(
+              'List Vaccine Cycle',
+              'dairy/vaccine-cycle-management/list',
+              <CiBoxList size={sizeIcon} />
+            ),
+          ]
+        ),
         getItem('Warehouse', 'dairy/warehouse-management', <PiWarehouse />, [
           getItem(
             'Warehouse ',
@@ -200,6 +213,11 @@ const AppDashboard: React.FC = () => {
                 'Item Batch',
                 'dairy/warehouse-management/item-management/item-batch',
                 <BiCategory size={sizeIcon} />
+              ),
+              getItem(
+                'Export Item',
+                'dairy/warehouse-management/item-management/export-item',
+                <CiExport size={sizeIcon} />
               ),
             ]
           ),

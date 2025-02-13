@@ -42,7 +42,12 @@ import HealthReport from '../../pages/CowManagement/components/HeathReport';
 import ItemBatchManagement from '../../pages/WarehouseManagement/components/Item/components/ItemBatch';
 import ListItemBatch from '../../pages/WarehouseManagement/components/Item/components/ItemBatch/components/ListItemBatch';
 import DetailItemBatch from '../../pages/WarehouseManagement/components/Item/components/ItemBatch/components/DetailItemBatch';
-
+import VaccineCycleManagement from '../../pages/VaccineCycleManagement';
+import ListVaccineCycle from '../../pages/VaccineCycleManagement/components/ListVaccineCycle';
+import ExportItem from '../../pages/WarehouseManagement/components/Item/components/ExportItem';
+import ListExports from '../../pages/WarehouseManagement/components/Item/components/ExportItem/ListExports';
+import DetailExport from '../../pages/WarehouseManagement/components/Item/components/ExportItem/DetailExport';
+import DetailVaccineCycle from '../../pages/VaccineCycleManagement/components/DetailVaccineCycle';
 
 const AppRouting = () => {
   const user = useSelector((state: RootState) => state.user);
@@ -132,6 +137,10 @@ const AppRouting = () => {
           element: <WarehouseManagement />,
           children: [
             {
+              path: '',
+              element: <Navigate to={'warehouse'} />,
+            },
+            {
               path: 'warehouse',
               element: <Warehouse />,
             },
@@ -165,7 +174,21 @@ const AppRouting = () => {
                     },
                     {
                       path: ':id',
-                      element: <DetailItemBatch />, 
+                      element: <DetailItemBatch />,
+                    },
+                  ],
+                },
+                {
+                  path: 'export-item',
+                  element: <ExportItem />,
+                  children: [
+                    {
+                      path: '',
+                      element: <ListExports />,
+                    },
+                    {
+                      path: ':id',
+                      element: <DetailExport />,
                     },
                   ],
                 },
@@ -176,6 +199,15 @@ const AppRouting = () => {
         {
           path: 'pen-management',
           element: <PenManageMent />,
+        },
+        {
+          path: 'vaccine-cycle-management',
+          element: <VaccineCycleManagement />,
+          children: [
+            { path: '', element: <Navigate to={'list'} /> },
+            { path: 'list', element: <ListVaccineCycle /> },
+            { path: ':id', element: <DetailVaccineCycle /> },
+          ],
         },
         {
           path: 'move-cow-management',
