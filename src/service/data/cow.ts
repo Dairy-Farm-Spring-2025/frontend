@@ -18,3 +18,5 @@ export const cows = [
       'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Cow_female_black_white.jpg/220px-Cow_female_black_white.jpg', // Replace with actual image URL
   },
 ];
+
+
