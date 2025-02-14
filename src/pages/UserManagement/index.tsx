@@ -4,21 +4,34 @@ import TextLink from "../../components/UI/TextLink";
 import WhiteBackground from "../../components/UI/WhiteBackground";
 import useFetcher from "../../hooks/useFetcher";
 
-import { Divider, Spin } from "antd";
+import { Divider, Button, Space, Select } from "antd";
 
 import ModalCreateUser from "./components/ModalCreateUser/ModalCreateUser";
 import useModal from "../../hooks/useModal";
-import { formatSTT } from "../../utils/format";
+import { formatAreaType, formatSTT } from "../../utils/format";
 import BanUnbanUser from "./components/BanUnBanUser/BanUnBanUser";
 import AnimationAppear from "../../components/UI/AnimationAppear";
+import toast from "react-hot-toast";
+import useToast from "../../hooks/useToast";
+
 
 
 const ListUser = () => {
     const { data, isLoading, mutate } = useFetcher<any>("users/all", "GET");
-    const modal = useModal();
+    const modalCreate = useModal();
 
+    const toast = useToast();
+    // Hook để gọi API thay đổi role
+    const { trigger: updateRole } = useFetcher(`users/changerole`, "PUT");
 
-
+    // Hàm cập nhật role khi chọn trong dropdown
+    const handleChangeRole = async (id: string, roleId: string) => {
+        console.log("check id role id: ", id, roleId);
+        await updateRole({ url: `users/changerole/${id}/${roleId}` });
+        toast.showSuccess('Update success');
+        mutate(); // Cập nhật lại danh sách user
+        toast
+    };
     const columns: Column[] = [
         {
             dataIndex: "id",
@@ -34,7 +47,6 @@ const ListUser = () => {
             dataIndex: "name",
             key: "name",
             title: "Name",
-
         },
         {
             dataIndex: "email",
@@ -45,37 +57,58 @@ const ListUser = () => {
             dataIndex: "roleId",
             key: "roleId",
             title: "Role",
-            render: (role: any) => role?.name,
+            filters: [
+                { text: "Admin", value: "1" },
+                { text: "Manager", value: "2" },
+                { text: "Veterinarians", value: "3" },
+                { text: "Worker", value: "4" },
+            ],
+            onFilter: (value, record) => record.roleId.toString() === value,
+            render: (_, record) => (
+                <Select
+                    value={record.roleId?.id?.toString()} // Lấy giá trị id thay vì object
+                    style={{ width: 120 }}
+                    onChange={(value) => handleChangeRole(record.id, value)}
+                >
+                    <Select.Option value="1">Admin</Select.Option>
+                    <Select.Option value="2">Manager</Select.Option>
+                    <Select.Option value="3">Veterinarians</Select.Option>
+                    <Select.Option value="4">Worker</Select.Option>
+                </Select>
+            ),
         },
         {
             dataIndex: "status",
             key: "status",
             title: "Status",
+            render: (data) => formatAreaType(data)
         },
         {
             dataIndex: "action",
             key: "action",
             title: "Action",
             render: (_, record) => (
-                <BanUnbanUser
-                    userId={record.id}
-                    isActive={record.status === "active"}
-                    onStatusChange={mutate}
-                />
+                <Space>
+                    <BanUnbanUser
+                        userId={record.id}
+                        isActive={record.status === "active"}
+                        onStatusChange={mutate}
+                    />
+                </Space>
             ),
         },
     ];
 
     return (
         <AnimationAppear duration={0.5}>
-
             <WhiteBackground>
-                <ModalCreateUser modal={modal} mutate={mutate} />
+                <ModalCreateUser modal={modalCreate} mutate={mutate} />
                 <Divider className="my-4" />
                 <TableComponent
                     columns={columns}
                     dataSource={data ? formatSTT(data) : []}
-                    loading={isLoading} />
+                    loading={isLoading}
+                />
             </WhiteBackground>
         </AnimationAppear>
     );

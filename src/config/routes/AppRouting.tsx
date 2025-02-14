@@ -48,6 +48,7 @@ import ExportItem from '../../pages/WarehouseManagement/components/Item/componen
 import ListExports from '../../pages/WarehouseManagement/components/Item/components/ExportItem/ListExports';
 import DetailExport from '../../pages/WarehouseManagement/components/Item/components/ExportItem/DetailExport';
 import DetailVaccineCycle from '../../pages/VaccineCycleManagement/components/DetailVaccineCycle';
+import FeedMealManagement from '../../pages/FeedManagement/FeedMeal';
 
 const AppRouting = () => {
   const user = useSelector((state: RootState) => state.user);
@@ -127,6 +128,10 @@ const AppRouting = () => {
               element: <HealthReport />,
             },
           ],
+        },
+        {
+          path: 'feed-management',
+          element: <FeedMealManagement />,
         },
         {
           path: 'area-management',
