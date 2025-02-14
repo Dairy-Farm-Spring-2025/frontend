@@ -17,13 +17,7 @@ interface DailyMilkProps {
   detailCow: Cow;
 }
 
-const DailyMilk = ({
-  id,
-  dataMilk = [],
-  isLoading,
-  mutateDaily,
-  detailCow,
-}: DailyMilkProps) => {
+const DailyMilk = ({ id, dataMilk = [], isLoading, mutateDaily, detailCow }: DailyMilkProps) => {
   const modal = useModal();
   const modalDailyMilk = useModal();
   const [dailyMilk, setDailyMilk] = useState(null);
@@ -72,16 +66,16 @@ const DailyMilk = ({
 
   return (
     <div>
-      <div className="flex gap-5 mb-5">
+      <div className='flex gap-5 mb-5'>
         {detailCow?.cowStatus === 'milkingCow' && (
-          <ButtonComponent onClick={openModal} type="primary">
+          <ButtonComponent onClick={openModal} type='primary'>
             Create Daily Milk
           </ButtonComponent>
         )}
       </div>
       <CalendarComponent
         events={events}
-        initialView="dayGridMonth"
+        initialView='dayGridMonth'
         eventContentRenderer={(eventInfo) => (
           <div onClick={() => openDailyModal(eventInfo.event)}>
             <p>

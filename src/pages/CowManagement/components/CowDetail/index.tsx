@@ -5,9 +5,7 @@ import {
   SaveOutlined,
 } from '@ant-design/icons';
 import { useParams } from 'react-router-dom';
-import TabsComponent, {
-  TabsItemProps,
-} from '../../../../components/Tabs/TabsComponent';
+import TabsComponent, { TabsItemProps } from '../../../../components/Tabs/TabsComponent';
 import AnimationAppear from '../../../../components/UI/AnimationAppear';
 import WhiteBackground from '../../../../components/UI/WhiteBackground';
 import DailyMilk from './TabsItem/DailyMilk';
@@ -28,6 +26,10 @@ const CowDetail = () => {
     isLoading: isLoadingDetail,
     mutate: mutateDetail,
   } = useFetcher<any>(`cows/${id}`, 'GET');
+  // const { data: dataDetailQR, isLoading: isLoadingDetailQR } = useFetcher<any>(
+  //   `cows/qr/${id}`,
+  //   'GET'
+  // );
   const items: TabsItemProps['items'] = [
     {
       key: 'information',
@@ -71,15 +73,9 @@ const CowDetail = () => {
   ];
   return (
     <AnimationAppear>
-      <WhiteBackground className="min-h-[70vh]">
-        <p className="text-4xl font-bold !h-fit my-4 text-primary">
-          {dataDetail?.name}
-        </p>
-        <TabsComponent
-          items={items}
-          destroyInactiveTabPane
-          className="!h-full"
-        />
+      <WhiteBackground className='min-h-[70vh]'>
+        <p className='text-4xl font-bold !h-fit my-4 text-primary'>{dataDetail?.name}</p>
+        <TabsComponent items={items} destroyInactiveTabPane className='!h-full' />
       </WhiteBackground>
     </AnimationAppear>
   );
