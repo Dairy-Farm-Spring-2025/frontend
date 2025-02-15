@@ -15,6 +15,7 @@ import { cowOrigin } from '../../../../../service/data/cowOrigin';
 import { cowStatus } from '../../../../../service/data/cowStatus';
 import { genderData } from '../../../../../service/data/gender';
 import CowQRImage from '../../../../../components/CowQrImage/CowQrImage';
+import Title from '../../../../../components/UI/Title';
 
 interface CowGeneralInformationProps {
   id: string;
@@ -32,7 +33,9 @@ const CowGeneralInformation = ({
   const [form] = Form.useForm();
   const { trigger, isLoading } = useFetcher(`cows/${id}`, 'PUT');
   const { data } = useFetcher<any[]>('cow-types', 'GET');
-  const [optionsCowType, setOptionsCowType] = useState<SelectProps['options']>([]);
+  const [optionsCowType, setOptionsCowType] = useState<SelectProps['options']>(
+    []
+  );
   const toast = useToast();
   useEffect(() => {
     if (data) {
@@ -82,94 +85,104 @@ const CowGeneralInformation = ({
   }
 
   return (
-    <FormComponent onFinish={handleFinish} form={form} className='p-2 flex flex-col gap-5'>
-      <div className='flex flex-col gap-2'>
-        <div className='relative'>
-          <p className='text-2xl text-primary font-bold'>Date information</p>
-          <div className='absolute top-0 right-0'>
+    <FormComponent
+      onFinish={handleFinish}
+      form={form}
+      className="p-2 flex flex-col gap-5"
+    >
+      <div className="flex flex-col gap-2">
+        <div className="relative">
+          <Title className="!text-2xl">Date Information</Title>
+          <div className="absolute top-0 right-0">
             <CowQRImage id={id} />
           </div>
         </div>
-        <div className='relative grid grid-cols-4 gap-5 w-full'>
-          <div className='flex gap-10'>
+        <div className="relative grid grid-cols-4 gap-5 w-full">
+          <div className="flex gap-10">
             <FormItemComponent
               rules={[{ required: true }]}
-              className='w-full'
-              name='dateOfBirth'
+              className="w-full"
+              name="dateOfBirth"
               label={<LabelForm>Date of birth</LabelForm>}
             >
-              <DatePicker className='w-full !text-[18px] min-w-[250px]' />
+              <DatePicker className="w-full !text-[18px] min-w-[250px]" />
             </FormItemComponent>
             <FormItemComponent
               rules={[{ required: true }]}
-              className='w-full'
-              name='dateOfEnter'
+              className="w-full"
+              name="dateOfEnter"
               label={<LabelForm>Date of enter</LabelForm>}
             >
-              <DatePicker className='w-full min-w-[250px]' />
+              <DatePicker className="w-full min-w-[250px]" />
             </FormItemComponent>
           </div>
         </div>
       </div>
-      <div className='flex flex-col gap-2'>
-        <p className='text-2xl text-primary font-bold'>Cow Information</p>
-        <div className='grid grid-cols-4 gap-5 w-full'>
+      <div className="flex flex-col gap-2">
+        <Title className="!text-2xl">Cow Information</Title>
+        <div className="grid grid-cols-4 gap-5 w-full">
           <FormItemComponent
             rules={[{ required: true }]}
-            name='gender'
-            className='w-full'
+            name="gender"
+            className="w-full"
             label={<LabelForm>Gender</LabelForm>}
           >
             <SelectComponent
               options={genderData}
-              className='w-full'
-              placeholder='Select gender...'
+              className="w-full"
+              placeholder="Select gender..."
             />
           </FormItemComponent>
           <FormItemComponent
-            name='cowTypeId'
+            name="cowTypeId"
             rules={[{ required: true }]}
-            className='w-full'
+            className="w-full"
             label={<LabelForm>Cow Type</LabelForm>}
           >
             <SelectComponent
               options={optionsCowType}
-              className='w-full'
-              placeholder='Select cow type...'
+              className="w-full"
+              placeholder="Select cow type..."
             />
           </FormItemComponent>
           <FormItemComponent
             rules={[{ required: true }]}
-            className='w-full'
-            name='cowStatus'
+            className="w-full"
+            name="cowStatus"
             label={<LabelForm>Cow Status</LabelForm>}
           >
             <SelectComponent
               options={cowStatus}
-              className='w-full'
-              placeholder='Select status...'
+              className="w-full"
+              placeholder="Select status..."
             />
           </FormItemComponent>
           <FormItemComponent
-            name='cowOrigin'
+            name="cowOrigin"
             rules={[{ required: true }]}
-            className='w-full'
+            className="w-full"
             label={<LabelForm>Cow Origin</LabelForm>}
           >
-            <SelectComponent options={cowOrigin} placeholder='Enter origin...' className='w-full' />
+            <SelectComponent
+              options={cowOrigin}
+              placeholder="Enter origin..."
+              className="w-full"
+            />
           </FormItemComponent>
           <FormItemComponent
-            className='w-full !col-span-4'
-            name='description'
+            className="w-full !col-span-4"
+            name="description"
             rules={[{ required: true }]}
             label={<LabelForm>Description</LabelForm>}
           >
             <ReactQuillComponent />
           </FormItemComponent>
         </div>
-        <div className='flex justify-end items-center gap-3'>
-          <p className='text-lg text-orange-600 font-semibold'>(You can edit cow's information)</p>
-          <ButtonComponent loading={isLoading} htmlType='submit' type='primary'>
+        <div className="flex justify-end items-center gap-3">
+          <p className="text-lg text-orange-600 font-semibold">
+            (You can edit cow's information)
+          </p>
+          <ButtonComponent loading={isLoading} htmlType="submit" type="primary">
             Save
           </ButtonComponent>
         </div>

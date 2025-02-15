@@ -9,12 +9,15 @@ import useToast from '../../../../hooks/useToast';
 import { Cow } from '../../../../model/Cow/Cow';
 import CreateCowInformation from './CreateCowInformation/CreateCowInformation';
 import AnimationAppear from '../../../../components/UI/AnimationAppear';
+import HealthRecordInformation from './CreateCowInformation/HealthRecordInformation';
 
 const CreateCow = () => {
   const [form] = Form.useForm();
   const [currentStep, setCurrentStep] = useState(0);
   const [inforData, setInforData] = useState<Cow>();
   const { trigger, isLoading } = useFetcher('cows/create', 'POST');
+  const { isLoading: isLoadingHealthRecord, trigger: triggerHealthRecord } =
+    useFetcher('health-record', 'POST');
   const toast = useToast();
 
   const steps = [
@@ -24,7 +27,7 @@ const CreateCow = () => {
     },
     {
       title: 'Health Information',
-      content: <div>{inforData?.cowId} </div>,
+      content: <HealthRecordInformation />,
     },
   ];
 
@@ -56,8 +59,22 @@ const CreateCow = () => {
       }
     }
     if (currentStep === 1) {
-      setCurrentStep(0);
-      handleClear();
+      try {
+        const payload = {
+          status: values.status,
+          period: values.period,
+          weight: values.weight,
+          size: values.size,
+          cowId: inforData?.cowId,
+          reportTime: '2025-02-15T02:46:21.358Z',
+        };
+        const response = await triggerHealthRecord({ body: payload });
+        toast.showSuccess(response.message);
+        setCurrentStep(0);
+        handleClear();
+      } catch (error: any) {
+        toast.showError(error.message);
+      }
     }
   };
 
@@ -85,13 +102,24 @@ const CreateCow = () => {
                 Clear All
               </ButtonComponent>
             )}
-            <ButtonComponent
-              type="primary"
-              htmlType="submit"
-              loading={isLoading}
-            >
-              {currentStep === steps.length - 1 ? 'Done' : 'Next'}
-            </ButtonComponent>
+            {currentStep === 0 && (
+              <ButtonComponent
+                type="primary"
+                htmlType="submit"
+                loading={isLoading}
+              >
+                Next
+              </ButtonComponent>
+            )}
+            {currentStep === 1 && (
+              <ButtonComponent
+                type="primary"
+                htmlType="submit"
+                loading={isLoadingHealthRecord}
+              >
+                Done
+              </ButtonComponent>
+            )}
           </div>
         </FormComponent>
       </WhiteBackground>

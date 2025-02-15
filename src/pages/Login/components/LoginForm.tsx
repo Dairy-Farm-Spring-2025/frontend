@@ -1,27 +1,27 @@
-import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import { Divider, Form, Input } from "antd";
-import { useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import ButtonComponent from "../../../components/Button/ButtonComponent";
-import FormComponent from "../../../components/Form/FormComponent";
-import FormItemComponent from "../../../components/Form/Item/FormItemComponent";
-import useFetcher from "../../../hooks/useFetcher";
-import useToast from "../../../hooks/useToast";
-import UserRequest from "../../../model/Authentication/UserRequest";
-import UserResponse from "../../../model/Authentication/UserResponse";
-import { login } from "../../../core/store/slice/userSlice";
+import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import { Divider, Form, Input } from 'antd';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import ButtonComponent from '../../../components/Button/ButtonComponent';
+import FormComponent from '../../../components/Form/FormComponent';
+import FormItemComponent from '../../../components/Form/Item/FormItemComponent';
+import useFetcher from '../../../hooks/useFetcher';
+import useToast from '../../../hooks/useToast';
+import UserRequest from '../../../model/Authentication/UserRequest';
+import UserResponse from '../../../model/Authentication/UserResponse';
+import { login } from '../../../core/store/slice/userSlice';
 const LoginForm = () => {
   const navigate = useNavigate();
   const { trigger, isLoading } = useFetcher<UserResponse>(
-    "users/signin",
-    "POST"
+    'users/signin',
+    'POST'
   );
   const dispatch = useDispatch();
   const toast = useToast();
   const [form] = Form.useForm();
   const handleForgetPassword = () => {
-    navigate("forget-password");
+    navigate('forget-password');
   };
   const handleFinish = async (values: UserRequest) => {
     const data: UserRequest = {
@@ -33,12 +33,16 @@ const LoginForm = () => {
       console.log(response);
       if (response.message && response.data) {
         const role = response.data.roleName;
-        if (role !== "Manager" && role !== "Admin") {
-          toast.showError("You do not permission to access");
+        if (
+          role !== 'Manager' &&
+          role !== 'Admin' &&
+          role !== 'Veterinarians'
+        ) {
+          toast.showError('You do not permission to access');
         } else {
-          toast.showSuccess("Signin Success");
+          toast.showSuccess('Signin Success');
           dispatch(login(response.data));
-          navigate("/dairy");
+          navigate('/dairy');
         }
       } else {
         toast.showError(response.message);
@@ -66,7 +70,7 @@ const LoginForm = () => {
           <FormItemComponent
             label={<span className="text-base font-semibold">Email</span>}
             name="email"
-            rules={[{ required: true, type: "email" }]}
+            rules={[{ required: true, type: 'email' }]}
           >
             <Input
               prefix={<UserOutlined className="text-gray-500" />}
@@ -135,7 +139,7 @@ const LoginForm = () => {
             loading={isLoading}
             htmlType="submit"
             type="primary"
-            className="w-full "
+            className="!w-full "
           >
             Login
           </ButtonComponent>

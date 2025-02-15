@@ -3,16 +3,7 @@ import { CowType } from './CowType';
 export type Cow = {
   cowId: number;
   name: string;
-  cowStatus:
-    | 'milkingCow'
-    | 'dryCow'
-    | 'pregnantCow'
-    | 'openCow'
-    | 'calvingCow'
-    | 'sickCow'
-    | 'breedingCow'
-    | 'quarantinedCow'
-    | 'culling';
+  cowStatus: CowStatus;
   dateOfBirth: string;
   dateOfEnter: string;
   dateOfOut: string;
@@ -25,3 +16,14 @@ export type Cow = {
   updatedAt: string;
   inPen: boolean;
 };
+
+export type CowStatus =
+  | 'milkingCow'
+  | 'dryCow'
+  | 'pregnantCow'
+  | 'openCow'
+  | 'calvingCow'
+  | 'sickCow'
+  | 'breedingCow'
+  | 'quarantinedCow'
+  | 'culling';
