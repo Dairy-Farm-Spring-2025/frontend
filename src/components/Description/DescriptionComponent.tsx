@@ -7,7 +7,7 @@ export interface DescriptionPropsItem extends DescriptionsProps {
 }
 interface DescriptionComponentProps extends DescriptionsProps {
   items: DescriptionPropsItem['items'];
-  title?: string;
+  title?: React.ReactNode | any;
   layout?: 'vertical' | 'horizontal';
   className?: string;
 }

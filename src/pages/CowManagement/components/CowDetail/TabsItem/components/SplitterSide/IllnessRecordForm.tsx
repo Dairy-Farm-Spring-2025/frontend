@@ -5,18 +5,30 @@ import InputComponent from '../../../../../../../components/Input/InputComponent
 import LabelForm from '../../../../../../../components/LabelForm/LabelForm';
 import ReactQuillComponent from '../../../../../../../components/ReactQuill/ReactQuillComponent';
 import SelectComponent from '../../../../../../../components/Select/SelectComponent';
+import TextTitle from '../../../../../../../components/UI/TextTitle';
 import Title from '../../../../../../../components/UI/Title';
+import { IllnessCow } from '../../../../../../../model/Cow/Illness';
 import { SEVERITY_OPTIONS } from '../../../../../../../service/data/severity';
 
 interface IllnessRecordFormProps {
   loading: boolean;
+  data: IllnessCow;
 }
 
-const IllnessRecordForm = ({ loading }: IllnessRecordFormProps) => {
+const IllnessRecordForm = ({ loading, data }: IllnessRecordFormProps) => {
   return (
     <div>
       <Title className="!text-2xl mb-5">Illness Record: </Title>
-      <div className="">
+      <div className="grid grid-cols-3">
+        <TextTitle title="User" description={data?.userEntity?.name} />
+        <TextTitle
+          title="Veterinarian"
+          description={
+            data?.veterinarian ? data?.veterinarian?.name : 'No veterinarian'
+          }
+        />
+      </div>
+      <div className="mt-5">
         <div className="grid grid-cols-3 gap-5">
           <FormItemComponent
             rules={[{ required: true }]}
