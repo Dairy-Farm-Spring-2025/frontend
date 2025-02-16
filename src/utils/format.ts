@@ -42,3 +42,13 @@ export function formatInjectionSite(site: InjectionSite): string {
     .replace(/([a-z])([A-Z])/g, '$1 $2') // Add a space before each capital letter
     .replace(/^./, (str) => str.toUpperCase()); // Capitalize the first letter
 }
+
+export const formatToTitleCase = (value: string) => {
+  if (!value) return '';
+
+  return value
+    .toLowerCase() // Convert to lowercase
+    .split('_') // Split by underscore (e.g., HEALTH_RECORD)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize each word
+    .join(' '); // Join words with a space
+};

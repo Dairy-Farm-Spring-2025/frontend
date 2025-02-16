@@ -1,161 +1,220 @@
-import { Divider, Form, Spin } from 'antd';
-import ButtonComponent from '../../../../../components/Button/ButtonComponent';
+import { Flex, Form, Splitter, Tooltip } from 'antd';
+import dayjs from 'dayjs';
+import { useState } from 'react';
+import { BsClipboard2, BsEmojiDizzy } from 'react-icons/bs';
+import { CgSmileSad } from 'react-icons/cg';
+import { HiOutlineEmojiHappy } from 'react-icons/hi';
+import { RiEmotionNormalLine } from 'react-icons/ri';
 import FormComponent from '../../../../../components/Form/FormComponent';
-import FormItemComponent from '../../../../../components/Form/Item/FormItemComponent';
-import InputComponent from '../../../../../components/Input/InputComponent';
-import LabelForm from '../../../../../components/LabelForm/LabelForm';
-import SelectComponent from '../../../../../components/Select/SelectComponent';
-import Title from '../../../../../components/UI/Title';
-import { cowStatus } from '../../../../../service/data/cowStatus';
-import { HEALTH_RECORD_STATUS } from '../../../../../service/data/healthRecordStatus';
+import TimelineComponent, {
+  TimelineItems,
+} from '../../../../../components/Timeline/TimelineComponent';
 import useFetcher from '../../../../../hooks/useFetcher';
-import { useEffect, useState } from 'react';
+import useToast from '../../../../../hooks/useToast';
+import { HealthResponse } from '../../../../../model/Cow/Cow';
+import { HealthRecord } from '../../../../../model/Cow/HealthRecord';
 import { IllnessCow } from '../../../../../model/Cow/Illness';
-import CalendarComponent from '../../../../../components/Calendar/CalendarComponent';
-import IllnessModalDetail from './components/ModalIllness/IllnessModalDetail';
-import useModal from '../../../../../hooks/useModal';
+import HealthRecordForm from './components/SplitterSide/HealthRecordForm';
+import IllnessRecordForm from './components/SplitterSide/IllnessRecordForm';
+import { formatToTitleCase } from '../../../../../utils/format';
 
 interface HealthRecordCowProps {
-  cowId: string;
+  data: HealthResponse[];
+  mutate: any;
 }
 
-const HealthRecordCow = ({ cowId }: HealthRecordCowProps) => {
+const SIZE_ICON = 20;
+
+const HealthRecordCow = ({ data, mutate }: HealthRecordCowProps) => {
   const [form] = Form.useForm();
-  const [showIllness, setShowIllness] = useState(false);
-  const [eventData, setEventData] = useState<any[]>([]);
-  const [illnessDetail, setIllnessDetail] = useState(null);
-  const modal = useModal();
-  const {
-    data: illnessData,
-    isLoading: illnessLoading,
-    mutate: mutateIllness,
-  } = useFetcher<IllnessCow[]>(`illness/cow/${cowId}`, 'GET');
-  const handleVisibleIllness = () => {
-    setShowIllness(!showIllness);
-  };
-  const handleOpenModal = (data: any) => {
-    setIllnessDetail(data);
-    modal.openModal();
-  };
-  useEffect(() => {
-    if (illnessData) {
-      setEventData(
-        illnessData.map((element: IllnessCow) => {
-          return {
-            id: element?.illnessId,
-            title: `${element?.severity} - ${element?.userEntity?.name} - ${
-              element?.veterinarian
-                ? element?.veterinarian?.name
-                : 'No Veterinarian'
-            }`,
-            start: element?.startDate,
-            end: new Date(
-              new Date(element?.endDate).getTime() +
-                24 * 60 * 60 * 1000 -
-                24 * 60 * 60 * 1000
-            ),
-            extendedProps: {
-              startDate: element?.startDate,
-              endDate: element?.endDate,
-              prognosis: element?.prognosis,
-              cow: element?.cowEntity,
-              user: element?.userEntity,
-              veterinarian: element?.veterinarian,
-              severity: element?.severity,
-              symptoms: element?.symptoms,
-            },
-          };
-        })
-      );
+  const [formIllness] = Form.useForm();
+  const toast = useToast();
+  const [type, setType] = useState<'HEALTH_RECORD' | 'ILLNESS' | null>();
+  const { trigger: triggerUpdateHealthRecord, isLoading: loadingUpdateHealth } =
+    useFetcher('update/health-record', 'PUT');
+  const { trigger: triggerUpdateIllness, isLoading: isLoadingUpdateIllness } =
+    useFetcher(`illness`, 'PUT');
+  const handleOpenLeftSide = (
+    type: 'HEALTH_RECORD' | 'ILLNESS' | any,
+    data: HealthRecord & IllnessCow
+  ) => {
+    setType(type);
+    if (type === 'HEALTH_RECORD') {
+      form.setFieldsValue({
+        status: data.status,
+        period: data.period,
+        weight: data.weight,
+        size: data.size,
+        cowId: data?.cowEntity?.cowId,
+        healthId: data?.healthRecordId,
+      });
     }
-  }, [illnessData]);
+    if (type === 'ILLNESS') {
+      formIllness.setFieldsValue({
+        severity: data?.severity,
+        startDate: data?.startDate ? dayjs(data.startDate) : null,
+        endDate: data?.endDate ? dayjs(data.endDate) : null,
+        symptoms: data?.symptoms,
+        prognosis: data?.prognosis,
+        cowId: data?.cowEntity?.cowId,
+        illnessId: data?.illnessId,
+      });
+    }
+  };
+
+  const onFinishUpdateHealthRecord = async (values: any) => {
+    const payload = {
+      status: values.status,
+      period: values.period,
+      weight: values.weight,
+      size: values.size,
+      cowId: values?.cowId,
+    };
+    try {
+      const response = await triggerUpdateHealthRecord({
+        url: `health-record/${values.healthId}`,
+        body: payload,
+      });
+      toast.showSuccess(response.message);
+      mutate();
+    } catch (error: any) {
+      toast.showError(error.message);
+    }
+  };
+
+  const onFinishIllnessRecord = async (values: any) => {
+    try {
+      const payload = {
+        symptoms: values?.symptoms,
+        severity: values?.severity,
+        startDate: values?.startDate.format('YYYY-MM-DD'),
+        endDate: values?.endDate.format('YYYY-MM-DD'),
+        prognosis: values?.prognosis,
+        cowId: values?.cowId,
+      };
+      const response = await triggerUpdateIllness({
+        url: `illness/${values?.illnessId}`,
+        body: payload,
+      });
+      toast.showSuccess(response.message);
+      mutate();
+    } catch (error: any) {
+      toast.showError(error.message);
+    }
+  };
+
+  console.log(data);
+
+  const items: TimelineItems[] = data.map((element) => ({
+    children: (
+      <div
+        className="ml-10 w-fit cursor-pointer hover:!opacity-55 duration-200"
+        onClick={() => handleOpenLeftSide(element?.type, element?.health)}
+      >
+        <div className="flex gap-2 text-base">
+          <p>{formatToTitleCase(element?.type)}</p>
+          <p>-</p>
+          {(element.type === 'HEALTH_RECORD' && (
+            <>
+              <Tooltip title="Status">
+                <p>{formatToTitleCase(element?.health?.status)}</p>
+              </Tooltip>
+              <p>-</p>
+              <Tooltip title="Weight">
+                <p>{element?.health?.weight}(kg)</p>
+              </Tooltip>
+              <p>-</p>
+              <Tooltip title="Size">
+                <p>{element?.health?.size}(m)</p>
+              </Tooltip>
+            </>
+          )) ||
+            (element.type === 'ILLNESS' && (
+              <>
+                <Tooltip title="Seveiry">
+                  <p>{formatToTitleCase(element?.health?.severity)}</p>
+                </Tooltip>
+                <p>-</p>
+                <Tooltip title="User">
+                  <p>{element?.health?.userEntity?.name}</p>
+                </Tooltip>
+                <p>-</p>
+                <Tooltip title="Veterinarian">
+                  <p>
+                    {element?.health?.veterinarian
+                      ? element?.health?.veterinarian?.name
+                      : 'No veterinarian'}
+                  </p>
+                </Tooltip>
+              </>
+            ))}
+        </div>
+      </div>
+    ),
+    dot: (
+      <div className="flex flex-col justify-center items-center !w-full gap-2 !h-fit">
+        {(element.type === 'HEALTH_RECORD' && (
+          <BsClipboard2 size={SIZE_ICON} color="blue" />
+        )) ||
+          (element.type === 'ILLNESS' &&
+            ((element?.health?.severity === 'mild' && (
+              <Tooltip title={'Mild'}>
+                <HiOutlineEmojiHappy size={SIZE_ICON} color="green" />
+              </Tooltip>
+            )) ||
+              (element?.health?.severity === 'moderate' && (
+                <Tooltip title={'Moderate'}>
+                  <RiEmotionNormalLine size={SIZE_ICON} color="purple" />
+                </Tooltip>
+              )) ||
+              (element?.health?.severity === 'severe' && (
+                <Tooltip title={'Severe'}>
+                  <CgSmileSad size={SIZE_ICON} color="orange" />
+                </Tooltip>
+              )) ||
+              (element?.health?.severity === 'critical' && (
+                <Tooltip title={'Critical'}>
+                  <BsEmojiDizzy size={SIZE_ICON} color="red" />
+                </Tooltip>
+              ))))}
+        <p>{element.date}</p>
+      </div>
+    ),
+  }));
+
+  const DescLeft: React.FC<Readonly<{ text?: string | number }>> = () => (
+    <Flex justify="center" align="start" style={{ height: '100%' }}>
+      <TimelineComponent className="ml-10 mt-10" items={items} reverse={true} />
+    </Flex>
+  );
   return (
-    <div className="flex flex-col">
-      <FormComponent form={form} className="w-full">
-        <Title className="!text-2xl mb-5">Health Record: </Title>
-        <div className="flex flex-col gap-8 w-full">
-          <div className="grid grid-cols-4 gap-5">
-            <FormItemComponent
-              name="status"
-              label={<LabelForm>Status:</LabelForm>}
+    <Splitter className="flex w-full">
+      <Splitter.Panel className="w-fit" defaultSize="50%" min="40%" max="70%">
+        <DescLeft />
+      </Splitter.Panel>
+      <Splitter.Panel defaultSize="50%" min="40%" max="70%">
+        <div className="p-5">
+          {type === 'HEALTH_RECORD' && (
+            <FormComponent
+              form={form}
+              onFinish={onFinishUpdateHealthRecord}
+              className="w-full"
             >
-              <SelectComponent options={HEALTH_RECORD_STATUS} />
-            </FormItemComponent>
-            <FormItemComponent
-              name="period"
-              label={<LabelForm>Period:</LabelForm>}
+              <HealthRecordForm loading={loadingUpdateHealth} />
+            </FormComponent>
+          )}
+          {type === 'ILLNESS' && (
+            <FormComponent
+              form={formIllness}
+              onFinish={onFinishIllnessRecord}
+              className="w-full"
             >
-              <SelectComponent options={cowStatus} />
-            </FormItemComponent>
-          </div>
+              <IllnessRecordForm loading={isLoadingUpdateIllness} />
+            </FormComponent>
+          )}
         </div>
-        <div className="flex flex-col gap-8 w-full">
-          <div className="grid grid-cols-4 gap-5">
-            <FormItemComponent
-              name="weight"
-              label={<LabelForm>Weight:</LabelForm>}
-            >
-              <div className="flex items-center gap-2">
-                <InputComponent.Number />
-                <p>(kilogram)</p>
-              </div>
-            </FormItemComponent>
-            <FormItemComponent name="size" label={<LabelForm>Size:</LabelForm>}>
-              <div className="flex items-center gap-2">
-                <InputComponent.Number />
-                <p>(meter)</p>
-              </div>
-            </FormItemComponent>
-          </div>
-        </div>
-        <div className="flex justify-start items-center gap-3">
-          <ButtonComponent htmlType="submit" type="primary">
-            Save
-          </ButtonComponent>
-        </div>
-      </FormComponent>
-      <Divider className="!underline !underline-offset-4 !font-bold !text-blue-500">
-        <div onClick={handleVisibleIllness}>
-          <p className="cursor-pointer hover:opacity-65 duration-200">
-            {showIllness ? 'Hide' : 'Show'} Illness
-          </p>
-        </div>
-      </Divider>
-      {illnessLoading ? (
-        <Spin />
-      ) : (
-        showIllness && (
-          <div className="flex flex-col gap-5">
-            <Title className="!text-2xl mb-5">Illness Record</Title>
-            <p className="text-base bg-green-600 w-fit text-white p-2 rounded-md">
-              (Mild - User - Veterinarian)
-            </p>
-            <CalendarComponent
-              events={eventData}
-              initialView="dayGridMonth"
-              headerToolbar={{
-                start: 'today prev,next',
-                center: 'title',
-                end: 'dayGridMonth',
-              }}
-              eventContentRenderer={(eventInfo) => (
-                <div
-                  className="text-left !text-wrap"
-                  onClick={() => handleOpenModal(eventInfo.event)}
-                >
-                  {eventInfo?.event?.title}
-                </div>
-              )}
-            />
-            <IllnessModalDetail
-              data={illnessDetail}
-              modal={modal}
-              mutate={mutateIllness}
-            />
-          </div>
-        )
-      )}
-    </div>
+      </Splitter.Panel>
+    </Splitter>
   );
 };
 
