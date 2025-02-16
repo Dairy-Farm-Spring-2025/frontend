@@ -12,6 +12,7 @@ import { formatToTitleCase } from '../../../../../../../utils/format';
 import useModal from '../../../../../../../hooks/useModal';
 import { useState } from 'react';
 import IllnessDetailModal from './components/IllnessDetailModal';
+import Title from '../../../../../../../components/UI/Title';
 
 interface IllnessDetailProps {
   data: IllnessDetail[];
@@ -35,7 +36,7 @@ const IllnessDetailComponent = ({ data }: IllnessDetailProps) => {
         className="ml-10 w-fit cursor-pointer hover:!opacity-55 duration-200"
       >
         <div className="flex gap-2">
-          <Tooltip title="Seveiry">
+          <Tooltip title="Status">
             <p>{formatToTitleCase(element?.status)}</p>
           </Tooltip>
           <p>-</p>
@@ -83,6 +84,9 @@ const IllnessDetailComponent = ({ data }: IllnessDetailProps) => {
   console.log(data);
   return (
     <div className="pl-2">
+      <div className="pt-5">
+        <Title className="!text-2xl mb-5">Illness Detail</Title>
+      </div>{' '}
       <TimelineComponent className="mt-10 ml-10" items={items} reverse={true} />
       <IllnessDetailModal data={detail as IllnessDetail} modal={modal} />
     </div>
