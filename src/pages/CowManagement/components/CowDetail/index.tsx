@@ -54,6 +54,7 @@ const CowDetail = () => {
       label: 'Health Record',
       children: (
         <HealthRecordCow
+          cowId={id as string}
           mutate={mutateDetail}
           data={dataDetail?.healthInfoResponses as HealthResponse[]}
         />
