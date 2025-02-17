@@ -1,5 +1,6 @@
 import { Form, FormProps } from 'antd';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface FormComponentProps extends FormProps {
   form: any;
@@ -7,26 +8,20 @@ interface FormComponentProps extends FormProps {
   children: React.ReactNode;
 }
 
-const validateMessages = {
-  required: 'This field is required!',
-  types: {
-    email: 'This is not a valid email!',
-    number: 'This is not a valid number!',
-  },
-  string: {
-    len: 'This field must be exactly ${len} characters!',
-  },
-  number: {
-    range: 'The field must be between ${min} and ${max}',
-  },
-};
-
 const FormComponent = ({
   form,
   colSpan = 24,
   children,
   ...props
 }: FormComponentProps) => {
+  const { t } = useTranslation();
+  const validateMessages = {
+    required: t('This field is required!'),
+    types: {
+      email: t('This is not a valid email!'),
+      number: t('This is not a valid number!'),
+    },
+  };
   return (
     <Form
       form={form}
