@@ -1,32 +1,32 @@
 import { DatePicker, Form, Select } from 'antd';
 import { useEffect, useState } from 'react';
-import ButtonComponent from '../../../../../components/Button/ButtonComponent';
+import ButtonComponent from '../../../../../../components/Button/ButtonComponent';
 import DescriptionComponent, {
     DescriptionPropsItem,
-} from '../../../../../components/Description/DescriptionComponent';
-import FormComponent from '../../../../../components/Form/FormComponent';
-import FormItemComponent from '../../../../../components/Form/Item/FormItemComponent';
-import InputComponent from '../../../../../components/Input/InputComponent';
-import ModalComponent from '../../../../../components/Modal/ModalComponent';
-import useFetcher from '../../../../../hooks/useFetcher';
-import useToast from '../../../../../hooks/useToast';
+} from '../../../../../../components/Description/DescriptionComponent';
+import FormComponent from '../../../../../../components/Form/FormComponent';
+import FormItemComponent from '../../../../../../components/Form/Item/FormItemComponent';
+import InputComponent from '../../../../../../components/Input/InputComponent';
+import ModalComponent from '../../../../../../components/Modal/ModalComponent';
+import useFetcher from '../../../../../../hooks/useFetcher';
+import useToast from '../../../../../../hooks/useToast';
 
-import { Health } from '../../../../../model/Cow/HealthReport';
-import { healthSeverity } from '../../../../../service/data/health';
+import { Health } from '../../../../../../model/Cow/HealthReport';
+import { healthSeverity } from '../../../../../../service/data/health';
 import dayjs from 'dayjs';
 
 
-interface ModalViewDetailHealthReportProps {
+interface ModalViewDetailProps {
     modal: any;
     mutate: any;
     id: string;
 }
 
-const ModalViewDetailHealthReport = ({
+const ModalViewDetail = ({
     modal,
     mutate,
     id,
-}: ModalViewDetailHealthReportProps) => {
+}: ModalViewDetailProps) => {
     const [form] = Form.useForm();
     const toast = useToast();
     const { trigger, isLoading } = useFetcher(`illness/${id}`, 'PUT');
@@ -155,7 +155,7 @@ const ModalViewDetailHealthReport = ({
 
     return (
         <ModalComponent
-            title="Edit Health Report"
+            title="Edit Ill Ness"
             open={modal.open}
             onCancel={handleClose}
             loading={isLoadingDetail}
@@ -188,4 +188,4 @@ const ModalViewDetailHealthReport = ({
     );
 };
 
-export default ModalViewDetailHealthReport;
+export default ModalViewDetail;

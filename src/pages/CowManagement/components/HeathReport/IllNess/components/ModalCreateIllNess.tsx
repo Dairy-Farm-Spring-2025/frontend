@@ -1,22 +1,22 @@
 import { DatePicker, Form, Select } from 'antd';
-import FormComponent from '../../../../../components/Form/FormComponent';
-import FormItemComponent from '../../../../../components/Form/Item/FormItemComponent';
-import InputComponent from '../../../../../components/Input/InputComponent';
-import LabelForm from '../../../../../components/LabelForm/LabelForm';
-import ModalComponent from '../../../../../components/Modal/ModalComponent';
+import FormComponent from '../../../../../../components/Form/FormComponent';
+import FormItemComponent from '../../../../../../components/Form/Item/FormItemComponent';
+import InputComponent from '../../../../../../components/Input/InputComponent';
+import LabelForm from '../../../../../../components/LabelForm/LabelForm';
+import ModalComponent from '../../../../../../components/Modal/ModalComponent';
 
-import useToast from '../../../../../hooks/useToast';
-import { healthSeverity } from '../../../../../service/data/health';
-import { Cow } from '../../../../../model/Cow/Cow';
-import useFetcher from '../../../../../hooks/useFetcher';
+import useToast from '../../../../../../hooks/useToast';
+import { healthSeverity } from '../../../../../../service/data/health';
+import { Cow } from '../../../../../../model/Cow/Cow';
+import useFetcher from '../../../../../../hooks/useFetcher';
 import { useState } from 'react';
 
-interface ModalCreateHealthReportProps {
+interface ModalCreateIllNessProps {
     modal: any;
     mutate: any;
 }
 
-const ModalCreateHealthReport = ({ modal, mutate }: ModalCreateHealthReportProps) => {
+const ModalCreateIllNess = ({ modal, mutate }: ModalCreateIllNessProps) => {
     const [form] = Form.useForm();
     const toast = useToast();
     const { trigger, isLoading } = useFetcher('illness/create', 'POST');
@@ -39,7 +39,7 @@ const ModalCreateHealthReport = ({ modal, mutate }: ModalCreateHealthReportProps
     };
     return (
         <ModalComponent
-            title="Create HealthReport"
+            title="Create IllNess"
             open={modal.open}
             onCancel={handleClose}
             loading={isLoading}
@@ -113,4 +113,4 @@ const ModalCreateHealthReport = ({ modal, mutate }: ModalCreateHealthReportProps
     );
 };
 
-export default ModalCreateHealthReport;
+export default ModalCreateIllNess;
