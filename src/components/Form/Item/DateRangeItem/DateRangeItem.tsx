@@ -2,7 +2,11 @@ import { DatePicker, Form } from 'antd';
 import LabelForm from '../../../LabelForm/LabelForm';
 import FormItemComponent from '../FormItemComponent';
 
-const DateRangeItem = () => {
+interface DateRangeItemProps {
+  disable?: boolean;
+}
+
+const DateRangeItem = ({ disable = false }: DateRangeItemProps) => {
   const dateNow = new Date();
   const [form] = Form.useForm(); // Access the form instance
 
@@ -41,6 +45,7 @@ const DateRangeItem = () => {
         ]}
       >
         <DatePicker
+          disabled={disable}
           format="YYYY-MM-DD"
           placeholder="Start date"
           className="!w-full"
@@ -56,6 +61,7 @@ const DateRangeItem = () => {
         rules={[{ required: true }]}
       >
         <DatePicker
+          disabled={disable}
           format="YYYY-MM-DD"
           placeholder="End date"
           className="!w-full"

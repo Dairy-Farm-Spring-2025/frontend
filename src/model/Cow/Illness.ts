@@ -1,5 +1,6 @@
 import { UserProfileData } from '../User';
 import { Cow } from './Cow';
+import { IllnessDetail } from './IllnessDetail';
 
 export type IllnessCow = {
   illnessId: number;
@@ -11,6 +12,7 @@ export type IllnessCow = {
   cowEntity: Cow;
   userEntity: UserProfileData;
   veterinarian: UserProfileData;
+  illnessDetails: IllnessDetail[];
 };
 
 export type Severity = 'mild' | 'moderate' | 'severe' | 'critical';

@@ -16,6 +16,7 @@ import useFetcher from '../../../../hooks/useFetcher';
 import { DailyMilkModel } from '../../../../model/DailyMilk/DailyMilk';
 import DailyMilkRecord from './TabsItem/DailyMilkRecord';
 import HealthRecordCow from './TabsItem/HealthRecordCow';
+import { Cow, HealthResponse } from '../../../../model/Cow/Cow';
 
 const CowDetail = () => {
   const { id } = useParams();
@@ -28,7 +29,7 @@ const CowDetail = () => {
     data: dataDetail,
     isLoading: isLoadingDetail,
     mutate: mutateDetail,
-  } = useFetcher<any>(`cows/${id}`, 'GET');
+  } = useFetcher<Cow>(`cows/${id}`, 'GET');
 
   // const { data: dataDetailQR, isLoading: isLoadingDetailQR } = useFetcher<any>(
   //   `cows/qr/${id}`,
@@ -41,7 +42,7 @@ const CowDetail = () => {
       children: (
         <CowGeneralInformation
           id={id as string}
-          dataDetail={dataDetail}
+          dataDetail={dataDetail as Cow}
           isLoadingDetail={isLoadingDetail}
           mutateDetail={mutateDetail}
         />
@@ -51,7 +52,13 @@ const CowDetail = () => {
     {
       key: 'health',
       label: 'Health Record',
-      children: <HealthRecordCow cowId={id as string} />,
+      children: (
+        <HealthRecordCow
+          cowId={id as string}
+          mutate={mutateDetail}
+          data={dataDetail?.healthInfoResponses as HealthResponse[]}
+        />
+      ),
       icon: <PlusCircleOutlined />,
     },
     {
@@ -59,7 +66,7 @@ const CowDetail = () => {
       label: 'Daily Milk',
       children: (
         <DailyMilk
-          detailCow={dataDetail}
+          detailCow={dataDetail as Cow}
           dataMilk={dataMilk ? dataMilk : []}
           isLoading={isLoadingDaily}
           mutateDaily={mutateDaily}

@@ -7,10 +7,12 @@ import LabelForm from '../../../../components/LabelForm/LabelForm';
 import { PasswordRequest } from '../../../../model/Authentication/PasswordRequest';
 import useFetcher from '../../../../hooks/useFetcher';
 import useToast from '../../../../hooks/useToast';
+import { useTranslation } from 'react-i18next';
 
 const classNameStyle = '!w-1/3 !h-10 !text-base';
 
 const ChangePassword: React.FC = () => {
+  const { t } = useTranslation();
   const [form] = Form.useForm();
   const [passwordRequirements, setPasswordRequirements] = useState({
     minLength: false,
@@ -23,7 +25,7 @@ const ChangePassword: React.FC = () => {
 
   const validatePassword = (value: string) => {
     const requirements = {
-      minLength: value.length >= 6,
+      minLength: value?.length >= 6,
       specialChar: /[!@#$%^&*(),.?":{}|<>]/.test(value),
       number: /\d/.test(value),
       uppercase: /[A-Z]/.test(value),
@@ -36,16 +38,16 @@ const ChangePassword: React.FC = () => {
     try {
       const response = await trigger({ body: values });
       if (response.message === 'Old password incorrect') {
-        toast.showError(response.message);
+        toast.showError(t(response.message));
         return;
       }
       if (
         response.message === 'New password and confirm password do not match'
       ) {
-        toast.showError(response.message);
+        toast.showError(t(response.message));
         return;
       }
-      toast.showSuccess('Change password success');
+      toast.showSuccess(t(response.message));
       form.resetFields();
     } catch (error: any) {
       toast.showError(error.message);
@@ -57,8 +59,8 @@ const ChangePassword: React.FC = () => {
       {/* Old Password Field */}
       <FormItemComponent
         name="oldPassword"
-        label={<LabelForm>Old Password</LabelForm>}
-        rules={[{ required: true, message: 'Old password is required!' }]}
+        label={<LabelForm>{t('Old Password')}</LabelForm>}
+        rules={[{ required: true }]}
       >
         <Input.Password className={classNameStyle} disabled={isLoading} />
       </FormItemComponent>
@@ -68,11 +70,10 @@ const ChangePassword: React.FC = () => {
         name="newPassword"
         dependencies={['oldPassword']}
         hasFeedback
-        label={<LabelForm>New Password</LabelForm>}
+        label={<LabelForm>{t('New Password')}</LabelForm>}
         rules={[
           {
             required: true,
-            message: 'Please confirm your password!',
           },
           ({ getFieldValue }) => ({
             validator(_, value) {
@@ -80,7 +81,7 @@ const ChangePassword: React.FC = () => {
                 return Promise.resolve();
               }
               return Promise.reject(
-                new Error('The new password is match with the old password')
+                new Error(t('The new password is match with the old password'))
               );
             },
           }),
@@ -88,8 +89,13 @@ const ChangePassword: React.FC = () => {
             validator: (_, value) => {
               if (!validatePassword(value)) {
                 return Promise.reject(
-                  new Error('Password does not meet all the required criteria.')
+                  new Error(
+                    t('Password does not meet all the required criteria.')
+                  )
                 );
+              }
+              if (value === '') {
+                return Promise.reject(new Error(''));
               }
               return Promise.resolve();
             },
@@ -107,13 +113,12 @@ const ChangePassword: React.FC = () => {
       {/* Confirm Password Field */}
       <FormItemComponent
         name="confirmedPassword"
-        label={<LabelForm>Confirm Password</LabelForm>}
+        label={<LabelForm>{t('Confirm Password')}</LabelForm>}
         dependencies={['newPassword']}
         hasFeedback
         rules={[
           {
             required: true,
-            message: 'Please confirm your password!',
           },
           ({ getFieldValue }) => ({
             validator(_, value) {
@@ -134,10 +139,10 @@ const ChangePassword: React.FC = () => {
       <ButtonComponent
         type="primary"
         htmlType="submit"
-        className="!w-1/3 !text-lg !h-10 font-bold"
+        className="!w-1/3 !text-base !h-10 font-bold"
         loading={isLoading}
       >
-        Change Password
+        {t('Change Password')}
       </ButtonComponent>
     </FormComponent>
   );
@@ -163,6 +168,7 @@ const InputPassword: React.FC<InputPasswordProps> = ({
   showValidation = false,
   ...props
 }) => {
+  const { t } = useTranslation();
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     // Handle both: Form `onChange` and custom password validation logic
     if (onChange) {
@@ -186,28 +192,28 @@ const InputPassword: React.FC<InputPasswordProps> = ({
                 requirements.minLength ? 'text-green-600' : 'text-red-500'
               }`}
             >
-              At least 6 characters
+              {t('At least 6 characters')}
             </li>
             <li
               className={`${
                 requirements.specialChar ? 'text-green-600' : 'text-red-500'
               }`}
             >
-              At least 1 special character
+              {t('At least 1 special character')}
             </li>
             <li
               className={`${
                 requirements.number ? 'text-green-600' : 'text-red-500'
               }`}
             >
-              At least 1 number
+              {t('At least 1 number')}
             </li>
             <li
               className={`${
                 requirements.uppercase ? 'text-green-600' : 'text-red-500'
               }`}
             >
-              At least 1 uppercase letter
+              {t('At least 1 uppercase letter')}
             </li>
           </ul>
         </div>

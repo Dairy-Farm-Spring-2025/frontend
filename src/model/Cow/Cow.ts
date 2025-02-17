@@ -1,4 +1,6 @@
 import { CowType } from './CowType';
+import { HealthRecord } from './HealthRecord';
+import { IllnessCow } from './Illness';
 
 export type Cow = {
   cowId: number;
@@ -15,6 +17,15 @@ export type Cow = {
   createdAt: string;
   updatedAt: string;
   inPen: boolean;
+  healthInfoResponses: HealthResponse[];
+  penResponse: any;
+};
+
+export type HealthResponse = {
+  date: string;
+  health: HealthRecord & IllnessCow;
+  id: number;
+  type: 'HEALTH_RECORD' | 'ILLNESS';
 };
 
 export type CowStatus =

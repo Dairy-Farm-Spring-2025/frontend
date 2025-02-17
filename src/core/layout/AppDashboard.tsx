@@ -10,11 +10,12 @@ import {
   MenuProps,
   theme,
 } from 'antd';
-import React, { Children, useEffect } from 'react';
-import { MdOutlineVaccines, MdSwapVert } from 'react-icons/md';
+
+import React, { useEffect } from 'react';
+
 import { AiOutlineDashboard, AiOutlineIssuesClose } from 'react-icons/ai';
 import { BiCategory, BiTask, BiUser } from 'react-icons/bi';
-import { CiBoxList } from 'react-icons/ci';
+import { CiBoxList, CiExport } from 'react-icons/ci';
 import { FaWpforms } from 'react-icons/fa';
 import { GiCage } from 'react-icons/gi';
 import { IoIosLogOut, IoIosNotifications } from 'react-icons/io';
@@ -23,10 +24,11 @@ import { LuGitPullRequest, LuMilk } from 'react-icons/lu';
 import {
   MdOutlineFastfood,
   MdOutlineHealthAndSafety,
+  MdOutlineVaccines,
   MdSchedule,
+  MdSwapVert,
 } from 'react-icons/md';
 import { PiCow, PiPlus, PiWarehouse } from 'react-icons/pi';
-import { CiExport } from 'react-icons/ci';
 import { RiAlignItemLeftLine } from 'react-icons/ri';
 import { SiHappycow } from 'react-icons/si';
 import { useDispatch } from 'react-redux';
@@ -269,9 +271,6 @@ const AppDashboard: React.FC = () => {
       ],
     },
   ];
-  useEffect(() => {
-    console.log(location.pathname.slice(1));
-  }, [location.pathname]);
   return (
     <AnimationAppear>
       <Layout style={{ minHeight: '100vh' }} className="layout-dairy">
