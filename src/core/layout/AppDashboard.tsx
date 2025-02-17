@@ -10,7 +10,9 @@ import {
   MenuProps,
   theme,
 } from 'antd';
+
 import React, { useEffect } from 'react';
+
 import { AiOutlineDashboard, AiOutlineIssuesClose } from 'react-icons/ai';
 import { BiCategory, BiTask, BiUser } from 'react-icons/bi';
 import { CiBoxList, CiExport } from 'react-icons/ci';
@@ -162,8 +164,12 @@ const AppDashboard: React.FC = () => {
           getItem(
             'Health Report',
             'dairy/cow-management/health-report',
-            <MdOutlineHealthAndSafety size={sizeIcon} />
+            <MdOutlineHealthAndSafety size={sizeIcon} />,
+            [
+              getItem('Ill Ness', 'dairy/cow-management/health-report/ill-ness', <BiCategory size={sizeIcon} />),
+            ]
           ),
+
         ]),
         getItem('Feed', 'dairy/feed-management', <MdOutlineFastfood />),
         getItem('Area', 'dairy/area-management', <LiaChartAreaSolid />),

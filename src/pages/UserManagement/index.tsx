@@ -13,6 +13,8 @@ import BanUnbanUser from "./components/BanUnBanUser/BanUnBanUser";
 import AnimationAppear from "../../components/UI/AnimationAppear";
 import toast from "react-hot-toast";
 import useToast from "../../hooks/useToast";
+import SelectComponent from "../../components/Select/SelectComponent";
+import { role } from "../../service/data/role";
 
 
 
@@ -57,24 +59,14 @@ const ListUser = () => {
             dataIndex: "roleId",
             key: "roleId",
             title: "Role",
-            filters: [
-                { text: "Admin", value: "1" },
-                { text: "Manager", value: "2" },
-                { text: "Veterinarians", value: "3" },
-                { text: "Worker", value: "4" },
-            ],
-            onFilter: (value, record) => record.roleId.toString() === value,
+
             render: (_, record) => (
-                <Select
+                <SelectComponent
                     value={record.roleId?.id?.toString()} // Lấy giá trị id thay vì object
-                    style={{ width: 120 }}
+                    options={role}
+                    style={{ width: 130 }}
                     onChange={(value) => handleChangeRole(record.id, value)}
-                >
-                    <Select.Option value="1">Admin</Select.Option>
-                    <Select.Option value="2">Manager</Select.Option>
-                    <Select.Option value="3">Veterinarians</Select.Option>
-                    <Select.Option value="4">Worker</Select.Option>
-                </Select>
+                />
             ),
         },
         {
