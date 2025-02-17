@@ -8,6 +8,7 @@ import useFetcher from "../../../../../../hooks/useFetcher";
 import useToast from "../../../../../../hooks/useToast";
 import { CowTypeRequest } from "../../../../../../model/Cow/CowType";
 import { cowTypesStatus } from "../../../../../../service/data/cowTypesStatus";
+import { useTranslation } from "react-i18next";
 
 interface ModalTypesProps {
   mutate: any;
@@ -15,6 +16,7 @@ interface ModalTypesProps {
 }
 
 const ModalTypes = ({ mutate, modal }: ModalTypesProps) => {
+  const { t } = useTranslation();
   const toast = useToast();
   const { trigger, isLoading } = useFetcher("cow-types/create", "POST");
   const [form] = Form.useForm();
@@ -37,13 +39,13 @@ const ModalTypes = ({ mutate, modal }: ModalTypesProps) => {
   return (
     <div>
       <ButtonComponent onClick={modal.openModal} type="primary">
-        Create New Types
+        {t("Create new cow types")}
       </ButtonComponent>
       <ModalComponent
         open={modal.open}
         onOk={() => form.submit()}
         onCancel={modal.closeModal}
-        title="Create new cow types"
+        title={t("Create new cow types")}
         loading={isLoading}
       >
         <FormComponent form={form} onFinish={onFinish}>
@@ -53,13 +55,13 @@ const ModalTypes = ({ mutate, modal }: ModalTypesProps) => {
           <FormItemComponent
             rules={[{ required: true }]}
             name="name"
-            label={<LabelForm>Name:</LabelForm>}
+            label={<LabelForm>{t("Name")}:</LabelForm>}
           >
             <Input />
           </FormItemComponent>
           <FormItemComponent
             name="status"
-            label={<LabelForm>Status:</LabelForm>}
+            label={<LabelForm>{t("Status")}:</LabelForm>}
             rules={[{ required: true }]}
           >
             <Select options={cowTypesStatus} />
@@ -67,7 +69,7 @@ const ModalTypes = ({ mutate, modal }: ModalTypesProps) => {
           <FormItemComponent
             rules={[{ required: true }]}
             name="description"
-            label={<LabelForm>Description:</LabelForm>}
+            label={<LabelForm>{t("Description")}:</LabelForm>}
           >
             <Input.TextArea />
           </FormItemComponent>

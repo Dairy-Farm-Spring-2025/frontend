@@ -12,8 +12,10 @@ import ModalTypes from "./components/ModalAddTypes/ModalTypes";
 import { useState } from "react";
 import ModalEditTypes from "./components/ModalEditTypes/ModalEditTypes";
 import { CowType } from "../../../../model/Cow/CowType";
+import { useTranslation } from "react-i18next";
 
 const CowTypeManagement = () => {
+  const { t } = useTranslation();
   const modal = useModal();
   const modalEdit = useModal();
   const { data, isLoading, mutate } = useFetcher<CowType[]>("cow-types", "GET");
@@ -33,13 +35,13 @@ const CowTypeManagement = () => {
     {
       dataIndex: "createdAt",
       key: "createdAt",
-      title: "Created Date",
+      title: t("Created Date"),
       render: (data) => formatDateHour(data),
     },
     {
       dataIndex: "name",
       key: "name",
-      title: "Name",
+      title: t("Name"),
       render: (element: string, data) => (
         <p
           onClick={() => handleEdit(data.cowTypeId)}
@@ -52,20 +54,20 @@ const CowTypeManagement = () => {
     {
       dataIndex: "status",
       key: "status",
-      title: "Status",
+      title: t("Status"),
       render: (data) => (data === "exist" ? "Exist" : "Not Exist"),
     },
     {
       dataIndex: "cowTypeId",
       key: "action",
-      title: "Action",
+      title: t("Action"),
       render: (data) => (
         <ButtonComponent
           onClick={() => console.log(data)}
           danger
           type="primary"
         >
-          Delete
+          {t("Delete")}
         </ButtonComponent>
       ),
     },

@@ -9,6 +9,7 @@ import FormComponent from "../../../../components/Form/FormComponent";
 import FormItemComponent from "../../../../components/Form/Item/FormItemComponent";
 import LabelForm from "../../../../components/LabelForm/LabelForm";
 import { role } from "../../../../service/data/role";
+import { useTranslation } from "react-i18next";
 
 
 interface ModalCreateUserProps {
@@ -20,11 +21,11 @@ const ModalCreateUser = ({ mutate, modal }: ModalCreateUserProps) => {
     const toast = useToast();
     const { trigger, isLoading } = useFetcher("users/create", "POST");
     const [form] = Form.useForm();
-
+    const { t } = useTranslation();
     const onFinish = async (values: CreateUser) => {
         try {
             const response = await trigger({ body: values });
-            toast.showSuccess(response.message);
+            toast.showSuccess(t("Create account successfully"));
             onClose();
         } catch (error: any) {
             toast.showError(error.message);
@@ -39,7 +40,7 @@ const ModalCreateUser = ({ mutate, modal }: ModalCreateUserProps) => {
     return (
         <div>
             <ButtonComponent onClick={modal.openModal} type="primary">
-                Create User
+                {t('Create User')}
             </ButtonComponent>
             <ModalComponent
                 open={modal.open}
@@ -55,14 +56,14 @@ const ModalCreateUser = ({ mutate, modal }: ModalCreateUserProps) => {
                     <FormItemComponent
                         rules={[{ required: true }]}
                         name="name"
-                        label={<LabelForm>Name:</LabelForm>}
+                        label={<LabelForm>{t("Name")}:</LabelForm>}
                     >
                         <Input />
                     </FormItemComponent>
                     <FormItemComponent
                         rules={[{ required: true }]}
                         name="email"
-                        label={<LabelForm>Email:</LabelForm>}
+                        label={<LabelForm>{t("Email")}:</LabelForm>}
                     >
                         <Input />
                     </FormItemComponent>
@@ -70,7 +71,7 @@ const ModalCreateUser = ({ mutate, modal }: ModalCreateUserProps) => {
                     <FormItemComponent
                         rules={[{ required: true }]}
                         name="roleId"
-                        label={<LabelForm>Role:</LabelForm>}
+                        label={<LabelForm>{t("role")}:</LabelForm>}
                     >
                         <Select options={role} />
                     </FormItemComponent>

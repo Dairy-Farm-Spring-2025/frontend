@@ -14,6 +14,8 @@ import useToast from '../../../../../../hooks/useToast';
 import { Health } from '../../../../../../model/Cow/HealthReport';
 import { healthSeverity } from '../../../../../../service/data/health';
 import dayjs from 'dayjs';
+import { useTranslation } from 'react-i18next';
+import ReactQuillComponent from '../../../../../../components/ReactQuill/ReactQuillComponent';
 
 
 interface ModalViewDetailProps {
@@ -31,6 +33,7 @@ const ModalViewDetail = ({
     const toast = useToast();
     const { trigger, isLoading } = useFetcher(`illness/${id}`, 'PUT');
     const [edit, setEdit] = useState(false);
+    const { t } = useTranslation();
     const {
         data,
         isLoading: isLoadingDetail,
@@ -53,7 +56,7 @@ const ModalViewDetail = ({
     const handleFinish = async (values: any) => {
         try {
             await trigger({ body: values });
-            toast.showSuccess('Update success');
+            toast.showSuccess(t('Update success'));
             mutate();
             mutateEdit();
             setEdit(false);
@@ -71,7 +74,7 @@ const ModalViewDetail = ({
     const items: DescriptionPropsItem['items'] = [
         {
             key: 'symptoms',
-            label: 'Symptoms',
+            label: t('Symptoms'),
             children: !edit ? (
                 data ? (
                     data?.symptoms
@@ -80,14 +83,14 @@ const ModalViewDetail = ({
                 )
             ) : (
                 <FormItemComponent name="symptoms" rules={[{ required: true }]}>
-                    <InputComponent />
+                    <ReactQuillComponent />
                 </FormItemComponent>
             ),
             span: 3,
         },
         {
             key: 'severity',
-            label: 'Severity',
+            label: t('Severity'),
             children: !edit ? (
                 data ? (
                     data?.severity
@@ -103,7 +106,7 @@ const ModalViewDetail = ({
         },
         {
             key: 'prognosis',
-            label: 'Prognosis',
+            label: t('Prognosis'),
             children: !edit ? (
                 data ? (
                     data?.severity
@@ -112,7 +115,7 @@ const ModalViewDetail = ({
                 )
             ) : (
                 <FormItemComponent name="prognosis" rules={[{ required: true }]}>
-                    <InputComponent />
+                    <ReactQuillComponent />
                 </FormItemComponent>
             ),
             span: 3,
@@ -120,7 +123,7 @@ const ModalViewDetail = ({
 
         {
             key: 'startDate',
-            label: 'Start Date',
+            label: t('Start Date'),
             children: !edit ? (
                 data ? (
                     data?.startDate
@@ -136,7 +139,7 @@ const ModalViewDetail = ({
         },
         {
             key: 'endDate',
-            label: 'EndDate',
+            label: t('End Date'),
             children: !edit ? (
                 data ? (
                     data?.endDate
@@ -155,31 +158,32 @@ const ModalViewDetail = ({
 
     return (
         <ModalComponent
-            title="Edit Ill Ness"
+            title={t("Edit")}
             open={modal.open}
             onCancel={handleClose}
             loading={isLoadingDetail}
             footer={[
                 !edit && (
                     <ButtonComponent type="primary" onClick={() => setEdit(true)}>
-                        Edit
+                        {t("Edit")}
                     </ButtonComponent>
                 ),
                 edit && (
                     <div className="flex gap-5 justify-end">
                         <ButtonComponent onClick={() => setEdit(false)}>
-                            Cancel
+                            {t("Cancel")}
                         </ButtonComponent>
                         <ButtonComponent
                             loading={isLoading}
                             type="primary"
                             onClick={() => form.submit()}
                         >
-                            Save
+                            {t("Save")}
                         </ButtonComponent>
                     </div>
                 ),
             ]}
+            width={1200}
         >
             <FormComponent form={form} onFinish={handleFinish}>
                 <DescriptionComponent items={items} />

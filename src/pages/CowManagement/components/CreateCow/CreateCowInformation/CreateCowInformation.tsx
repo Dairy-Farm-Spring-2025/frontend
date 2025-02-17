@@ -10,12 +10,13 @@ import { cowOrigin } from '../../../../../service/data/cowOrigin';
 import { cowStatus } from '../../../../../service/data/cowStatus';
 import { genderData } from '../../../../../service/data/gender';
 import Title from '../../../../../components/UI/Title';
+import { useTranslation } from 'react-i18next';
 const CreateCowInformation = () => {
   const { data } = useFetcher<any[]>('cow-types', 'GET');
   const [optionsCowType, setOptionsCowType] = useState<SelectProps['options']>(
     []
   );
-
+  const { t } = useTranslation();
   useEffect(() => {
     if (data) {
       const options = data.map((element: CowType) => ({
@@ -29,13 +30,13 @@ const CreateCowInformation = () => {
   return (
     <div className="mt-5">
       <div className="flex flex-col gap-2">
-        <Title className="!text-2xl">Date Information</Title>
+        <Title className="!text-2xl">{t('Date Information')}</Title>
         <div className="grid grid-cols-4 gap-5 w-full">
           <FormItemComponent
             rules={[{ required: true }]}
             className="w-full"
             name="dateOfBirth"
-            label={<LabelForm>Date of birth</LabelForm>}
+            label={<LabelForm>{t("Date Of Birth")}</LabelForm>}
           >
             <DatePicker className="w-full !text-[18px]" />
           </FormItemComponent>
@@ -58,20 +59,20 @@ const CreateCowInformation = () => {
             ]}
             className="w-full"
             name="dateOfEnter"
-            label={<LabelForm>Date of enter</LabelForm>}
+            label={<LabelForm>{t("Date Of Enter")}</LabelForm>}
           >
             <DatePicker className="w-full" />
           </FormItemComponent>
         </div>
       </div>
       <div className="flex flex-col gap-2">
-        <Title className="!text-2xl">Cow Information</Title>
+        <Title className="!text-2xl">{t("Cow Information")}</Title>
         <div className="grid grid-cols-4 gap-5 w-full">
           <FormItemComponent
             rules={[{ required: true }]}
             name="gender"
             className="w-full"
-            label={<LabelForm>Gender</LabelForm>}
+            label={<LabelForm>{t("Gender")}</LabelForm>}
           >
             <SelectComponent
               options={genderData}
@@ -83,7 +84,7 @@ const CreateCowInformation = () => {
             name="cowTypeId"
             rules={[{ required: true }]}
             className="w-full"
-            label={<LabelForm>Cow Type</LabelForm>}
+            label={<LabelForm>{t("Cow Type")}</LabelForm>}
           >
             <SelectComponent
               options={optionsCowType}
@@ -95,7 +96,7 @@ const CreateCowInformation = () => {
             rules={[{ required: true }]}
             className="w-full"
             name="cowStatus"
-            label={<LabelForm>Cow Status</LabelForm>}
+            label={<LabelForm>{t("Cow Status")}</LabelForm>}
           >
             <SelectComponent
               options={cowStatus}
@@ -107,7 +108,7 @@ const CreateCowInformation = () => {
             name="cowOrigin"
             rules={[{ required: true }]}
             className="w-full"
-            label={<LabelForm>Cow Origin</LabelForm>}
+            label={<LabelForm>{t("Origin")}</LabelForm>}
           >
             <SelectComponent
               options={cowOrigin}
@@ -119,7 +120,7 @@ const CreateCowInformation = () => {
             className="w-full !col-span-4"
             name="description"
             rules={[{ required: true }]}
-            label={<LabelForm>Description</LabelForm>}
+            label={<LabelForm>{t("Description")}</LabelForm>}
           >
             <ReactQuillComponent />
           </FormItemComponent>

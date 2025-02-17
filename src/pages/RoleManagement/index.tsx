@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import TableComponent, { Column } from "../../components/Table/TableComponent";
 import TextLink from "../../components/UI/TextLink";
 import WhiteBackground from "../../components/UI/WhiteBackground";
@@ -6,6 +7,7 @@ import useFetcher from "../../hooks/useFetcher";
 const ListRole = () => {
     const { data, isLoading } = useFetcher<any>("users/roles", "GET");
     console.log("check data: ", data);
+    const { t } = useTranslation();
     const columns: Column[] = [
         {
             dataIndex: "id",
@@ -15,7 +17,7 @@ const ListRole = () => {
         {
             dataIndex: "name",
             key: "name",
-            title: "Role Name",
+            title: t("Role Name"),
             render: (element: string) => <TextLink to={""}>{element}</TextLink>,
         },
     ];
