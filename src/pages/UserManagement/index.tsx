@@ -15,13 +15,14 @@ import toast from "react-hot-toast";
 import useToast from "../../hooks/useToast";
 import SelectComponent from "../../components/Select/SelectComponent";
 import { role } from "../../service/data/role";
+import { useTranslation } from "react-i18next";
 
 
 
 const ListUser = () => {
     const { data, isLoading, mutate } = useFetcher<any>("users/all", "GET");
     const modalCreate = useModal();
-
+    const { t } = useTranslation();
     const toast = useToast();
     // Hook để gọi API thay đổi role
     const { trigger: updateRole } = useFetcher(`users/changerole`, "PUT");
@@ -43,12 +44,12 @@ const ListUser = () => {
         {
             dataIndex: "employeeNumber",
             key: "employeeNumber",
-            title: "Employee Number",
+            title: t("Employee Number"),
         },
         {
             dataIndex: "name",
             key: "name",
-            title: "Name",
+            title: t("Name"),
         },
         {
             dataIndex: "email",
@@ -58,7 +59,7 @@ const ListUser = () => {
         {
             dataIndex: "roleId",
             key: "roleId",
-            title: "Role",
+            title: t("role"),
 
             render: (_, record) => (
                 <SelectComponent
@@ -72,13 +73,13 @@ const ListUser = () => {
         {
             dataIndex: "status",
             key: "status",
-            title: "Status",
+            title: t("Status"),
             render: (data) => formatAreaType(data)
         },
         {
             dataIndex: "action",
             key: "action",
-            title: "Action",
+            title: t("Action"),
             render: (_, record) => (
                 <Space>
                     <BanUnbanUser

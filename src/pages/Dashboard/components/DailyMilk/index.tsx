@@ -6,18 +6,20 @@ import DailyMilkTotalMonth from './components/DailyMilkTotalMonth';
 import AnimationAppear from '../../../../components/UI/AnimationAppear';
 import WhiteBackground from '../../../../components/UI/WhiteBackground';
 import DailyMilkTotalDate from './components/DailyMilkTotalDate';
+import { useTranslation } from 'react-i18next';
 
 const DailyMilkDashboard = () => {
+  const { t } = useTranslation();
   const items: TabsItemProps['items'] = [
     {
       key: 'dateRecord',
-      label: 'Date Record',
+      label: t('Date Record'),
       children: <DailyMilkTotalMonth />,
       icon: <CalendarOutlined />,
     },
     {
       key: 'monthRecord',
-      label: 'Monthly Record',
+      label: t('Monthly Record'),
       children: <DailyMilkTotalDate />,
       icon: <BarChartOutlined />,
     },

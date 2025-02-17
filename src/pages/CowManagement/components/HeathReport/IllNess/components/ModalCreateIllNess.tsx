@@ -10,6 +10,7 @@ import { healthSeverity } from '../../../../../../service/data/health';
 import { Cow } from '../../../../../../model/Cow/Cow';
 import useFetcher from '../../../../../../hooks/useFetcher';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface ModalCreateIllNessProps {
     modal: any;
@@ -17,6 +18,7 @@ interface ModalCreateIllNessProps {
 }
 
 const ModalCreateIllNess = ({ modal, mutate }: ModalCreateIllNessProps) => {
+    const { t } = useTranslation();
     const [form] = Form.useForm();
     const toast = useToast();
     const { trigger, isLoading } = useFetcher('illness/create', 'POST');
@@ -25,7 +27,7 @@ const ModalCreateIllNess = ({ modal, mutate }: ModalCreateIllNessProps) => {
     const handleFinish = async (values: any) => {
         try {
             await trigger({ body: values });
-            toast.showSuccess('Create success');
+            toast.showSuccess(t('Create success'));
             mutate();
             handleClose();
         } catch (error: any) {
@@ -39,7 +41,7 @@ const ModalCreateIllNess = ({ modal, mutate }: ModalCreateIllNessProps) => {
     };
     return (
         <ModalComponent
-            title="Create IllNess"
+            title={t("Create IllNess")}
             open={modal.open}
             onCancel={handleClose}
             loading={isLoading}
@@ -49,7 +51,7 @@ const ModalCreateIllNess = ({ modal, mutate }: ModalCreateIllNessProps) => {
 
                 <FormItemComponent
                     name="cowId"
-                    label={<LabelForm>Cow</LabelForm>}
+                    label={<LabelForm>{t("Cow")}</LabelForm>}
                     rules={[{ required: true }]}
                 >
                     <Select
@@ -63,7 +65,7 @@ const ModalCreateIllNess = ({ modal, mutate }: ModalCreateIllNessProps) => {
                 </FormItemComponent>
                 <FormItemComponent
                     name="symptoms"
-                    label={<LabelForm>Symptoms</LabelForm>}
+                    label={<LabelForm>{t("Symptoms")}</LabelForm>}
                     rules={[{ required: true }]}
                 >
 
@@ -72,7 +74,7 @@ const ModalCreateIllNess = ({ modal, mutate }: ModalCreateIllNessProps) => {
                 </FormItemComponent>
                 <FormItemComponent
                     name="severity"
-                    label={<LabelForm>Severity</LabelForm>}
+                    label={<LabelForm>{t("Severity")}</LabelForm>}
                     rules={[{ required: true }]}
 
                 >
@@ -82,7 +84,7 @@ const ModalCreateIllNess = ({ modal, mutate }: ModalCreateIllNessProps) => {
                 </FormItemComponent>
                 <FormItemComponent
                     name="prognosis"
-                    label={<LabelForm>Prognosis</LabelForm>}
+                    label={<LabelForm>{t("Prognosis")}</LabelForm>}
                     rules={[{ required: true }]}
                 >
 
@@ -92,7 +94,7 @@ const ModalCreateIllNess = ({ modal, mutate }: ModalCreateIllNessProps) => {
 
                 <FormItemComponent
                     name="startDate"
-                    label={<LabelForm>Start Date</LabelForm>}
+                    label={<LabelForm>{t("Start Date")}</LabelForm>}
                     rules={[
                         { required: true }
                     ]}
@@ -101,7 +103,7 @@ const ModalCreateIllNess = ({ modal, mutate }: ModalCreateIllNessProps) => {
                 </FormItemComponent>
                 <FormItemComponent
                     name="endDate"
-                    label={<LabelForm>End Date</LabelForm>}
+                    label={<LabelForm>{t("End Date")}</LabelForm>}
                     rules={[
                         { required: true, }
                     ]}

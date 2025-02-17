@@ -7,8 +7,10 @@ import DescriptionComponent, {
 import useFetcher from '../../../../../hooks/useFetcher';
 import useToast from '../../../../../hooks/useToast';
 import { RecordDate } from '../../../../../model/DailyMilk/DailyMilkRecord';
+import { useTranslation } from 'react-i18next';
 
 const DailyMilkTotalDate = () => {
+  const { t } = useTranslation();
   const [dateSelected, setDateSelected] = useState(dayjs());
   const { data, isLoading, error } = useFetcher<RecordDate>(
     `dailymilks/total/day?date=${dayjs(dateSelected).format('YYYY-MM-DD')}`,
@@ -48,7 +50,7 @@ const DailyMilkTotalDate = () => {
   ) : (
     <div>
       <div className="flex flex-col gap-2 w-full">
-        <p className="font-bold text-base">Select Date:</p>
+        <p className="font-bold text-base">{t("Select Date")}:</p>
         <DatePicker
           onChange={onChange}
           className="w-1/5"

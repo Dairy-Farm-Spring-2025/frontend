@@ -10,23 +10,25 @@ import { Cow } from '../../../../model/Cow/Cow';
 import CreateCowInformation from './CreateCowInformation/CreateCowInformation';
 import AnimationAppear from '../../../../components/UI/AnimationAppear';
 import HealthRecordInformation from './CreateCowInformation/HealthRecordInformation';
+import { useTranslation } from 'react-i18next';
 
 const CreateCow = () => {
   const [form] = Form.useForm();
   const [currentStep, setCurrentStep] = useState(0);
   const [inforData, setInforData] = useState<Cow>();
   const { trigger, isLoading } = useFetcher('cows/create', 'POST');
+  const { t } = useTranslation();
   const { isLoading: isLoadingHealthRecord, trigger: triggerHealthRecord } =
     useFetcher('health-record', 'POST');
   const toast = useToast();
 
   const steps = [
     {
-      title: 'General Information',
+      title: t('General Information'),
       content: <CreateCowInformation />,
     },
     {
-      title: 'Health Information',
+      title: t('Health Information'),
       content: <HealthRecordInformation />,
     },
   ];
@@ -99,7 +101,7 @@ const CreateCow = () => {
                 type="primary"
                 className="!bg-orange-500"
               >
-                Clear All
+                {t("Clear All")}
               </ButtonComponent>
             )}
             {currentStep === 0 && (
@@ -108,7 +110,7 @@ const CreateCow = () => {
                 htmlType="submit"
                 loading={isLoading}
               >
-                Next
+                {t("Next")}
               </ButtonComponent>
             )}
             {currentStep === 1 && (
@@ -117,7 +119,7 @@ const CreateCow = () => {
                 htmlType="submit"
                 loading={isLoadingHealthRecord}
               >
-                Done
+                {t("Done")}
               </ButtonComponent>
             )}
           </div>

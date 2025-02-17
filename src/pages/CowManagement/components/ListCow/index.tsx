@@ -16,7 +16,9 @@ import { cowOrigin } from '../../../../service/data/cowOrigin';
 import { cowStatus } from '../../../../service/data/cowStatus';
 import { formatDateHour, formatSTT } from '../../../../utils/format';
 import { getLabelByValue } from '../../../../utils/getLabel';
+import { useTranslation } from 'react-i18next';
 const ListCow = () => {
+  const { t } = useTranslation();
   const [cow, setCow] = useState<Cow[]>([]);
   const { data, error, isLoading } = useFetch<Cow[]>('cows', 'GET');
   console.log(isLoading);
@@ -31,20 +33,20 @@ const ListCow = () => {
     {
       dataIndex: 'image',
       key: 'image',
-      title: 'Image',
+      title: t('Image'),
       render: () => <Image width={200} src={cowImage} />,
       width: 200,
     },
     {
       dataIndex: 'createdAt',
       key: 'createdAt',
-      title: 'Created At',
+      title: t('Created At'),
       render: (data) => formatDateHour(data),
     },
     {
       dataIndex: 'name',
       key: 'name',
-      title: 'Name',
+      title: t('Name'),
       render: (element: string, data) => (
         <TextLink
           to={`/dairy/cow-management/${data.cowId}`}
@@ -57,31 +59,31 @@ const ListCow = () => {
     {
       dataIndex: 'dateOfBirth',
       key: 'dateOfBirth',
-      title: 'Date Of Birth',
+      title: t('Date Of Birth'),
       render: (data) => formatDateHour(data),
     },
     {
       dataIndex: 'dateOfEnter',
       key: 'dateOfEnter',
-      title: 'Date Of Enter',
+      title: t('Date Of Enter'),
       render: (data) => formatDateHour(data),
     },
     {
       dataIndex: 'dateOfOut',
       key: 'dateOfOut',
-      title: 'Date Of Out',
+      title: t('Date Of Out'),
       render: (data) => (data ? formatDateHour(data) : 'Not Out'),
     },
     {
       dataIndex: 'cowOrigin',
       key: 'cowOrigin',
-      title: 'Origin',
+      title: t('Origin'),
       render: (data) => getLabelByValue(data, cowOrigin),
     },
     {
       dataIndex: 'gender',
       key: 'gender',
-      title: 'Gender',
+      title: t('Gender'),
       render: (data) =>
         data === 'male' ? (
           <IoMdMale className="text-blue-600" size={20} />
@@ -92,22 +94,22 @@ const ListCow = () => {
     {
       dataIndex: 'cowType',
       key: 'cowType',
-      title: 'Cow Type',
+      title: t('Cow Type'),
       render: (data) => <p>{data.name}</p>,
     },
     {
       dataIndex: 'cowStatus',
       key: 'cowStatus',
-      title: 'Cow Status',
+      title: t('Cow Status'),
       render: (data) => getLabelByValue(data, cowStatus),
     },
     {
       dataIndex: 'cowId',
       key: 'action',
-      title: 'Action',
+      title: t('Action'),
       render: () => (
         <ButtonComponent type="primary" danger>
-          Delete
+          {t("Delete")}
         </ButtonComponent>
       ),
     },

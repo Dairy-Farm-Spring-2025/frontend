@@ -43,6 +43,7 @@ import { setAvatarFunction } from '../store/slice/avatarSlice';
 import { logout } from '../store/slice/userSlice';
 import LabelDashboard from './components/LabelDashboard';
 import './index.scss';
+import { useTranslation } from 'react-i18next';
 const { Header, Content, Sider } = Layout;
 type MenuItem = Required<MenuProps>['items'][number];
 const { useToken } = theme;
@@ -72,6 +73,7 @@ const siderStyle: React.CSSProperties = {
 };
 
 const AppDashboard: React.FC = () => {
+  const { t } = useTranslation();
   const location = useLocation();
   const dispatch = useDispatch();
   const pathSegments = location.pathname.split('/').filter(Boolean);
@@ -130,105 +132,106 @@ const AppDashboard: React.FC = () => {
   const itemsMenu: MenuItem[] = [
     {
       key: 'user-group',
-      label: <LabelDashboard>User Management</LabelDashboard>,
+      label: <LabelDashboard>{t('user_management')}</LabelDashboard>,
+
       type: 'group',
       children: [
-        getItem('User', 'dairy/user-management', <BiUser />),
-        getItem('Role', 'dairy/role-management', <BiCategory />),
+        getItem(t('user'), 'dairy/user-management', <BiUser />),
+        getItem(t('role'), 'dairy/role-management', <BiCategory />),
       ],
     },
-    getItem('Dashboard', 'dairy/dashboard', <AiOutlineDashboard />, [
-      getItem('Daily Milk', 'dairy/dashboard/daily-milk', <LuMilk />),
+    getItem(t('dashboard'), 'dairy/dashboard', <AiOutlineDashboard />, [
+      getItem(t('daily_milk'), 'dairy/dashboard/daily-milk', <LuMilk />),
     ]),
     {
       key: 'group-cow',
-      label: <LabelDashboard>Dairy Management</LabelDashboard>,
+      label: <LabelDashboard>{t('dairy_management')}</LabelDashboard>,
       type: 'group',
       children: [
-        getItem('Cow', 'dairy/cow-management', <PiCow />, [
+        getItem(t('cow'), 'dairy/cow-management', <PiCow />, [
           getItem(
-            'List Cow',
+            t('list_cow'),
             'dairy/cow-management/list-cow',
             <CiBoxList size={sizeIcon} />
           ),
           getItem(
-            'Cow Type',
+            t('cow_type'),
             'dairy/cow-management/cow-type-management',
             <BiCategory size={sizeIcon} />
           ),
           getItem(
-            'Create Cow',
+            t('create_cow'),
             'dairy/cow-management/create-cow',
             <PiPlus size={sizeIcon} />
           ),
           getItem(
-            'Health Report',
+            t('health_report'),
             'dairy/cow-management/health-report',
             <MdOutlineHealthAndSafety size={sizeIcon} />,
             [
-              getItem('Ill Ness', 'dairy/cow-management/health-report/ill-ness', <BiCategory size={sizeIcon} />),
+              getItem(t('ill_ness'), 'dairy/cow-management/health-report/ill-ness', <BiCategory size={sizeIcon} />),
             ]
           ),
 
         ]),
-        getItem('Feed', 'dairy/feed-management', <MdOutlineFastfood />),
-        getItem('Area', 'dairy/area-management', <LiaChartAreaSolid />),
-        getItem('Pen', 'dairy/pen-management', <GiCage />),
-        getItem('Move Cow', 'dairy/move-cow-management', <MdSwapVert />),
-        getItem('Milk', 'dairy/milk-management', <LuMilk />, [
+        getItem(t('feed'), 'dairy/feed-management', <MdOutlineFastfood />),
+        getItem(t('area'), 'dairy/area-management', <LiaChartAreaSolid />),
+        getItem(t('pen'), 'dairy/pen-management', <GiCage />),
+        getItem(t('move_cow'), 'dairy/move-cow-management', <MdSwapVert />),
+        getItem(t('milk'), 'dairy/milk-management', <LuMilk />, [
           getItem(
-            'Milk Batch',
+            t('milk_batch'),
             'dairy/milk-management/milk-batch',
             <WalletOutlined size={sizeIcon} />
           ),
         ]),
         getItem(
-          'Vaccine Cycle',
+          t('vaccine_cycle'),
           'dairy/vaccine-cycle-management',
           <MdOutlineVaccines />,
           [
             getItem(
-              'List Vaccine Cycle',
+              t('list_vaccine_cycle'),
               'dairy/vaccine-cycle-management/list',
               <CiBoxList size={sizeIcon} />
             ),
           ]
         ),
-        getItem('Warehouse', 'dairy/warehouse-management', <PiWarehouse />, [
+        getItem(t('warehouse'), 'dairy/warehouse-management', <PiWarehouse />, [
           getItem(
-            'Warehouse ',
+            t('warehouse'),
             'dairy/warehouse-management/warehouse',
             <PiWarehouse size={sizeIcon} />
           ),
           getItem(
-            'Category',
+            t('category'),
             'dairy/warehouse-management/category',
             <BiCategory size={sizeIcon} />
           ),
           getItem(
-            'Item',
+            t('item'),
             'dairy/warehouse-management/item-management',
             <RiAlignItemLeftLine size={sizeIcon} />,
             [
               getItem(
-                'Item List',
+                t('item_list'),
                 'dairy/warehouse-management/item-management',
                 <CiBoxList size={sizeIcon} />
               ),
               getItem(
-                'Item Batch',
+                t('item_batch'),
                 'dairy/warehouse-management/item-management/item-batch',
                 <BiCategory size={sizeIcon} />
               ),
               getItem(
-                'Export Item',
+                t('export_item'),
                 'dairy/warehouse-management/item-management/export-item',
                 <CiExport size={sizeIcon} />
               ),
             ]
           ),
           getItem(
-            'Supplier',
+            t('supplier'),
             'dairy/warehouse-management/supplier',
             <LiaProductHunt size={sizeIcon} />
           ),
@@ -237,34 +240,34 @@ const AppDashboard: React.FC = () => {
     },
     {
       key: 'group-schedule',
-      label: <LabelDashboard>HR Management</LabelDashboard>,
+      label: <LabelDashboard>{t('hr_management')}</LabelDashboard>,
       type: 'group',
       children: [
-        getItem('Human', 'dairy/human-management', <BiUser />, [
+        getItem(t('human'), 'dairy/human-management', <BiUser />, [
           getItem(
-            'Worker',
+            t('worker'),
             'dairy/human-management/worker',
             <CiBoxList size={sizeIcon} />
           ),
           getItem(
-            'Veterinarian',
+            t('veterinarian'),
             'dairy/human-management/veterinarian',
             <CiBoxList size={sizeIcon} />
           ),
         ]),
 
-        getItem('Schedule', 'dairy/schedule-management', <MdSchedule />),
-        getItem('Task', 'dairy/task-management', <BiTask />, [
+        getItem(t('schedule'), 'dairy/schedule-management', <MdSchedule />),
+        getItem(t('task'), 'dairy/task-management', <BiTask />, [
           getItem(
-            'Task Type',
+            t('task_type'),
             'dairy/task-type',
             <BiCategory size={sizeIcon} />
           ),
         ]),
-        getItem('Application', 'dairy/application-management', <FaWpforms />),
-        getItem('Issue', 'dairy/issue-management', <AiOutlineIssuesClose />),
+        getItem(t('application'), 'dairy/application-management', <FaWpforms />),
+        getItem(t('issue'), 'dairy/issue-management', <AiOutlineIssuesClose />),
         getItem(
-          'Request Schedule',
+          t('request_schedule'),
           'dairy/request-schedule-management',
           <LuGitPullRequest />
         ),
@@ -272,6 +275,7 @@ const AppDashboard: React.FC = () => {
     },
   ];
   return (
+
     <AnimationAppear>
       <Layout style={{ minHeight: '100vh' }} className="layout-dairy">
         <Sider
@@ -349,6 +353,7 @@ const AppDashboard: React.FC = () => {
             </div>
           </Header>
           <Content
+
             style={{ padding: '10px' }}
             className=" !bg-slate-200 !min-h-[90vh]"
           >
