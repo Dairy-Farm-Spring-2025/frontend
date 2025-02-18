@@ -196,61 +196,70 @@ const HealthRecordCow = ({ cowId, data, mutate }: HealthRecordCowProps) => {
   }));
 
   const DescLeft: React.FC<Readonly<{ text?: string | number }>> = () => (
-    <Flex justify="center" align="start" style={{ height: '100%' }}>
+    <Flex justify="center" align="start">
       <TimelineComponent className="ml-10 mt-10" items={items} reverse={true} />
     </Flex>
   );
-  return items.length === 0 ? (
-    <FormComponent form={form} onFinish={onCreateHealth} className="w-2/3">
-      <HealthRecordForm loading={isLoadingHealthRecord} />
-    </FormComponent>
-  ) : (
-    <Splitter className="flex w-full">
-      <Splitter.Panel className="w-fit" defaultSize={'25%'} min="25%" max="25%">
-        <div className="pt-5">
-          <Title className="!text-2xl mb-5">Record Timeline</Title>
-        </div>
-        <DescLeft />
-      </Splitter.Panel>
-      <Splitter.Panel defaultSize="50%" min="50%" max="50%">
-        <div className="p-5">
-          {type === 'HEALTH_RECORD' && (
-            <FormComponent
-              form={form}
-              onFinish={onFinishUpdateHealthRecord}
-              className="w-2/3"
-            >
-              <HealthRecordForm loading={loadingUpdateHealth} />
-            </FormComponent>
-          )}
-          {type === 'ILLNESS' && (
-            <FormComponent
-              form={formIllness}
-              onFinish={onFinishIllnessRecord}
-              className="w-full"
-            >
-              <IllnessRecordForm
-                loading={isLoadingUpdateIllness}
-                data={illness as IllnessCow}
-              />
-            </FormComponent>
-          )}
-        </div>
-      </Splitter.Panel>
-      <Splitter.Panel defaultSize="25%" className="w-fit">
-        {type === undefined || type === 'HEALTH_RECORD' ? (
-          <></>
-        ) : illness?.illnessDetails.length === 0 ? (
-          <Empty />
-        ) : (
-          <>
-            <IllnessDetailComponent
-              data={illness?.illnessDetails as IllnessDetail[]}
-            />
-          </>
-        )}
-      </Splitter.Panel>
-    </Splitter>
+  return (
+    <div className="min-h-full">
+      {items.length === 0 ? (
+        <FormComponent form={form} onFinish={onCreateHealth} className="w-2/3">
+          <HealthRecordForm loading={isLoadingHealthRecord} />
+        </FormComponent>
+      ) : (
+        <Splitter className="flex w-full !min-h-[500px]">
+          <Splitter.Panel
+            className="w-fit"
+            defaultSize={'25%'}
+            min="25%"
+            max="25%"
+          >
+            <div className="pt-5">
+              <Title className="!text-2xl mb-5">Record Timeline</Title>
+            </div>
+            <DescLeft />
+          </Splitter.Panel>
+          <Splitter.Panel defaultSize="50%" min="50%" max="50%">
+            <div className="p-5">
+              {type === 'HEALTH_RECORD' && (
+                <FormComponent
+                  form={form}
+                  onFinish={onFinishUpdateHealthRecord}
+                  className="w-2/3"
+                >
+                  <HealthRecordForm loading={loadingUpdateHealth} />
+                </FormComponent>
+              )}
+              {type === 'ILLNESS' && (
+                <FormComponent
+                  form={formIllness}
+                  onFinish={onFinishIllnessRecord}
+                  className="w-full"
+                >
+                  <IllnessRecordForm
+                    loading={isLoadingUpdateIllness}
+                    data={illness as IllnessCow}
+                  />
+                </FormComponent>
+              )}
+            </div>
+          </Splitter.Panel>
+          <Splitter.Panel defaultSize="25%" className="w-fit">
+            {type === undefined || type === 'HEALTH_RECORD' ? (
+              <></>
+            ) : illness?.illnessDetails.length === 0 ? (
+              <Empty />
+            ) : (
+              <>
+                <IllnessDetailComponent
+                  data={illness?.illnessDetails as IllnessDetail[]}
+                />
+              </>
+            )}
+          </Splitter.Panel>
+        </Splitter>
+      )}
+    </div>
   );
 };
 

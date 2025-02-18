@@ -11,14 +11,11 @@ const ReactQuillComponent = ({
   const modules = {
     toolbar: {
       container: [
-        [{ header: '1' }, { header: '2' }, { header: '3' }, { font: [] }],
+        [{ header: '2' }, { header: '3' }],
         [{ list: 'ordered' }, { list: 'bullet' }],
-        ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-        [{ size: ['small', 'normal', 'large'] }],
+        ['bold', 'italic', 'underline', 'strike'],
         ['link'],
         [{ align: [] }],
-        [{ color: [] }, { background: [] }],
-        ['clean'],
       ],
     },
   };
