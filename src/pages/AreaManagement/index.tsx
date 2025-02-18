@@ -9,6 +9,7 @@ import ModalCreateArea from './components/ModalCreateArea/ModalCreateArea';
 import { AreaType } from '../../model/Area/AreaType';
 import ModalAreaDetail from './components/ModalAreaDetail/ModalAreaDetail';
 import ButtonComponent from '../../components/Button/ButtonComponent';
+import { useTranslation } from 'react-i18next';
 
 const areaTypes: { label: string; value: AreaType }[] = [
   { label: 'Cow Housing', value: 'cowHousing' },
@@ -22,7 +23,7 @@ const AreaManagement: React.FC = () => {
   const [areaId, setAreaId] = React.useState<number>(0);
   const modalCreate = useModal();
   const modalViewDetail = useModal();
-
+  const { t } = useTranslation();
   const handleOpenEdit = (record: any) => {
     setAreaId(record.areaId);
     modalViewDetail.openModal();
@@ -37,37 +38,37 @@ const AreaManagement: React.FC = () => {
     {
       dataIndex: 'name',
       key: 'name',
-      title: 'Name',
+      title: t('Name'),
     },
     {
       dataIndex: 'description',
       key: 'description',
-      title: 'Description',
+      title: t('Description'),
     },
     {
       dataIndex: 'length',
       key: 'length',
-      title: 'Length (m)',
+      title: t('Length (m)'),
     },
     {
       dataIndex: 'width',
       key: 'width',
-      title: 'Width (m)',
+      title: t('Width (m)'),
     },
     {
       dataIndex: 'penLength',
       key: 'penLength',
-      title: 'Pen Length (m)',
+      title: t('Pen Length (m)'),
     },
     {
       dataIndex: 'penWidth',
       key: 'penWidth',
-      title: 'Pen Width (m)',
+      title: t('Pen Width (m)'),
     },
     {
       dataIndex: 'areaType',
       key: 'areaType',
-      title: 'Area Type',
+      title: t('Area Type'),
       render: (value: AreaType) => {
         const type = areaTypes.find((type) => type.value === value);
         return type ? type.label : value;
@@ -76,10 +77,10 @@ const AreaManagement: React.FC = () => {
     {
       dataIndex: 'action',
       key: 'action',
-      title: 'Action',
+      title: t('Action'),
       render: (_, record) => (
         <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <ButtonComponent onClick={() => handleOpenEdit(record)}>View Detail</ButtonComponent>
+          <ButtonComponent onClick={() => handleOpenEdit(record)}>{t("View Detail")}</ButtonComponent>
         </div>
       ),
     },

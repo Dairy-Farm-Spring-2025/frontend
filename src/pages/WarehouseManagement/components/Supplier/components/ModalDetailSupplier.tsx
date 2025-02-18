@@ -12,6 +12,7 @@ import useFetcher from '../../../../../hooks/useFetcher';
 import useToast from '../../../../../hooks/useToast';
 
 import { Supplier } from '../../../../../model/Warehouse/supplier';
+import { useTranslation } from 'react-i18next';
 
 
 interface ModalDetailSupplierProps {
@@ -25,6 +26,7 @@ const ModalDetailSupplier = ({
     mutate,
     id,
 }: ModalDetailSupplierProps) => {
+    const { t } = useTranslation();
     const [form] = Form.useForm();
     const toast = useToast();
     const { trigger, isLoading } = useFetcher(`suppliers/${id}`, 'PUT');
@@ -66,7 +68,7 @@ const ModalDetailSupplier = ({
     const items: DescriptionPropsItem['items'] = [
         {
             key: 'name',
-            label: 'Name',
+            label: t('Name'),
             children: !edit ? (
                 data ? (
                     data?.name
@@ -82,7 +84,7 @@ const ModalDetailSupplier = ({
         },
         {
             key: 'address',
-            label: 'Address',
+            label: t('Address'),
             children: !edit ? (
                 data ? (
                     data?.address
@@ -98,7 +100,7 @@ const ModalDetailSupplier = ({
         },
         {
             key: 'phone',
-            label: 'Phone',
+            label: t('Phone'),
             children: !edit ? (
                 data ? (
                     data?.phone
@@ -133,27 +135,27 @@ const ModalDetailSupplier = ({
 
     return (
         <ModalComponent
-            title="Edit Supplier"
+            title={t("Edit Supplier")}
             open={modal.open}
             onCancel={handleClose}
             loading={isLoadingDetail}
             footer={[
                 !edit && (
                     <ButtonComponent type="primary" onClick={() => setEdit(true)}>
-                        Edit
+                        {t("Edit")}
                     </ButtonComponent>
                 ),
                 edit && (
                     <div className="flex gap-5 justify-end">
                         <ButtonComponent onClick={() => setEdit(false)}>
-                            Cancel
+                            {t("Cancel")}
                         </ButtonComponent>
                         <ButtonComponent
                             loading={isLoading}
                             type="primary"
                             onClick={() => form.submit()}
                         >
-                            Save
+                            {t("Save")}
                         </ButtonComponent>
                     </div>
                 ),

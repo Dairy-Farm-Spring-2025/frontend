@@ -167,7 +167,7 @@ const IllNess = () => {
                     type="primary"
                     onClick={() => handleOpenModalDetail(data)}
                 >
-                    {t("View detail")}
+                    {t("View Detail")}
                 </ButtonComponent>
                 <PopconfirmComponent
                     title={'Delete?'}

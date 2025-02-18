@@ -6,6 +6,7 @@ import LabelForm from '../../../../../components/LabelForm/LabelForm';
 import ModalComponent from '../../../../../components/Modal/ModalComponent';
 import useFetcher from '../../../../../hooks/useFetcher';
 import useToast from '../../../../../hooks/useToast';
+import { useTranslation } from 'react-i18next';
 
 interface ModalAddWarehouseProps {
   modal: any;
@@ -16,11 +17,11 @@ const ModalAddWarehouse = ({ modal, mutate }: ModalAddWarehouseProps) => {
   const [form] = Form.useForm();
   const toast = useToast();
   const { trigger, isLoading } = useFetcher('warehouses/create', 'POST');
-
+  const { t } = useTranslation();
   const handleFinish = async (values: any) => {
     try {
       await trigger({ body: values });
-      toast.showSuccess('Create success');
+      toast.showSuccess(t('Create success'));
       mutate();
       handleClose();
     } catch (error: any) {
@@ -34,7 +35,7 @@ const ModalAddWarehouse = ({ modal, mutate }: ModalAddWarehouseProps) => {
   };
   return (
     <ModalComponent
-      title="Create Warehouse"
+      title={t("Create Warehouse")}
       open={modal.open}
       onCancel={handleClose}
       loading={isLoading}
@@ -43,14 +44,14 @@ const ModalAddWarehouse = ({ modal, mutate }: ModalAddWarehouseProps) => {
       <FormComponent form={form} onFinish={handleFinish}>
         <FormItemComponent
           name="name"
-          label={<LabelForm>Name</LabelForm>}
+          label={<LabelForm>{t("Name")}</LabelForm>}
           rules={[{ required: true }]}
         >
           <InputComponent />
         </FormItemComponent>
         <FormItemComponent
           name="description"
-          label={<LabelForm>Description</LabelForm>}
+          label={<LabelForm>{t("Description")}</LabelForm>}
           rules={[{ required: true }]}
         >
           <InputComponent.TextArea />

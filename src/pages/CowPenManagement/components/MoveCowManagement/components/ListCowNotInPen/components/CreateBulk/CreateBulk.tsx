@@ -7,6 +7,7 @@ import ButtonComponent from '../../../../../../../../components/Button/ButtonCom
 import { Cow } from '../../../../../../../../model/Cow/Cow';
 import useFetcher from '../../../../../../../../hooks/useFetcher';
 import { PenEntity } from '../../../../../../../../model/CowPen/CowPen';
+import { useTranslation } from 'react-i18next';
 
 interface CreateBulkModalProps {
   modal: any;
@@ -27,7 +28,7 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
   const [selectedCows, setSelectedCows] = useState<number[]>([]);
   const [selectedPens, setSelectedPens] = useState<string[]>([]);
   const [fromDate, setFromDate] = useState<string>('');
-
+  const { t } = useTranslation();
   const handleCowSelection = (cowId: number) => {
     if (selectedCows.includes(cowId)) {
       setSelectedCows(selectedCows.filter((id) => id !== cowId));
@@ -99,7 +100,7 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
   // Table columns for cows
   const cowColumns = [
     {
-      title: 'Select',
+      title: t('Select'),
       dataIndex: 'cowId',
       key: 'select',
       render: (cowId: number) => (
@@ -111,12 +112,12 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
       ),
     },
     {
-      title: 'Cow Name',
+      title: t('Cow Name'),
       dataIndex: 'name',
       key: 'name',
     },
     {
-      title: 'Status',
+      title: t('Status'),
       dataIndex: 'cowStatus',
       key: 'cowStatus',
     },
@@ -125,7 +126,7 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
   // Table columns for pens
   const penColumns = [
     {
-      title: 'Select',
+      title: t('Select'),
       dataIndex: 'penId',
       key: 'select',
       render: (penId: string, record: any) => (
@@ -138,12 +139,12 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
       ),
     },
     {
-      title: 'Pen Name',
+      title: t('Pen Name'),
       dataIndex: 'name',
       key: 'name',
     },
     {
-      title: 'Status',
+      title: t('Status'),
       dataIndex: 'penStatus',
       key: 'penStatus',
     },
@@ -152,26 +153,26 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
   return (
     <div style={{ marginBottom: '1rem' }}>
       <ButtonComponent onClick={modal.openModal} type='primary'>
-        Create Bulk
+        {t("Create Bulk")}
       </ButtonComponent>
       <ModalComponent
-        title='Select Dairy Cows and Pens'
+        title={t('Select Dairy Cows and Pens')}
         width={1000}
         open={modal.open}
         onCancel={onClose}
         footer={[
           <Button key='back' onClick={onClose}>
-            Cancel
+            {t("Cancel")}
           </Button>,
           <Button key='submit' type='primary' onClick={handleSubmit} disabled={isSubmitDisabled()}>
-            Submit
+            {t("Submit")}
           </Button>,
         ]}
       >
         <Card bordered={false}>
           <Row gutter={[16, 16]}>
             <Col span={12}>
-              <h3>Cows</h3>
+              <h3>{t("Cows")}</h3>
               <Table
                 dataSource={avalableCows}
                 columns={cowColumns}
@@ -180,7 +181,7 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
               />
             </Col>
             <Col span={12}>
-              <h3>Pens</h3>
+              <h3>{t("Pens")}</h3>
               <Table
                 dataSource={availablePens}
                 columns={penColumns}
@@ -198,11 +199,11 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
             </Col>
           </Row>
           <Button onClick={handleSelectAllCows} type='primary' style={{ margin: '10px 0' }}>
-            Select All Cows (Max {availablePens.length})
+            {t("Select All Cows")} (Max {availablePens.length})
           </Button>
           {selectedCows.length !== selectedPens.length && (
             <p style={{ color: 'red', marginTop: '16px' }}>
-              The number of selected cows must match the number of selected pens.
+              {t("The number of selected cows must match the number of selected pens.")}
             </p>
           )}
           {selectedCows.length > 0 && (

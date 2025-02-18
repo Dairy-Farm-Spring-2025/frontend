@@ -4,6 +4,7 @@ import { Area } from "../../../../model/Area";
 import useFetcher from "../../../../hooks/useFetcher";
 import LabelForm from "../../../../components/LabelForm/LabelForm";
 import ModalComponent from '../../../../components/Modal/ModalComponent';
+import { useTranslation } from 'react-i18next';
 
 interface ModalAreaDetailsProps {
     modal: any;
@@ -12,7 +13,7 @@ interface ModalAreaDetailsProps {
 
 const ModalAreaDetails = ({ modal, areaId }: ModalAreaDetailsProps) => {
     const { data, isLoading, error } = useFetcher<Area>(`areas/${areaId}`, "GET");
-
+    const { t } = useTranslation();
     useEffect(() => {
         console.log("ModalAreaDetails opened with areaId:", areaId);  // Debugging log
     }, [areaId]);
@@ -25,7 +26,7 @@ const ModalAreaDetails = ({ modal, areaId }: ModalAreaDetailsProps) => {
         <ModalComponent
             open={modal.open}
             onCancel={onClose}
-            title="Area Details"
+            title={t("Area Details")}
             footer={null}
             width={800}
         >
@@ -48,7 +49,7 @@ const ModalAreaDetails = ({ modal, areaId }: ModalAreaDetailsProps) => {
                             </p>
                         </>
                     ) : (
-                        <p>No details available for this area</p>
+                        <p>{t("No details available for this area")}</p>
                     )}
                 </div>
             )}

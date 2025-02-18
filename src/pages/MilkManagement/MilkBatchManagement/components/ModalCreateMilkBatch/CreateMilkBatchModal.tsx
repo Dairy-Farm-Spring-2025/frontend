@@ -11,6 +11,7 @@ import SelectComponent from '../../../../../components/Select/SelectComponent';
 import { getLabelByValue } from '../../../../../utils/getLabel';
 import { cowStatus } from '../../../../../service/data/cowStatus';
 import { shiftData } from '../../../../../service/data/shiftData';
+import { useTranslation } from 'react-i18next';
 
 interface CreateMilkBatchModalProps {
   modal: any;
@@ -30,7 +31,7 @@ const CreateMilkBatchModal = ({ modal, mutate }: CreateMilkBatchModalProps) => {
     `MilkBatch`,
     'POST'
   );
-
+  const { t } = useTranslation();
   useEffect(() => {
     if (modal.open) {
       const valueSelect = dataArea.map((element: Area) => ({
@@ -70,29 +71,29 @@ const CreateMilkBatchModal = ({ modal, mutate }: CreateMilkBatchModalProps) => {
     {
       dataIndex: 'volume',
       key: 'volume',
-      title: 'Volume',
+      title: t('Volume'),
     },
     {
       dataIndex: 'milkDate',
       key: 'milkDate',
-      title: 'Milk Date',
+      title: t('Milk Date'),
     },
     {
       dataIndex: 'cow',
       key: 'cow',
-      title: 'Cow Name',
+      title: t('Cow Name'),
       render: (data) => data.name,
     },
     {
       dataIndex: 'cow',
       key: 'cow',
-      title: 'Cow Status',
+      title: t('Cow Status'),
       render: (data) => getLabelByValue(data.cowStatus, cowStatus),
     },
     {
       dataIndex: 'worker',
       key: 'worker',
-      title: 'Worker',
+      title: t('Worker'),
       render: (data) => (
         <p>
           {data.name} -{' '}
@@ -142,7 +143,7 @@ const CreateMilkBatchModal = ({ modal, mutate }: CreateMilkBatchModalProps) => {
       try {
         await trigger({ url: `MilkBatch?${queryParams}` });
         mutate();
-        toast.showSuccess('Success');
+        toast.showSuccess(t('Success'));
       } catch (error: any) {
         toast.showError(error.message);
       } finally {
@@ -156,7 +157,7 @@ const CreateMilkBatchModal = ({ modal, mutate }: CreateMilkBatchModalProps) => {
     <ModalComponent
       loading={isLoadingCreate}
       width={1000}
-      title="Create Milk Batch"
+      title={t("Create Milk Batch")}
       className=""
       open={modal.open}
       onCancel={handleCancel}
@@ -165,7 +166,7 @@ const CreateMilkBatchModal = ({ modal, mutate }: CreateMilkBatchModalProps) => {
       <div className="flex justify-evenly items-center gap-5 w-4/5">
         <div className="flex flex-col gap-2 w-1/2">
           <label className="text-base font-bold">
-            Select Area<sup className="text-red-500">*</sup>:
+            {t("Select Area")}<sup className="text-red-500">*</sup>:
           </label>
           <SelectComponent
             placeholder={selectedArea === '' && 'Select Area...'}
@@ -179,7 +180,7 @@ const CreateMilkBatchModal = ({ modal, mutate }: CreateMilkBatchModalProps) => {
         <p className="mt-8">or</p>
         <div className="flex flex-col gap-2 w-1/2">
           <label className="text-base font-bold">
-            Select Shift<sup className="text-red-500">*</sup>:
+            {t("Select Shift")}<sup className="text-red-500">*</sup>:
           </label>
           <SelectComponent
             placeholder={selectedArea === '' && 'Select Area...'}

@@ -12,6 +12,7 @@ import SelectComponent from '../../../../../../../../../components/Select/Select
 import { ItemBatchCreate } from '../../../../../../../../../model/Warehouse/itemBatch';
 import useToast from '../../../../../../../../../hooks/useToast';
 import dayjs from 'dayjs';
+import { useTranslation } from 'react-i18next';
 
 interface CreateItemBatchModalProps {
   modal: any;
@@ -26,6 +27,7 @@ const CreateItemBatchModal = ({ modal, mutate }: CreateItemBatchModalProps) => {
   const { data: dataSupplier } = useFetcher<Supplier[]>('suppliers', 'GET');
   const { isLoading, trigger } = useFetcher('itembatchs/create', 'POST');
   const toast = useToast();
+  const { t } = useTranslation();
   useEffect(() => {
     if (modal.open && dataItem && dataSupplier) {
       setOptionItem(
@@ -91,7 +93,7 @@ const CreateItemBatchModal = ({ modal, mutate }: CreateItemBatchModalProps) => {
   };
   return (
     <ModalComponent
-      title="Create Item Batch"
+      title={t("Create Item Batch")}
       open={modal.open}
       onCancel={handleCancel}
       width={800}
@@ -102,14 +104,14 @@ const CreateItemBatchModal = ({ modal, mutate }: CreateItemBatchModalProps) => {
         <div className="grid grid-cols-2 gap-5">
           <FormItemComponent
             name="quantity"
-            label={<LabelForm>Quantity</LabelForm>}
+            label={<LabelForm>{t("Quantity")}</LabelForm>}
             rules={[{ required: true }]}
           >
             <InputComponent.Number />
           </FormItemComponent>
           <FormItemComponent
             name="expiryDate"
-            label={<LabelForm>Expired Date</LabelForm>}
+            label={<LabelForm>{t("Expired Date")}</LabelForm>}
             rules={[{ required: true }]}
           >
             <DatePicker
@@ -121,7 +123,7 @@ const CreateItemBatchModal = ({ modal, mutate }: CreateItemBatchModalProps) => {
         <div>
           <FormItemComponent
             name="itemId"
-            label={<LabelForm>Item</LabelForm>}
+            label={<LabelForm>{t("Item")}</LabelForm>}
             rules={[{ required: true }]}
           >
             <SelectComponent options={optionItem} search={true} />
@@ -129,30 +131,30 @@ const CreateItemBatchModal = ({ modal, mutate }: CreateItemBatchModalProps) => {
           <div className="grid grid-cols-5 gap-1 mt-2">
             <div className="flex gap-2 items-center">
               <div className="w-3 h-3 bg-blue-500 rounded-sm"></div> -{' '}
-              <p>Name</p>
+              <p>{t("Name")}</p>
             </div>
             <div className="flex gap-2 items-center">
               <div className="w-3 h-3 bg-orange-400 rounded-sm"></div> -{' '}
-              <p>Quantity</p>
+              <p>{t("Quantity")}</p>
             </div>
             <div className="flex gap-2 items-center">
               <div className="w-3 h-3 bg-cyan-500 rounded-sm"></div> -{' '}
-              <p>Status</p>
+              <p>{t("Status")}</p>
             </div>
             <div className="flex gap-2 items-center">
               <div className="w-3 h-3 bg-purple-500 rounded-sm"></div> -{' '}
-              <p>Category</p>
+              <p>{t("Category")}</p>
             </div>
             <div className="flex gap-2 items-center">
               <div className="w-3 h-3 bg-orange-600 rounded-sm"></div> -{' '}
-              <p>Warehouse</p>
+              <p>{t("Warehouse")}</p>
             </div>
           </div>
         </div>
         <div className="mt-5">
           <FormItemComponent
             name="supplierId"
-            label={<LabelForm>Supplier</LabelForm>}
+            label={<LabelForm>{t("Supplier")}</LabelForm>}
             rules={[{ required: true }]}
           >
             <SelectComponent options={optionSupplier} search={true} />
@@ -160,19 +162,19 @@ const CreateItemBatchModal = ({ modal, mutate }: CreateItemBatchModalProps) => {
           <div className="grid grid-cols-5 gap-1 mt-2">
             <div className="flex gap-2 items-center">
               <div className="w-3 h-3 bg-blue-500 rounded-sm"></div> -{' '}
-              <p>Name</p>
+              <p>{t("Name")}</p>
             </div>
             <div className="flex gap-2 items-center">
               <div className="w-3 h-3 bg-orange-400 rounded-sm"></div> -{' '}
-              <p>Address</p>
+              <p>{t("Address")}</p>
             </div>
             <div className="flex gap-2 items-center">
               <div className="w-3 h-3 bg-cyan-500 rounded-sm"></div> -{' '}
-              <p>Email</p>
+              <p>{t("Email")}</p>
             </div>
             <div className="flex gap-2 items-center">
               <div className="w-3 h-3 bg-purple-500 rounded-sm"></div> -{' '}
-              <p>Phone</p>
+              <p>{t("Phone")}</p>
             </div>
           </div>
         </div>

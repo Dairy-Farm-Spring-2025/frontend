@@ -6,8 +6,10 @@ import AnimationAppear from "../../../components/UI/AnimationAppear";
 import WhiteBackground from "../../../components/UI/WhiteBackground";
 import { Divider } from "antd";
 import { formatSTT } from "../../../utils/format";
-import ModalCreateHuman from "../components/ModalCreateHuman/ModalCreateHuman";
+
 import BanUnbanUser from "../../UserManagement/components/BanUnBanUser/BanUnBanUser";
+import ModalCreateHuman from "../components/ModalCreateHuman/ModalCreateHuman";
+import { useTranslation } from "react-i18next";
 
 
 
@@ -15,7 +17,7 @@ const ListVeterinarian = () => {
     const { data, isLoading, mutate } = useFetcher<any>("users/veterinarians", "GET");
     const modal = useModal();
     const defaultRole = 3;
-
+    const { t } = useTranslation();
 
     const columns: Column[] = [
         {
@@ -26,12 +28,12 @@ const ListVeterinarian = () => {
         {
             dataIndex: "employeeNumber",
             key: "employeeNumber",
-            title: "Employee Number",
+            title: t("Employee Number"),
         },
         {
             dataIndex: "name",
             key: "name",
-            title: "Name",
+            title: t("Name"),
 
         },
         {
@@ -42,18 +44,18 @@ const ListVeterinarian = () => {
         {
             dataIndex: "roleId",
             key: "roleId",
-            title: "Role",
+            title: t("Role"),
             render: (role: any) => role?.name,
         },
         {
             dataIndex: "status",
             key: "status",
-            title: "Status",
+            title: t("Status"),
         },
         {
             dataIndex: "action",
             key: "action",
-            title: "Action",
+            title: t("Action"),
             render: (_, record) => (
                 <BanUnbanUser
                     userId={record.id}
@@ -72,7 +74,7 @@ const ListVeterinarian = () => {
                 <ModalCreateHuman
                     modal={modal}
                     mutate={mutate}
-                    title="Create Veterinarian"
+                    title={t("Create Veterinarian")}
                     defaultValues={{ roleId: defaultRole }}
 
                 />

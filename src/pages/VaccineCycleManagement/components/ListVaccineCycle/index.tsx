@@ -13,6 +13,7 @@ import CreateVaccineCycleModal from './components/CreateVaccineCycleModal';
 import PopconfirmComponent from '../../../../components/Popconfirm/PopconfirmComponent';
 import useToast from '../../../../hooks/useToast';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const ListVaccineCycle = () => {
   const navigate = useNavigate();
@@ -27,7 +28,7 @@ const ListVaccineCycle = () => {
   );
   const modal = useModal();
   const toast = useToast();
-
+  const { t } = useTranslation();
   const handleDelete = async (id: number) => {
     try {
       const response = await trigger({ url: `vaccinecycles/${id}` });
@@ -48,32 +49,32 @@ const ListVaccineCycle = () => {
     {
       dataIndex: 'createdAt',
       key: 'createdAt',
-      title: 'Created At',
+      title: t('Created At'),
       render: (data) => formatDateHour(data),
     },
     {
       dataIndex: 'name',
       key: 'name',
-      title: 'Name',
+      title: t('Name'),
     },
     {
       dataIndex: 'vaccineCycleId',
       key: 'action',
-      title: 'Action',
+      title: t('Action'),
       render: (data) => (
         <div className="flex gap-5">
           <ButtonComponent
             type="primary"
             onClick={() => navigate(`../${data}`)}
           >
-            View Detail
+            {t("View Detail")}
           </ButtonComponent>
           <PopconfirmComponent
             onConfirm={() => handleDelete(data)}
-            title={'Are you sure to delete this?'}
+            title={t('Are you sure to delete this?')}
           >
             <ButtonComponent loading={isLoadingDelete} danger type="primary">
-              Delete
+              {t("Delete")}
             </ButtonComponent>
           </PopconfirmComponent>
         </div>
@@ -84,7 +85,7 @@ const ListVaccineCycle = () => {
     <AnimationAppear>
       <WhiteBackground>
         <ButtonComponent type="primary" onClick={() => modal.openModal()}>
-          Create Vaccine Cycle
+          {t("Create Vaccine Cycle")}
         </ButtonComponent>
         <Divider />
         <TableComponent

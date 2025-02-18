@@ -11,6 +11,7 @@ import useModal from '../../../../hooks/useModal';
 import useToast from '../../../../hooks/useToast';
 import ModalAddSupplier from './components/ModalAddSupplier';
 import ModalDetailSupplier from './components/ModalDetailSupplier';
+import { useTranslation } from 'react-i18next';
 
 
 
@@ -25,7 +26,7 @@ const Supplier = () => {
     );
     const modal = useModal();
     const modalDetail = useModal();
-
+    const { t } = useTranslation();
     const onConfirm = async (id: string) => {
         try {
             await trigger({ url: `suppliers/${id}` });
@@ -55,25 +56,25 @@ const Supplier = () => {
         {
             dataIndex: 'name',
             key: 'name',
-            title: 'Name',
+            title: t('Name'),
             // render: (data) => <p className="text-base font-bold">{data}</p>,
         },
         {
             dataIndex: 'address',
             key: 'address',
-            title: 'Address',
+            title: t('Address'),
             // render: (data) => <p className="text-base font-bold">{data}</p>,
         },
         {
             dataIndex: 'phone',
             key: 'phone',
-            title: 'Phone',
+            title: t('Phone'),
             // render: (data) => <p className="text-base font-bold">{data}</p>,
         },
         {
             dataIndex: 'email',
             key: 'email',
-            title: 'Email',
+            title: t('Email'),
             // render: (data) => <p className="text-base font-bold">{data}</p>,
         },
 
@@ -82,21 +83,21 @@ const Supplier = () => {
         {
             dataIndex: 'supplierId',
             key: 'action',
-            title: 'Action',
+            title: t('Action'),
             render: (data) => (
                 <div className="flex gap-5">
                     <ButtonComponent
                         type="primary"
                         onClick={() => handleOpenModalDetail(data)}
                     >
-                        View detail
+                        {t("View Detail")}
                     </ButtonComponent>
                     <PopconfirmComponent
                         title={'Delete?'}
                         onConfirm={() => onConfirm(data)}
                     >
                         <ButtonComponent type="primary" danger>
-                            Delete
+                            {t("Delete")}
                         </ButtonComponent>
                     </PopconfirmComponent>
 
@@ -114,7 +115,7 @@ const Supplier = () => {
                         type="primary"
                         onClick={handleOpenModalAdd}
                     >
-                        Add Supplier
+                        {t("Create Supplier")}
                     </ButtonComponent>
                     <TableComponent
                         dataSource={data}

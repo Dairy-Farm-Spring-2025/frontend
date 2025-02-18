@@ -11,6 +11,7 @@ import { getLabelByValue } from '../../../../utils/getLabel';
 import { penStatus, penType } from '../../../../service/data/pen';
 import { cowStatus } from '../../../../service/data/cowStatus';
 import ListCowNotInPen from './components/ListCowNotInPen/ListCowNotInPen';
+import { useTranslation } from 'react-i18next';
 
 const { TabPane } = Tabs;
 const { confirm } = Modal;
@@ -19,7 +20,7 @@ export const MoveCowManagement: React.FC = () => {
   const { data: cowPenData, mutate } = useFetcher<any>('cow-pens', 'GET');
   const { data: availablePens } = useFetcher<any>('pens/available', 'GET');
   const { trigger } = useFetcher('cow-pens', 'POST');
-
+  const { t } = useTranslation();
   const [selectedCow, setSelectedCow] = useState<string | null>(null);
   const [selectedPen, setSelectedPen] = useState<string | null>(null);
   const [penId, setPenId] = useState<number>(0);
@@ -36,27 +37,27 @@ export const MoveCowManagement: React.FC = () => {
 
   const columns: Column[] = [
     {
-      title: 'Cow Name',
+      title: t('Cow Name'),
       dataIndex: ['cowEntity', 'name'],
       key: 'cowName',
       sorter: (a, b) => a.cowEntity.name.localeCompare(b.cowEntity.name),
       searchable: true,
     },
     {
-      title: 'In Pen Name',
+      title: t('In Pen Name'),
       dataIndex: ['penEntity', 'name'],
       key: 'penName',
       searchable: true,
     },
     {
-      title: 'Pen Type',
+      title: t('Pen Type'),
       dataIndex: ['penEntity', 'penType'],
       key: 'penType',
       render: (data) => getLabelByValue(data, penType),
       searchable: true,
     },
     {
-      title: 'Cow Status',
+      title: t('Cow Status'),
       dataIndex: ['cowEntity', 'cowStatus'],
       key: 'cowStatus',
       render: (status: string) => (
@@ -67,7 +68,7 @@ export const MoveCowManagement: React.FC = () => {
       searchable: true,
     },
     {
-      title: 'Pen Status',
+      title: t('Pen Status'),
       dataIndex: ['penEntity', 'penStatus'],
       key: 'penStatus',
       render: (status: string) => (
@@ -78,7 +79,7 @@ export const MoveCowManagement: React.FC = () => {
       searchable: true,
     },
     {
-      title: 'Action',
+      title: t('Action'),
       key: 'action',
       dataIndex: 'action',
       render: (_, record) => (
@@ -92,7 +93,7 @@ export const MoveCowManagement: React.FC = () => {
   const handleMove = (fromDate: dayjs.Dayjs | null, toDate: dayjs.Dayjs | null) => {
     if (selectedCow && selectedPen && fromDate) {
       confirm({
-        title: 'Are you sure you want to move this cow?',
+        title: t('Are you sure you want to move this cow?'),
         content: 'This action will move the selected cow to the chosen pen.',
         onOk() {
           console.log(

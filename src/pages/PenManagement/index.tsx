@@ -14,6 +14,7 @@ import ModalCreatePen from "./components/ModalCreatePen";
 import ModalEditPens from "./components/ModalEditPen";
 import { penType, penStatus } from "../../service/data/pen";
 import { Area } from "../../model/Area";
+import { useTranslation } from "react-i18next";
 
 const PenManageMent = () => {
   const modal = useModal();
@@ -21,7 +22,7 @@ const PenManageMent = () => {
   const { data, isLoading, mutate } = useFetcher<Pen[]>("pens", "GET");
   const { data: dataArea } = useFetcher<Area[]>("areas", "GET");
   console.log("check dataArea: ", dataArea)
-
+  const { t } = useTranslation();
   const [id, setId] = useState<number>(0);
   const [selectedAreaId, setSelectedAreaId] = useState<number | null>(dataArea ? dataArea[0].areaId : null);
   console.log("check data: ", data);
@@ -40,20 +41,20 @@ const PenManageMent = () => {
     {
       dataIndex: "image",
       key: "image",
-      title: "Image",
+      title: t("Image"),
       render: () => <Image width={200} src={penImage} />,
       width: 200,
     },
     {
       dataIndex: "createdAt",
       key: "createdAt",
-      title: "Created Date",
+      title: t("Created Date"),
       render: (data) => formatDateHour(data),
     },
     {
       dataIndex: "name",
       key: "name",
-      title: "Pen Name",
+      title: t("Pen Name"),
       render: (element: string, data) => (
         <p
           onClick={() => handleEdit(data.penId)}
@@ -66,7 +67,7 @@ const PenManageMent = () => {
     {
       dataIndex: "penType",
       key: "penType",
-      title: "Pen Type",
+      title: t("Pen Type"),
       render: (typeValue: string) => {
 
         const type = penType.find((type) => type.value === typeValue);
@@ -77,7 +78,7 @@ const PenManageMent = () => {
     {
       dataIndex: "area",
       key: "area",
-      title: "Area",
+      title: t("Area"),
       render: (area: any) => {
         const areaDetails = dataArea?.find((item) => item.areaId === area?.areaId);
 
@@ -87,9 +88,9 @@ const PenManageMent = () => {
             title={
               areaDetails ? (
                 <>
-                  <div className="description"><strong>Description:</strong> {areaDetails?.description}</div>
-                  <div className="dimensions"><strong>Dimensions:</strong> {areaDetails?.length} m x {areaDetails?.width} m</div>
-                  <div className="type"><strong>Area Type:</strong> {formatAreaType(areaDetails?.areaType)}</div>
+                  <div className="description"><strong>{t("Description")}:</strong> {areaDetails?.description}</div>
+                  <div className="dimensions"><strong>{t("Dimensions")}:</strong> {areaDetails?.length} m x {areaDetails?.width} m</div>
+                  <div className="type"><strong>{t("Area Type")}:</strong> {formatAreaType(areaDetails?.areaType)}</div>
                 </>
               ) : (
                 "No details available"
@@ -110,12 +111,12 @@ const PenManageMent = () => {
     {
       dataIndex: "length",
       key: "length",
-      title: "Dimensions",
+      title: t("Dimensions"),
       render: (element: any, data) => (
         <Tooltip className="tooltip-content"
           color="#87d068"
           placement="top"
-          title={<div className="dimensions"><strong>Length: </strong> {data.area.penLength} m,<strong> Width: </strong>{data.area.penWidth} m </div>}
+          title={<div className="dimensions"><strong>{t("Length")}: </strong> {data.area.penLength} m,<strong> {t("Width")}: </strong>{data.area.penWidth} m </div>}
         >
           <span>
             {data.area.penLength} x {data.area.penWidth} m
@@ -126,7 +127,7 @@ const PenManageMent = () => {
     {
       dataIndex: "penStatus",
       key: "penStatus",
-      title: "Status",
+      title: t("Status"),
       render: (statusValue: string) => {
         // Find the label for the given statusValue
         const status = penStatus.find((status) => status.value === statusValue);

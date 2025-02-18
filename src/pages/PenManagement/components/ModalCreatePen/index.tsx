@@ -12,6 +12,7 @@ import { penStatus, penType } from "../../../../service/data/pen";
 import { Area } from "../../../../model/Area";
 import { Pen } from "../../../../model/Pen";
 import { formatAreaType, validateInput } from "../../../../utils/format";
+import { useTranslation } from "react-i18next";
 
 interface ModalCreatePenProps {
     mutate: any;
@@ -24,7 +25,7 @@ const ModalCreatePen = ({ mutate, modal, areaId }: ModalCreatePenProps) => {
     const toast = useToast();
     const { trigger: TriggerPost, isLoading } = useFetcher("pens/create", "POST");
     const { data, isLoading: isAreasLoading } = useFetcher<Area[]>("areas", "GET");
-
+    const { t } = useTranslation();
     const [form] = Form.useForm();
     const [selectedAreaDetails, setSelectedAreaDetails] = useState<Area | null>(null);
 
@@ -60,14 +61,14 @@ const ModalCreatePen = ({ mutate, modal, areaId }: ModalCreatePenProps) => {
         <div style={{ display: "flex", justifyContent: "space-between" }}>
             <div style={{ width: "48%" }}>
                 <ButtonComponent onClick={modal.openModal} type="primary">
-                    Create New Pen
+                    {t("Create New Pen")}
                 </ButtonComponent>
 
                 <ModalComponent
                     open={modal.open}
                     onOk={() => form.submit()}
                     onCancel={onClose}
-                    title="Create New Pen"
+                    title={t("Create New Pen")}
                     loading={isLoading}
                     footer={isLoading ? <Spin tip="Submitting..." /> : null}
                     width={1000}
@@ -81,12 +82,12 @@ const ModalCreatePen = ({ mutate, modal, areaId }: ModalCreatePenProps) => {
                             </FormItemComponent>
 
                             <div className="flex flex-col gap-4">
-                                <p className="text-2xl text-primary font-bold">Pen Information</p>
+                                <p className="text-2xl text-primary font-bold">{t("Pen Information")}</p>
                                 <div className="grid grid-cols-4 gap-5 w-full">
                                     <FormItemComponent
                                         className="col-span-4"
                                         name="name"
-                                        label={<LabelForm>Pen Name:</LabelForm>}
+                                        label={<LabelForm>{t("Pen Name")}:</LabelForm>}
                                         rules={[{ required: true, message: "Please enter the pen name" },
                                         { validator: validateInput },
 
@@ -96,7 +97,7 @@ const ModalCreatePen = ({ mutate, modal, areaId }: ModalCreatePenProps) => {
                                     </FormItemComponent>
                                     <FormItemComponent
                                         name="areaId"
-                                        label={<LabelForm>Area:</LabelForm>}
+                                        label={<LabelForm>{t("Area")}:</LabelForm>}
                                         rules={[{ required: true, message: "Please select an area" }]}
 
                                     >
@@ -111,7 +112,7 @@ const ModalCreatePen = ({ mutate, modal, areaId }: ModalCreatePenProps) => {
 
                                     <FormItemComponent
                                         name="penType"
-                                        label={<LabelForm>Pen Type:</LabelForm>}
+                                        label={<LabelForm>{t("Pen Type")}:</LabelForm>}
                                         rules={[{ required: true, message: "Please select a pen type" }]}
                                     >
                                         <Select options={penType} placeholder="Select pen type" />
@@ -119,7 +120,7 @@ const ModalCreatePen = ({ mutate, modal, areaId }: ModalCreatePenProps) => {
 
                                     <FormItemComponent
                                         name="penStatus"
-                                        label={<LabelForm>Status:</LabelForm>}
+                                        label={<LabelForm>{t("Status")}:</LabelForm>}
                                         rules={[{ required: true, message: "Please select a status" }]}
                                     >
                                         <Select options={penStatus} placeholder="Select status" />
@@ -130,14 +131,14 @@ const ModalCreatePen = ({ mutate, modal, areaId }: ModalCreatePenProps) => {
 
                                 {selectedAreaDetails && (
                                     <Card className="area-details"
-                                        title="Area Details"
+                                        title={t("Area Details")}
                                         bordered={true}
                                         style={{ backgroundColor: "#f7f7f7" }}
                                     >
                                         <div>
-                                            <p className="dimensions"><strong>Dimensions:</strong> {selectedAreaDetails.length} x {selectedAreaDetails.width} m</p>
-                                            <p className="type"><strong>Type:</strong> {formatAreaType(selectedAreaDetails.areaType)}</p>
-                                            <p className="description"><strong>Description:</strong> {selectedAreaDetails.description}</p>
+                                            <p className="dimensions"><strong>{t("Dimensions")}:</strong> {selectedAreaDetails.length} x {selectedAreaDetails.width} m</p>
+                                            <p className="type"><strong>{t("Type")}:</strong> {formatAreaType(selectedAreaDetails.areaType)}</p>
+                                            <p className="description"><strong>{t("Description")}:</strong> {selectedAreaDetails.description}</p>
                                         </div>
                                     </Card>
                                 )}
@@ -164,11 +165,11 @@ const ModalCreatePen = ({ mutate, modal, areaId }: ModalCreatePenProps) => {
                                 </div>
                             </div> */}
                             <div className="flex flex-col gap-4">
-                                <p className="text-2xl text-primary font-bold">Description</p>
+                                <p className="text-2xl text-primary font-bold">{t("Description")}</p>
                                 <div className="grid gap-5 w-full">
                                     <FormItemComponent
                                         name="description"
-                                        label={<LabelForm>Description:</LabelForm>}
+                                        label={<LabelForm>{t("Description")}:</LabelForm>}
                                         rules={[{ required: true, message: "Please enter a description" }]}
                                     >
                                         <Input.TextArea placeholder="Enter a brief description" rows={3} />

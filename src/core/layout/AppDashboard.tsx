@@ -245,12 +245,12 @@ const AppDashboard: React.FC = () => {
       children: [
         getItem(t('human'), 'dairy/human-management', <BiUser />, [
           getItem(
-            t('worker'),
+            t('Worker'),
             'dairy/human-management/worker',
             <CiBoxList size={sizeIcon} />
           ),
           getItem(
-            t('veterinarian'),
+            t('Veterinarians'),
             'dairy/human-management/veterinarian',
             <CiBoxList size={sizeIcon} />
           ),

@@ -19,6 +19,7 @@ import { Item } from '../../../../../model/Warehouse/items';
 import { VaccineCyclePayload } from '../../../../../model/Vaccine/VaccineCycle/vaccineCycle';
 import useToast from '../../../../../hooks/useToast';
 import ReactQuillComponent from '../../../../../components/ReactQuill/ReactQuillComponent';
+import { useTranslation } from 'react-i18next';
 
 interface CreateVaccineCycleModalProps {
   modal: any;
@@ -39,6 +40,7 @@ const CreateVaccineCycleModal = ({
   const { data: itemData } = useFetcher<Item[]>('items', 'GET');
   const { trigger, isLoading } = useFetcher('vaccinecycles/create', 'POST');
   const toast = useToast();
+  const { t } = useTranslation();
   useEffect(() => {
     if (data && modal.open && itemData) {
       setOptionsCowType(
@@ -103,27 +105,27 @@ const CreateVaccineCycleModal = ({
 
   const steps: StepItem[] = [
     {
-      title: 'General Information',
+      title: t('General Information'),
       content: (
         <FormComponent form={generalForm}>
           <FormItemComponent
             rules={[{ required: true }]}
             name="name"
-            label={<LabelForm>Name</LabelForm>}
+            label={<LabelForm>{t("Name")}</LabelForm>}
           >
             <InputComponent />
           </FormItemComponent>
           <FormItemComponent
             rules={[{ required: true }]}
             name="cowTypeId"
-            label={<LabelForm>Cow Type</LabelForm>}
+            label={<LabelForm>{t("Cow Type")}</LabelForm>}
           >
             <SelectComponent options={optionsCowType} search={true} />
           </FormItemComponent>
           <FormItemComponent
             rules={[{ required: true }]}
             name="description"
-            label={<LabelForm>Description</LabelForm>}
+            label={<LabelForm>{t("Description")}</LabelForm>}
           >
             <ReactQuillComponent />
           </FormItemComponent>
@@ -132,7 +134,7 @@ const CreateVaccineCycleModal = ({
       onNext: handleNextGeneral,
     },
     {
-      title: 'Detail Information',
+      title: t('Detail Information'),
       content: (
         <Form
           form={detailForm}
@@ -163,7 +165,7 @@ const CreateVaccineCycleModal = ({
                         <Form.Item
                           {...restField}
                           name={[name, 'name']}
-                          label={<LabelForm>Name</LabelForm>}
+                          label={<LabelForm>{t("Name")}</LabelForm>}
                           rules={[
                             {
                               required: true,
@@ -176,7 +178,7 @@ const CreateVaccineCycleModal = ({
                         </Form.Item>
                         <Form.Item
                           {...restField}
-                          label={<LabelForm>Item</LabelForm>}
+                          label={<LabelForm>{t("Item")}</LabelForm>}
                           name={[name, 'itemId']}
                           rules={[
                             {
@@ -190,7 +192,7 @@ const CreateVaccineCycleModal = ({
                         </Form.Item>
                         <Form.Item
                           {...restField}
-                          label={<LabelForm>Dosage</LabelForm>}
+                          label={<LabelForm>{t("Dosage")}</LabelForm>}
                           name={[name, 'dosage']}
                           rules={[
                             {
@@ -203,7 +205,7 @@ const CreateVaccineCycleModal = ({
                         </Form.Item>
                         <Form.Item
                           {...restField}
-                          label={<LabelForm>Dosage Unit</LabelForm>}
+                          label={<LabelForm>{t("Dosage Unit")}</LabelForm>}
                           name={[name, 'dosageUnit']}
                           rules={[
                             {
@@ -216,7 +218,7 @@ const CreateVaccineCycleModal = ({
                         </Form.Item>
                         <Form.Item
                           {...restField}
-                          label={<LabelForm>Injection Site</LabelForm>}
+                          label={<LabelForm>{t("Injection Site")}</LabelForm>}
                           name={[name, 'injectionSite']}
                           rules={[
                             {
@@ -229,7 +231,7 @@ const CreateVaccineCycleModal = ({
                         </Form.Item>
                         <Form.Item
                           {...restField}
-                          label={<LabelForm>Age in months</LabelForm>}
+                          label={<LabelForm>{t("Age in months")}</LabelForm>}
                           name={[name, 'ageInMonths']}
                           rules={[
                             {
@@ -242,7 +244,7 @@ const CreateVaccineCycleModal = ({
                         </Form.Item>
                         <Form.Item
                           {...restField}
-                          label={<LabelForm>Description</LabelForm>}
+                          label={<LabelForm>{t("Description")}</LabelForm>}
                           className="col-span-4"
                           name={[name, 'description']}
                           rules={[
@@ -275,7 +277,7 @@ const CreateVaccineCycleModal = ({
                     block
                     icon={<PlusOutlined />}
                   >
-                    Add more field
+                    {t("Add more field")}
                   </ButtonComponent>
                 </Form.Item>
               </>

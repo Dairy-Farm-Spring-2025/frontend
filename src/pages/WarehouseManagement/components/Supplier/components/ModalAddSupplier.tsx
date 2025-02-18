@@ -6,6 +6,7 @@ import LabelForm from '../../../../../components/LabelForm/LabelForm';
 import ModalComponent from '../../../../../components/Modal/ModalComponent';
 import useFetcher from '../../../../../hooks/useFetcher';
 import useToast from '../../../../../hooks/useToast';
+import { useTranslation } from 'react-i18next';
 
 interface ModalAddSupplierProps {
     modal: any;
@@ -16,11 +17,11 @@ const ModalAddSupplier = ({ modal, mutate }: ModalAddSupplierProps) => {
     const [form] = Form.useForm();
     const toast = useToast();
     const { trigger, isLoading } = useFetcher('suppliers/create', 'POST');
-
+    const { t } = useTranslation();
     const handleFinish = async (values: any) => {
         try {
             await trigger({ body: values });
-            toast.showSuccess('Create success');
+            toast.showSuccess(t('Create success'));
             mutate();
             handleClose();
         } catch (error: any) {
@@ -34,7 +35,7 @@ const ModalAddSupplier = ({ modal, mutate }: ModalAddSupplierProps) => {
     };
     return (
         <ModalComponent
-            title="Create Supplier"
+            title={t("Create Supplier")}
             open={modal.open}
             onCancel={handleClose}
             loading={isLoading}
@@ -43,7 +44,7 @@ const ModalAddSupplier = ({ modal, mutate }: ModalAddSupplierProps) => {
             <FormComponent form={form} onFinish={handleFinish}>
                 <FormItemComponent
                     name="name"
-                    label={<LabelForm>Name</LabelForm>}
+                    label={<LabelForm>{t("Name")}</LabelForm>}
                     rules={[{ required: true }]}
                 >
                     <InputComponent
@@ -51,7 +52,7 @@ const ModalAddSupplier = ({ modal, mutate }: ModalAddSupplierProps) => {
                 </FormItemComponent>
                 <FormItemComponent
                     name="address"
-                    label={<LabelForm>Address</LabelForm>}
+                    label={<LabelForm>{t("Address")}</LabelForm>}
                     rules={[{ required: true }]}
 
                 >
@@ -60,7 +61,7 @@ const ModalAddSupplier = ({ modal, mutate }: ModalAddSupplierProps) => {
                 </FormItemComponent>
                 <FormItemComponent
                     name="phone"
-                    label={<LabelForm>Phone</LabelForm>}
+                    label={<LabelForm>{t("Phone")}</LabelForm>}
                     rules={[
                         { required: true, message: 'Please enter phone of supplier' },
                         { pattern: /^\d{10}$/, message: 'phone must have 10 numbers' }
@@ -71,7 +72,7 @@ const ModalAddSupplier = ({ modal, mutate }: ModalAddSupplierProps) => {
                 </FormItemComponent>
                 <FormItemComponent
                     name="email"
-                    label={<LabelForm>Email</LabelForm>}
+                    label={<LabelForm>{t("Email")}</LabelForm>}
                     rules={[
                         { required: true, message: 'Please enter email of supplier' },
                         { type: 'email', message: 'Email is invalid!' }

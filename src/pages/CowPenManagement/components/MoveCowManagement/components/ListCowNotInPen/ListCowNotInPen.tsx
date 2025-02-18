@@ -17,6 +17,7 @@ import CreateBulkModal from './components/CreateBulk/CreateBulk';
 import useModal from '../../../../../../hooks/useModal';
 import { Pen } from '../../../../../../model/Pen';
 import { PenEntity } from '../../../../../../model/CowPen/CowPen';
+import { useTranslation } from 'react-i18next';
 
 interface ListCowNotInPenProps {
   availablePens: PenEntity[];
@@ -28,7 +29,7 @@ const ListCowNotInPen: React.FC<ListCowNotInPenProps> = ({ availablePens, mutate
   const [cow, setCow] = useState<Cow[]>([]);
   const toast = useToast();
   const modal = useModal();
-
+  const { t } = useTranslation();
   const columns: Column[] = [
     {
       dataIndex: 'cowId',
@@ -38,20 +39,20 @@ const ListCowNotInPen: React.FC<ListCowNotInPenProps> = ({ availablePens, mutate
     {
       dataIndex: 'image',
       key: 'image',
-      title: 'Image',
+      title: t('Image'),
       render: () => <Image width={200} src={cowImage} />,
       width: 200,
     },
     {
       dataIndex: 'createdAt',
       key: 'createdAt',
-      title: 'Created At',
+      title: t('Created At'),
       render: (data) => formatDateHour(data),
     },
     {
       dataIndex: 'name',
       key: 'name',
-      title: 'Name',
+      title: t('Name'),
       render: (element: string, data) => (
         <TextLink to={`/dairy/cow-management/${data.cowId}`}>{element}</TextLink>
       ),
@@ -60,58 +61,58 @@ const ListCowNotInPen: React.FC<ListCowNotInPenProps> = ({ availablePens, mutate
     {
       dataIndex: 'dateOfBirth',
       key: 'dateOfBirth',
-      title: 'Date Of Birth',
+      title: t('Date Of Birth'),
       render: (data) => formatDateHour(data),
     },
     {
       dataIndex: 'dateOfEnter',
       key: 'dateOfEnter',
-      title: 'Date Of Enter',
+      title: t('Date Of Enter'),
       render: (data) => formatDateHour(data),
     },
     {
       dataIndex: 'dateOfOut',
       key: 'dateOfOut',
-      title: 'Date Of Out',
+      title: t('Date Of Out'),
       render: (data) => (data ? formatDateHour(data) : 'Not Out'),
     },
     {
       dataIndex: 'cowOrigin',
       key: 'cowOrigin',
-      title: 'Origin',
+      title: t('Origin'),
       render: (data) => getLabelByValue(data, cowOrigin),
     },
     {
       dataIndex: 'gender',
       key: 'gender',
-      title: 'Gender',
+      title: t('Gender'),
       render: (data) => (data === 'male' ? 'Male' : 'Female'),
     },
     {
       dataIndex: 'cowType',
       key: 'cowType',
-      title: 'Cow Type',
+      title: t('Cow Type'),
       render: (data) => <p>{data.name}</p>,
     },
     {
       dataIndex: 'inPen',
       key: 'inPen',
-      title: 'In Pen',
+      title: t('In Pen'),
       render: (data) => (data ? 'Yes' : 'No'),
     },
     {
       dataIndex: 'cowStatus',
       key: 'cowStatus',
-      title: 'Cow Status',
+      title: t('Cow Status'),
       render: (data) => getLabelByValue(data, cowStatus),
     },
     {
       dataIndex: 'cowId',
       key: 'action',
-      title: 'Action',
+      title: t('Action'),
       render: () => (
         <ButtonComponent type='primary' danger>
-          Delete
+          {t("Delete")}
         </ButtonComponent>
       ),
     },

@@ -8,6 +8,7 @@ import { Divider } from "antd";
 import { formatSTT } from "../../../utils/format";
 import BanUnbanUser from "../../UserManagement/components/BanUnBanUser/BanUnBanUser";
 import ModalCreateHuman from "../components/ModalCreateHuman/ModalCreateHuman";
+import { useTranslation } from "react-i18next";
 
 
 
@@ -16,7 +17,7 @@ const ListWorker = () => {
     const modal = useModal();
     const defaultRole = 4;
 
-
+    const { t } = useTranslation();
     const columns: Column[] = [
         {
             dataIndex: "id",
@@ -26,18 +27,18 @@ const ListWorker = () => {
         {
             dataIndex: "employeeNumber",
             key: "employeeNumber",
-            title: "Employee Number",
+            title: t("Employee Number"),
         },
         {
             dataIndex: "name",
             key: "name",
-            title: "Name",
+            title: t("Name"),
 
         },
         {
             dataIndex: "email",
             key: "email",
-            title: "Email",
+            title: t("Email"),
         },
         // {
         //     dataIndex: "roleId",
@@ -48,12 +49,12 @@ const ListWorker = () => {
         {
             dataIndex: "status",
             key: "status",
-            title: "Status",
+            title: t("Status"),
         },
         {
             dataIndex: "action",
             key: "action",
-            title: "Action",
+            title: t("Action"),
             render: (_, record) => (
                 <BanUnbanUser
                     userId={record.id}
@@ -72,7 +73,7 @@ const ListWorker = () => {
                 <ModalCreateHuman
                     modal={modal}
                     mutate={mutate}
-                    title="Create Worker"
+                    title={t("Create Worker")}
                     defaultValues={{ roleId: defaultRole }}
 
                 />

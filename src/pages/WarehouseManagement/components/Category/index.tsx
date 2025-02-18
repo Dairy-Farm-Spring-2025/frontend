@@ -11,6 +11,7 @@ import useModal from '../../../../hooks/useModal';
 import useToast from '../../../../hooks/useToast';
 import ModalAddCategory from './components/ModalAddCategory';
 import ModalDetailCategory from './components/ModalDetailCategory';
+import { useTranslation } from 'react-i18next';
 
 
 
@@ -24,11 +25,11 @@ const Category = () => {
     );
     const modal = useModal();
     const modalDetail = useModal();
-
+    const { t } = useTranslation();
     const onConfirm = async (id: string) => {
         try {
             await trigger({ url: `categories/${id}` });
-            toast.showSuccess('Delete success');
+            toast.showSuccess(t('Delete success'));
             mutate();
         } catch (error: any) {
             toast.showError(error.message);
@@ -54,28 +55,28 @@ const Category = () => {
         {
             dataIndex: 'name',
             key: 'name',
-            title: 'Name',
+            title: t('Name'),
             render: (data) => <p className="text-base font-bold">{data}</p>,
         },
         {
             dataIndex: 'categoryId',
             key: 'action',
-            title: 'Action',
+            title: t('Action'),
             render: (data) => (
                 <div className="flex gap-5">
                     <PopconfirmComponent
-                        title={'Delete?'}
+                        title={t('Delete?')}
                         onConfirm={() => onConfirm(data)}
                     >
                         <ButtonComponent type="primary" danger>
-                            Delete
+                            {t("Delete")}
                         </ButtonComponent>
                     </PopconfirmComponent>
                     <ButtonComponent
                         type="primary"
                         onClick={() => handleOpenModalDetail(data)}
                     >
-                        View detail
+                        {t("View Detail")}
                     </ButtonComponent>
                 </div>
             ),
@@ -91,7 +92,7 @@ const Category = () => {
                         type="primary"
                         onClick={handleOpenModalAdd}
                     >
-                        Add Category
+                        {t("Create Category")}
                     </ButtonComponent>
                     <TableComponent
                         dataSource={data}

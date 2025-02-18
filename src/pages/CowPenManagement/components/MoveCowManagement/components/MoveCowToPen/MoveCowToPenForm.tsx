@@ -2,6 +2,7 @@ import React, { FC, useState } from 'react';
 import { Form, Select, Button, DatePicker, message } from 'antd';
 import dayjs from 'dayjs';
 import { CowPen, PenEntity } from '../../../../../../model/CowPen/CowPen';
+import { useTranslation } from 'react-i18next';
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -26,7 +27,7 @@ const MoveCowToPenForm: FC<MoveCowToPenFormProps> = ({
   handleMove,
 }) => {
   const [dates, setDates] = useState<[dayjs.Dayjs | null, dayjs.Dayjs | null]>([null, null]);
-
+  const { t } = useTranslation();
   const handleDateChange = (dates: [dayjs.Dayjs | null, dayjs.Dayjs | null] | null) => {
     if (!dates) return;
     const [fromDate, toDate] = dates;
@@ -45,7 +46,7 @@ const MoveCowToPenForm: FC<MoveCowToPenFormProps> = ({
   return (
     <div className='w-full max-w-lg bg-white shadow-md rounded-lg p-6'>
       <Form layout='vertical'>
-        <Form.Item label={<span className='font-semibold'>Select Cow</span>}>
+        <Form.Item label={<span className='font-semibold'>{t("Select Cow")}</span>}>
           <Select
             placeholder='Choose a cow'
             onChange={setSelectedCow}
@@ -61,7 +62,7 @@ const MoveCowToPenForm: FC<MoveCowToPenFormProps> = ({
           </Select>
         </Form.Item>
 
-        <Form.Item label={<span className='font-semibold'>Select Pen</span>}>
+        <Form.Item label={<span className='font-semibold'>{t("Select Pen")}</span>}>
           <Select
             placeholder='Choose a pen'
             onChange={setSelectedPen}
@@ -77,7 +78,7 @@ const MoveCowToPenForm: FC<MoveCowToPenFormProps> = ({
           </Select>
         </Form.Item>
 
-        <Form.Item label={<span className='font-semibold'>Select Date Range</span>}>
+        <Form.Item label={<span className='font-semibold'>{t("Select Date Range")}</span>}>
           <RangePicker
             size='large'
             className='rounded-lg w-full'
@@ -93,23 +94,23 @@ const MoveCowToPenForm: FC<MoveCowToPenFormProps> = ({
           className='w-full rounded-lg'
           disabled={!selectedCow || !selectedPen || !dates[0]}
         >
-          Move Cow to Pen
+          {t("Move Cow to Pen")}
         </Button>
       </Form>
 
       <div className='mt-6'>
-        <div className='text-lg font-medium mb-4'>Current Selection</div>
+        <div className='text-lg font-medium mb-4'>{t("Current Selection")}</div>
         <div className='text-gray-700'>
-          <strong>Cow:</strong> {selectedCow || 'None'}
+          <strong>{t("Cow")}:</strong> {selectedCow || 'None'}
         </div>
         <div className='text-gray-700'>
-          <strong>Pen:</strong> {selectedPen || 'None'}
+          <strong>{t("Pen")}:</strong> {selectedPen || 'None'}
         </div>
         <div className='text-gray-700'>
-          <strong>From Date:</strong> {dates[0] ? dates[0].format('YYYY-MM-DD') : 'None'}
+          <strong>{t("From Date")}:</strong> {dates[0] ? dates[0].format('YYYY-MM-DD') : 'None'}
         </div>
         <div className='text-gray-700'>
-          <strong>To Date:</strong> {dates[1] ? dates[1].format('YYYY-MM-DD') : 'None'}
+          <strong>{t("To Date")}:</strong> {dates[1] ? dates[1].format('YYYY-MM-DD') : 'None'}
         </div>
       </div>
     </div>

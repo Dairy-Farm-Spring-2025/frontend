@@ -17,6 +17,7 @@ import useFetcher from '../../../../../../../../hooks/useFetcher';
 import useToast from '../../../../../../../../hooks/useToast';
 import CardComponent from '../../../../../../../../components/Card/CardComponent';
 import { ItemRequestBody } from '../../../../../../../../model/Warehouse/items';
+import { useTranslation } from 'react-i18next';
 
 interface ModalAddItemProps {
   modal: any;
@@ -30,6 +31,7 @@ const ModalAddItem = ({ modal, mutate }: ModalAddItemProps) => {
   const itemManagementWarehouse = useSelector(
     (state: RootState) => state.itemManagement
   );
+  const { t } = useTranslation();
   const [form] = Form.useForm();
   const toast = useToast();
   const { isLoading, trigger } = useFetcher<Warehouse>('');
@@ -86,7 +88,7 @@ const ModalAddItem = ({ modal, mutate }: ModalAddItemProps) => {
     <div>
       <ModalComponent
         loading={loadingFinish}
-        title="Create Item"
+        title={t("Create Item")}
         open={modal.open}
         onCancel={handleCancel}
         onOk={handleOk}
@@ -96,7 +98,7 @@ const ModalAddItem = ({ modal, mutate }: ModalAddItemProps) => {
           <FormItemComponent
             rules={[{ required: true }]}
             name="name"
-            label={<LabelForm>Name</LabelForm>}
+            label={<LabelForm>{t("Name")}</LabelForm>}
           >
             <InputComponent />
           </FormItemComponent>
@@ -104,7 +106,7 @@ const ModalAddItem = ({ modal, mutate }: ModalAddItemProps) => {
             <FormItemComponent
               rules={[{ required: true }]}
               name="unit"
-              label={<LabelForm>Unit</LabelForm>}
+              label={<LabelForm>{t("Unit")}</LabelForm>}
             >
               <SelectComponent
                 options={unitOptions}
@@ -114,7 +116,7 @@ const ModalAddItem = ({ modal, mutate }: ModalAddItemProps) => {
             <FormItemComponent
               name="quantity"
               rules={[{ required: true }]}
-              label={<LabelForm>Quantity</LabelForm>}
+              label={<LabelForm>{t("Quantity")}</LabelForm>}
             >
               <InputComponent.Number disabled={!available} />
             </FormItemComponent>
@@ -123,14 +125,14 @@ const ModalAddItem = ({ modal, mutate }: ModalAddItemProps) => {
             <FormItemComponent
               name="categoryId"
               rules={[{ required: true }]}
-              label={<LabelForm>Category</LabelForm>}
+              label={<LabelForm>{t("Category")}</LabelForm>}
             >
               <SelectComponent options={itemManagementWarehouse.categories} />
             </FormItemComponent>
             <FormItemComponent
               name="status"
               rules={[{ required: true }]}
-              label={<LabelForm>Status</LabelForm>}
+              label={<LabelForm>{t("Status")}</LabelForm>}
             >
               <SelectComponent options={statusOptions} />
             </FormItemComponent>
@@ -138,7 +140,7 @@ const ModalAddItem = ({ modal, mutate }: ModalAddItemProps) => {
           <FormItemComponent
             name="locationId"
             rules={[{ required: true }]}
-            label={<LabelForm>Location</LabelForm>}
+            label={<LabelForm>{t("Location")}</LabelForm>}
           >
             <SelectComponent
               options={itemManagementWarehouse.warehouses}

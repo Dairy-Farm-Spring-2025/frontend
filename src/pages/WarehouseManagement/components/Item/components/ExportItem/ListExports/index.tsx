@@ -13,6 +13,7 @@ import AnimationAppear from '../../../../../../../components/UI/AnimationAppear'
 import WhiteBackground from '../../../../../../../components/UI/WhiteBackground';
 import { EXPORT_STATUS_OPTIONS } from '../../../../../../../service/data/exportStatus';
 import { Key } from 'antd/es/table/interface';
+import { useTranslation } from 'react-i18next';
 
 const ListExports = () => {
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ const ListExports = () => {
   );
   const modal = useModal();
   const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
-
+  const { t } = useTranslation();
   // const isBulkActionDisabled =
   //   selectedRowKeys.length === 0 ||
   //   (Array.isArray(data) &&
@@ -97,13 +98,13 @@ const ListExports = () => {
     {
       dataIndex: 'quantity',
       key: 'quantity',
-      title: 'Quantity',
+      title: t('Quantity'),
       render: (data) => `${data} liters`,
     },
     {
       dataIndex: 'itemBatchEntity',
       key: 'itemBatchEntity',
-      title: 'Item Details',
+      title: t('Item Details'),
       render: (data) => (
         <div>
           <div>{data?.itemEntity?.name}</div>
@@ -114,25 +115,25 @@ const ListExports = () => {
     {
       dataIndex: 'itemBatchEntity',
       key: 'warehouseLocation',
-      title: 'Warehouse Location',
+      title: t('Warehouse Location'),
       render: (data) => data?.itemEntity?.warehouseLocationEntity?.name,
     },
     {
       dataIndex: 'itemBatchEntity',
       key: 'expiryDate',
-      title: 'Expiry Date',
+      title: t('Expiry Date'),
       render: (data) => (data?.expiryDate ? formatDate(data.expiryDate) : 'N/A'),
     },
     {
       dataIndex: 'exportDate',
       key: 'exportDate',
-      title: 'Export Date',
+      title: t('Export Date'),
       render: (data) => formatDate(data),
     },
     {
       dataIndex: 'status',
       key: 'status',
-      title: 'Status',
+      title: t('Status'),
       render: (data, record) => {
         // Only show SelectComponent if status is NOT "cancel"
         if (data == 'pending') {
@@ -154,13 +155,13 @@ const ListExports = () => {
     {
       dataIndex: 'received',
       key: 'received',
-      title: 'Received',
+      title: t('Received'),
       render: (data) => (data ? 'Yes' : 'No'),
     },
     {
       dataIndex: 'exportItemId',
       key: 'action',
-      title: 'Action',
+      title: t('Action'),
       render: (data) => (
         <div className='flex gap-4'>
           <ButtonComponent type='primary' onClick={() => navigate(`${data}`)}>
