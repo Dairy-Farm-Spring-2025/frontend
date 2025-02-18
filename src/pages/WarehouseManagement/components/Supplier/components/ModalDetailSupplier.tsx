@@ -11,7 +11,7 @@ import ModalComponent from '../../../../../components/Modal/ModalComponent';
 import useFetcher from '../../../../../hooks/useFetcher';
 import useToast from '../../../../../hooks/useToast';
 
-import { Supplier } from '../../../../../model/Warehouse/supplier';
+import { SupplierType } from '../../../../../model/Warehouse/supplier';
 import { useTranslation } from 'react-i18next';
 
 
@@ -35,7 +35,7 @@ const ModalDetailSupplier = ({
         data,
         isLoading: isLoadingDetail,
         mutate: mutateEdit,
-    } = useFetcher<Supplier>(`suppliers/${id}`, 'GET');
+    } = useFetcher<SupplierType>(`suppliers/${id}`, 'GET');
 
     useEffect(() => {
         if (data) {
@@ -46,7 +46,7 @@ const ModalDetailSupplier = ({
                 email: data.email
             });
         }
-    }, [data, form]);
+    }, [modal.open, data, form]);
 
     const handleFinish = async (values: any) => {
         try {
@@ -61,8 +61,9 @@ const ModalDetailSupplier = ({
     };
 
     const handleClose = () => {
+        form.resetFields(); // Reset form khi đóng modal
+        setEdit(false); // Đảm bảo quay về chế độ xem
         modal.closeModal();
-        form.resetFields();
     };
 
     const items: DescriptionPropsItem['items'] = [

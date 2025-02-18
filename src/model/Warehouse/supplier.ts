@@ -1,4 +1,4 @@
-export type Supplier = {
+export type SupplierType = {
     supplierId: number;
     name: string;
     phone: number;

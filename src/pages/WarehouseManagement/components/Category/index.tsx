@@ -12,11 +12,12 @@ import useToast from '../../../../hooks/useToast';
 import ModalAddCategory from './components/ModalAddCategory';
 import ModalDetailCategory from './components/ModalDetailCategory';
 import { useTranslation } from 'react-i18next';
+import { CategoryType } from '../../../../model/Warehouse/category';
 
 
 
 const Category = () => {
-    const { data, isLoading, mutate } = useFetcher('categories', 'GET');
+    const { data, isLoading, mutate } = useFetcher<CategoryType[]>('categories', 'GET');
     const [id, setId] = useState('');
     const toast = useToast();
     const { trigger, isLoading: loadingDelete } = useFetcher(
@@ -95,7 +96,7 @@ const Category = () => {
                         {t("Create Category")}
                     </ButtonComponent>
                     <TableComponent
-                        dataSource={data}
+                        dataSource={data || []}
                         columns={column}
                         loading={isLoading}
                     />
