@@ -24,7 +24,7 @@ const IllNess = () => {
     const { data, error, isLoading, mutate } = useFetch<Health[]>('illness', 'GET');
     const { t } = useTranslation();
     const { trigger, isLoading: loadingDelete } = useFetcher(
-        'suppliers',
+        'illness',
         'DELETE'
     );
     const [modalOpen, setModalOpen] = useState(false)
