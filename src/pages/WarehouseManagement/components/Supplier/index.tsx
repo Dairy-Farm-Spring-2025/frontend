@@ -12,12 +12,13 @@ import useToast from '../../../../hooks/useToast';
 import ModalAddSupplier from './components/ModalAddSupplier';
 import ModalDetailSupplier from './components/ModalDetailSupplier';
 import { useTranslation } from 'react-i18next';
+import { SupplierType } from '../../../../model/Warehouse/supplier';
 
 
 
 
 const Supplier = () => {
-    const { data, isLoading, mutate } = useFetcher('suppliers', 'GET');
+    const { data, isLoading, mutate } = useFetcher<SupplierType[]>('suppliers', 'GET');
     const [id, setId] = useState('');
     const toast = useToast();
     const { trigger, isLoading: loadingDelete } = useFetcher(
@@ -118,7 +119,7 @@ const Supplier = () => {
                         {t("Create Supplier")}
                     </ButtonComponent>
                     <TableComponent
-                        dataSource={data}
+                        dataSource={data || []}
                         columns={column}
                         loading={isLoading}
                     />

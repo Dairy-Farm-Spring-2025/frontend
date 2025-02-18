@@ -51,7 +51,7 @@ const ModalViewDetail = ({
 
             });
         }
-    }, [data, form]);
+    }, [modal.open, data, form]);
 
     const handleFinish = async (values: any) => {
         try {
@@ -77,7 +77,7 @@ const ModalViewDetail = ({
             label: t('Symptoms'),
             children: !edit ? (
                 data ? (
-                    data?.symptoms
+                    data?.symptoms.replace(/<\/?p>/g, '') // Loại bỏ thẻ <p>
                 ) : (
                     ''
                 )
@@ -109,7 +109,7 @@ const ModalViewDetail = ({
             label: t('Prognosis'),
             children: !edit ? (
                 data ? (
-                    data?.severity
+                    data?.prognosis.replace(/<\/?p>/g, '') // Loại bỏ thẻ <p>
                 ) : (
                     ''
                 )
