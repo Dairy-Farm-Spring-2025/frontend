@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import ButtonComponent from '../../../../../../../../components/Button/ButtonComponent';
 import TableComponent, {
   Column,
@@ -20,11 +21,11 @@ const ListAllItem = ({
   mutate,
 }: ListAllItemProps) => {
   const modal = useModal();
-
+  const { t } = useTranslation();
   return (
     <div className="flex flex-col gap-5">
       <ButtonComponent type="primary" onClick={modal.openModal}>
-        Create Item
+        {t("Create Item")}
       </ButtonComponent>
       <TableComponent
         columns={column}

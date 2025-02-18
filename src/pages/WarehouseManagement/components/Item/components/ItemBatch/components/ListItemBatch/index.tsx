@@ -17,6 +17,7 @@ import { Supplier } from '../../../../../../../../model/Warehouse/supplier';
 import CreateItemBatchModal from './components/CreateItemBatchModal';
 import SelectComponent from '../../../../../../../../components/Select/SelectComponent';
 import { ITEM_BATCH_OPTIONS } from '../../../../../../../../service/data/item';
+import { useTranslation } from 'react-i18next';
 
 const ListItemBatch = () => {
   const navigate = useNavigate();
@@ -44,7 +45,7 @@ const ListItemBatch = () => {
       toast.showError(error.message);
     }
   };
-
+  const { t } = useTranslation();
   const handleUpdateStatus = async (id: number, status: string) => {
     try {
       const response = await triggerUpdate({
@@ -68,24 +69,24 @@ const ListItemBatch = () => {
     {
       dataIndex: 'quantity',
       key: 'quantity',
-      title: 'Quantity',
+      title: t('Quantity'),
     },
     {
       dataIndex: 'importDate',
       key: 'importDate',
-      title: 'Import Date',
+      title: t('Import Date'),
       render: (data) => formatDate(data),
     },
     {
       dataIndex: 'expiryDate',
       key: 'expiryDate',
-      title: 'Expired Date',
+      title: t('Expired Date'),
       render: (data) => (data ? formatDate(data) : 'Not Yet'),
     },
     {
       dataIndex: 'status',
       key: 'status',
-      title: 'Status',
+      title: t('Status'),
       render: (data, record: ItemBatch) => (
         <SelectComponent
           className="w-full"
@@ -99,30 +100,30 @@ const ListItemBatch = () => {
     {
       dataIndex: 'itemEntity',
       key: 'itemEntity',
-      title: 'Item',
+      title: t('Item'),
       render: (data: Item) => data?.name,
     },
     {
       dataIndex: 'supplierEntity',
       key: 'supplierEntity',
-      title: 'Supplier',
+      title: t('Supplier'),
       render: (data: Supplier) => data?.name,
     },
     {
       dataIndex: 'itemBatchId',
       key: 'action',
-      title: 'Action',
+      title: t('Action'),
       render: (data) => (
         <div className="flex gap-4">
           <ButtonComponent type="primary" onClick={() => navigate(`${data}`)}>
-            View Detail
+            {t("View Detail")}
           </ButtonComponent>
           <PopconfirmComponent
             title="Are you sure to delete this item"
             onConfirm={() => handleDeleteItemBatch(data)}
           >
             <ButtonComponent type="primary" danger loading={deleteLoading}>
-              Delete
+              {t("Delete")}
             </ButtonComponent>
           </PopconfirmComponent>
         </div>
@@ -133,7 +134,7 @@ const ListItemBatch = () => {
     <AnimationAppear>
       <WhiteBackground>
         <ButtonComponent type="primary" onClick={modal.openModal}>
-          Create Item Batch
+          {t("Create Item Batch")}
         </ButtonComponent>
         <Divider className="!my-4" />
         <TableComponent

@@ -16,6 +16,7 @@ import { MilkBatch } from '../../../model/DailyMilk/MilkBatch';
 import { formatAreaType, formatDateHour, formatSTT } from '../../../utils/format';
 import CreateMilkBatchModal from './components/ModalCreateMilkBatch/CreateMilkBatchModal';
 import ModalMilkBatchDetail from './components/ModalMilkBatchDetail';
+import { useTranslation } from 'react-i18next';
 
 const MilkBatchManagement = () => {
   const modalBatch = useModal();
@@ -25,7 +26,7 @@ const MilkBatchManagement = () => {
   );
   console.log('check data: ', data);
   const modalViewDetail = useModal();
-
+  const { t } = useTranslation();
   const [milkBatchId, setMilkBatchId] = React.useState<number>(0);
 
   const handleOpenEdit = (record: any) => {
@@ -54,41 +55,41 @@ const MilkBatchManagement = () => {
     {
       dataIndex: 'totalVolume',
       key: 'totalVolume',
-      title: 'Total Volume',
+      title: t('Total Volume'),
     },
     {
       dataIndex: 'date',
       key: 'date',
-      title: 'Date',
+      title: t('Date'),
       render: (data) => formatDateHour(data),
     },
     {
       dataIndex: 'expiryDate',
       key: 'expiryDate',
-      title: 'Expiry Date',
+      title: t('Expiry Date'),
       render: (data) => formatDateHour(data),
     },
     {
       dataIndex: 'status',
       key: 'status',
-      title: 'Status',
+      title: t('Status'),
       render: (data) => formatAreaType(data),
     },
     {
       dataIndex: 'action',
       key: 'action',
-      title: 'Action',
+      title: t('Action'),
       render: (_, record) => (
         <div>
           <ButtonComponent onClick={() => handleOpenEdit(record)}>
-            View Detail
+            {t(" View Detail")}
           </ButtonComponent>
           <ButtonComponent
             danger
             onClick={() => console.log(record.milkBatchId)}
             style={{ marginLeft: 8 }}
           >
-            Delete
+            {t("Delete")}
           </ButtonComponent>
         </div>
       ),
@@ -109,7 +110,7 @@ const MilkBatchManagement = () => {
         />
         <CreateMilkBatchModal modal={modalBatch} mutate={mutate} />
         <ButtonComponent onClick={openModalBatch} type="primary">
-          Create Milk Batch
+          {t("Create Milk Batch")}
         </ButtonComponent>
         <Divider className="my-4" />
         <TableComponent

@@ -11,6 +11,7 @@ import useModal from '../../../../hooks/useModal';
 import useToast from '../../../../hooks/useToast';
 import ModalAddWarehouse from './components/ModalAddWarehouse';
 import ModalDetailWarehouse from './components/ModalDetailWarehouse';
+import { useTranslation } from 'react-i18next';
 
 const Warehouse = () => {
   const { data, isLoading, mutate } = useFetcher('warehouses', 'GET');
@@ -22,7 +23,7 @@ const Warehouse = () => {
   );
   const modal = useModal();
   const modalDetail = useModal();
-
+  const { t } = useTranslation();
   const onConfirm = async (id: string) => {
     try {
       await trigger({ url: `warehouses/${id}` });
@@ -52,28 +53,28 @@ const Warehouse = () => {
     {
       dataIndex: 'name',
       key: 'name',
-      title: 'Name',
+      title: t('Name'),
       render: (data) => <p className="text-base font-bold">{data}</p>,
     },
     {
       dataIndex: 'warehouseLocationId',
       key: 'action',
-      title: 'Action',
+      title: t('Action'),
       render: (data) => (
         <div className="flex gap-5">
           <PopconfirmComponent
-            title={'Delete?'}
+            title={t('Delete?')}
             onConfirm={() => onConfirm(data)}
           >
             <ButtonComponent type="primary" danger>
-              Delete
+              {t("Delete")}
             </ButtonComponent>
           </PopconfirmComponent>
           <ButtonComponent
             type="primary"
             onClick={() => handleOpenModalDetail(data)}
           >
-            View detail
+            {t("View Detail")}
           </ButtonComponent>
         </div>
       ),
@@ -89,7 +90,7 @@ const Warehouse = () => {
             type="primary"
             onClick={handleOpenModalAdd}
           >
-            Add Warehouse
+            {t("Create Warehouse")}
           </ButtonComponent>
           <TableComponent
             dataSource={data}

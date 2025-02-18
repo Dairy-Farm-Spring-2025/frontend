@@ -19,6 +19,7 @@ import useToast from '../../../../../../hooks/useToast';
 import PopconfirmComponent from '../../../../../../components/Popconfirm/PopconfirmComponent';
 import ButtonComponent from '../../../../../../components/Button/ButtonComponent';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const convertToTreeDataByWarehouse = (items: Item[]) => {
   const warehouseMap = new Map();
@@ -67,7 +68,7 @@ const ListItemManagement = () => {
   } = useFetcher('items/category');
   const { isLoading: isLoadingDeleteItem, trigger: triggerDeleteItem } =
     useFetcher(`items/delete`, 'DELETE');
-
+  const { t } = useTranslation();
   const column: Column[] = [
     {
       key: 'itemId',
@@ -77,35 +78,35 @@ const ListItemManagement = () => {
     {
       key: 'name',
       dataIndex: 'name',
-      title: 'Name',
+      title: t('Name'),
       render: (name, data) => <TextLink to={`${data.itemId}`}>{name}</TextLink>,
     },
     {
       key: 'quantity',
       dataIndex: 'quantity',
-      title: 'Quantity',
+      title: t('Quantity'),
     },
     {
       key: 'unit',
       dataIndex: 'unit',
-      title: 'Unit',
+      title: t('Unit'),
     },
     {
       key: 'categoryEntity',
       dataIndex: 'categoryEntity',
-      title: 'Category',
+      title: t('Category'),
       render: (data) => data?.name,
     },
     {
       key: 'warehouseLocationEntity',
       dataIndex: 'warehouseLocationEntity',
-      title: 'Warehouse Location',
+      title: t('Warehouse Location'),
       render: (data) => data?.name,
     },
     {
       key: 'status',
       dataIndex: 'status',
-      title: 'Status',
+      title: t('Status'),
     },
     // {
     //   key: 'action',
@@ -132,7 +133,7 @@ const ListItemManagement = () => {
       width: 100,
     },
     {
-      title: 'Name',
+      title: t('Name'),
       dataIndex: 'name',
       key: 'name',
       render: (name, data) =>
@@ -143,25 +144,25 @@ const ListItemManagement = () => {
         ),
     },
     {
-      title: 'Quantity',
+      title: t('Quantity'),
       dataIndex: 'quantity',
       key: 'quantity',
       width: 120,
     },
     {
-      title: 'Unit',
+      title: t('Unit'),
       dataIndex: 'unit',
       key: 'unit',
       width: 120,
     },
     {
-      title: 'Category',
+      title: t('Category'),
       dataIndex: 'categoryEntity',
       key: 'categoryEntity',
       render: (category) => category?.name || '-',
     },
     {
-      title: 'Status',
+      title: t('Status'),
       dataIndex: 'status',
       key: 'status',
       width: 120,
@@ -169,11 +170,11 @@ const ListItemManagement = () => {
     {
       key: 'action',
       dataIndex: 'itemId',
-      title: 'Action',
+      title: t('Action'),
       render: (data) =>
         data && (
           <PopconfirmComponent
-            title={'Delete this item?'}
+            title={t('Delete this item?')}
             onConfirm={() => handleDelete(data)}
           >
             <ButtonComponent
@@ -191,7 +192,7 @@ const ListItemManagement = () => {
   const items: TabsItemProps['items'] = [
     {
       key: 'all',
-      label: 'View All',
+      label: t('View All'),
       children: (
         <ListAllItem
           column={columnsItemByWarehouse}
@@ -206,7 +207,7 @@ const ListItemManagement = () => {
     },
     {
       key: 'view-by-warehouse',
-      label: 'View By Warehouse',
+      label: t('View By Warehouse'),
       children: (
         <ListItemWarehouse
           column={column}
@@ -218,7 +219,7 @@ const ListItemManagement = () => {
     },
     {
       key: 'view-by-category',
-      label: 'View By Category',
+      label: t('View By Category'),
       children: (
         <ListItemCategory
           column={column}

@@ -9,6 +9,7 @@ import FormItemComponent from '../../../../components/Form/Item/FormItemComponen
 import LabelForm from '../../../../components/LabelForm/LabelForm';
 import { AreaType } from '../../../../model/Area/AreaType';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface ModalCreateAreaProps {
   mutate: any;
@@ -46,7 +47,7 @@ const ModalCreateArea = ({ mutate, modal }: ModalCreateAreaProps) => {
   const toast = useToast();
   const { trigger, isLoading } = useFetcher('areas/create', 'POST');
   const [form] = Form.useForm();
-
+  const { t } = useTranslation();
   const [areaTypeSelected, setAreaTypeSelected] = useState<AreaType | null>(null);
 
   const validateDimensions = (areaType: AreaType, length: number, width: number) => {
@@ -80,13 +81,13 @@ const ModalCreateArea = ({ mutate, modal }: ModalCreateAreaProps) => {
   return (
     <div>
       <ButtonComponent onClick={modal.openModal} type='primary'>
-        Create Area
+        {t("Create Area")}
       </ButtonComponent>
       <ModalComponent
         open={modal.open}
         onOk={() => form.submit()}
         onCancel={onClose}
-        title='Create New Area'
+        title={t('Create New Area')}
         loading={isLoading}
         width={800}
         style={{ overflow: 'none' }}
@@ -95,7 +96,7 @@ const ModalCreateArea = ({ mutate, modal }: ModalCreateAreaProps) => {
           <FormItemComponent
             rules={[{ required: true, message: 'Area type is required' }]}
             name='areaType'
-            label={<LabelForm>Area Type:</LabelForm>}
+            label={<LabelForm>{t("Area Type")}:</LabelForm>}
           >
             <Select options={areaTypes} onChange={(value) => setAreaTypeSelected(value)} />
           </FormItemComponent>
@@ -119,7 +120,7 @@ const ModalCreateArea = ({ mutate, modal }: ModalCreateAreaProps) => {
                 }),
               ]}
               name='length'
-              label={<LabelForm>Length (m):</LabelForm>}
+              label={<LabelForm>{t("Length (m)")}:</LabelForm>}
             >
               <InputNumber
                 className='w-[50%]'
@@ -150,7 +151,7 @@ const ModalCreateArea = ({ mutate, modal }: ModalCreateAreaProps) => {
                 }),
               ]}
               name='width'
-              label={<LabelForm>Width (m):</LabelForm>}
+              label={<LabelForm>{t("Width (m)")}:</LabelForm>}
             >
               <InputNumber
                 className='w-[50%]'
@@ -180,7 +181,7 @@ const ModalCreateArea = ({ mutate, modal }: ModalCreateAreaProps) => {
                 }),
               ]}
               name='penLength'
-              label={<LabelForm>Pen Length (m):</LabelForm>}
+              label={<LabelForm>{t("Pen Length (m)")}:</LabelForm>}
             >
               <InputNumber
                 className='w-[50%]'
@@ -194,7 +195,7 @@ const ModalCreateArea = ({ mutate, modal }: ModalCreateAreaProps) => {
             <FormItemComponent
               rules={[
                 { required: true, message: 'Pen Width is required' },
-                { type: 'number', min: 1, message: 'Pen Width must be a positive number' },
+                { type: 'number', min: 1, message: t('Pen Width must be a positive number') },
                 ({ getFieldValue }) => ({
                   validator(_, value) {
                     const penLength = getFieldValue('penLength');
@@ -202,13 +203,13 @@ const ModalCreateArea = ({ mutate, modal }: ModalCreateAreaProps) => {
                       return Promise.resolve();
                     }
                     return Promise.reject(
-                      new Error('Pen Width must be smaller than or equal to the Pen Length')
+                      new Error(t('Pen Width must be smaller than or equal to the Pen Length'))
                     );
                   },
                 }),
               ]}
               name='penWidth'
-              label={<LabelForm>Pen Width (m):</LabelForm>}
+              label={<LabelForm>{t("Pen Width (m)")}:</LabelForm>}
             >
               <InputNumber
                 className='w-[50%]'
@@ -221,43 +222,39 @@ const ModalCreateArea = ({ mutate, modal }: ModalCreateAreaProps) => {
             </FormItemComponent>
           </div>
           <FormItemComponent
-            rules={[{ required: true, message: 'Name is required' }, { validator: validateInput }]}
+            rules={[{ required: true, message: t('Name is required') }, { validator: validateInput }]}
             name='name'
-            label={<LabelForm>Name:</LabelForm>}
+            label={<LabelForm>{t("Name")}:</LabelForm>}
           >
             <Input />
           </FormItemComponent>
           <FormItemComponent
-            rules={[{ required: true, message: 'Description is required' }]}
+            rules={[{ required: true, message: t('Description is required') }]}
             name='description'
-            label={<LabelForm>Description:</LabelForm>}
+            label={<LabelForm>{t("Description")}:</LabelForm>}
           >
             <Input.TextArea style={{ height: 80 }} placeholder='Enter a description' />
           </FormItemComponent>
         </FormComponent>
         <div className='mb-4 text-sm text-gray-700'>
-          <p className='font-semibold'>Note:</p>
-          <p>The minimum dimensions required for each area type are as follows:</p>
+          <p className='font-semibold'>{t("Note")}:</p>
+          <p>{t("The minimum dimensions required for each area type are as follows")}:</p>
           <ul className='list-disc pl-5'>
             <li>
-              <span className='font-medium'>Cow Housing:</span> Minimum length 20m, minimum width
-              10m
+              <span className='font-medium'>{t("Cow Housing")}:</span> {t("Minimum length 20m, minimum width 10m")}
             </li>
             <li>
-              <span className='font-medium'>Milking Parlor:</span> Minimum length 15m, minimum width
-              8m
+              <span className='font-medium'>{t("Milking Parlor")}:</span> {t("Minimum length 15m, minimum width 8m")}
             </li>
             <li>
-              <span className='font-medium'>Warehouse:</span> Minimum length 10m, minimum width 5m
+              <span className='font-medium'>{t("Warehouse")}:</span> {t("Minimum length 10m, minimum width 5m")}
             </li>
           </ul>
           <p>
-            Ensure that the dimensions you enter meet or exceed the minimum requirements for the
-            selected area type.
+            {t("Ensure that the dimensions you enter meet or exceed the minimum requirements for the selected area type.")}
           </p>
           <p className='mt-2 text-blue-600'>
-            <strong>Tip:</strong> You can refer to the required dimensions when filling in the
-            length and width.
+            <strong>{t("Tip")}:</strong> {t("You can refer to the required dimensions when filling in the length and width.")}
           </p>
         </div>
       </ModalComponent>

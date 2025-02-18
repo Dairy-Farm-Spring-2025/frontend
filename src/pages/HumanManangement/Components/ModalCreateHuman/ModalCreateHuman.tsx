@@ -8,6 +8,7 @@ import ModalComponent from "../../../../components/Modal/ModalComponent";
 import FormComponent from "../../../../components/Form/FormComponent";
 import FormItemComponent from "../../../../components/Form/Item/FormItemComponent";
 import LabelForm from "../../../../components/LabelForm/LabelForm";
+import { useTranslation } from "react-i18next";
 
 
 
@@ -18,7 +19,7 @@ const ModalCreateHuman = ({ mutate, modal, title, defaultValues }: any) => {
     const toast = useToast();
     const { trigger, isLoading } = useFetcher("users/create", "POST");
     const [form] = Form.useForm();
-
+    const { t } = useTranslation();
     const onFinish = async (values: CreateUser) => {
         try {
             const response = await trigger({ body: values });
@@ -60,7 +61,7 @@ const ModalCreateHuman = ({ mutate, modal, title, defaultValues }: any) => {
                     <FormItemComponent
                         rules={[{ required: true }]}
                         name="name"
-                        label={<LabelForm>Name:</LabelForm>}
+                        label={<LabelForm>{t("Name")}:</LabelForm>}
                     >
                         <Input />
                     </FormItemComponent>
@@ -76,7 +77,7 @@ const ModalCreateHuman = ({ mutate, modal, title, defaultValues }: any) => {
                     <FormItemComponent hidden
                         rules={[{ required: true }]}
                         name="roleId"
-                        label={<LabelForm>Role:</LabelForm>}
+                        label={<LabelForm>{t("Role")}:</LabelForm>}
                     >
                         <Select options={defaultValues}
                         />

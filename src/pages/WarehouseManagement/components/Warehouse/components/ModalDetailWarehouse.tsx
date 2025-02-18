@@ -11,6 +11,7 @@ import ModalComponent from '../../../../../components/Modal/ModalComponent';
 import useFetcher from '../../../../../hooks/useFetcher';
 import useToast from '../../../../../hooks/useToast';
 import { Warehouse } from '../../../../../model/Warehouse/warehouse';
+import { useTranslation } from 'react-i18next';
 
 interface ModalDetailWarehouseProps {
   modal: any;
@@ -32,7 +33,7 @@ const ModalDetailWarehouse = ({
     isLoading: isLoadingDetail,
     mutate: mutateEdit,
   } = useFetcher<Warehouse>(`warehouses/${id}`, 'GET');
-
+  const { t } = useTranslation();
   useEffect(() => {
     if (data) {
       form.setFieldsValue({
@@ -62,7 +63,7 @@ const ModalDetailWarehouse = ({
   const items: DescriptionPropsItem['items'] = [
     {
       key: 'name',
-      label: 'Name',
+      label: t('Name'),
       children: !edit ? (
         data ? (
           data?.name
@@ -78,7 +79,7 @@ const ModalDetailWarehouse = ({
     },
     {
       key: 'description',
-      label: 'Description',
+      label: t('Description'),
       children: !edit ? (
         data ? (
           data?.description
@@ -95,14 +96,14 @@ const ModalDetailWarehouse = ({
 
   return (
     <ModalComponent
-      title="Create Warehouse"
+      title={t("Create Warehouse")}
       open={modal.open}
       onCancel={handleClose}
       loading={isLoadingDetail}
       footer={[
         !edit && (
           <ButtonComponent type="primary" onClick={() => setEdit(true)}>
-            Edit
+            {t("Edit")}
           </ButtonComponent>
         ),
         edit && (
@@ -115,7 +116,7 @@ const ModalDetailWarehouse = ({
               type="primary"
               onClick={() => form.submit()}
             >
-              Save
+              {t("Save")}
             </ButtonComponent>
           </div>
         ),
