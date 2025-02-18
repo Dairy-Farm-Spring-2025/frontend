@@ -3,56 +3,151 @@ import {
   Navigate,
   RouterProvider,
 } from 'react-router-dom';
-import AppDashboard from '../../core/layout/AppDashboard';
-import CowManagement from '../../pages/CowManagement';
-import ListCow from '../../pages/CowManagement/components/ListCow';
-
 import { useSelector } from 'react-redux';
 import { RootState } from '../../core/store/store';
-import AreaManagement from '../../pages/AreaManagement';
-import CowTypeManagement from '../../pages/CowManagement/components/CowTypeManagement';
-import CreateCow from '../../pages/CowManagement/components/CreateCow';
-import LoginPage from '../../pages/Login';
-import ForgetPassword from '../../pages/Login/components/ForgetPassword';
-import LoginForm from '../../pages/Login/components/LoginForm';
-import Profile from '../../pages/Profile';
-import ListRole from '../../pages/RoleManagement';
-import ListUser from '../../pages/UserManagement';
-
-import HumanManagement from '../../pages/HumanManangement';
-import ListVeterinarian from '../../pages/HumanManangement/VeterinarianManagement';
-import ListWorker from '../../pages/HumanManangement/WorkerManagement';
-import PenManageMent from '../../pages/PenManagement';
-
-import CowDetail from '../../pages/CowManagement/components/CowDetail';
-import Dashboard from '../../pages/Dashboard';
-import DailyMilkDashboard from '../../pages/Dashboard/components/DailyMilk';
-import MilkManagement from '../../pages/MilkManagement';
-import MilkBatchManagement from '../../pages/MilkManagement/MilkBatchManagement';
-import WarehouseManagement from '../../pages/WarehouseManagement';
-import Category from '../../pages/WarehouseManagement/components/Category';
-import ItemManagement from '../../pages/WarehouseManagement/components/Item';
-import ListItemManagement from '../../pages/WarehouseManagement/components/Item/components/ListItem';
-import Warehouse from '../../pages/WarehouseManagement/components/Warehouse';
-import ItemDetail from '../../pages/WarehouseManagement/components/Item/components/ItemDetail';
-import { MoveCowManagement } from '../../pages/CowPenManagement/components/MoveCowManagement';
+import { Spin } from 'antd';
+import { lazy, Suspense } from 'react';
 import { CowPenManagement } from '../../pages/CowPenManagement';
-import Supplier from '../../pages/WarehouseManagement/components/Supplier';
-import HealthReport from '../../pages/CowManagement/components/HeathReport';
-import ItemBatchManagement from '../../pages/WarehouseManagement/components/Item/components/ItemBatch';
-import ListItemBatch from '../../pages/WarehouseManagement/components/Item/components/ItemBatch/components/ListItemBatch';
-import DetailItemBatch from '../../pages/WarehouseManagement/components/Item/components/ItemBatch/components/DetailItemBatch';
-import VaccineCycleManagement from '../../pages/VaccineCycleManagement';
-import ListVaccineCycle from '../../pages/VaccineCycleManagement/components/ListVaccineCycle';
-import ExportItem from '../../pages/WarehouseManagement/components/Item/components/ExportItem';
-import ListExports from '../../pages/WarehouseManagement/components/Item/components/ExportItem/ListExports';
-import DetailExport from '../../pages/WarehouseManagement/components/Item/components/ExportItem/DetailExport';
-import DetailVaccineCycle from '../../pages/VaccineCycleManagement/components/DetailVaccineCycle';
-import FeedMealManagement from '../../pages/FeedManagement/FeedMeal';
-import IllNess from '../../pages/CowManagement/components/HeathReport/IllNess';
+import { MoveCowManagement } from '../../pages/CowPenManagement/components/MoveCowManagement';
+const ListItemBatch = lazy(
+  () =>
+    import(
+      '../../pages/WarehouseManagement/components/Item/components/ItemBatch/components/ListItemBatch'
+    )
+);
+const DetailItemBatch = lazy(
+  () =>
+    import(
+      '../../pages/WarehouseManagement/components/Item/components/ItemBatch/components/DetailItemBatch'
+    )
+);
+const ExportItem = lazy(
+  () =>
+    import(
+      '../../pages/WarehouseManagement/components/Item/components/ExportItem'
+    )
+);
+const ListExports = lazy(
+  () =>
+    import(
+      '../../pages/WarehouseManagement/components/Item/components/ExportItem/ListExports'
+    )
+);
+const DetailExport = lazy(
+  () =>
+    import(
+      '../../pages/WarehouseManagement/components/Item/components/ExportItem/DetailExport'
+    )
+);
+const MilkManagement = lazy(() => import('../../pages/MilkManagement'));
+const MilkBatchManagement = lazy(
+  () => import('../../pages/MilkManagement/MilkBatchManagement')
+);
+const HumanManagement = lazy(() => import('../../pages/HumanManangement'));
+const ListWorker = lazy(
+  () => import('../../pages/HumanManangement/WorkerManagement')
+);
+const ListVeterinarian = lazy(
+  () => import('../../pages/HumanManangement/VeterinarianManagement')
+);
+
+// Lazy load components
+const ItemDetail = lazy(
+  () =>
+    import(
+      '../../pages/WarehouseManagement/components/Item/components/ItemDetail'
+    )
+);
+const ItemBatchManagement = lazy(
+  () =>
+    import(
+      '../../pages/WarehouseManagement/components/Item/components/ItemBatch'
+    )
+);
+const AppDashboard = lazy(() => import('../../core/layout/AppDashboard'));
+const CowManagement = lazy(() => import('../../pages/CowManagement'));
+const PenManageMent = lazy(() => import('../../pages/PenManagement'));
+const ListCow = lazy(
+  () => import('../../pages/CowManagement/components/ListCow')
+);
+const AreaManagement = lazy(() => import('../../pages/AreaManagement'));
+const CowTypeManagement = lazy(
+  () => import('../../pages/CowManagement/components/CowTypeManagement')
+);
+const CreateCow = lazy(
+  () => import('../../pages/CowManagement/components/CreateCow')
+);
+const LoginPage = lazy(() => import('../../pages/Login'));
+const ForgetPassword = lazy(
+  () => import('../../pages/Login/components/ForgetPassword')
+);
+const LoginForm = lazy(() => import('../../pages/Login/components/LoginForm'));
+const Profile = lazy(() => import('../../pages/Profile'));
+const ListRole = lazy(() => import('../../pages/RoleManagement'));
+const ListUser = lazy(() => import('../../pages/UserManagement'));
+const Dashboard = lazy(() => import('../../pages/Dashboard'));
+const DailyMilkDashboard = lazy(
+  () => import('../../pages/Dashboard/components/DailyMilk')
+);
+const CowDetail = lazy(
+  () => import('../../pages/CowManagement/components/CowDetail')
+);
+const FeedMealManagement = lazy(
+  () => import('../../pages/FeedManagement/FeedMeal')
+);
+const VaccineCycleManagement = lazy(
+  () => import('../../pages/VaccineCycleManagement')
+);
+const ListVaccineCycle = lazy(
+  () => import('../../pages/VaccineCycleManagement/components/ListVaccineCycle')
+);
+const DetailVaccineCycle = lazy(
+  () =>
+    import('../../pages/VaccineCycleManagement/components/DetailVaccineCycle')
+);
+const WarehouseManagement = lazy(
+  () => import('../../pages/WarehouseManagement')
+);
+const Category = lazy(
+  () => import('../../pages/WarehouseManagement/components/Category')
+);
+const ItemManagement = lazy(
+  () => import('../../pages/WarehouseManagement/components/Item')
+);
+const ListItemManagement = lazy(
+  () =>
+    import(
+      '../../pages/WarehouseManagement/components/Item/components/ListItem'
+    )
+);
+const Warehouse = lazy(
+  () => import('../../pages/WarehouseManagement/components/Warehouse')
+);
+const Supplier = lazy(
+  () => import('../../pages/WarehouseManagement/components/Supplier')
+);
+const HealthReport = lazy(
+  () => import('../../pages/CowManagement/components/HeathReport')
+);
+const IllNess = lazy(
+  () => import('../../pages/CowManagement/components/HeathReport/IllNess')
+);
+// Add more components as needed...
 
 const AppRouting = () => {
   const user = useSelector((state: RootState) => state.user);
+  const SuspenseWrapper = (Component: JSX.Element) => (
+    <Suspense
+      fallback={
+        <div className="w-screen h-screen flex items-center justify-center">
+          <Spin size="large" />
+        </div>
+      }
+    >
+      {Component}
+    </Suspense>
+  );
+
   const router = createBrowserRouter([
     {
       path: '',
@@ -60,35 +155,40 @@ const AppRouting = () => {
     },
     {
       path: '/login',
-      element: <LoginPage />,
+      element: SuspenseWrapper(<LoginPage />),
       children: [
         {
           path: '',
           index: true,
-          element: <LoginForm />,
+          element: SuspenseWrapper(<LoginForm />),
         },
         {
           path: 'forget-password',
-          element: <ForgetPassword />,
+          element: SuspenseWrapper(<ForgetPassword />),
         },
       ],
     },
     {
       path: 'dairy',
-      element: user !== null ? <AppDashboard /> : <Navigate to={'/login'} />,
+      element:
+        user !== null ? (
+          SuspenseWrapper(<AppDashboard />)
+        ) : (
+          <Navigate to={'/login'} />
+        ),
       children: [
         {
           path: 'user-management',
-          element: <ListUser />,
+          element: SuspenseWrapper(<ListUser />),
         },
         {
           path: 'role-management',
-          element: <ListRole />,
+          element: SuspenseWrapper(<ListRole />),
         },
 
         {
           path: 'dashboard',
-          element: <Dashboard />,
+          element: SuspenseWrapper(<Dashboard />),
           children: [
             {
               path: '',
@@ -96,13 +196,13 @@ const AppRouting = () => {
             },
             {
               path: 'daily-milk',
-              element: <DailyMilkDashboard />,
+              element: SuspenseWrapper(<DailyMilkDashboard />),
             },
           ],
         },
         {
           path: 'cow-management',
-          element: <CowManagement />,
+          element: SuspenseWrapper(<CowManagement />),
           children: [
             {
               path: '',
@@ -110,43 +210,43 @@ const AppRouting = () => {
             },
             {
               path: ':id',
-              element: <CowDetail />,
+              element: SuspenseWrapper(<CowDetail />),
             },
             {
               path: 'cow-type-management',
-              element: <CowTypeManagement />,
+              element: SuspenseWrapper(<CowTypeManagement />),
             },
             {
               path: 'list-cow',
-              element: <ListCow />,
+              element: SuspenseWrapper(<ListCow />),
             },
             {
               path: 'create-cow',
-              element: <CreateCow />,
+              element: SuspenseWrapper(<CreateCow />),
             },
             {
               path: 'health-report',
-              element: <HealthReport />,
+              element: SuspenseWrapper(<HealthReport />),
               children: [
                 {
                   path: 'ill-ness',
-                  element: <IllNess />
+                  element: SuspenseWrapper(<IllNess />),
                 },
-              ]
+              ],
             },
           ],
         },
         {
           path: 'feed-management',
-          element: <FeedMealManagement />,
+          element: SuspenseWrapper(<FeedMealManagement />),
         },
         {
           path: 'area-management',
-          element: <AreaManagement />,
+          element: SuspenseWrapper(<AreaManagement />),
         },
         {
           path: 'warehouse-management',
-          element: <WarehouseManagement />,
+          element: SuspenseWrapper(<WarehouseManagement />),
           children: [
             {
               path: '',
@@ -154,53 +254,53 @@ const AppRouting = () => {
             },
             {
               path: 'warehouse',
-              element: <Warehouse />,
+              element: SuspenseWrapper(<Warehouse />),
             },
             {
               path: 'category',
-              element: <Category />,
+              element: SuspenseWrapper(<Category />),
             },
             {
               path: 'supplier',
-              element: <Supplier />,
+              element: SuspenseWrapper(<Supplier />),
             },
             {
               path: 'item-management',
-              element: <ItemManagement />,
+              element: SuspenseWrapper(<ItemManagement />),
               children: [
                 {
                   path: '',
-                  element: <ListItemManagement />,
+                  element: SuspenseWrapper(<ListItemManagement />),
                 },
                 {
                   path: ':id',
-                  element: <ItemDetail />,
+                  element: SuspenseWrapper(<ItemDetail />),
                 },
                 {
                   path: 'item-batch',
-                  element: <ItemBatchManagement />,
+                  element: SuspenseWrapper(<ItemBatchManagement />),
                   children: [
                     {
                       path: '',
-                      element: <ListItemBatch />,
+                      element: SuspenseWrapper(<ListItemBatch />),
                     },
                     {
                       path: ':id',
-                      element: <DetailItemBatch />,
+                      element: SuspenseWrapper(<DetailItemBatch />),
                     },
                   ],
                 },
                 {
                   path: 'export-item',
-                  element: <ExportItem />,
+                  element: SuspenseWrapper(<ExportItem />),
                   children: [
                     {
                       path: '',
-                      element: <ListExports />,
+                      element: SuspenseWrapper(<ListExports />),
                     },
                     {
                       path: ':id',
-                      element: <DetailExport />,
+                      element: SuspenseWrapper(<DetailExport />),
                     },
                   ],
                 },
@@ -210,30 +310,30 @@ const AppRouting = () => {
         },
         {
           path: 'pen-management',
-          element: <PenManageMent />,
+          element: SuspenseWrapper(<PenManageMent />),
         },
         {
           path: 'vaccine-cycle-management',
-          element: <VaccineCycleManagement />,
+          element: SuspenseWrapper(<VaccineCycleManagement />),
           children: [
             { path: '', element: <Navigate to={'list'} /> },
-            { path: 'list', element: <ListVaccineCycle /> },
-            { path: ':id', element: <DetailVaccineCycle /> },
+            { path: 'list', element: SuspenseWrapper(<ListVaccineCycle />) },
+            { path: ':id', element: SuspenseWrapper(<DetailVaccineCycle />) },
           ],
         },
         {
           path: 'move-cow-management',
-          element: <CowPenManagement />,
+          element: SuspenseWrapper(<CowPenManagement />),
           children: [
             {
               path: '',
-              element: <MoveCowManagement />,
+              element: SuspenseWrapper(<MoveCowManagement />),
             },
           ],
         },
         {
           path: 'milk-management',
-          element: <MilkManagement />,
+          element: SuspenseWrapper(<MilkManagement />),
           children: [
             {
               path: '',
@@ -242,13 +342,13 @@ const AppRouting = () => {
 
             {
               path: ':id',
-              element: <MilkBatchManagement />,
+              element: SuspenseWrapper(<MilkBatchManagement />),
             },
           ],
         },
         {
           path: 'human-management',
-          element: <HumanManagement />,
+          element: SuspenseWrapper(<HumanManagement />),
           children: [
             {
               path: '',
@@ -257,17 +357,17 @@ const AppRouting = () => {
 
             {
               path: 'worker',
-              element: <ListWorker />,
+              element: SuspenseWrapper(<ListWorker />),
             },
             {
               path: 'veterinarian',
-              element: <ListVeterinarian />,
+              element: SuspenseWrapper(<ListVeterinarian />),
             },
           ],
         },
         {
           path: 'profile',
-          element: <Profile />,
+          element: SuspenseWrapper(<Profile />),
         },
       ],
     },

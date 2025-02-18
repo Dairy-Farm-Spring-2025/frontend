@@ -7,7 +7,7 @@ import { FilterOutlined } from '@ant-design/icons';
 
 export interface Column extends ColumnProps {
   title: string;
-  dataIndex: string;
+  dataIndex: string | any;
   key: string;
   searchable?: boolean;
   render?: (value: any, record: any, index: number) => React.ReactNode;
