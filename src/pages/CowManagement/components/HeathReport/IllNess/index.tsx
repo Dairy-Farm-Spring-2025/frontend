@@ -27,6 +27,10 @@ const IllNess = () => {
         'illness',
         'DELETE'
     );
+    const stripHtml = (html: string) => {
+        const doc = new DOMParser().parseFromString(html, "text/html");
+        return doc.body.textContent || "";
+    };
     const [modalOpen, setModalOpen] = useState(false)
     console.log(isLoading);
     const toast = useToast();
@@ -73,7 +77,7 @@ const IllNess = () => {
                             <p><strong>{t("Date of Birth")}:</strong> {formatDateHour(data.dateOfBirth)}</p>
                             <p><strong>{t("Date of Enter")}:</strong> {formatDateHour(data.dateOfEnter)}</p>
                             <p><strong>{t("Origin")}:</strong> {getLabelByValue(data.cowOrigin, cowOrigin)}</p>
-                            <p><strong>{t("Description")}:</strong> {data.description}</p>
+                            <p><strong>{t("Description")}:</strong> {stripHtml(data.description)}</p>
                         </div>
                     }
                 >
@@ -147,7 +151,7 @@ const IllNess = () => {
                             <p><strong>ID:</strong> {data.id}</p>
                             <p><strong>{t("Employee Number")}:</strong> {formatAreaType(data.employeeNumber)}</p>
                             <p><strong>{t("Email")}:</strong> {data.email}</p>
-                            <p><strong>{t("Date of Enter")}:</strong> {formatDateHour(data.dateOfEnter)}</p>
+                            <p><strong>{t("Date Of Enter")}:</strong> {formatDateHour(data.dateOfEnter)}</p>
                             <p><strong>{t("Role")}:</strong> {data.roleId.name}</p>
                             {/* <p><strong>Origin:</strong> {getLabelByValue(data.cowOrigin, cowOrigin)}</p>
                             <p><strong>Description:</strong> {data.description}</p> */}

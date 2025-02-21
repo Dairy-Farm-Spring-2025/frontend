@@ -278,10 +278,18 @@ const AppDashboard: React.FC = () => {
             <BiCategory size={sizeIcon} />
           ),
         ]),
-        getItem(
-          t('application'),
-          'dairy/application-management',
-          <FaWpforms />
+        getItem(t('Application'), 'dairy/application-management', <FaWpforms />, [
+          getItem(
+            t('Application'),
+            'dairy/application-management/application',
+            <BiCategory size={sizeIcon} />
+          ),
+          getItem(
+            t('Application Type'),
+            'dairy/application-management/application-type',
+            <BiCategory size={sizeIcon} />
+          ),
+        ]
         ),
         getItem(t('Issue'), 'dairy/issue-management', <AiOutlineIssuesClose />),
         getItem(
