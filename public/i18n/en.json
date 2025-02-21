@@ -57,7 +57,10 @@
   "human": "Human",
   "schedule": "Schedule",
   "task": "Task",
-  "application": "Application",
   "issue": "Issue",
-  "request_schedule": "Request Schedule"
+  "request_schedule": "Request Schedule",
+  "hay": "Hay",
+  "refined": "Refined food",
+  "silage": "Silage",
+  "minerals": "Minerals"
 }

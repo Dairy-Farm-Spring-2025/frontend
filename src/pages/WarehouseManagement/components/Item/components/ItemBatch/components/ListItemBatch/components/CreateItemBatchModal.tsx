@@ -7,12 +7,12 @@ import LabelForm from '../../../../../../../../../components/LabelForm/LabelForm
 import useFetcher from '../../../../../../../../../hooks/useFetcher';
 import { useEffect, useState } from 'react';
 import { Item } from '../../../../../../../../../model/Warehouse/items';
-import { Supplier } from '../../../../../../../../../model/Warehouse/supplier';
 import SelectComponent from '../../../../../../../../../components/Select/SelectComponent';
 import { ItemBatchCreate } from '../../../../../../../../../model/Warehouse/itemBatch';
 import useToast from '../../../../../../../../../hooks/useToast';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
+import { SupplierType } from '../../../../../../../../../model/Warehouse/supplier';
 
 interface CreateItemBatchModalProps {
   modal: any;
@@ -24,7 +24,7 @@ const CreateItemBatchModal = ({ modal, mutate }: CreateItemBatchModalProps) => {
   const [optionItem, setOptionItem] = useState<any[]>([]);
   const [optionSupplier, setOptionSupplier] = useState<any[]>([]);
   const { data: dataItem } = useFetcher<Item[]>('items', 'GET');
-  const { data: dataSupplier } = useFetcher<Supplier[]>('suppliers', 'GET');
+  const { data: dataSupplier } = useFetcher<SupplierType[]>('suppliers', 'GET');
   const { isLoading, trigger } = useFetcher('itembatchs/create', 'POST');
   const toast = useToast();
   const { t } = useTranslation();
@@ -53,7 +53,7 @@ const CreateItemBatchModal = ({ modal, mutate }: CreateItemBatchModalProps) => {
         })
       );
       setOptionSupplier(
-        dataSupplier.map((element: Supplier) => {
+        dataSupplier.map((element: SupplierType) => {
           const searchLabel = `${element.name} ${element.address} ${element.email} ${element.phone}`;
 
           return {
@@ -93,7 +93,7 @@ const CreateItemBatchModal = ({ modal, mutate }: CreateItemBatchModalProps) => {
   };
   return (
     <ModalComponent
-      title={t("Create Item Batch")}
+      title={t('Create Item Batch')}
       open={modal.open}
       onCancel={handleCancel}
       width={800}
@@ -104,14 +104,14 @@ const CreateItemBatchModal = ({ modal, mutate }: CreateItemBatchModalProps) => {
         <div className="grid grid-cols-2 gap-5">
           <FormItemComponent
             name="quantity"
-            label={<LabelForm>{t("Quantity")}</LabelForm>}
+            label={<LabelForm>{t('Quantity')}</LabelForm>}
             rules={[{ required: true }]}
           >
             <InputComponent.Number />
           </FormItemComponent>
           <FormItemComponent
             name="expiryDate"
-            label={<LabelForm>{t("Expired Date")}</LabelForm>}
+            label={<LabelForm>{t('Expired Date')}</LabelForm>}
             rules={[{ required: true }]}
           >
             <DatePicker
@@ -123,7 +123,7 @@ const CreateItemBatchModal = ({ modal, mutate }: CreateItemBatchModalProps) => {
         <div>
           <FormItemComponent
             name="itemId"
-            label={<LabelForm>{t("Item")}</LabelForm>}
+            label={<LabelForm>{t('Item')}</LabelForm>}
             rules={[{ required: true }]}
           >
             <SelectComponent options={optionItem} search={true} />
@@ -131,30 +131,30 @@ const CreateItemBatchModal = ({ modal, mutate }: CreateItemBatchModalProps) => {
           <div className="grid grid-cols-5 gap-1 mt-2">
             <div className="flex gap-2 items-center">
               <div className="w-3 h-3 bg-blue-500 rounded-sm"></div> -{' '}
-              <p>{t("Name")}</p>
+              <p>{t('Name')}</p>
             </div>
             <div className="flex gap-2 items-center">
               <div className="w-3 h-3 bg-orange-400 rounded-sm"></div> -{' '}
-              <p>{t("Quantity")}</p>
+              <p>{t('Quantity')}</p>
             </div>
             <div className="flex gap-2 items-center">
               <div className="w-3 h-3 bg-cyan-500 rounded-sm"></div> -{' '}
-              <p>{t("Status")}</p>
+              <p>{t('Status')}</p>
             </div>
             <div className="flex gap-2 items-center">
               <div className="w-3 h-3 bg-purple-500 rounded-sm"></div> -{' '}
-              <p>{t("Category")}</p>
+              <p>{t('Category')}</p>
             </div>
             <div className="flex gap-2 items-center">
               <div className="w-3 h-3 bg-orange-600 rounded-sm"></div> -{' '}
-              <p>{t("Warehouse")}</p>
+              <p>{t('Warehouse')}</p>
             </div>
           </div>
         </div>
         <div className="mt-5">
           <FormItemComponent
             name="supplierId"
-            label={<LabelForm>{t("Supplier")}</LabelForm>}
+            label={<LabelForm>{t('Supplier')}</LabelForm>}
             rules={[{ required: true }]}
           >
             <SelectComponent options={optionSupplier} search={true} />
@@ -162,19 +162,19 @@ const CreateItemBatchModal = ({ modal, mutate }: CreateItemBatchModalProps) => {
           <div className="grid grid-cols-5 gap-1 mt-2">
             <div className="flex gap-2 items-center">
               <div className="w-3 h-3 bg-blue-500 rounded-sm"></div> -{' '}
-              <p>{t("Name")}</p>
+              <p>{t('Name')}</p>
             </div>
             <div className="flex gap-2 items-center">
               <div className="w-3 h-3 bg-orange-400 rounded-sm"></div> -{' '}
-              <p>{t("Address")}</p>
+              <p>{t('Address')}</p>
             </div>
             <div className="flex gap-2 items-center">
               <div className="w-3 h-3 bg-cyan-500 rounded-sm"></div> -{' '}
-              <p>{t("Email")}</p>
+              <p>{t('Email')}</p>
             </div>
             <div className="flex gap-2 items-center">
               <div className="w-3 h-3 bg-purple-500 rounded-sm"></div> -{' '}
-              <p>{t("Phone")}</p>
+              <p>{t('Phone')}</p>
             </div>
           </div>
         </div>

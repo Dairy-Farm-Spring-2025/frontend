@@ -177,7 +177,18 @@ const AppDashboard: React.FC = () => {
             ]
           ),
         ]),
-        getItem(t('Feed'), 'dairy/feed-management', <MdOutlineFastfood />),
+        getItem(t('Feed'), 'dairy/feed-management', <MdOutlineFastfood />, [
+          getItem(
+            t('List'),
+            'dairy/feed-management/list',
+            <CiBoxList size={sizeIcon} />
+          ),
+          getItem(
+            t('Create feed meal'),
+            'dairy/feed-management/create-feed-meal',
+            <PiPlus size={sizeIcon} />
+          ),
+        ]),
         getItem(t('Area'), 'dairy/area-management', <LiaChartAreaSolid />),
         getItem(t('Pen'), 'dairy/pen-management', <GiCage />),
         getItem(t('Move cow'), 'dairy/move-cow-management', <MdSwapVert />),
