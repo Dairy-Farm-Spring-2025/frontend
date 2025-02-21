@@ -8,11 +8,11 @@ import {
   setWarehouses,
 } from '../../../../core/store/slice/itemManagementSlice';
 import { useEffect } from 'react';
-import { Warehouse } from '../../../../model/Warehouse/warehouse';
+import { WarehouseType } from '../../../../model/Warehouse/warehouse';
 
 const ItemManagement = () => {
   const dispatch = useDispatch();
-  const { data: warehousesData } = useFetcher<Warehouse[]>('warehouses', 'GET');
+  const { data: warehousesData } = useFetcher<WarehouseType[]>('warehouses', 'GET');
   const { data: categoryData } = useFetcher<any[]>('categories', 'GET');
   const { data: exportItemsData } = useFetcher<any[]>('export_items', 'GET');
   useEffect(() => {

@@ -10,7 +10,7 @@ import useModal from "../../../hooks/useModal";
 import { useState } from "react";
 import ButtonComponent from "../../../components/Button/ButtonComponent";
 import PopconfirmComponent from "../../../components/Popconfirm/PopconfirmComponent";
-import { Divider } from "antd";
+import { Divider, Tag } from "antd";
 
 
 const Application = () => {
@@ -28,7 +28,11 @@ const Application = () => {
         modalDetail.openModal();
     };
 
-
+    const statusColor = {
+        processing: 'orange',
+        complete: 'green',
+        rejected: 'red'
+    };
     const columns: Column[] = [
         {
             dataIndex: "applicationId",
@@ -63,7 +67,11 @@ const Application = () => {
             dataIndex: "status",
             key: "status",
             title: t("Status"),
-            render: (data) => formatAreaType(data)
+            render: (status: string) => (
+                <Tag color={statusColor[status as keyof typeof statusColor] || "default"}>
+                    {t(status)}
+                </Tag>
+            )
 
         },
         {

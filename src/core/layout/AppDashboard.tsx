@@ -213,9 +213,21 @@ const AppDashboard: React.FC = () => {
         ),
         getItem(t('warehouse'), 'dairy/warehouse-management', <PiWarehouse />, [
           getItem(
-            t('warehouse'),
-            'dairy/warehouse-management/warehouse',
-            <PiWarehouse size={sizeIcon} />
+            t('Warehouse'),
+            'dairy/warehouse-management/warehouse-management',
+            <PiWarehouse size={sizeIcon} />,
+            [
+              getItem(
+                t('Warehouse list'),
+                'dairy/warehouse-management/warehouse',
+                <CiBoxList size={sizeIcon} />
+              ),
+              getItem(
+                t('Equipment'),
+                'dairy/warehouse-management/equipment',
+                <CiBoxList size={sizeIcon} />
+              ),
+            ]
           ),
           getItem(
             t('Category'),
