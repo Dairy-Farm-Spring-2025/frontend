@@ -17,6 +17,7 @@ interface TextAreaComponentProp extends TextAreaProps {
 
 interface NumberProps extends InputNumberProps {
   className?: string;
+  decimal?: boolean;
 }
 
 interface SearchComponentProps extends SearchProps {
@@ -38,14 +39,25 @@ const TextArea = ({ className, ...props }: TextAreaComponentProp) => (
   />
 );
 
-const Number = ({ className, ...props }: NumberProps) => {
-  return (
+const Number = ({ className, decimal = false, ...props }: NumberProps) => {
+  return !decimal ? (
     <InputNumber
       className={`input-component text-area-component !w-full ${
         className || ''
       }`}
       min={0}
       placeholder="Enter..."
+      {...props}
+    />
+  ) : (
+    <InputNumber
+      className={`input-component text-area-component !w-full ${
+        className || ''
+      }`}
+      min={0}
+      placeholder="Enter..."
+      step={0.1} // Allows increments of 0.1
+      precision={2} // Restricts to 2 decimal places
       {...props}
     />
   );

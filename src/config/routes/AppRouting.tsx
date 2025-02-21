@@ -9,6 +9,8 @@ import { Spin } from 'antd';
 import { lazy, Suspense } from 'react';
 import { CowPenManagement } from '../../pages/CowPenManagement';
 import { MoveCowManagement } from '../../pages/CowPenManagement/components/MoveCowManagement';
+import FeedMealList from '../../pages/FeedManagement/FeedMeal/components/List/FeedMealList';
+import CreateFeedMeal from '../../pages/FeedManagement/FeedMeal/components/CreateFeedMeal';
 const ListItemBatch = lazy(
   () =>
     import(
@@ -239,6 +241,20 @@ const AppRouting = () => {
         {
           path: 'feed-management',
           element: SuspenseWrapper(<FeedMealManagement />),
+          children: [
+            {
+              path: '',
+              element: <Navigate to={'list'} />,
+            },
+            {
+              path: 'list',
+              element: <FeedMealList />,
+            },
+            {
+              path: 'create-feed-meal',
+              element: <CreateFeedMeal />,
+            },
+          ],
         },
         {
           path: 'area-management',
