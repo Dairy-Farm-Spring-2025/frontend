@@ -13,11 +13,11 @@ import useModal from '../../../../../../../../hooks/useModal';
 import useToast from '../../../../../../../../hooks/useToast';
 import { ItemBatch } from '../../../../../../../../model/Warehouse/itemBatch';
 import { Item } from '../../../../../../../../model/Warehouse/items';
-import { Supplier } from '../../../../../../../../model/Warehouse/supplier';
 import CreateItemBatchModal from './components/CreateItemBatchModal';
 import SelectComponent from '../../../../../../../../components/Select/SelectComponent';
 import { ITEM_BATCH_OPTIONS } from '../../../../../../../../service/data/item';
 import { useTranslation } from 'react-i18next';
+import { SupplierType } from '../../../../../../../../model/Warehouse/supplier';
 
 const ListItemBatch = () => {
   const navigate = useNavigate();
@@ -107,7 +107,7 @@ const ListItemBatch = () => {
       dataIndex: 'supplierEntity',
       key: 'supplierEntity',
       title: t('Supplier'),
-      render: (data: Supplier) => data?.name,
+      render: (data: SupplierType) => data?.name,
     },
     {
       dataIndex: 'itemBatchId',
@@ -116,14 +116,14 @@ const ListItemBatch = () => {
       render: (data) => (
         <div className="flex gap-4">
           <ButtonComponent type="primary" onClick={() => navigate(`${data}`)}>
-            {t("View Detail")}
+            {t('View Detail')}
           </ButtonComponent>
           <PopconfirmComponent
             title="Are you sure to delete this item"
             onConfirm={() => handleDeleteItemBatch(data)}
           >
             <ButtonComponent type="primary" danger loading={deleteLoading}>
-              {t("Delete")}
+              {t('Delete')}
             </ButtonComponent>
           </PopconfirmComponent>
         </div>
@@ -134,7 +134,7 @@ const ListItemBatch = () => {
     <AnimationAppear>
       <WhiteBackground>
         <ButtonComponent type="primary" onClick={modal.openModal}>
-          {t("Create Item Batch")}
+          {t('Create Item Batch')}
         </ButtonComponent>
         <Divider className="!my-4" />
         <TableComponent

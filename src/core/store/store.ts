@@ -4,6 +4,7 @@ import storage from 'redux-persist/lib/storage';
 import userReducer from './slice/userSlice';
 import avatarReducer from './slice/avatarSlice';
 import mutateReducer from './slice/mutateSlice';
+import functionReducer from './slice/functionSlice';
 import itemManagementReducer from './slice/itemManagementSlice';
 
 const persistConfig = {
@@ -16,6 +17,7 @@ const rootReducer = combineReducers({
   user: userReducer,
   avatar: avatarReducer,
   mutate: mutateReducer,
+  function: functionReducer,
   itemManagement: itemManagementReducer, // Không áp dụng persist
 });
 
