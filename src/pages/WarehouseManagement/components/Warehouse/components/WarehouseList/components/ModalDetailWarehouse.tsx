@@ -1,17 +1,18 @@
 import { Form } from 'antd';
 import { useEffect, useState } from 'react';
-import ButtonComponent from '../../../../../components/Button/ButtonComponent';
+import ButtonComponent from '../../../../../../../components/Button/ButtonComponent';
 import DescriptionComponent, {
   DescriptionPropsItem,
-} from '../../../../../components/Description/DescriptionComponent';
-import FormComponent from '../../../../../components/Form/FormComponent';
-import FormItemComponent from '../../../../../components/Form/Item/FormItemComponent';
-import InputComponent from '../../../../../components/Input/InputComponent';
-import ModalComponent from '../../../../../components/Modal/ModalComponent';
-import useFetcher from '../../../../../hooks/useFetcher';
-import useToast from '../../../../../hooks/useToast';
-import { Warehouse } from '../../../../../model/Warehouse/warehouse';
+} from '../../../../../../../components/Description/DescriptionComponent';
+import FormComponent from '../../../../../../../components/Form/FormComponent';
+import FormItemComponent from '../../../../../../../components/Form/Item/FormItemComponent';
+import InputComponent from '../../../../../../../components/Input/InputComponent';
+import ModalComponent from '../../../../../../../components/Modal/ModalComponent';
+import useFetcher from '../../../../../../../hooks/useFetcher';
+import useToast from '../../../../../../../hooks/useToast';
+
 import { useTranslation } from 'react-i18next';
+import { WarehouseType } from '../../../../../../../model/Warehouse/warehouse';
 
 interface ModalDetailWarehouseProps {
   modal: any;
@@ -32,7 +33,7 @@ const ModalDetailWarehouse = ({
     data,
     isLoading: isLoadingDetail,
     mutate: mutateEdit,
-  } = useFetcher<Warehouse>(`warehouses/${id}`, 'GET');
+  } = useFetcher<WarehouseType>(`warehouses/${id}`, 'GET');
   const { t } = useTranslation();
   useEffect(() => {
     if (data) {

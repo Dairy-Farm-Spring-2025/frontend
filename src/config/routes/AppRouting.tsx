@@ -16,6 +16,7 @@ import ApplicationManagement from '../../pages/ApplicationManagement';
 
 import FeedMealList from '../../pages/FeedManagement/FeedMeal/components/List/FeedMealList';
 import CreateFeedMeal from '../../pages/FeedManagement/FeedMeal/components/CreateFeedMeal';
+import WarehouseList from '../../pages/WarehouseManagement/components/Warehouse/components/WarehouseList';
 
 const ListItemBatch = lazy(
   () =>
@@ -275,8 +276,18 @@ const AppRouting = () => {
               element: <Navigate to={'warehouse'} />,
             },
             {
-              path: 'warehouse',
+              path: 'warehouse-management',
               element: SuspenseWrapper(<Warehouse />),
+              children: [
+                {
+                  path: '',
+                  element: SuspenseWrapper(<WarehouseList />),
+                },
+                {
+                  path: '',
+                  element: SuspenseWrapper(<ListItemManagement />),
+                },
+              ]
             },
             {
               path: 'category',

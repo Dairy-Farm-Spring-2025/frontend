@@ -1,11 +1,11 @@
 import { Form } from 'antd';
-import FormComponent from '../../../../../components/Form/FormComponent';
-import FormItemComponent from '../../../../../components/Form/Item/FormItemComponent';
-import InputComponent from '../../../../../components/Input/InputComponent';
-import LabelForm from '../../../../../components/LabelForm/LabelForm';
-import ModalComponent from '../../../../../components/Modal/ModalComponent';
-import useFetcher from '../../../../../hooks/useFetcher';
-import useToast from '../../../../../hooks/useToast';
+import FormComponent from '../../../../../../../components/Form/FormComponent';
+import FormItemComponent from '../../../../../../../components/Form/Item/FormItemComponent';
+import InputComponent from '../../../../../../../components/Input/InputComponent';
+import LabelForm from '../../../../../../../components/LabelForm/LabelForm';
+import ModalComponent from '../../../../../../../components/Modal/ModalComponent';
+import useFetcher from '../../../../../../../hooks/useFetcher';
+import useToast from '../../../../../../../hooks/useToast';
 import { useTranslation } from 'react-i18next';
 
 interface ModalAddWarehouseProps {
