@@ -1,13 +1,15 @@
-import { Form, Input, Select } from "antd";
-import { useEffect } from "react";
-import FormComponent from "../../../../../../components/Form/FormComponent";
-import FormItemComponent from "../../../../../../components/Form/Item/FormItemComponent";
-import LabelForm from "../../../../../../components/LabelForm/LabelForm";
-import ModalComponent from "../../../../../../components/Modal/ModalComponent";
-import useFetcher from "../../../../../../hooks/useFetcher";
-import useToast from "../../../../../../hooks/useToast";
-import { CowTypeRequest } from "../../../../../../model/Cow/CowType";
-import { cowTypesStatus } from "../../../../../../service/data/cowTypesStatus";
+import { Form, Input, Select } from 'antd';
+import { useEffect } from 'react';
+import FormComponent from '../../../../../../components/Form/FormComponent';
+import FormItemComponent from '../../../../../../components/Form/Item/FormItemComponent';
+import LabelForm from '../../../../../../components/LabelForm/LabelForm';
+import ModalComponent from '../../../../../../components/Modal/ModalComponent';
+import useFetcher from '../../../../../../hooks/useFetcher';
+import useToast from '../../../../../../hooks/useToast';
+import { CowTypeRequest } from '../../../../../../model/Cow/CowType';
+import { cowTypesStatus } from '../../../../../../service/data/cowTypesStatus';
+import InputComponent from '../../../../../../components/Input/InputComponent';
+import { useTranslation } from 'react-i18next';
 
 interface ModalTypesProps {
   mutate: any;
@@ -17,11 +19,12 @@ interface ModalTypesProps {
 
 const ModalEditTypes = ({ mutate, modal, id }: ModalTypesProps) => {
   const toast = useToast();
-  const { data } = useFetcher<any>(`cow-types/${id}`, "GET");
+  const { data } = useFetcher<any>(`cow-types/${id}`, 'GET');
   const { isLoading: isLoadingEdit, trigger } = useFetcher<any>(
     `cow-types/${id}`,
-    "PUT"
+    'PUT'
   );
+  const { t } = useTranslation();
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -30,9 +33,18 @@ const ModalEditTypes = ({ mutate, modal, id }: ModalTypesProps) => {
         name: data?.name,
         status: data?.status,
         description: data?.description,
+        maxWeight: data?.maxWeight,
       });
     }
-  }, [data?.description, data?.name, data?.status, form, id, modal.open]);
+  }, [
+    data?.description,
+    data?.maxWeight,
+    data?.name,
+    data?.status,
+    form,
+    id,
+    modal.open,
+  ]);
 
   const onFinish = async (values: CowTypeRequest) => {
     try {
@@ -68,6 +80,13 @@ const ModalEditTypes = ({ mutate, modal, id }: ModalTypesProps) => {
             label={<LabelForm>Name:</LabelForm>}
           >
             <Input />
+          </FormItemComponent>
+          <FormItemComponent
+            rules={[{ required: true }]}
+            name="maxWeight"
+            label={<LabelForm>{t('Max weight')}:</LabelForm>}
+          >
+            <InputComponent.Number min={1} />
           </FormItemComponent>
           <FormItemComponent
             name="status"

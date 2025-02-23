@@ -1,6 +1,7 @@
 import { Form, SelectProps, Spin, Steps } from 'antd';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { IoMdArrowRoundBack } from 'react-icons/io';
 import ButtonComponent from '../../../../../components/Button/ButtonComponent';
 import FormComponent from '../../../../../components/Form/FormComponent';
 import FormItemComponent from '../../../../../components/Form/Item/FormItemComponent';
@@ -23,6 +24,8 @@ const CreateFeedMeal = () => {
   const toast = useToast();
   const [cowTypes, setCowTypes] = useState<SelectProps['options']>([]);
   const [checkDryMatter, setCheckDryMatter] = useState<boolean>(false);
+  const [cowTypesSelected, setCowTypesSelected] = useState(0);
+  const [cowStatusSelected, setCowStatusSelected] = useState('');
   const [dry, setDry] = useState<number>(0);
   const { data: cowType, isLoading: isLoadingCowType } = useFetcher<CowType[]>(
     'cow-types',
@@ -38,9 +41,9 @@ const CreateFeedMeal = () => {
     if (cowType) {
       setCowTypes(
         cowType.map((element: CowType) => {
-          const searchLabel = `${element.name} ${element.weight}`;
+          const searchLabel = `${element.name} ${element.maxWeight}`;
           return {
-            label: element.name,
+            label: `${element.name} - ${element.maxWeight} (kg)`,
             value: element.cowTypeId,
             searchLabel,
           };
@@ -48,6 +51,18 @@ const CreateFeedMeal = () => {
       );
     }
   }, [cowType]);
+
+  const handleBack = async () => {
+    setCurrentStep((prev) => prev - 1);
+    form.resetFields();
+    setCheckDryMatter(false);
+    setDry(0);
+  };
+
+  useEffect(() => {
+    console.log(cowTypesSelected);
+    console.log(cowStatusSelected);
+  }, [cowStatusSelected, cowTypesSelected]);
 
   const onFinishDryMatter = async (values: any) => {
     try {
@@ -71,14 +86,24 @@ const CreateFeedMeal = () => {
               rules={[{ required: true }]}
               label={<LabelForm>{t('Cow Type')}</LabelForm>}
             >
-              <SelectComponent options={cowTypes} loading={isLoadingCowType} />
+              <SelectComponent
+                search
+                options={cowTypes}
+                loading={isLoadingCowType}
+                value={cowTypesSelected}
+                onChange={setCowTypesSelected}
+              />
             </FormItemComponent>
             <FormItemComponent
               rules={[{ required: true }]}
               name="cowStatus"
               label={<LabelForm>{t('Cow Status')}</LabelForm>}
             >
-              <SelectComponent options={COW_STATUS_DRY_MATTER} />
+              <SelectComponent
+                options={COW_STATUS_DRY_MATTER}
+                value={cowStatusSelected}
+                onChange={setCowStatusSelected}
+              />
             </FormItemComponent>
             <ButtonComponent
               loading={loadingDryMatter}
@@ -104,7 +129,14 @@ const CreateFeedMeal = () => {
               </p>
             </div>
           ) : dry > 0 ? (
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-5">
+              <ButtonComponent
+                className="!shadow-md"
+                icon={<IoMdArrowRoundBack size={20} />}
+                onClick={handleBack}
+              >
+                Back
+              </ButtonComponent>
               <div className="flex gap-2">
                 <p className="font-semibold text-lg">{t('Dry matter')}:</p>
                 <TagComponents color="green-inverse" className="text-lg">
@@ -113,7 +145,12 @@ const CreateFeedMeal = () => {
               </div>
               {checkDryMatter && (
                 <div>
-                  <FeedMealForm cowType={cowTypes as any[]} dry={dry} />
+                  <FeedMealForm
+                    cowStatusSelected={cowStatusSelected}
+                    cowTypeSelected={cowTypesSelected}
+                    cowType={cowTypes as any[]}
+                    dry={dry}
+                  />
                 </div>
               )}
             </div>

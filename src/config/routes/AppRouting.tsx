@@ -14,9 +14,19 @@ import ApplicationType from '../../pages/ApplicationManagement/ApplicationType';
 import Application from '../../pages/ApplicationManagement/Application-management';
 import ApplicationManagement from '../../pages/ApplicationManagement';
 
-import FeedMealList from '../../pages/FeedManagement/FeedMeal/components/List/FeedMealList';
-import CreateFeedMeal from '../../pages/FeedManagement/FeedMeal/components/CreateFeedMeal';
 import WarehouseList from '../../pages/WarehouseManagement/components/Warehouse/components/WarehouseList';
+import ErrorPageNotification from '../../pages/Error';
+const DetailFeedMeal = lazy(
+  () => import('../../pages/FeedManagement/FeedMeal/components/DetailFeedMeal')
+);
+const FeedMealList = lazy(
+  () =>
+    import('../../pages/FeedManagement/FeedMeal/components/List/FeedMealList')
+);
+
+const CreateFeedMeal = lazy(
+  () => import('../../pages/FeedManagement/FeedMeal/components/CreateFeedMeal')
+);
 
 const ListItemBatch = lazy(
   () =>
@@ -255,11 +265,15 @@ const AppRouting = () => {
             },
             {
               path: 'list',
-              element: <FeedMealList />,
+              element: SuspenseWrapper(<FeedMealList />),
             },
             {
               path: 'create-feed-meal',
-              element: <CreateFeedMeal />,
+              element: SuspenseWrapper(<CreateFeedMeal />),
+            },
+            {
+              path: ':id',
+              element: SuspenseWrapper(<DetailFeedMeal />),
             },
           ],
         },
@@ -287,7 +301,7 @@ const AppRouting = () => {
                   path: '',
                   element: SuspenseWrapper(<ListItemManagement />),
                 },
-              ]
+              ],
             },
             {
               path: 'category',
@@ -422,6 +436,10 @@ const AppRouting = () => {
           element: SuspenseWrapper(<Profile />),
         },
       ],
+    },
+    {
+      path: '*',
+      element: <ErrorPageNotification />,
     },
   ]);
   return <RouterProvider router={router} />;

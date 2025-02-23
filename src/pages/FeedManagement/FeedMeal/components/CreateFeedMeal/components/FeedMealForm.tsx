@@ -21,9 +21,16 @@ import SilageFieldFormList from './FormListFeedMeal/SilageFieldFormList';
 interface FeedMealFormProps {
   dry: number;
   cowType: any[];
+  cowTypeSelected: number;
+  cowStatusSelected: string;
 }
 
-const FeedMealForm = ({ dry, cowType }: FeedMealFormProps) => {
+const FeedMealForm = ({
+  dry,
+  cowType,
+  cowTypeSelected,
+  cowStatusSelected,
+}: FeedMealFormProps) => {
   const [form] = Form.useForm();
   const [hay, setHay] = useState<SelectProps['options']>([]);
   const [refinedFood, setRefinedFood] = useState<SelectProps['options']>([]);
@@ -205,9 +212,9 @@ const FeedMealForm = ({ dry, cowType }: FeedMealFormProps) => {
         initialValues={{
           name: '',
           description: '',
-          cowTypeId: null,
+          cowTypeId: cowTypeSelected,
           shift: 'morningShift',
-          cowStatus: 'milkingCow',
+          cowStatus: cowStatusSelected,
           detailsHay: [
             {
               quantity: 0,
@@ -243,7 +250,7 @@ const FeedMealForm = ({ dry, cowType }: FeedMealFormProps) => {
               {t('Feed meal information')}:
             </Title>
             <div className="flex justify-between mb-5 gap-5">
-              <div className="grid grid-cols-2 gap-5 w-1/2 h-fit">
+              <div className=" w-1/3 h-fit">
                 <FormItemComponent
                   rules={[{ required: true }]}
                   name="name"
@@ -257,7 +264,22 @@ const FeedMealForm = ({ dry, cowType }: FeedMealFormProps) => {
                   name="cowTypeId"
                   label={<LabelForm>{t('Cow Type')}</LabelForm>}
                 >
-                  <SelectComponent options={cowType} />
+                  <SelectComponent
+                    options={cowType}
+                    open={false}
+                    className="!cursor-default"
+                  />
+                </FormItemComponent>
+                <FormItemComponent
+                  rules={[{ required: true }]}
+                  name="cowStatus"
+                  label={<LabelForm>{t('Cow Status')}</LabelForm>}
+                >
+                  <SelectComponent
+                    options={cowStatus}
+                    open={false}
+                    className="!cursor-default"
+                  />
                 </FormItemComponent>
                 <FormItemComponent
                   rules={[{ required: true }]}
@@ -273,15 +295,8 @@ const FeedMealForm = ({ dry, cowType }: FeedMealFormProps) => {
                     ]}
                   />
                 </FormItemComponent>
-                <FormItemComponent
-                  rules={[{ required: true }]}
-                  name="cowStatus"
-                  label={<LabelForm>{t('Cow Status')}</LabelForm>}
-                >
-                  <SelectComponent options={cowStatus} />
-                </FormItemComponent>
               </div>
-              <div className="w-1/2">
+              <div className="w-2/3">
                 <FormItemComponent
                   rules={[{ required: true }]}
                   name="description"

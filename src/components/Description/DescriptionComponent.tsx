@@ -20,7 +20,7 @@ const DescriptionComponent = ({
 }: DescriptionComponentProps) => {
   return (
     <Descriptions
-      className={`description-component !bg-white !rounded-lg !shadow-lg ${className}`}
+      className={`description-component !bg-white !rounded-lg !shadow-md ${className}`}
       title={title}
       items={items}
       layout={layout}

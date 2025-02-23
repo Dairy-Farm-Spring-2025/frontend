@@ -11,6 +11,7 @@ import useToast from '../../../../../hooks/useToast';
 import { FeedType } from '../../../../../model/Feed/Feed';
 import { formatStatusWithCamel } from '../../../../../utils/format';
 import { Spin } from 'antd';
+import { useNavigate } from 'react-router-dom';
 
 const FeedMealList = () => {
   const { data, isLoading, mutate } = useFetcher<FeedType[]>(
@@ -18,6 +19,7 @@ const FeedMealList = () => {
     'GET'
   );
   const toast = useToast();
+  const navigate = useNavigate();
   const { trigger, isLoading: loadingDelete } = useFetcher(
     'feedmeals',
     'DELETE'
@@ -70,6 +72,9 @@ const FeedMealList = () => {
       title: t('Action'),
       render: (data) => (
         <div className="flex gap-5">
+          <ButtonComponent onClick={() => navigate(`../${data}`)}>
+            {t('View Detail')}
+          </ButtonComponent>
           <PopconfirmComponent
             title={'Delete?'}
             onConfirm={() => onConfirm(data)}

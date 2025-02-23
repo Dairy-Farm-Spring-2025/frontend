@@ -2,6 +2,7 @@ export type CowTypeRequest = {
   name: string;
   description: string;
   status: 'exist' | 'notExist';
+  maxWeight: 0;
 };
 
 export type CowType = {
@@ -11,5 +12,5 @@ export type CowType = {
   status: 'exist' | 'notExist';
   createdAt: string;
   updatedAt: string;
-  weight: number;
+  maxWeight: number;
 };
