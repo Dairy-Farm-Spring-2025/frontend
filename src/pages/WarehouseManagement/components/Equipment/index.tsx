@@ -1,24 +1,27 @@
 import { useState } from 'react';
-import useFetcher from '../../../../../../hooks/useFetcher';
-import { WarehouseType } from '../../../../../../model/Warehouse/warehouse';
-import useToast from '../../../../../../hooks/useToast';
-import useModal from '../../../../../../hooks/useModal';
+import useFetcher from '../../../../hooks/useFetcher';
+import { WarehouseType } from '../../../../model/Warehouse/warehouse';
+import useToast from '../../../../hooks/useToast';
+import useModal from '../../../../hooks/useModal';
 import { useTranslation } from 'react-i18next';
-import TableComponent, { Column } from '../../../../../../components/Table/TableComponent';
-import PopconfirmComponent from '../../../../../../components/Popconfirm/PopconfirmComponent';
-import ButtonComponent from '../../../../../../components/Button/ButtonComponent';
-import AnimationAppear from '../../../../../../components/UI/AnimationAppear';
-import WhiteBackground from '../../../../../../components/UI/WhiteBackground';
-import ModalAddWarehouse from './components/ModalAddWarehouse';
-import ModalDetailWarehouse from './components/ModalDetailWarehouse';
+import TableComponent, { Column } from '../../../../components/Table/TableComponent';
+import PopconfirmComponent from '../../../../components/Popconfirm/PopconfirmComponent';
+import ButtonComponent from '../../../../components/Button/ButtonComponent';
+import AnimationAppear from '../../../../components/UI/AnimationAppear';
+import WhiteBackground from '../../../../components/UI/WhiteBackground';
+import { EquipmentType } from '../../../../model/Warehouse/equipment';
+import ModalAddEquipment from './components/ModalAddEquipment';
+import ModalDetailEquipment from './components/ModalDeatialEquipment';
+import { formatAreaType } from '../../../../utils/format';
 
 
-const WarehouseList = () => {
-    const { data, isLoading, mutate } = useFetcher<WarehouseType[]>('warehouses', 'GET');
+
+const Equipment = () => {
+    const { data, isLoading, mutate } = useFetcher<EquipmentType[]>('equipment', 'GET');
     const [id, setId] = useState('');
     const toast = useToast();
     const { trigger, isLoading: loadingDelete } = useFetcher(
-        'warehouses',
+        'equipment',
         'DELETE'
     );
     const modal = useModal();
@@ -26,7 +29,7 @@ const WarehouseList = () => {
     const { t } = useTranslation();
     const onConfirm = async (id: string) => {
         try {
-            await trigger({ url: `warehouses/${id}` });
+            await trigger({ url: `equipment/${id}` });
             toast.showSuccess('Delete success');
             mutate();
         } catch (error: any) {
@@ -45,8 +48,8 @@ const WarehouseList = () => {
 
     const column: Column[] = [
         {
-            dataIndex: 'warehouseLocationId',
-            key: 'warehouseLocationId',
+            dataIndex: 'equipmentId',
+            key: 'equipmentId',
             title: '#',
             render: (_, __, index) => index + 1,
         },
@@ -57,7 +60,31 @@ const WarehouseList = () => {
             render: (data) => <p className="text-base font-bold">{data}</p>,
         },
         {
-            dataIndex: 'warehouseLocationId',
+            dataIndex: 'type',
+            key: 'type',
+            title: t('Type'),
+            render: (data) => <p className="text-base font-bold">{formatAreaType(data)}</p>,
+        },
+        {
+            dataIndex: 'status',
+            key: 'status',
+            title: t('Status'),
+            render: (data) => <p className="text-base font-bold">{formatAreaType(data)}</p>,
+        },
+        {
+            dataIndex: 'quantity',
+            key: 'quantity',
+            title: t('quantity'),
+            render: (data) => <p className="text-base font-bold">{data}</p>,
+        },
+        {
+            dataIndex: 'warehouseLocationEntity',
+            key: 'warehouseLocationEntity',
+            title: t('Warehouse'),
+            render: (data) => <p className="text-base font-bold">{data.name}</p>,
+        },
+        {
+            dataIndex: 'equipmentId',
             key: 'action',
             title: t('Action'),
             render: (data) => (
@@ -90,7 +117,7 @@ const WarehouseList = () => {
                         type="primary"
                         onClick={handleOpenModalAdd}
                     >
-                        {t("Create Warehouse")}
+                        {t("Create Equipment")}
                     </ButtonComponent>
                     <TableComponent
                         dataSource={data || []}
@@ -98,13 +125,13 @@ const WarehouseList = () => {
                         loading={isLoading}
                     />
                 </div>
-                <ModalAddWarehouse modal={modal} mutate={mutate} />
+                <ModalAddEquipment modal={modal} mutate={mutate} />
                 {id !== '' && (
-                    <ModalDetailWarehouse id={id} modal={modalDetail} mutate={mutate} />
+                    <ModalDetailEquipment id={id} modal={modalDetail} mutate={mutate} />
                 )}
             </WhiteBackground>
         </AnimationAppear>
     );
 };
 
-export default WarehouseList;
+export default Equipment;
