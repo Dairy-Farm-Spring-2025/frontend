@@ -7,6 +7,8 @@ import ModalComponent from '../../../../../components/Modal/ModalComponent';
 import useFetcher from '../../../../../hooks/useFetcher';
 import useToast from '../../../../../hooks/useToast';
 import { useTranslation } from 'react-i18next';
+import SelectComponent from '../../../../../components/Select/SelectComponent';
+import { warehouseType } from '../../../../../service/data/warehouse';
 
 interface ModalAddWarehouseProps {
   modal: any;
@@ -48,6 +50,13 @@ const ModalAddWarehouse = ({ modal, mutate }: ModalAddWarehouseProps) => {
           rules={[{ required: true }]}
         >
           <InputComponent />
+        </FormItemComponent>
+        <FormItemComponent
+          name="type"
+          label={<LabelForm>{t("Type")}</LabelForm>}
+          rules={[{ required: true }]}
+        >
+          <SelectComponent options={warehouseType} />
         </FormItemComponent>
         <FormItemComponent
           name="description"
