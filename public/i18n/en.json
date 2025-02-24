@@ -62,5 +62,7 @@
   "hay": "Hay",
   "refined": "Refined food",
   "silage": "Silage",
-  "minerals": "Minerals"
+  "minerals": "Minerals",
+
+  "total_quantity_range": "Total quantity must be between {{min}} and {{max}}"
 }

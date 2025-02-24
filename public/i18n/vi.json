@@ -257,5 +257,6 @@
   "Total feed meal details quantity": "Tổng lượng thức ăn",
   "Application": "Đơn từ",
   "Application Type": "Loại đơn từ",
-  "Create Application": "Tạo đơn"
+  "Create Application": "Tạo đơn",
+  "total_quantity_range": "Tổng số lượng phải tương đương giữa {{min}} và {{max}}"
 }
