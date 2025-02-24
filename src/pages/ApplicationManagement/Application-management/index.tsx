@@ -103,12 +103,7 @@ const Application = () => {
 
     return (
         <WhiteBackground>
-            {/* <div>
-                <ButtonComponent type="primary" onClick={handleOpenModalRequest}>
-                    {t("Create Application")}
-                </ButtonComponent>
-            </div>
-            <Divider className="my-4" /> */}
+
             <TableComponent
                 columns={columns}
                 dataSource={data || []}
