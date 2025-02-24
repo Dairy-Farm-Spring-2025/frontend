@@ -116,63 +116,6 @@ const FeedMealForm = ({
     }
   }, [dry]);
 
-  // const handleSelectChange = (
-  //   value: string,
-  //   fieldIndex: number,
-  //   fieldName: string
-  // ) => {
-  //   if (fieldName === 'detailsHay') {
-  //     const updatedHay = [...selectedHay];
-  //     updatedHay[fieldIndex] = value; // Update selected option at the correct index
-  //     setSelectedHay(updatedHay.filter(Boolean)); // Filter out any falsy values
-  //   }
-  //   if (fieldName === 'detailsRefined') {
-  //     const updatedRefined = [...selectedRefined];
-  //     updatedRefined[fieldIndex] = value;
-  //     setSelectedRefined(updatedRefined.filter(Boolean));
-  //   }
-  // };
-
-  const handleValidatorQuantity = async (fieldName: string, total: number) => {
-    const totalQuantity = (form.getFieldValue(fieldName) || []).reduce(
-      (sum: number, field: any) => sum + (parseFloat(field?.quantity) || 0),
-      0
-    );
-    const minAcceptable = (total * 0.8).toFixed(2);
-    if (minAcceptable >= totalQuantity || totalQuantity >= total) {
-      throw new Error(
-        t(
-          `The total quantity of hay must be between ${minAcceptable} kg and ${total} kg.`
-        )
-      );
-    } else {
-      return Promise.resolve();
-    }
-  };
-
-  // const handleRemoveField = (name: number, fieldName: string) => {
-  //   if (fieldName === 'detailsHay') {
-  //     const currentValues = form.getFieldValue(fieldName) || [];
-  //     const removedItem = currentValues[name]?.itemId; // Capture the removed item
-  //     currentValues.splice(name, 1);
-  //     form.setFieldsValue({ detailsHay: currentValues });
-  //     const updatedSelectedHay = selectedHay.filter(
-  //       (item) => item !== removedItem
-  //     ); // Remove the item from selectedHay
-  //     setSelectedHay(updatedSelectedHay);
-  //   }
-  //   if (fieldName === 'detailsRefined') {
-  //     const currentValues = form.getFieldValue(fieldName) || [];
-  //     const removedItem = currentValues[name]?.itemId; // Capture the removed item
-  //     currentValues.splice(name, 1);
-  //     form.setFieldsValue({ detailsRefined: currentValues });
-  //     const updatedSelectedRefined = selectedRefined.filter(
-  //       (item) => item !== removedItem
-  //     ); // Remove the item from selectedRefined
-  //     setSelectedRefined(updatedSelectedRefined);
-  //   }
-  // };
-
   const handleFinish = async (values: any) => {
     const transformDetails = (array: any[]) =>
       array.map((item: { itemId: string; quantity: number }) => ({
@@ -318,7 +261,6 @@ const FeedMealForm = ({
                 className="flex flex-col gap-2 !py-5 !pr-5"
               >
                 <HayFieldFormList
-                  handleValidatorQuantity={handleValidatorQuantity}
                   hay={hay}
                   hayTotal={hayTotal}
                 />
@@ -333,7 +275,6 @@ const FeedMealForm = ({
                 className="flex flex-col gap-2 !p-5"
               >
                 <RefinedFieldFormList
-                  handleValidatorQuantity={handleValidatorQuantity}
                   refinedFood={refinedFood}
                   refinedTotal={refinedTotal}
                 />
@@ -346,7 +287,6 @@ const FeedMealForm = ({
                 className="flex flex-col gap-2 !p-5"
               >
                 <SilageFieldFormList
-                  handleValidatorQuantity={handleValidatorQuantity}
                   silage={silage}
                   silageTotal={silageTotal}
                 />
@@ -359,7 +299,6 @@ const FeedMealForm = ({
                 className="flex flex-col gap-2 !p-5"
               >
                 <MineralFieldFormList
-                  handleValidatorQuantity={handleValidatorQuantity}
                   mineralTotal={mineralsTotal}
                   minerals={minerals}
                 />
