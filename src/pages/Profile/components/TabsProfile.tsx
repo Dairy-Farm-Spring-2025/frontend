@@ -15,6 +15,7 @@ import SettingOptions from './TabsItem/SettingOptions';
 import { useTranslation } from 'react-i18next';
 import GeneralInformation from './GeneralInformation';
 import { Divider } from 'antd';
+import MyApplication from '../../ApplicationManagement/MyApplication';
 
 interface TabsProfileProps {
   profile: UserProfileData;
@@ -38,9 +39,9 @@ const TabsProfile = ({ profile, mutate }: TabsProfileProps) => {
       label: t('change_password'), // Translation for 'Change Password'
     },
     {
-      children: <p>Application</p>,
+      children: <MyApplication />,
       icon: <AppstoreOutlined />,
-      key: 'Application',
+      key: 'MyApplication',
       label: t('application'), // Translation for 'Application'
     },
     {

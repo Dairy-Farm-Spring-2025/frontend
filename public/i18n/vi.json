@@ -5,7 +5,7 @@
   "change_language": "Thay đổi ngôn ngữ",
   "profile": "Hồ sơ",
   "change_password": "Đổi mật khẩu",
-  "application": "Ứng dụng",
+  "application": "Đơn từ",
   "setting": "Cài đặt",
   "email": "Email",
   "date_of_birth": "Ngày sinh",
@@ -254,5 +254,8 @@
   "Max weight": "Cân nặng tối đa",
   "Sorry, the page you visited does not exist.": "Xin lỗi, trang bạn truy cập không tồn tại",
   "Back": "Trở lại",
-  "Total feed meal details quantity": "Tổng lượng thức ăn"
+  "Total feed meal details quantity": "Tổng lượng thức ăn",
+  "Application": "Đơn từ",
+  "Application Type": "Loại đơn từ",
+  "Create Application": "Tạo đơn"
 }

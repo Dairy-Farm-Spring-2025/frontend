@@ -1,3 +1,5 @@
+import { WarehouseType } from "./warehouse";
+
 export type EquipmentType = {
     equipmentId: string;
     name: string;
@@ -5,4 +7,5 @@ export type EquipmentType = {
     status: string;
     description: string;
     quantity: number;
+    warehouseLocationEntity: WarehouseType
 };

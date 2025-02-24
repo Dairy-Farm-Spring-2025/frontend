@@ -14,8 +14,9 @@ import ApplicationType from '../../pages/ApplicationManagement/ApplicationType';
 import Application from '../../pages/ApplicationManagement/Application-management';
 import ApplicationManagement from '../../pages/ApplicationManagement';
 
-import WarehouseList from '../../pages/WarehouseManagement/components/Warehouse/components/WarehouseList';
+
 import ErrorPageNotification from '../../pages/Error';
+import Equipment from '../../pages/WarehouseManagement/components/Equipment';
 const DetailFeedMeal = lazy(
   () => import('../../pages/FeedManagement/FeedMeal/components/DetailFeedMeal')
 );
@@ -290,18 +291,8 @@ const AppRouting = () => {
               element: <Navigate to={'warehouse'} />,
             },
             {
-              path: 'warehouse-management',
+              path: 'warehouse',
               element: SuspenseWrapper(<Warehouse />),
-              children: [
-                {
-                  path: '',
-                  element: SuspenseWrapper(<WarehouseList />),
-                },
-                {
-                  path: '',
-                  element: SuspenseWrapper(<ListItemManagement />),
-                },
-              ],
             },
             {
               path: 'category',
@@ -310,6 +301,10 @@ const AppRouting = () => {
             {
               path: 'supplier',
               element: SuspenseWrapper(<Supplier />),
+            },
+            {
+              path: 'equipment',
+              element: SuspenseWrapper(<Equipment />),
             },
             {
               path: 'item-management',

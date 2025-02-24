@@ -13,7 +13,7 @@ import {
 
 import React, { useEffect } from 'react';
 
-import { AiOutlineDashboard, AiOutlineIssuesClose } from 'react-icons/ai';
+import { AiOutlineDashboard, AiOutlineIssuesClose, AiTwotoneTool } from 'react-icons/ai';
 import { BiCategory, BiTask, BiUser } from 'react-icons/bi';
 import { CiBoxList, CiExport } from 'react-icons/ci';
 import { FaWpforms } from 'react-icons/fa';
@@ -113,7 +113,7 @@ const AppDashboard: React.FC = () => {
     toast.showSuccess('Login success');
     handleNavigate('/login');
   };
-
+  const userRole = data?.role || ""; // Lấy role từ API
   const items: MenuProps['items'] = [
     {
       key: '1',
@@ -214,20 +214,8 @@ const AppDashboard: React.FC = () => {
         getItem(t('warehouse'), 'dairy/warehouse-management', <PiWarehouse />, [
           getItem(
             t('Warehouse'),
-            'dairy/warehouse-management/warehouse-management',
+            'dairy/warehouse-management/warehouse',
             <PiWarehouse size={sizeIcon} />,
-            [
-              getItem(
-                t('Warehouse list'),
-                'dairy/warehouse-management/warehouse',
-                <CiBoxList size={sizeIcon} />
-              ),
-              getItem(
-                t('Equipment'),
-                'dairy/warehouse-management/equipment',
-                <CiBoxList size={sizeIcon} />
-              ),
-            ]
           ),
           getItem(
             t('Category'),
@@ -261,6 +249,11 @@ const AppDashboard: React.FC = () => {
             'dairy/warehouse-management/supplier',
             <LiaProductHunt size={sizeIcon} />
           ),
+          getItem(
+            t('Equipment'),
+            'dairy/warehouse-management/equipment',
+            <AiTwotoneTool size={sizeIcon} />
+          ),
         ]),
       ],
     },
@@ -290,6 +283,7 @@ const AppDashboard: React.FC = () => {
             <BiCategory size={sizeIcon} />
           ),
         ]),
+
         getItem(t('Application'), 'dairy/application-management', <FaWpforms />, [
           getItem(
             t('Application'),
