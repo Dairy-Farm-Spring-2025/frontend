@@ -10,6 +10,7 @@ import ModalComponent from '../../../../components/Modal/ModalComponent';
 import ButtonComponent from '../../../../components/Button/ButtonComponent';
 import FormComponent from '../../../../components/Form/FormComponent';
 import { formatDateHour } from '../../../../utils/format';
+import ReactQuillComponent from '../../../../components/ReactQuill/ReactQuillComponent';
 
 interface ModalDetailApplicationProps {
     modal: any;
@@ -42,7 +43,7 @@ const ModalDetailApplication = ({ modal, mutate, id }: ModalDetailApplicationPro
         }
         if (modal.open) {
             form.resetFields();
-            setComment(''); // 🆕 Reset comment khi mở modal
+            setComment('');
         }
         if (id) {
             mutateEdit();
@@ -150,13 +151,11 @@ const ModalDetailApplication = ({ modal, mutate, id }: ModalDetailApplicationPro
             <Card>
                 <FormComponent form={form}>
                     <DescriptionComponent items={items} column={2} />
-                    {/* 🆕 Thêm ô nhập comment */}
+
                     <Form.Item label={t("Comment")} name="commentApprove">
-                        <Input.TextArea
-                            rows={3}
+                        <ReactQuillComponent
                             placeholder={t("Enter your comment here...")}
                             value={comment}
-                            onChange={(e) => setComment(e.target.value)}
                         />
                     </Form.Item>
                 </FormComponent>

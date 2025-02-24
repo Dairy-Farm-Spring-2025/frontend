@@ -58,11 +58,24 @@ const Warehouse = () => {
       render: (data) => <p className="text-base font-bold">{data}</p>,
     },
     {
+      dataIndex: 'type',
+      key: 'type',
+      title: t('Type'),
+      render: (data) => <p className="text-base font-bold">{data}</p>,
+    },
+    {
       dataIndex: 'warehouseLocationId',
       key: 'action',
       title: t('Action'),
       render: (data) => (
         <div className="flex gap-5">
+
+          <ButtonComponent
+            type="primary"
+            onClick={() => handleOpenModalDetail(data)}
+          >
+            {t("View Detail")}
+          </ButtonComponent>
           <PopconfirmComponent
             title={t('Delete?')}
             onConfirm={() => onConfirm(data)}
@@ -71,12 +84,6 @@ const Warehouse = () => {
               {t("Delete")}
             </ButtonComponent>
           </PopconfirmComponent>
-          <ButtonComponent
-            type="primary"
-            onClick={() => handleOpenModalDetail(data)}
-          >
-            {t("View Detail")}
-          </ButtonComponent>
         </div>
       ),
     },
