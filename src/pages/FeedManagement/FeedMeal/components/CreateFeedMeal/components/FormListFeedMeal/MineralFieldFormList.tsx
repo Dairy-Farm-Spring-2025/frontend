@@ -1,12 +1,11 @@
-import { Divider, Form } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import Title from '../../../../../../../components/UI/Title';
-import TagComponents from '../../../../../../../components/UI/TagComponents';
-import FormItemComponent from '../../../../../../../components/Form/Item/FormItemComponent';
-import SelectComponent from '../../../../../../../components/Select/SelectComponent';
-import InputComponent from '../../../../../../../components/Input/InputComponent';
-import ButtonComponent from '../../../../../../../components/Button/ButtonComponent';
+import { Divider, Form } from 'antd';
 import { useTranslation } from 'react-i18next';
+import ButtonComponent from '../../../../../../../components/Button/ButtonComponent';
+import FormItemComponent from '../../../../../../../components/Form/Item/FormItemComponent';
+import InputComponent from '../../../../../../../components/Input/InputComponent';
+import SelectComponent from '../../../../../../../components/Select/SelectComponent';
+import Title from '../../../../../../../components/UI/Title';
 interface MineralFieldFormListProps {
   mineralTotal: number;
   minerals: any;
@@ -44,15 +43,6 @@ const MineralFieldFormList = ({
       {(fields, { add, remove }) => (
         <>
           <Title className="text-xl no-underline">{t('minerals')}</Title>
-          <div className="flex gap-2 my-3">
-            <p className="font-semibold text-lg">{t('Total')}:</p>
-            <TagComponents color="magenta" className="text-lg">
-              <span className="font-bold">
-                {(mineralTotal * 0.8).toFixed(2)} ~ {mineralTotal}
-              </span>{' '}
-              (kilogram)
-            </TagComponents>
-          </div>
           {fields.map(({ key, name, ...restField }, index) => {
             const currentSelected = detailsMineral[index]?.itemId;
             // Build an array of selected values from the other fields
@@ -79,6 +69,7 @@ const MineralFieldFormList = ({
                     rules={[
                       {
                         required: true,
+                        message: t('Please select a item type'),
                       },
                     ]}
                   >
@@ -136,7 +127,7 @@ const MineralFieldFormList = ({
             <InputComponent style={{ display: 'none' }} />
           </Form.Item>
 
-          <div style={{ marginBottom: 16 }}>
+          <div style={{ marginBottom: 16, fontSize: 16 }}>
             {(() => {
               const details = form.getFieldValue('detailsMineral') || [];
               const totalQuantity = details.reduce(

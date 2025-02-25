@@ -5,7 +5,6 @@ import ButtonComponent from '../../../../../../../components/Button/ButtonCompon
 import FormItemComponent from '../../../../../../../components/Form/Item/FormItemComponent';
 import InputComponent from '../../../../../../../components/Input/InputComponent';
 import SelectComponent from '../../../../../../../components/Select/SelectComponent';
-import TagComponents from '../../../../../../../components/UI/TagComponents';
 import Title from '../../../../../../../components/UI/Title';
 interface SilageFieldFormListProps {
   silageTotal: number;
@@ -44,14 +43,6 @@ const SilageFieldFormList = ({
       {(fields, { add, remove }) => (
         <>
           <Title className="text-xl no-underline">{t('silage')}</Title>
-          <div className="flex gap-2 my-3">
-            <p className="font-semibold text-lg">{t('Total')}:</p>
-            <TagComponents color="magenta" className="text-lg">
-              <span className="font-bold">
-                {(silageTotal * 0.8).toFixed(2)} ~ {silageTotal}
-              </span>{' '}
-            </TagComponents>
-          </div>
           {fields.map(({ key, name, ...restField }, index) => {
             const currentSelected = detailsSilage[index]?.itemId;
             // Build an array of selected values from the other fields
@@ -90,7 +81,7 @@ const SilageFieldFormList = ({
                     rules={[
                       {
                         required: true,
-                        message: t('Please enter the quantity'),
+                        message: t('Please select a item type'),
                       },
                     ]}
                   >
@@ -137,7 +128,7 @@ const SilageFieldFormList = ({
             <InputComponent style={{ display: 'none' }} />
           </Form.Item>
 
-          <div style={{ marginBottom: 16 }}>
+          <div style={{ marginBottom: 16, fontSize: 16 }}>
             {(() => {
               const details = form.getFieldValue('detailsSilage') || [];
               const totalQuantity = details.reduce(

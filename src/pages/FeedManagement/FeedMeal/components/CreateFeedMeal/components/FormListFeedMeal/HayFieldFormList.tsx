@@ -1,12 +1,11 @@
+import { PlusOutlined } from '@ant-design/icons';
 import { Divider, Form } from 'antd';
 import { useTranslation } from 'react-i18next';
 import ButtonComponent from '../../../../../../../components/Button/ButtonComponent';
 import FormItemComponent from '../../../../../../../components/Form/Item/FormItemComponent';
 import InputComponent from '../../../../../../../components/Input/InputComponent';
 import SelectComponent from '../../../../../../../components/Select/SelectComponent';
-import TagComponents from '../../../../../../../components/UI/TagComponents';
 import Title from '../../../../../../../components/UI/Title';
-import { PlusOutlined } from '@ant-design/icons';
 
 interface HayFieldFormListProps {
   hayTotal: number;
@@ -43,15 +42,6 @@ const HayFieldFormList = ({ hayTotal, hay }: HayFieldFormListProps) => {
       {(fields, { add, remove }) => (
         <>
           <Title className="text-xl no-underline">{t('hay')}</Title>
-          <div className="flex gap-2 my-3">
-            <p className="font-semibold text-lg">{t('Total')}:</p>
-            <TagComponents color="magenta" className="text-lg">
-              <span className="font-bold">
-                {(hayTotal * 0.8).toFixed(2)} ~ {hayTotal}
-              </span>{' '}
-              (kilogram)
-            </TagComponents>
-          </div>
           {fields.map(({ key, name, ...restField }, index) => {
             const currentSelected = detailsHay[index]?.itemId;
             const selectedOthers = detailsHay
@@ -75,6 +65,7 @@ const HayFieldFormList = ({ hayTotal, hay }: HayFieldFormListProps) => {
                     rules={[
                       {
                         required: true,
+                        message: t('Please select a item type'),
                       },
                     ]}
                   >
@@ -133,7 +124,7 @@ const HayFieldFormList = ({ hayTotal, hay }: HayFieldFormListProps) => {
             <InputComponent style={{ display: 'none' }} />
           </Form.Item>
 
-          <div style={{ marginBottom: 16 }}>
+          <div style={{ marginBottom: 16, fontSize: 16 }}>
             {(() => {
               const details = form.getFieldValue('detailsHay') || [];
               const totalQuantity = details.reduce(

@@ -13,7 +13,11 @@ import {
 
 import React, { useEffect } from 'react';
 
-import { AiOutlineDashboard, AiOutlineIssuesClose, AiTwotoneTool } from 'react-icons/ai';
+import {
+  AiOutlineDashboard,
+  AiOutlineIssuesClose,
+  AiTwotoneTool,
+} from 'react-icons/ai';
 import { BiCategory, BiTask, BiUser } from 'react-icons/bi';
 import { CiBoxList, CiExport } from 'react-icons/ci';
 import { FaWpforms } from 'react-icons/fa';
@@ -59,6 +63,7 @@ function getItem(
     icon,
     children,
     label: <Link to={`/${key}`}>{label}</Link>,
+    title: label,
   } as MenuItem;
 }
 
@@ -86,9 +91,12 @@ const AppDashboard: React.FC = () => {
   }, []);
 
   const breadcrumbItems = pathSegments.map((segment, index) => ({
-    title:
-      breadcumData[segment] ||
-      segment.charAt(0).toUpperCase() + segment.slice(1),
+    title: t(
+      `${
+        breadcumData[segment] ||
+        segment.charAt(0).toUpperCase() + segment.slice(1)
+      }`
+    ),
     href: '/' + pathSegments.slice(0, index + 1).join('/'),
   }));
   const navigate = useNavigate();
@@ -113,7 +121,7 @@ const AppDashboard: React.FC = () => {
     toast.showSuccess('Login success');
     handleNavigate('/login');
   };
-  const userRole = data?.role || ""; // Lấy role từ API
+  const userRole = data?.role || ''; // Lấy role từ API
   const items: MenuProps['items'] = [
     {
       key: '1',
@@ -150,7 +158,7 @@ const AppDashboard: React.FC = () => {
       children: [
         getItem(t('Cow'), 'dairy/cow-management', <PiCow />, [
           getItem(
-            t('list_cow'),
+            t('List'),
             'dairy/cow-management/list-cow',
             <CiBoxList size={sizeIcon} />
           ),
@@ -192,6 +200,13 @@ const AppDashboard: React.FC = () => {
         getItem(t('Area'), 'dairy/area-management', <LiaChartAreaSolid />),
         getItem(t('Pen'), 'dairy/pen-management', <GiCage />),
         getItem(t('Move cow'), 'dairy/move-cow-management', <MdSwapVert />),
+      ],
+    },
+    {
+      key: 'group-warehouse',
+      label: <LabelDashboard>{t('warehouse-management')}</LabelDashboard>,
+      type: 'group',
+      children: [
         getItem(t('Milk'), 'dairy/milk-management', <LuMilk />, [
           getItem(
             t('Milk batch'),
@@ -213,9 +228,9 @@ const AppDashboard: React.FC = () => {
         ),
         getItem(t('warehouse'), 'dairy/warehouse-management', <PiWarehouse />, [
           getItem(
-            t('Warehouse'),
+            t('warehouse'),
             'dairy/warehouse-management/warehouse',
-            <PiWarehouse size={sizeIcon} />,
+            <PiWarehouse size={sizeIcon} />
           ),
           getItem(
             t('Category'),
@@ -228,7 +243,7 @@ const AppDashboard: React.FC = () => {
             <RiAlignItemLeftLine size={sizeIcon} />,
             [
               getItem(
-                t('Item list'),
+                t('List'),
                 'dairy/warehouse-management/item-management',
                 <CiBoxList size={sizeIcon} />
               ),
@@ -284,18 +299,22 @@ const AppDashboard: React.FC = () => {
           ),
         ]),
 
-        getItem(t('Application'), 'dairy/application-management', <FaWpforms />, [
-          getItem(
-            t('Application'),
-            'dairy/application-management/application',
-            <BiCategory size={sizeIcon} />
-          ),
-          getItem(
-            t('Application Type'),
-            'dairy/application-management/application-type',
-            <BiCategory size={sizeIcon} />
-          ),
-        ]
+        getItem(
+          t('Application'),
+          'dairy/application-management',
+          <FaWpforms />,
+          [
+            getItem(
+              t('Application'),
+              'dairy/application-management/application',
+              <BiCategory size={sizeIcon} />
+            ),
+            getItem(
+              t('Application Type'),
+              'dairy/application-management/application-type',
+              <BiCategory size={sizeIcon} />
+            ),
+          ]
         ),
         getItem(t('Issue'), 'dairy/issue-management', <AiOutlineIssuesClose />),
         getItem(
