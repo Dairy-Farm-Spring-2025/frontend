@@ -94,7 +94,7 @@ const ModalDetailApplication = ({ modal, mutate, id }: ModalDetailApplicationPro
     const statusColor = {
         processing: 'orange',
         complete: 'green',
-        rejected: 'red'
+        cancel: 'red'
     };
 
     const items: DescriptionPropsItem['items'] = [
@@ -130,7 +130,7 @@ const ModalDetailApplication = ({ modal, mutate, id }: ModalDetailApplicationPro
                         onClick={handleCancel}
                         icon={<CloseOutlined />}
                         size="large"
-                        disabled={data?.status === "complete" || data?.status === "rejected"}
+                        disabled={data?.status === "complete" || data?.status === "cancel"}
                     >
                         {t("Cancel")}
                     </ButtonComponent>
@@ -141,7 +141,7 @@ const ModalDetailApplication = ({ modal, mutate, id }: ModalDetailApplicationPro
                         onClick={handleApprove}
                         icon={<CheckOutlined />}
                         size="large"
-                        disabled={data?.status === "complete" || data?.status === "rejected"}
+                        disabled={data?.status === "complete" || data?.status === "cancel"}
                     >
                         {t("Approve")}
                     </ButtonComponent>

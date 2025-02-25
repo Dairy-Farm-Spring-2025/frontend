@@ -104,7 +104,7 @@ const MyApplication = () => {
     const statusColor = useMemo(() => ({
         processing: 'orange',
         complete: 'green',
-        rejected: 'red'
+        cancel: 'red'
     }), []);
 
     const columns: Column[] = useMemo(() => [
