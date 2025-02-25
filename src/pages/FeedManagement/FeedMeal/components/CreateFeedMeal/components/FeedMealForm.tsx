@@ -17,6 +17,7 @@ import HayFieldFormList from './FormListFeedMeal/HayFieldFormList';
 import MineralFieldFormList from './FormListFeedMeal/MineralFieldFormList';
 import RefinedFieldFormList from './FormListFeedMeal/RefinedFieldFormList';
 import SilageFieldFormList from './FormListFeedMeal/SilageFieldFormList';
+import FormComponent from '../../../../../../components/Form/FormComponent';
 
 interface FeedMealFormProps {
   dry: number;
@@ -147,7 +148,7 @@ const FeedMealForm = ({
 
   return (
     <div>
-      <Form
+      <FormComponent
         form={form}
         name="dynamic_form_nest_item"
         autoComplete="off"
@@ -260,10 +261,7 @@ const FeedMealForm = ({
                 size={'25%'}
                 className="flex flex-col gap-2 !py-5 !pr-5"
               >
-                <HayFieldFormList
-                  hay={hay}
-                  hayTotal={hayTotal}
-                />
+                <HayFieldFormList hay={hay} hayTotal={hayTotal} />
               </Splitter.Panel>
 
               {/*Refined */}
@@ -315,7 +313,7 @@ const FeedMealForm = ({
             </Form.Item>
           </>
         )}
-      </Form>
+      </FormComponent>
     </div>
   );
 };
