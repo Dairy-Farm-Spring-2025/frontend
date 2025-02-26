@@ -90,6 +90,8 @@ const AppDashboard: React.FC = () => {
     }
   }, []);
 
+  console.log(data);
+
   const breadcrumbItems = pathSegments.map((segment, index) => ({
     title: t(
       `${
@@ -121,7 +123,7 @@ const AppDashboard: React.FC = () => {
     toast.showSuccess('Login success');
     handleNavigate('/login');
   };
-  const userRole = data?.role || ''; // Lấy role từ API
+  const userRole = data?.roleId.name || ''; // Lấy role từ API
   const items: MenuProps['items'] = [
     {
       key: '1',
@@ -130,8 +132,8 @@ const AppDashboard: React.FC = () => {
           className="flex flex-col"
           onClick={() => handleNavigate('profile')}
         >
-          <p className="text-base font-bold">Nguyen Van A</p>
-          <p className="text-slate-500">Staff</p>
+          <p className="text-base font-bold">{data?.name}</p>
+          <p className="text-slate-500">{t(userRole)}</p>
         </div>
       ),
     },
@@ -390,7 +392,7 @@ const AppDashboard: React.FC = () => {
                             className="!w-full font-bold"
                             icon={<IoIosLogOut size={20} />}
                           >
-                            Logout
+                            {t('Logout')}
                           </ButtonComponent>
                         </div>
                       </div>

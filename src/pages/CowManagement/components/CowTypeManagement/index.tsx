@@ -69,6 +69,7 @@ const CowTypeManagement = () => {
       title: t('Action'),
       render: (data) => (
         <ButtonComponent
+          key={'deleteButton'}
           onClick={() => console.log(data)}
           danger
           type="primary"

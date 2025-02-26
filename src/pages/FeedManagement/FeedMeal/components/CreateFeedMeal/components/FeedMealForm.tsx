@@ -51,6 +51,21 @@ const FeedMealForm = ({
     'feedmeals',
     'POST'
   );
+  const isFormValid = (values: any): boolean => {
+    if (!values) return false; // If form values are empty, disable the button
+
+    return Object.values(values).every((value) => {
+      if (Array.isArray(value)) {
+        return value.length > 0 && value.every((item) => isFormValid(item)); // Recursively check nested fields
+      } else if (typeof value === 'object' && value !== null) {
+        return isFormValid(value); // Recursively check objects
+      } else {
+        return Boolean(value); // Ensure value is not empty
+      }
+    });
+  };
+  const formValues = Form.useWatch([], form);
+  const isButtonDisabled = !isFormValid(formValues);
 
   useEffect(() => {
     if (itemsData) {
@@ -143,7 +158,6 @@ const FeedMealForm = ({
     } catch (error: any) {
       toast.showError(error.message);
     }
-    console.log(payload);
   };
 
   return (
@@ -307,6 +321,7 @@ const FeedMealForm = ({
                 className="!w-[500px]"
                 type="primary"
                 htmlType="submit"
+                disabled={isButtonDisabled}
               >
                 {t('Submit')}
               </ButtonComponent>
