@@ -73,7 +73,12 @@ const ModalDetailMyApplication = ({ modal, mutate, id }: ModalDetailMyApplicatio
 
     const handleCancel = async () => {
         try {
-            await cancelRequest();
+            await cancelRequest({
+                body: {
+                    approvalStatus: "approve",
+                    commentApprove: comment
+                }
+            });
             toast.showSuccess(t('Cancel success'));
 
             mutateEdit();
@@ -93,7 +98,7 @@ const ModalDetailMyApplication = ({ modal, mutate, id }: ModalDetailMyApplicatio
     const statusColor = {
         processing: 'orange',
         complete: 'green',
-        rejected: 'red'
+        cancel: 'red'
     };
 
     const items: DescriptionPropsItem['items'] = [
@@ -111,7 +116,7 @@ const ModalDetailMyApplication = ({ modal, mutate, id }: ModalDetailMyApplicatio
         { key: 'requestBy', label: t('Requested By'), children: data?.requestBy?.name || 'N/A', span: 1 },
         { key: 'approveBy', label: t('Approved By'), children: data?.approveBy?.name || '', span: 1 },
         { key: 'status', label: t('Status'), children: <Tag color={statusColor[data?.status as keyof typeof statusColor]}>{data?.status || ''}</Tag>, span: 2 },
-        { key: 'commentApprove', label: t('Comment'), children: data?.commentApprove || '', span: 2 },
+
     ];
 
 
@@ -130,7 +135,7 @@ const ModalDetailMyApplication = ({ modal, mutate, id }: ModalDetailMyApplicatio
                         onClick={handleCancel}
                         icon={<CloseOutlined />}
                         size="large"
-                        disabled={data?.status === "complete" || data?.status === "rejected"}
+                        disabled={data?.status === "complete" || data?.status === "cancel"}
                     >
                         {t("Cancel")}
                     </ButtonComponent>
