@@ -28,11 +28,11 @@ const PenEntityDetail: React.FC<PenEntityDetailProps> = ({
   penStatuses,
 }) => {
   return (
-    <div className='w-1/2'>
+    <div className="w-1/2">
       <Title level={3}>Pen Details</Title>
       <Descriptions bordered column={1}>
-        <Descriptions.Item label='ID'>{penEntity.penId}</Descriptions.Item>
-        <Descriptions.Item label='Name'>
+        <Descriptions.Item label="ID">{penEntity.penId}</Descriptions.Item>
+        <Descriptions.Item label="Name">
           {isEditing ? (
             <Input
               value={editedDetails?.name || ''}
@@ -42,7 +42,7 @@ const PenEntityDetail: React.FC<PenEntityDetailProps> = ({
             penEntity.name
           )}
         </Descriptions.Item>
-        <Descriptions.Item label='Description'>
+        <Descriptions.Item label="Description">
           {isEditing ? (
             <Input
               value={editedDetails?.description || ''}
@@ -52,7 +52,7 @@ const PenEntityDetail: React.FC<PenEntityDetailProps> = ({
             penEntity.description
           )}
         </Descriptions.Item>
-        <Descriptions.Item label='Pen Type'>
+        <Descriptions.Item label="Pen Type">
           {isEditing ? (
             <Select
               value={editedDetails?.penType || ''}
@@ -63,7 +63,7 @@ const PenEntityDetail: React.FC<PenEntityDetailProps> = ({
             penTypes.find((type) => type.value === penEntity.penType)?.label
           )}
         </Descriptions.Item>
-        <Descriptions.Item label='Pen Status'>
+        <Descriptions.Item label="Pen Status">
           {isEditing ? (
             <Select
               value={editedDetails?.penStatus || ''}
@@ -71,14 +71,17 @@ const PenEntityDetail: React.FC<PenEntityDetailProps> = ({
               options={penStatuses}
             />
           ) : (
-            penStatuses.find((status) => status.value === penEntity.penStatus)?.label
+            penStatuses.find((status) => status.value === penEntity.penStatus)
+              ?.label
           )}
         </Descriptions.Item>
-        <Descriptions.Item label='Area Belong To'>{penEntity.areaBelongto?.name}</Descriptions.Item>
-        <Descriptions.Item label='Area Type'>
+        <Descriptions.Item label="Area Belong To">
+          {penEntity.areaBelongto?.name}
+        </Descriptions.Item>
+        <Descriptions.Item label="Area Type">
           {getLabelByValue(penEntity.areaBelongto?.areaType, areaType)}
         </Descriptions.Item>
-        <Descriptions.Item label='Area Description'>
+        <Descriptions.Item label="Area Description">
           {penEntity.areaBelongto?.description}
         </Descriptions.Item>
       </Descriptions>

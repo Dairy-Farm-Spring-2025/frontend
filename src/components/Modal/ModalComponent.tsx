@@ -10,6 +10,7 @@ interface ModalComponentInterface extends ModalProps {
   footer?: React.ReactNode | React.ReactNode[];
   onOk?: () => void;
   onCancel?: () => void;
+  disabledButtonOk?: boolean;
 }
 const ModalComponent = ({
   children,
@@ -17,8 +18,10 @@ const ModalComponent = ({
   onCancel,
   footer,
   onOk,
+  disabledButtonOk = false,
   ...props
 }: ModalComponentInterface) => {
+  console.log(disabledButtonOk);
   return (
     <ConfigProvider
       modal={{
@@ -69,7 +72,12 @@ const ModalComponent = ({
                 >
                   Cancel
                 </ButtonComponent>,
-                <ButtonComponent key={'confirm'} onClick={onOk} type="primary">
+                <ButtonComponent
+                  key={'confirm'}
+                  onClick={onOk}
+                  type="primary"
+                  disabled={disabledButtonOk}
+                >
                   Confirm
                 </ButtonComponent>,
               ]

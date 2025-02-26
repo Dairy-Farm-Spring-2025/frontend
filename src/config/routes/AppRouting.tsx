@@ -14,9 +14,9 @@ import ApplicationType from '../../pages/ApplicationManagement/ApplicationType';
 import Application from '../../pages/ApplicationManagement/Application-management';
 import ApplicationManagement from '../../pages/ApplicationManagement';
 
-
 import ErrorPageNotification from '../../pages/Error';
 import Equipment from '../../pages/WarehouseManagement/components/Equipment';
+import { SiHappycow } from 'react-icons/si';
 const DetailFeedMeal = lazy(
   () => import('../../pages/FeedManagement/FeedMeal/components/DetailFeedMeal')
 );
@@ -159,7 +159,25 @@ const AppRouting = () => {
   const SuspenseWrapper = (Component: JSX.Element) => (
     <Suspense
       fallback={
-        <div className="w-screen h-screen flex items-center justify-center">
+        <div className="w-full h-full flex items-center justify-center">
+          <Spin size="large" />
+        </div>
+      }
+    >
+      {Component}
+    </Suspense>
+  );
+
+  const AppWrapper = (Component: JSX.Element) => (
+    <Suspense
+      fallback={
+        <div className="w-screen h-screen flex flex-col justify-center items-center">
+          <div
+            className={`bg-white p-3 flex  gap-4 justify-center items-center`}
+          >
+            <SiHappycow className="text-green-900" size={52} />
+            <p className="text-2xl font-bold text-black">Dairy Farm</p>
+          </div>
           <Spin size="large" />
         </div>
       }
@@ -175,7 +193,7 @@ const AppRouting = () => {
     },
     {
       path: '/login',
-      element: SuspenseWrapper(<LoginPage />),
+      element: AppWrapper(<LoginPage />),
       children: [
         {
           path: '',
@@ -192,7 +210,7 @@ const AppRouting = () => {
       path: 'dairy',
       element:
         user !== null ? (
-          SuspenseWrapper(<AppDashboard />)
+          AppWrapper(<AppDashboard />)
         ) : (
           <Navigate to={'/login'} />
         ),

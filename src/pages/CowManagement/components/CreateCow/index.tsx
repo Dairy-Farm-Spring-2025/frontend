@@ -1,6 +1,6 @@
 import { Form, Steps } from 'antd';
 import dayjs from 'dayjs';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ButtonComponent from '../../../../components/Button/ButtonComponent';
 import FormComponent from '../../../../components/Form/FormComponent';
 import WhiteBackground from '../../../../components/UI/WhiteBackground';
@@ -14,6 +14,8 @@ import { useTranslation } from 'react-i18next';
 
 const CreateCow = () => {
   const [form] = Form.useForm();
+  const formValues = Form.useWatch([], form);
+  const [disabledButton, setDisabledButton] = useState(true);
   const [currentStep, setCurrentStep] = useState(0);
   const [inforData, setInforData] = useState<Cow>();
   const { trigger, isLoading } = useFetcher('cows/create', 'POST');
@@ -21,6 +23,12 @@ const CreateCow = () => {
   const { isLoading: isLoadingHealthRecord, trigger: triggerHealthRecord } =
     useFetcher('health-record', 'POST');
   const toast = useToast();
+
+  useEffect(() => {
+    const isButtonDisabled =
+      !formValues || Object.values(formValues).some((value) => !value);
+    setDisabledButton(isButtonDisabled);
+  }, [formValues]);
 
   const steps = [
     {
@@ -101,7 +109,7 @@ const CreateCow = () => {
                 type="primary"
                 className="!bg-orange-500"
               >
-                {t("Clear All")}
+                {t('Clear All')}
               </ButtonComponent>
             )}
             {currentStep === 0 && (
@@ -109,17 +117,19 @@ const CreateCow = () => {
                 type="primary"
                 htmlType="submit"
                 loading={isLoading}
+                disabled={disabledButton}
               >
-                {t("Next")}
+                {t('Next')}
               </ButtonComponent>
             )}
             {currentStep === 1 && (
               <ButtonComponent
                 type="primary"
+                disabled={disabledButton}
                 htmlType="submit"
                 loading={isLoadingHealthRecord}
               >
-                {t("Done")}
+                {t('Done')}
               </ButtonComponent>
             )}
           </div>

@@ -10,6 +10,7 @@ import { CowTypeRequest } from '../../../../../../model/Cow/CowType';
 import { cowTypesStatus } from '../../../../../../service/data/cowTypesStatus';
 import { useTranslation } from 'react-i18next';
 import InputComponent from '../../../../../../components/Input/InputComponent';
+import { useEffect, useState } from 'react';
 
 interface ModalTypesProps {
   mutate: any;
@@ -21,6 +22,14 @@ const ModalTypes = ({ mutate, modal }: ModalTypesProps) => {
   const toast = useToast();
   const { trigger, isLoading } = useFetcher('cow-types/create', 'POST');
   const [form] = Form.useForm();
+  const formValues = Form.useWatch([], form);
+  const [disabledButton, setDisabledButton] = useState(true);
+
+  useEffect(() => {
+    const isButtonDisabled =
+      !formValues || Object.values(formValues).some((value) => !value);
+    setDisabledButton(isButtonDisabled);
+  }, [formValues]);
 
   const onFinish = async (values: CowTypeRequest) => {
     try {
@@ -48,11 +57,9 @@ const ModalTypes = ({ mutate, modal }: ModalTypesProps) => {
         onCancel={modal.closeModal}
         title={t('Create new cow types')}
         loading={isLoading}
+        disabledButtonOk={disabledButton}
       >
         <FormComponent form={form} onFinish={onFinish}>
-          <FormItemComponent name="id" hidden>
-            <Input />
-          </FormItemComponent>
           <FormItemComponent
             rules={[{ required: true }]}
             name="name"

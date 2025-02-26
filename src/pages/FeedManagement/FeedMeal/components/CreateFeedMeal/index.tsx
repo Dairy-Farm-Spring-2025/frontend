@@ -20,6 +20,7 @@ import FeedMealForm from './components/FeedMealForm';
 const CreateFeedMeal = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [form] = Form.useForm();
+  const formValues = Form.useWatch([], form);
   const { t } = useTranslation();
   const toast = useToast();
   const [cowTypes, setCowTypes] = useState<SelectProps['options']>([]);
@@ -31,11 +32,18 @@ const CreateFeedMeal = () => {
     'cow-types',
     'GET'
   );
+  const [disabledButton, setDisabledButton] = useState(true);
 
   const { trigger: triggerDryMatter, isLoading: loadingDryMatter } = useFetcher(
     'feedmeals/drymatter',
     'POST'
   );
+
+  useEffect(() => {
+    const isButtonDisabled =
+      !formValues || Object.values(formValues).some((value) => !value);
+    setDisabledButton(isButtonDisabled);
+  }, [formValues]);
 
   useEffect(() => {
     if (cowType) {
@@ -56,13 +64,9 @@ const CreateFeedMeal = () => {
     setCurrentStep((prev) => prev - 1);
     form.resetFields();
     setCheckDryMatter(false);
+    setDisabledButton(true);
     setDry(0);
   };
-
-  useEffect(() => {
-    console.log(cowTypesSelected);
-    console.log(cowStatusSelected);
-  }, [cowStatusSelected, cowTypesSelected]);
 
   const onFinishDryMatter = async (values: any) => {
     try {
@@ -106,6 +110,7 @@ const CreateFeedMeal = () => {
               />
             </FormItemComponent>
             <ButtonComponent
+              disabled={disabledButton}
               loading={loadingDryMatter}
               className="mt-10"
               htmlType="submit"
