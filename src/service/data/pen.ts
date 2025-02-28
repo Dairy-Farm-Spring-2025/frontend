@@ -29,6 +29,37 @@ export const penType = [
   },
 ];
 
+export const penFilter = [
+  {
+    text: 'Calf Pen',
+    value: 'calfPen',
+  },
+  {
+    text: 'Heifer Pen',
+    value: 'heiferPen',
+  },
+  {
+    text: 'DryCow Pen',
+    value: 'dryCowPen',
+  },
+  {
+    text: 'Lactating Cow Pen',
+    value: 'lactatingCowPen',
+  },
+  {
+    text: 'Maternity Pen',
+    value: 'maternityPen',
+  },
+  {
+    text: 'Isolation Pen',
+    value: 'isolationPen',
+  },
+  {
+    text: 'Holding Pen',
+    value: 'holdingPen',
+  },
+];
+
 export const penStatus = [
   {
     label: 'Occupied',

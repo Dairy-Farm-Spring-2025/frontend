@@ -1,8 +1,8 @@
 import { Image } from 'antd';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { IoMdFemale, IoMdMale } from 'react-icons/io';
 import cowImage from '../../../../assets/cow.jpg';
-import ButtonComponent from '../../../../components/Button/ButtonComponent';
 import TableComponent, {
   Column,
 } from '../../../../components/Table/TableComponent';
@@ -12,11 +12,13 @@ import WhiteBackground from '../../../../components/UI/WhiteBackground';
 import useFetch from '../../../../hooks/useFetcher';
 import useToast from '../../../../hooks/useToast';
 import { Cow } from '../../../../model/Cow/Cow';
-import { cowOrigin } from '../../../../service/data/cowOrigin';
+import {
+  cowOrigin,
+  cowOriginFiltered,
+} from '../../../../service/data/cowOrigin';
 import { cowStatus } from '../../../../service/data/cowStatus';
 import { formatDateHour, formatSTT } from '../../../../utils/format';
 import { getLabelByValue } from '../../../../utils/getLabel';
-import { useTranslation } from 'react-i18next';
 const ListCow = () => {
   const { t } = useTranslation();
   const [cow, setCow] = useState<Cow[]>([]);
@@ -38,12 +40,6 @@ const ListCow = () => {
       width: 200,
     },
     {
-      dataIndex: 'createdAt',
-      key: 'createdAt',
-      title: t('Created At'),
-      render: (data) => formatDateHour(data),
-    },
-    {
       dataIndex: 'name',
       key: 'name',
       title: t('Name'),
@@ -61,24 +57,32 @@ const ListCow = () => {
       key: 'dateOfBirth',
       title: t('Date Of Birth'),
       render: (data) => formatDateHour(data),
+      sorter: (a: any, b: any) =>
+        new Date(a.dateOfBirth).getTime() - new Date(b.dateOfBirth).getTime(),
+      filteredDate: true,
     },
     {
       dataIndex: 'dateOfEnter',
       key: 'dateOfEnter',
       title: t('Date Of Enter'),
       render: (data) => formatDateHour(data),
+      sorter: (a: any, b: any) =>
+        new Date(a.dateOfEnter).getTime() - new Date(b.dateOfEnter).getTime(),
+      filteredDate: true,
     },
     {
       dataIndex: 'dateOfOut',
       key: 'dateOfOut',
       title: t('Date Of Out'),
-      render: (data) => (data ? formatDateHour(data) : 'Not Out'),
+      render: (data) => (data ? formatDateHour(data) : '-'),
     },
     {
       dataIndex: 'cowOrigin',
       key: 'cowOrigin',
       title: t('Origin'),
       render: (data) => getLabelByValue(data, cowOrigin),
+      filterable: true,
+      filterOptions: cowOriginFiltered,
     },
     {
       dataIndex: 'gender',
@@ -90,6 +94,11 @@ const ListCow = () => {
         ) : (
           <IoMdFemale className="text-pink-600" size={20} />
         ),
+      filterable: true, // Enables dropdown filter
+      filterOptions: [
+        { text: 'Male', value: 'male' },
+        { text: 'Female', value: 'female' },
+      ],
     },
     {
       dataIndex: 'cowType',
@@ -102,16 +111,6 @@ const ListCow = () => {
       key: 'cowStatus',
       title: t('Cow Status'),
       render: (data) => getLabelByValue(data, cowStatus),
-    },
-    {
-      dataIndex: 'cowId',
-      key: 'action',
-      title: t('Action'),
-      render: () => (
-        <ButtonComponent type="primary" danger>
-          {t("Delete")}
-        </ButtonComponent>
-      ),
     },
   ];
   useEffect(() => {
