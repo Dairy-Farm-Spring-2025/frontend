@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import { InjectionSite } from '../model/Vaccine/VaccineCycle/vaccineCycle';
 
 export const formatDateHour = (data: any) => {
-  return dayjs(data).format('YYYY-MM-DD');
+  return dayjs(data).format('DD / MM / YYYY');
 };
 
 export const formatSTT = (data: any[]) => {

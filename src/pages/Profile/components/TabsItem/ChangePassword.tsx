@@ -137,7 +137,6 @@ const ChangePassword: React.FC = () => {
 
       {/* Submit Button */}
       <ButtonComponent
-        type="primary"
         htmlType="submit"
         className="!w-1/3 !text-base !h-10 font-bold"
         loading={isLoading}

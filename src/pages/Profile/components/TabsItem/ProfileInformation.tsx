@@ -1,13 +1,13 @@
+import { EditOutlined } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
 import ButtonComponent from '../../../../components/Button/ButtonComponent';
 import DescriptionComponent, {
   DescriptionPropsItem,
 } from '../../../../components/Description/DescriptionComponent';
-import { EditOutlined } from '@ant-design/icons';
 import useModal from '../../../../hooks/useModal';
 import { UserProfileData } from '../../../../model/User';
 import { formatDateHour } from '../../../../utils/format';
 import ModalEditProfile from '../ModalEditProfile';
-import { useTranslation } from 'react-i18next';
 
 interface ProfileInformationProps {
   profile: UserProfileData;
@@ -23,31 +23,31 @@ const ProfileInformation = ({ profile, mutate }: ProfileInformationProps) => {
       key: 'email',
       label: t('email'), // Translation for 'Email'
       children: profile?.email,
+      span: 3,
     },
     {
       key: 'dob',
       label: t('date_of_birth'), // Translation for 'Date of Birth'
-      children: profile?.dob,
+      children: formatDateHour(profile?.dob),
+      span: 3,
     },
     {
       key: 'startedDate',
       label: t('started_date'), // Translation for 'Started Date'
       children: formatDateHour(profile?.createdAt),
+      span: 3,
     },
     {
       key: 'gender',
       label: t('gender'), // Translation for 'Gender'
       children: profile?.gender,
-    },
-    {
-      key: 'status',
-      label: t('status'), // Translation for 'Status'
-      children: t('active'), // Translation for 'Active'
+      span: 3,
     },
     {
       key: 'phoneNumber',
       label: t('phone_number'), // Translation for 'Phone Number'
       children: profile?.phoneNumber,
+      span: 3,
     },
     {
       key: 'address',
@@ -59,7 +59,20 @@ const ProfileInformation = ({ profile, mutate }: ProfileInformationProps) => {
 
   return (
     <div>
-      <DescriptionComponent items={items} />
+      <DescriptionComponent
+        items={items}
+        layout="horizontal"
+        labelStyle={{
+          fontWeight: 'bold',
+          color: 'black',
+          width: 200,
+        }}
+        contentStyle={{
+          color: 'black',
+        }}
+        bordered={true}
+        className="!shadow-none"
+      />
       <div className="flex justify-end">
         <ButtonComponent
           icon={<EditOutlined />}

@@ -32,3 +32,38 @@ export const cowOrigin = [
     label: 'Crossbreed',
   },
 ];
+
+export const cowOriginFiltered = [
+  {
+    value: 'european',
+    text: 'European',
+  },
+  {
+    value: 'indian',
+    text: 'Indian',
+  },
+  {
+    value: 'african',
+    text: 'African',
+  },
+  {
+    value: 'american',
+    text: 'American',
+  },
+  {
+    value: 'australian',
+    text: 'Australian',
+  },
+  {
+    value: 'exotic',
+    text: 'Exotic',
+  },
+  {
+    value: 'indigenous',
+    text: 'Indigenous',
+  },
+  {
+    value: 'crossbreed',
+    text: 'Crossbreed',
+  },
+];
