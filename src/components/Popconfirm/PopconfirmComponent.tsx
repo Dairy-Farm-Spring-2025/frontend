@@ -1,5 +1,6 @@
 import { Popconfirm, PopconfirmProps } from 'antd';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface PopconfirmComponentPorps extends PopconfirmProps {
   confirm?: PopconfirmProps['onConfirm'];
@@ -13,11 +14,12 @@ const PopconfirmComponent = ({
   children,
   ...props
 }: PopconfirmComponentPorps) => {
+  const { t } = useTranslation()
   return (
     <Popconfirm
-      description="Are you sure to delete?"
-      okText="Yes"
-      cancelText="No"
+      description={t("Are you sure to delete?")}
+      okText={t("Yes")}
+      cancelText={t("No")}
       onConfirm={confirm}
       onCancel={cancel}
       {...props}
