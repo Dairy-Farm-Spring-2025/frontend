@@ -199,7 +199,11 @@ const AppDashboard: React.FC = () => {
             <PiPlus size={sizeIcon} />
           ),
         ]),
-        getItem(t('Area'), 'dairy/area-management', <LiaChartAreaSolid />),
+        getItem(
+          t('Area & Pen Management'),
+          'dairy/area-management',
+          <LiaChartAreaSolid />
+        ),
         getItem(t('Pen'), 'dairy/pen-management', <GiCage />),
         getItem(t('Move cow'), 'dairy/move-cow-management', <MdSwapVert />),
       ],

@@ -1,7 +1,7 @@
 import { Button, ButtonProps } from 'antd';
 import React from 'react';
 interface ButtonComponentProps extends ButtonProps {
-  children: React.ReactNode | React.ReactNode[];
+  children?: React.ReactNode | React.ReactNode[];
   className?: string;
   colorButton?: string;
 }

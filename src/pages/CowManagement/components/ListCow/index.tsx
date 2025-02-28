@@ -51,6 +51,7 @@ const ListCow = () => {
           {element}
         </TextLink>
       ),
+      searchText: true,
     },
     {
       dataIndex: 'dateOfBirth',

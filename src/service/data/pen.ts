@@ -86,3 +86,18 @@ export const penStatus = [
     value: 'inPlaning',
   },
 ];
+
+export const penStatusFilter = [
+  {
+    text: 'Occupied',
+    value: 'occupied',
+  },
+  {
+    text: 'Empty',
+    value: 'empty',
+  },
+  {
+    text: 'Under Maintenance',
+    value: 'underMaintenance',
+  },
+];

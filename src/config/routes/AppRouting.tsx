@@ -1,156 +1,145 @@
+import { Spin } from 'antd';
+import { lazy, Suspense } from 'react';
+import { useSelector } from 'react-redux';
 import {
   createBrowserRouter,
   Navigate,
   RouterProvider,
 } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../core/store/store';
-import { Spin } from 'antd';
-import { lazy, Suspense } from 'react';
-import { CowPenManagement } from '../../pages/CowPenManagement';
-import { MoveCowManagement } from '../../pages/CowPenManagement/components/MoveCowManagement';
+import { RootState } from '@core/store/store';
+import { CowPenManagement } from '@pages/CowPenManagement';
+import { MoveCowManagement } from '@pages/CowPenManagement/components/MoveCowManagement';
 
-import ApplicationType from '../../pages/ApplicationManagement/ApplicationType';
-import Application from '../../pages/ApplicationManagement/Application-management';
-import ApplicationManagement from '../../pages/ApplicationManagement';
+import ApplicationManagement from '@pages/ApplicationManagement';
+import Application from '@pages/ApplicationManagement/Application-management';
+import ApplicationType from '@pages/ApplicationManagement/ApplicationType';
 
-import ErrorPageNotification from '../../pages/Error';
-import Equipment from '../../pages/WarehouseManagement/components/Equipment';
 import { SiHappycow } from 'react-icons/si';
+import ErrorPageNotification from '@pages/Error';
+import Equipment from '@pages/WarehouseManagement/components/Equipment';
+const AreaDetail = lazy(
+  () => import('@pages/AreaManagement/components/AreaDetail/AreaDetail')
+);
+const AreaList = lazy(
+  () => import('@pages/AreaManagement/components/AreaList/AreaList')
+);
 const DetailFeedMeal = lazy(
-  () => import('../../pages/FeedManagement/FeedMeal/components/DetailFeedMeal')
+  () => import('@pages/FeedManagement/FeedMeal/components/DetailFeedMeal')
 );
 const FeedMealList = lazy(
-  () =>
-    import('../../pages/FeedManagement/FeedMeal/components/List/FeedMealList')
+  () => import('@pages/FeedManagement/FeedMeal/components/List/FeedMealList')
 );
 
 const CreateFeedMeal = lazy(
-  () => import('../../pages/FeedManagement/FeedMeal/components/CreateFeedMeal')
+  () => import('@pages/FeedManagement/FeedMeal/components/CreateFeedMeal')
 );
 
 const ListItemBatch = lazy(
   () =>
     import(
-      '../../pages/WarehouseManagement/components/Item/components/ItemBatch/components/ListItemBatch'
+      '@pages/WarehouseManagement/components/Item/components/ItemBatch/components/ListItemBatch'
     )
 );
 const DetailItemBatch = lazy(
   () =>
     import(
-      '../../pages/WarehouseManagement/components/Item/components/ItemBatch/components/DetailItemBatch'
+      '@pages/WarehouseManagement/components/Item/components/ItemBatch/components/DetailItemBatch'
     )
 );
 const ExportItem = lazy(
   () =>
-    import(
-      '../../pages/WarehouseManagement/components/Item/components/ExportItem'
-    )
+    import('@pages/WarehouseManagement/components/Item/components/ExportItem')
 );
 const ListExports = lazy(
   () =>
     import(
-      '../../pages/WarehouseManagement/components/Item/components/ExportItem/ListExports'
+      '@pages/WarehouseManagement/components/Item/components/ExportItem/ListExports'
     )
 );
 const DetailExport = lazy(
   () =>
     import(
-      '../../pages/WarehouseManagement/components/Item/components/ExportItem/DetailExport'
+      '@pages/WarehouseManagement/components/Item/components/ExportItem/DetailExport'
     )
 );
-const MilkManagement = lazy(() => import('../../pages/MilkManagement'));
+const MilkManagement = lazy(() => import('@pages/MilkManagement'));
 const MilkBatchManagement = lazy(
-  () => import('../../pages/MilkManagement/MilkBatchManagement')
+  () => import('@pages/MilkManagement/MilkBatchManagement')
 );
-const HumanManagement = lazy(() => import('../../pages/HumanManangement'));
+const HumanManagement = lazy(() => import('@pages/HumanManangement'));
 const ListWorker = lazy(
-  () => import('../../pages/HumanManangement/WorkerManagement')
+  () => import('@pages/HumanManangement/WorkerManagement')
 );
 const ListVeterinarian = lazy(
-  () => import('../../pages/HumanManangement/VeterinarianManagement')
+  () => import('@pages/HumanManangement/VeterinarianManagement')
 );
 
 // Lazy load components
 const ItemDetail = lazy(
   () =>
-    import(
-      '../../pages/WarehouseManagement/components/Item/components/ItemDetail'
-    )
+    import('@pages/WarehouseManagement/components/Item/components/ItemDetail')
 );
 const ItemBatchManagement = lazy(
   () =>
-    import(
-      '../../pages/WarehouseManagement/components/Item/components/ItemBatch'
-    )
+    import('@pages/WarehouseManagement/components/Item/components/ItemBatch')
 );
-const AppDashboard = lazy(() => import('../../core/layout/AppDashboard'));
-const CowManagement = lazy(() => import('../../pages/CowManagement'));
-const PenManageMent = lazy(() => import('../../pages/PenManagement'));
-const ListCow = lazy(
-  () => import('../../pages/CowManagement/components/ListCow')
-);
-const AreaManagement = lazy(() => import('../../pages/AreaManagement'));
+const AppDashboard = lazy(() => import('@core/layout/AppDashboard'));
+const CowManagement = lazy(() => import('@pages/CowManagement'));
+const PenManageMent = lazy(() => import('@pages/PenManagement'));
+const ListCow = lazy(() => import('@pages/CowManagement/components/ListCow'));
+const AreaAndPenManagement = lazy(() => import('@pages/AreaManagement'));
 const CowTypeManagement = lazy(
-  () => import('../../pages/CowManagement/components/CowTypeManagement')
+  () => import('@pages/CowManagement/components/CowTypeManagement')
 );
 const CreateCow = lazy(
-  () => import('../../pages/CowManagement/components/CreateCow')
+  () => import('@pages/CowManagement/components/CreateCow')
 );
-const LoginPage = lazy(() => import('../../pages/Login'));
+const LoginPage = lazy(() => import('@pages/Login'));
 const ForgetPassword = lazy(
-  () => import('../../pages/Login/components/ForgetPassword')
+  () => import('@pages/Login/components/ForgetPassword')
 );
-const LoginForm = lazy(() => import('../../pages/Login/components/LoginForm'));
-const Profile = lazy(() => import('../../pages/Profile'));
-const ListRole = lazy(() => import('../../pages/RoleManagement'));
-const ListUser = lazy(() => import('../../pages/UserManagement'));
-const Dashboard = lazy(() => import('../../pages/Dashboard'));
+const LoginForm = lazy(() => import('@pages/Login/components/LoginForm'));
+const Profile = lazy(() => import('@pages/Profile'));
+const ListRole = lazy(() => import('@pages/RoleManagement'));
+const ListUser = lazy(() => import('@pages/UserManagement'));
+const Dashboard = lazy(() => import('@pages/Dashboard'));
 const DailyMilkDashboard = lazy(
-  () => import('../../pages/Dashboard/components/DailyMilk')
+  () => import('@pages/Dashboard/components/DailyMilk')
 );
 const CowDetail = lazy(
-  () => import('../../pages/CowManagement/components/CowDetail')
+  () => import('@pages/CowManagement/components/CowDetail')
 );
-const FeedMealManagement = lazy(
-  () => import('../../pages/FeedManagement/FeedMeal')
-);
+const FeedMealManagement = lazy(() => import('@pages/FeedManagement/FeedMeal'));
 const VaccineCycleManagement = lazy(
-  () => import('../../pages/VaccineCycleManagement')
+  () => import('@pages/VaccineCycleManagement')
 );
 const ListVaccineCycle = lazy(
-  () => import('../../pages/VaccineCycleManagement/components/ListVaccineCycle')
+  () => import('@pages/VaccineCycleManagement/components/ListVaccineCycle')
 );
 const DetailVaccineCycle = lazy(
-  () =>
-    import('../../pages/VaccineCycleManagement/components/DetailVaccineCycle')
+  () => import('@pages/VaccineCycleManagement/components/DetailVaccineCycle')
 );
-const WarehouseManagement = lazy(
-  () => import('../../pages/WarehouseManagement')
-);
+const WarehouseManagement = lazy(() => import('@pages/WarehouseManagement'));
 const Category = lazy(
-  () => import('../../pages/WarehouseManagement/components/Category')
+  () => import('@pages/WarehouseManagement/components/Category')
 );
 const ItemManagement = lazy(
-  () => import('../../pages/WarehouseManagement/components/Item')
+  () => import('@pages/WarehouseManagement/components/Item')
 );
 const ListItemManagement = lazy(
-  () =>
-    import(
-      '../../pages/WarehouseManagement/components/Item/components/ListItem'
-    )
+  () => import('@pages/WarehouseManagement/components/Item/components/ListItem')
 );
 const Warehouse = lazy(
-  () => import('../../pages/WarehouseManagement/components/Warehouse')
+  () => import('@pages/WarehouseManagement/components/Warehouse')
 );
 const Supplier = lazy(
-  () => import('../../pages/WarehouseManagement/components/Supplier')
+  () => import('@pages/WarehouseManagement/components/Supplier')
 );
 const HealthReport = lazy(
-  () => import('../../pages/CowManagement/components/HeathReport')
+  () => import('@pages/CowManagement/components/HeathReport')
 );
 const IllNess = lazy(
-  () => import('../../pages/CowManagement/components/HeathReport/IllNess')
+  () => import('@pages/CowManagement/components/HeathReport/IllNess')
 );
 // Add more components as needed...
 
@@ -298,7 +287,11 @@ const AppRouting = () => {
         },
         {
           path: 'area-management',
-          element: SuspenseWrapper(<AreaManagement />),
+          element: SuspenseWrapper(<AreaAndPenManagement />),
+          children: [
+            { path: '', element: SuspenseWrapper(<AreaList />) },
+            { path: ':id', element: SuspenseWrapper(<AreaDetail />) },
+          ],
         },
         {
           path: 'warehouse-management',

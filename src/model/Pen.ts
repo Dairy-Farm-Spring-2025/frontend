@@ -22,5 +22,6 @@ export type Pen = {
     | 'decommissioned'
     | 'inPlaning';
   areaId: number;
+  areaBelongto: Area;
   area: Area;
 };

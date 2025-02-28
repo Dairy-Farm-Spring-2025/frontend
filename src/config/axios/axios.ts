@@ -1,9 +1,9 @@
-import axios from "axios";
-import { RootState, store } from "../../core/store/store";
-import toast from "react-hot-toast";
-import { logout, updateNewAccessToken } from "../../core/store/slice/userSlice";
+import axios from 'axios';
+import { RootState, store } from '../../core/store/store';
+import toast from 'react-hot-toast';
+import { logout, updateNewAccessToken } from '../../core/store/slice/userSlice';
 
-const baseURL = "http://34.124.196.11:8080/api/v1/";
+const baseURL = 'http://34.124.196.11:8080/api/v1/';
 
 const api = axios.create({
   baseURL: baseURL,
@@ -13,9 +13,16 @@ api.interceptors.request.use(
   (config) => {
     const state: RootState = store.getState();
     const user = state.user;
+    const language = localStorage.getItem('i18nextLng');
     if (user && user.accessToken) {
       config.headers.Authorization = `Bearer ${user.accessToken}`;
     }
+    if (language) {
+      config.headers['Accept-Language'] = language;
+    } else {
+      config.headers['Accept-Language'] = 'en';
+    }
+
     return config;
   },
   (error) => {
@@ -25,11 +32,11 @@ api.interceptors.request.use(
 
 const refreshToken = async (refreshToken: string) => {
   if (!refreshToken) {
-    throw new Error("No refresh token available");
+    throw new Error('No refresh token available');
   }
   const response = await axios.post(`${baseURL}users/refresh`, refreshToken, {
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
   const { accessToken } = response.data.data;
@@ -57,8 +64,8 @@ api.interceptors.response.use(
         return api(originalRequest);
       } catch (error) {
         store.dispatch(logout());
-        window.location.href = "/login";
-        toast.error("Expired Login");
+        window.location.href = '/login';
+        toast.error('Expired Login');
         return Promise.reject(error);
       }
     }

@@ -38,7 +38,7 @@ const ChangePassword: React.FC = () => {
     try {
       const response = await trigger({ body: values });
       if (response.message === 'Old password incorrect') {
-        toast.showError(t(response.message));
+        toast.showError(response.message);
         return;
       }
       if (
