@@ -127,7 +127,7 @@ const AreaDetail = () => {
     <AnimationAppear>
       <WhiteBackground>
         <div className="p-4">
-          <div className="flex justify-between">
+          <div className="flex flex-col">
             <div>
               <h2 className="text-2xl font-bold">{area.name}</h2>
 
@@ -141,7 +141,9 @@ const AreaDetail = () => {
                 <strong>Số Pen có thể chứa:</strong> {numPensX * numPensY}
               </p>
             </div>
-            <AreaDimension area={area} pens={pens as Pen[]} />
+            <div className="h-full">
+              <AreaDimension area={area} pens={pens as Pen[]} />
+            </div>{' '}
           </div>
           <Divider />
 

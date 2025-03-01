@@ -16,6 +16,10 @@ import { cowStatus } from '../../../../../service/data/cowStatus';
 import { genderData } from '../../../../../service/data/gender';
 import CowQRImage from '../../../../../components/CowQrImage/CowQrImage';
 import Title from '../../../../../components/UI/Title';
+import { t } from 'i18next';
+import { formatDateHour, formatStatusWithCamel } from '@utils/format';
+import Text from '@components/UI/Text';
+import QuillRender from '@components/UI/QuillRender';
 
 interface CowGeneralInformationProps {
   id: string;
@@ -36,6 +40,7 @@ const CowGeneralInformation = ({
   const [optionsCowType, setOptionsCowType] = useState<SelectProps['options']>(
     []
   );
+  const [showEdit, setShowEdit] = useState(false);
   const toast = useToast();
   useEffect(() => {
     if (data) {
@@ -88,104 +93,135 @@ const CowGeneralInformation = ({
     <FormComponent
       onFinish={handleFinish}
       form={form}
-      className="p-2 flex flex-col gap-5"
+      className="p-2 flex flex-col items-center gap-5 w-full"
     >
-      <div className="flex flex-col gap-2">
-        <div className="relative">
-          <Title className="!text-2xl">Date Information</Title>
-          <div className="absolute top-0 right-0">
-            <CowQRImage id={id} />
+      <div className="flex gap-5 w-3/4">
+        <div className="flex gap-5 w-full">
+          <div className="relative flex flex-col gap-2 w-full">
+            <Title className="!text-2xl">{t('Date Information')}</Title>
+            <div className="flex flex-col gap-5 w-3/4">
+              <FormItemComponent
+                rules={[{ required: true }]}
+                className="w-full"
+                name="dateOfBirth"
+                label={<LabelForm>{t('Date Of Birth')}</LabelForm>}
+              >
+                {!showEdit ? (
+                  <Text>{formatDateHour(dataDetail?.dateOfBirth)}</Text>
+                ) : (
+                  <DatePicker className="w-full !text-[18px] min-w-[250px]" />
+                )}
+              </FormItemComponent>
+              <FormItemComponent
+                rules={[{ required: true }]}
+                className="w-full"
+                name="dateOfEnter"
+                label={<LabelForm>{t('Date Of Enter')}</LabelForm>}
+              >
+                {!showEdit ? (
+                  <Text>{formatDateHour(dataDetail?.dateOfEnter)}</Text>
+                ) : (
+                  <DatePicker className="w-full min-w-[250px]" />
+                )}
+              </FormItemComponent>
+              <div className="flex justify-center">
+                <CowQRImage id={id} />
+              </div>
+            </div>
           </div>
         </div>
-        <div className="relative grid grid-cols-4 gap-5 w-full">
-          <div className="flex gap-10">
+        <div className="flex flex-col gap-2 w-full">
+          <Title className="!text-2xl">{t('Cow Information')}</Title>
+          <div className="flex flex-col gap-5 w-full">
             <FormItemComponent
               rules={[{ required: true }]}
+              name="gender"
               className="w-full"
-              name="dateOfBirth"
-              label={<LabelForm>Date of birth</LabelForm>}
+              label={<LabelForm>{t('Gender')}</LabelForm>}
             >
-              <DatePicker className="w-full !text-[18px] min-w-[250px]" />
+              {!showEdit ? (
+                <Text>{formatStatusWithCamel(dataDetail?.gender)}</Text>
+              ) : (
+                <SelectComponent options={genderData} className="w-full" />
+              )}
+            </FormItemComponent>
+            <FormItemComponent
+              name="cowTypeId"
+              rules={[{ required: true }]}
+              className="w-full"
+              label={<LabelForm>{t('Cow Type')}</LabelForm>}
+            >
+              {!showEdit ? (
+                <Text>{formatStatusWithCamel(dataDetail?.cowType?.name)}</Text>
+              ) : (
+                <SelectComponent options={optionsCowType} className="w-full" />
+              )}
             </FormItemComponent>
             <FormItemComponent
               rules={[{ required: true }]}
               className="w-full"
-              name="dateOfEnter"
-              label={<LabelForm>Date of enter</LabelForm>}
+              name="cowStatus"
+              label={<LabelForm>{t('Cow Status')}</LabelForm>}
             >
-              <DatePicker className="w-full min-w-[250px]" />
+              {!showEdit ? (
+                <Text>{formatStatusWithCamel(dataDetail?.cowStatus)}</Text>
+              ) : (
+                <SelectComponent options={cowStatus} className="w-full" />
+              )}
+            </FormItemComponent>
+            <FormItemComponent
+              name="cowOrigin"
+              rules={[{ required: true }]}
+              className="w-full"
+              label={<LabelForm>{t('Origin')}</LabelForm>}
+            >
+              {!showEdit ? (
+                <Text>{formatStatusWithCamel(dataDetail?.cowOrigin)}</Text>
+              ) : (
+                <SelectComponent options={cowOrigin} className="w-full" />
+              )}
             </FormItemComponent>
           </div>
         </div>
       </div>
-      <div className="flex flex-col gap-2">
-        <Title className="!text-2xl">Cow Information</Title>
-        <div className="grid grid-cols-4 gap-5 w-full">
-          <FormItemComponent
-            rules={[{ required: true }]}
-            name="gender"
-            className="w-full"
-            label={<LabelForm>Gender</LabelForm>}
-          >
-            <SelectComponent
-              options={genderData}
-              className="w-full"
-              placeholder="Select gender..."
-            />
-          </FormItemComponent>
-          <FormItemComponent
-            name="cowTypeId"
-            rules={[{ required: true }]}
-            className="w-full"
-            label={<LabelForm>Cow Type</LabelForm>}
-          >
-            <SelectComponent
-              options={optionsCowType}
-              className="w-full"
-              placeholder="Select cow type..."
-            />
-          </FormItemComponent>
-          <FormItemComponent
-            rules={[{ required: true }]}
-            className="w-full"
-            name="cowStatus"
-            label={<LabelForm>Cow Status</LabelForm>}
-          >
-            <SelectComponent
-              options={cowStatus}
-              className="w-full"
-              placeholder="Select status..."
-            />
-          </FormItemComponent>
-          <FormItemComponent
-            name="cowOrigin"
-            rules={[{ required: true }]}
-            className="w-full"
-            label={<LabelForm>Cow Origin</LabelForm>}
-          >
-            <SelectComponent
-              options={cowOrigin}
-              placeholder="Enter origin..."
-              className="w-full"
-            />
-          </FormItemComponent>
-          <FormItemComponent
-            className="w-full !col-span-4"
-            name="description"
-            rules={[{ required: true }]}
-            label={<LabelForm>Description</LabelForm>}
-          >
-            <ReactQuillComponent />
-          </FormItemComponent>
-        </div>
-        <div className="flex justify-end items-center gap-3">
-          <p className="text-lg text-orange-600 font-semibold">
-            (You can edit cow's information)
-          </p>
-          <ButtonComponent loading={isLoading} htmlType="submit" type="primary">
-            Save
+      <FormItemComponent
+        className="w-3/4"
+        name="description"
+        rules={[{ required: true }]}
+        label={<LabelForm>{t('Description')}</LabelForm>}
+      >
+        {!showEdit ? (
+          <QuillRender description={dataDetail?.description} />
+        ) : (
+          <ReactQuillComponent />
+        )}
+      </FormItemComponent>
+      <div className="flex justify-end items-center w-full gap-3">
+        <p className="text-lg text-orange-600 font-semibold">
+          (You can edit cow's information)
+        </p>
+        {!showEdit ? (
+          <ButtonComponent type="primary" onClick={() => setShowEdit(true)}>
+            {t('Edit')}
           </ButtonComponent>
-        </div>
+        ) : (
+          <div className="flex gap-5">
+            <ButtonComponent
+              type="primary"
+              danger
+              onClick={() => setShowEdit(false)}
+            >
+              {t('Cancel')}
+            </ButtonComponent>
+            <ButtonComponent
+              loading={isLoading}
+              htmlType="submit"
+              type="primary"
+            >
+              {t('Save')}
+            </ButtonComponent>
+          </div>
+        )}
       </div>
     </FormComponent>
   );

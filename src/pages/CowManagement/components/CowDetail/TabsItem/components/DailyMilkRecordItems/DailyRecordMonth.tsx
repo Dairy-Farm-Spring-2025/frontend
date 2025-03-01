@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import useToast from '../../../../../../../hooks/useToast';
 import { dailyMilkApi } from '../../../../../../../service/api/DailyMilk/dailyMilkApi';
 import SelectYear from '../../../../../../../components/Select/components/SelectYear';
-import BarChartComponent from '../../../../../../../components/Chart/BarChart/BarChartComponent';
+import LineChartComponent from '@components/Chart/LineChart/LineChartComponent';
+import { t } from 'i18next';
 
 interface DailyRecordMonthProps {
   id: any;
@@ -48,10 +49,14 @@ const DailyRecordMonth = ({ id }: DailyRecordMonthProps) => {
   return (
     <>
       <div className="flex flex-col gap-2 w-full">
-        <p className="font-bold text-base">Select Year:</p>
+        <p className="font-bold text-base">{t('Select year')}:</p>
         <SelectYear defaultYear={selectedYear} onChange={handleYearChange} />
       </div>
-      <BarChartComponent loading={loading} data={chartData} />
+      <LineChartComponent
+        data={chartData}
+        textRender={t('Milk')}
+        loading={loading}
+      />
     </>
   );
 };
