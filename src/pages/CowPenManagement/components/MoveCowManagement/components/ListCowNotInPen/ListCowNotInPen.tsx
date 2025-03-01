@@ -130,9 +130,9 @@ const ListCowNotInPen: React.FC<ListCowNotInPenProps> = ({ availablePens, mutate
       <WhiteBackground>
         <CreateBulkModal
           modal={modal}
-          avalableCows={filteredCows}
-          availablePens={availablePens || []}
-          mutate={mutate}
+          availableCows={filteredCows}
+
+
           mutateCows={mutateCows}
         />
         <TableComponent loading={isLoading} columns={columns} dataSource={formatSTT(cow)} />
