@@ -29,21 +29,22 @@ export type PenEntity = {
   penType: string;
   penStatus: string;
   areaBelongto: AreaBelongto;
+  areaId: string;
 };
 
 interface CowEntity {
   cowId: number;
   name: string;
   cowStatus:
-    | 'milkingCow'
-    | 'dryCow'
-    | 'pregnantCow'
-    | 'openCow'
-    | 'calvingCow'
-    | 'sickCow'
-    | 'breedingCow'
-    | 'quarantinedCow'
-    | 'culling';
+  | 'milkingCow'
+  | 'dryCow'
+  | 'pregnantCow'
+  | 'openCow'
+  | 'calvingCow'
+  | 'sickCow'
+  | 'breedingCow'
+  | 'quarantinedCow'
+  | 'culling';
   dateOfBirth: string;
   dateOfEnter: string;
   dateOfOut: string | null;
