@@ -8,6 +8,7 @@ import SelectComponent from '@components/Select/SelectComponent';
 import ModalComponent from '@components/Modal/ModalComponent';
 
 import { FC } from 'react';
+import useToast from '@hooks/useToast';
 
 interface MoveCowProps {
     isOpen: boolean;
@@ -15,7 +16,7 @@ interface MoveCowProps {
 }
 const MoveCow: FC<MoveCowProps> = ({ isOpen, onClose }) => {
     const { id } = useParams();
-
+    const toast = useToast();
     const [selectedPen, setSelectedPen] = useState(null);
     const { data: dataArea } = useFetcher<Area[]>('areas', 'GET');
     const [selectedArea, setSelectedArea] = useState<number | null>(null);
@@ -32,8 +33,12 @@ const MoveCow: FC<MoveCowProps> = ({ isOpen, onClose }) => {
     }, [selectedArea]);
 
     const handleMoveCow = async () => {
-        if (!selectedPen) return;
-        await moveCow(selectedPen);
+        if (!selectedPen || !id) return;
+
+        await moveCow({
+            body: { cowId: id, penId: selectedPen }
+        });
+        toast.showSuccess("Move cow successfully");
         onClose();
     };
 

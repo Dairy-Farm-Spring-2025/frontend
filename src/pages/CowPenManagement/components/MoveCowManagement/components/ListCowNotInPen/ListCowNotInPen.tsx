@@ -24,7 +24,7 @@ interface ListCowNotInPenProps {
   mutate: any;
 }
 
-const ListCowNotInPen: React.FC<ListCowNotInPenProps> = ({ availablePens, mutate }) => {
+const ListCowNotInPen: React.FC<ListCowNotInPenProps> = () => {
   const { data, error, isLoading, mutate: mutateCows } = useFetcher<Cow[]>('cows', 'GET');
   const [cow, setCow] = useState<Cow[]>([]);
   const toast = useToast();
