@@ -8,6 +8,8 @@ import { Cow } from '../../../../../model/Cow/Cow';
 import { DailyMilkModel } from '../../../../../model/DailyMilk/DailyMilk';
 import CreateDailyMilkModal from './components/CreateDailyMilkModal';
 import ModalDetailDailyMilk from './components/ModalDetailDailyMilk';
+import DailyMilkRecord from './DailyMilkRecord';
+import { t } from 'i18next';
 
 interface DailyMilkProps {
   id: string;
@@ -17,7 +19,13 @@ interface DailyMilkProps {
   detailCow: Cow;
 }
 
-const DailyMilk = ({ id, dataMilk = [], isLoading, mutateDaily, detailCow }: DailyMilkProps) => {
+const DailyMilk = ({
+  id,
+  dataMilk = [],
+  isLoading,
+  mutateDaily,
+  detailCow,
+}: DailyMilkProps) => {
   const modal = useModal();
   const modalDailyMilk = useModal();
   const [dailyMilk, setDailyMilk] = useState(null);
@@ -66,25 +74,35 @@ const DailyMilk = ({ id, dataMilk = [], isLoading, mutateDaily, detailCow }: Dai
 
   return (
     <div>
-      <div className='flex gap-5 mb-5'>
+      <div className="flex gap-5 mb-5">
         {detailCow?.cowStatus === 'milkingCow' && (
-          <ButtonComponent onClick={openModal} type='primary'>
-            Create Daily Milk
+          <ButtonComponent onClick={openModal} type="primary">
+            {t('Create daily milk')}
           </ButtonComponent>
         )}
       </div>
-      <CalendarComponent
-        events={events}
-        initialView='dayGridMonth'
-        eventContentRenderer={(eventInfo) => (
-          <div onClick={() => openDailyModal(eventInfo.event)}>
-            <p>
-              <span>{eventInfo.event.extendedProps.volume} (lit)</span> -{' '}
-              <span>{eventInfo.event.extendedProps.worker.name}</span>
-            </p>
-          </div>
-        )}
-      />
+      <div className="flex">
+        <div className="w-1/2 items-center">
+          <CalendarComponent
+            events={events}
+            initialView="dayGridMonth"
+            eventContentRenderer={(eventInfo) => (
+              <div
+                className="text-center"
+                onClick={() => openDailyModal(eventInfo.event)}
+              >
+                <p>
+                  <span>{eventInfo.event.extendedProps.volume} (lit)</span>
+                </p>
+              </div>
+            )}
+            height={700}
+          />
+        </div>
+        <div className="w-1/2">
+          <DailyMilkRecord id={id} />
+        </div>
+      </div>
       {modalDailyMilk.open && (
         <ModalDetailDailyMilk
           dailyMilk={dailyMilk}

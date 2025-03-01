@@ -5,54 +5,80 @@ interface AreaDimensionProps {
   area: Area;
   pens: Pen[];
 }
+
 const AreaDimension = ({ area, pens }: AreaDimensionProps) => {
-  // Tính toán số lượng Pen theo hàng và cột
-  const numPensX = Math.floor(area.width / area.penWidth);
-  const numPensY = Math.floor(area.length / area.penLength);
   const isValidNumber = (value: any) =>
     typeof value === 'number' && !isNaN(value) && value > 0;
 
-  // Kích thước từng ô trong lưới Pen
-  const cellWidth = 600 / numPensX;
-  const cellHeight = 400 / numPensY;
+  const widthValid = isValidNumber(area.width);
+  const lengthValid = isValidNumber(area.length);
+  const penWidthValid = isValidNumber(area.penWidth);
+  const penLengthValid = isValidNumber(area.penLength);
+
+  const numPensPerRow =
+    widthValid && lengthValid && penWidthValid && penLengthValid
+      ? Math.max(
+          1,
+          (Math.floor(area.width / area.penWidth) *
+            Math.floor(area.length / area.penLength)) /
+            2
+        )
+      : 4;
+
+  const numPensX = Math.max(1, numPensPerRow);
+  const maxWidth = 1000;
+  const diagramWidth = Math.min(numPensX * 400, maxWidth);
+  const cellWidth = diagramWidth / numPensX;
+  const cellHeight = 180;
+  const dividerSpace = 60;
+
   return (
-    isValidNumber(area.width) &&
-    isValidNumber(area.length) &&
-    isValidNumber(area.penWidth) &&
-    isValidNumber(area.penLength) && (
-      <div className=" flex justify-start w-1/2">
-        <svg width="100%" height="300" viewBox="0 0 700 500">
-          {/* Vẽ khung tổng thể của Area */}
+    widthValid &&
+    lengthValid &&
+    penWidthValid &&
+    penLengthValid && (
+      <div className="flex">
+        <svg
+          width="100%"
+          height="500"
+          viewBox={`0 0 ${diagramWidth + 100} 550`}
+        >
+          {/* Area Border */}
           <rect
             x="50"
             y="50"
-            width="600"
+            width={diagramWidth}
             height="400"
             fill="none"
             stroke="black"
             strokeWidth="2"
           />
 
-          {/* Mũi tên Chiều dài */}
+          {/* Length Arrow */}
           <line
             x1="50"
-            y1="470"
-            x2="650"
-            y2="470"
+            y1="90%"
+            x2={50 + diagramWidth}
+            y2="90%"
             stroke="black"
             strokeWidth="2"
             markerEnd="url(#arrow)"
           />
-          <text x="350" y="495" textAnchor="middle" fontSize="25">
+          <text
+            x={50 + diagramWidth / 2}
+            y="520"
+            textAnchor="middle"
+            fontSize="20"
+          >
             {area.width}m
           </text>
 
-          {/* Mũi tên Chiều rộng */}
+          {/* Width Arrow */}
           <line
             x1="30"
             y1="50"
             x2="30"
-            y2="450"
+            y2="85%"
             stroke="black"
             strokeWidth="2"
             markerEnd="url(#arrow)"
@@ -61,13 +87,13 @@ const AreaDimension = ({ area, pens }: AreaDimensionProps) => {
             x="10"
             y="250"
             textAnchor="middle"
-            fontSize="25"
+            fontSize="20"
             transform="rotate(-90 10,250)"
           >
             {area.length}m
           </text>
 
-          {/* Định nghĩa mũi tên SVG */}
+          {/* Arrow Definition */}
           <defs>
             <marker
               id="arrow"
@@ -81,29 +107,49 @@ const AreaDimension = ({ area, pens }: AreaDimensionProps) => {
             </marker>
           </defs>
 
-          {/* Vẽ lưới Pen bên trong Area */}
-          {Array.from({ length: numPensY }).map((_, row) =>
-            Array.from({ length: numPensX }).map((_, col) => {
-              const x = 50 + col * cellWidth;
-              const y = 50 + row * cellHeight;
+          {/* Grid of Pens in Two Rows */}
+          {[...Array(2)].map((_, row) => (
+            <g key={row}>
+              {[...Array(numPensX)].map((_, col) => {
+                const index = row * numPensX + col;
+                const x = 50 + col * cellWidth;
+                const y = 50 + row * (cellHeight + dividerSpace);
+                const isOccupied = Array.isArray(pens) && pens[index] != null;
+                return (
+                  <rect
+                    key={`${row}-${col}`}
+                    x={x}
+                    y={y}
+                    width={cellWidth}
+                    height={cellHeight}
+                    fill={isOccupied ? '#34D399' : 'white'}
+                    stroke="black"
+                    strokeWidth="1"
+                  />
+                );
+              })}
+            </g>
+          ))}
 
-              const index = row * numPensX + col;
-              const isOccupied = pens && index < pens.length; // Nếu index nhỏ hơn số pens thực tế, tô xanh
-
-              return (
-                <rect
-                  key={`${row}-${col}`}
-                  x={x}
-                  y={y}
-                  width={cellWidth}
-                  height={cellHeight}
-                  fill={isOccupied ? '#34D399' : 'white'} // Tô xanh nếu occupied
-                  stroke="black"
-                  strokeWidth="1"
-                />
-              );
-            })
-          )}
+          {/* Entrance Divider Line */}
+          <line
+            x1="60"
+            y1={80 + cellHeight}
+            x2={(50 + diagramWidth) / 2.3}
+            y2={80 + cellHeight}
+            stroke="black"
+            strokeWidth="2"
+            markerEnd="url(#arrow)"
+          />
+          <text
+            x={50 + diagramWidth / 2.2}
+            y={57 + cellHeight + 30}
+            textAnchor="middle"
+            fontSize="20"
+            fontWeight="bold"
+          >
+            Entrance
+          </text>
         </svg>
       </div>
     )

@@ -5,6 +5,8 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction'; // Plugin for date click
 import './calendar.scss';
+import ButtonComponent from '@components/Button/ButtonComponent';
+import { motion } from 'framer-motion';
 
 interface CustomCalendarProps {
   initialView?: 'dayGridMonth' | 'timeGridWeek' | 'timeGridDay';
@@ -18,6 +20,7 @@ interface CustomCalendarProps {
   slotMinTime?: string;
   slotMaxTime?: string;
   eventContentRenderer?: (eventInfo: EventContentArg) => React.ReactNode;
+  className?: string;
 }
 
 const CalendarComponent: React.FC<CustomCalendarProps> = ({
@@ -36,43 +39,75 @@ const CalendarComponent: React.FC<CustomCalendarProps> = ({
 }) => {
   const mainCalendarRef = useRef<FullCalendar>(null);
   const [currentView, setCurrentView] = useState(initialView);
+  const [popoverVisible, setPopoverVisible] = useState(false);
+  const [toogleDate, setToogleDate] = useState<any>();
 
-  const handleDateClick = (dateInfo: { dateStr: string }) => {
+  const handleDateClick = (dateInfo: { dateStr: string; date: Date }) => {
+    const localDate = new Date(
+      dateInfo.date.getTime() - dateInfo.date.getTimezoneOffset() * 60000
+    )
+      .toISOString()
+      .split('T')[0];
+
+    console.log('Converted localDate:', localDate);
+
+    setToogleDate(localDate);
+
     const calendarApi: CalendarApi | any = mainCalendarRef.current?.getApi();
     if (calendarApi) {
-      calendarApi.gotoDate(dateInfo.dateStr);
+      calendarApi.gotoDate(localDate);
     }
   };
 
   const handleViewChange = (view: string) => {
-    console.log(view);
     setCurrentView(view as 'dayGridMonth' | 'timeGridWeek' | 'timeGridDay');
   };
 
+  const handleClose = () => {
+    setPopoverVisible(!popoverVisible);
+    setToogleDate(undefined);
+  };
+
   return (
-    <div className="flex">
+    <div className="">
       {currentView === 'timeGridDay' && (
-        <div className="w-1/5 p-2 bg-gray-100 rounded-md shadow-md">
-          <FullCalendar
-            plugins={[dayGridPlugin, interactionPlugin]}
-            initialView="dayGridMonth"
-            height="auto"
-            headerToolbar={{
-              left: '',
-              center: 'title',
-              right: '',
+        <div>
+          <ButtonComponent onClick={handleClose}>
+            {popoverVisible ? 'Close' : 'Open'} pick day
+          </ButtonComponent>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{
+              opacity: popoverVisible ? 1 : 0,
+              scale: popoverVisible ? 1 : 0.95,
             }}
-            dateClick={handleDateClick}
-          />
+            transition={{ duration: 0.3 }}
+            className="mt-5"
+          >
+            {popoverVisible && (
+              <FullCalendar
+                plugins={[dayGridPlugin, interactionPlugin]}
+                initialView="dayGridMonth"
+                height={500}
+                dayCellClassNames={(date) =>
+                  date.date.toLocaleDateString('fr-CA') === toogleDate
+                    ? 'selected-date'
+                    : ''
+                }
+                headerToolbar={{
+                  start: 'prev,next',
+                  center: 'title',
+                  right: '',
+                }}
+                dateClick={handleDateClick}
+              />
+            )}
+          </motion.div>
         </div>
       )}
 
       {/* Main Calendar */}
-      <div
-        className={`p-4 bg-white rounded-md shadow-lg calendar ${
-          currentView === 'timeGridDay' ? 'w-4/5' : 'w-full'
-        }`}
-      >
+      <div className={`p-4 bg-white rounded-md shadow-lg calendar w-full`}>
         <FullCalendar
           ref={mainCalendarRef}
           plugins={[dayGridPlugin, timeGridPlugin]}

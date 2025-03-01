@@ -2,7 +2,6 @@ import {
   FunnelPlotOutlined,
   PlusCircleOutlined,
   ProfileOutlined,
-  SaveOutlined,
 } from '@ant-design/icons';
 import { useParams } from 'react-router-dom';
 import TabsComponent, {
@@ -10,13 +9,12 @@ import TabsComponent, {
 } from '../../../../components/Tabs/TabsComponent';
 import AnimationAppear from '../../../../components/UI/AnimationAppear';
 import WhiteBackground from '../../../../components/UI/WhiteBackground';
+import useFetcher from '../../../../hooks/useFetcher';
+import { Cow, HealthResponse } from '../../../../model/Cow/Cow';
+import { DailyMilkModel } from '../../../../model/DailyMilk/DailyMilk';
 import DailyMilk from './TabsItem/DailyMilk';
 import CowGeneralInformation from './TabsItem/GeneralInformation';
-import useFetcher from '../../../../hooks/useFetcher';
-import { DailyMilkModel } from '../../../../model/DailyMilk/DailyMilk';
-import DailyMilkRecord from './TabsItem/DailyMilkRecord';
 import HealthRecordCow from './TabsItem/HealthRecordCow';
-import { Cow, HealthResponse } from '../../../../model/Cow/Cow';
 
 const CowDetail = () => {
   const { id } = useParams();
@@ -74,12 +72,6 @@ const CowDetail = () => {
         />
       ),
       icon: <FunnelPlotOutlined />,
-    },
-    {
-      key: 'record',
-      label: 'Daily Milk Record',
-      children: <DailyMilkRecord id={id} />,
-      icon: <SaveOutlined />,
     },
   ];
   return (

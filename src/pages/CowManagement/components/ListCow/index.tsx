@@ -119,7 +119,7 @@ const ListCow = () => {
       setCow(data);
     }
     if (error) {
-      toast.showError(error);
+      toast.showError(error.message);
     }
   }, [data, error, toast]);
   return (
@@ -128,7 +128,7 @@ const ListCow = () => {
         <TableComponent
           loading={isLoading}
           columns={columns}
-          dataSource={formatSTT(cow)}
+          dataSource={cow ? formatSTT(cow) : []}
         />
       </WhiteBackground>
     </AnimationAppear>
