@@ -18,10 +18,13 @@ import HealthRecordCow from './TabsItem/HealthRecordCow';
 import { useState } from 'react';
 import MoveCow from './TabsItem/components/MoveCow';
 import ButtonComponent from '@components/Button/ButtonComponent';
+import { useTranslation } from 'react-i18next';
+import HistoryMoveCow from './TabsItem/HistoryMoveCow';
 
 const CowDetail = () => {
+  const { t } = useTranslation();
   const { id } = useParams();
-  const [isOpen, setIsOpen] = useState(false);
+
   const {
     data: dataMilk,
     isLoading: isLoadingDaily,
@@ -77,23 +80,36 @@ const CowDetail = () => {
       ),
       icon: <FunnelPlotOutlined />,
     },
+    {
+      key: 'history',
+      label: 'History Move Cow',
+      children: (
+        <HistoryMoveCow
+          id={id as string}
+          dataHistory={dataDetail as Cow}
+          isLoadingHistory={isLoadingDetail}
+          mutateHistory={mutateDetail}
+        />
+      ),
+      icon: <ProfileOutlined />,
+    }
+
   ];
   return (
     <AnimationAppear>
       <WhiteBackground className="min-h-[70vh]">
-        <p className="text-4xl font-bold !h-fit my-4 text-primary">
-          {dataDetail?.name}
-        </p>
-        <ButtonComponent onClick={() => setIsOpen(true)}>Open MoveCow Modal</ButtonComponent>
-        <MoveCow isOpen={isOpen} onClose={() => setIsOpen(false)} />
-        <TabsComponent
-          items={items}
-          destroyInactiveTabPane
-          className="!h-full"
-        />
+        <div className="flex items-center justify-between my-4">
+          <p className="text-4xl font-bold text-primary">
+            {dataDetail?.name}
+          </p>
+
+        </div>
+
+        <TabsComponent items={items} destroyInactiveTabPane className="!h-full" />
       </WhiteBackground>
     </AnimationAppear>
   );
+
 };
 
 export default CowDetail;
