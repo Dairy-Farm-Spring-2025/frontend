@@ -5,6 +5,7 @@ import TabsComponent, {
 import DailyRecordDate from './components/DailyMilkRecordItems/DailyRecordDate';
 import DailyRecordMonth from './components/DailyMilkRecordItems/DailyRecordMonth';
 import { BarChartOutlined, CalendarOutlined } from '@ant-design/icons';
+import DailyRecordRange from './components/DailyMilkRecordItems/DailyRecordRange';
 
 interface DailyMilkRecordProps {
   id: any;
@@ -18,6 +19,12 @@ const DailyMilkRecord = ({ id }: DailyMilkRecordProps) => {
       label: t('Daily record'),
       children: <DailyRecordDate id={id} />,
       icon: <CalendarOutlined />,
+    },
+    {
+      key: 'rangeRecord',
+      label: t('Range record'),
+      children: <DailyRecordRange id={id} />,
+      icon: <BarChartOutlined />,
     },
     {
       key: 'monthRecord',

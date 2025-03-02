@@ -1,14 +1,14 @@
 import { Form, Steps } from 'antd';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
-import ButtonComponent from '../../../../components/Button/ButtonComponent';
-import FormComponent from '../../../../components/Form/FormComponent';
-import WhiteBackground from '../../../../components/UI/WhiteBackground';
-import useFetcher from '../../../../hooks/useFetcher';
-import useToast from '../../../../hooks/useToast';
-import { Cow } from '../../../../model/Cow/Cow';
+import ButtonComponent from '@components/Button/ButtonComponent';
+import FormComponent from '@components/Form/FormComponent';
+import WhiteBackground from '@components/UI/WhiteBackground';
+import useFetcher from '@hooks/useFetcher';
+import useToast from '@hooks/useToast';
+import { Cow } from '@model/Cow/Cow';
 import CreateCowInformation from './CreateCowInformation/CreateCowInformation';
-import AnimationAppear from '../../../../components/UI/AnimationAppear';
+import AnimationAppear from '@components/UI/AnimationAppear';
 import HealthRecordInformation from './CreateCowInformation/HealthRecordInformation';
 import { useTranslation } from 'react-i18next';
 

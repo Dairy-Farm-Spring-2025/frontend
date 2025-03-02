@@ -64,5 +64,6 @@
   "silage": "Silage",
   "minerals": "Minerals",
   "total_quantity_range": "Total quantity must be between {{min}} (kg) and {{max}} (kg)",
-  "warehouse-management": "Warehouse management"
+  "warehouse-management": "Warehouse management",
+  "volume": "Volume"
 }

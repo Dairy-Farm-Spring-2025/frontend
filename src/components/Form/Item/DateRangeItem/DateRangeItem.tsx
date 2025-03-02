@@ -1,12 +1,24 @@
-import { DatePicker, Form } from 'antd';
+import DatePickerComponent from '@components/DatePicker/DatePickerComponent';
+import Text from '@components/UI/Text';
+import TextBorder from '@components/UI/TextBorder';
+import { formatDateHour } from '@utils/format';
+import { Form } from 'antd';
 import LabelForm from '../../../LabelForm/LabelForm';
 import FormItemComponent from '../FormItemComponent';
 
 interface DateRangeItemProps {
   disable?: boolean;
+  edited?: boolean;
+  startDate?: string;
+  endDate?: string;
 }
 
-const DateRangeItem = ({ disable = false }: DateRangeItemProps) => {
+const DateRangeItem = ({
+  disable = false,
+  edited = true,
+  startDate = new Date().toISOString(),
+  endDate = new Date().toISOString(),
+}: DateRangeItemProps) => {
   const dateNow = new Date();
   const [form] = Form.useForm(); // Access the form instance
 
@@ -44,13 +56,18 @@ const DateRangeItem = ({ disable = false }: DateRangeItemProps) => {
           },
         ]}
       >
-        <DatePicker
-          disabled={disable}
-          format="YYYY-MM-DD"
-          placeholder="Start date"
-          className="!w-full"
-          disabledDate={disablePastDates}
-        />
+        {!edited ? (
+          <TextBorder>
+            <Text>{formatDateHour(startDate)}</Text>
+          </TextBorder>
+        ) : (
+          <DatePickerComponent
+            disabled={disable}
+            placeholder="Start date"
+            className="!w-full"
+            disabledDate={disablePastDates}
+          />
+        )}
       </FormItemComponent>
 
       {/* End Date */}
@@ -60,13 +77,18 @@ const DateRangeItem = ({ disable = false }: DateRangeItemProps) => {
         dependencies={['startDate']}
         rules={[{ required: true }]}
       >
-        <DatePicker
-          disabled={disable}
-          format="YYYY-MM-DD"
-          placeholder="End date"
-          className="!w-full"
-          disabledDate={disablePastDates}
-        />
+        {!edited ? (
+          <TextBorder>
+            <Text>{formatDateHour(endDate)}</Text>
+          </TextBorder>
+        ) : (
+          <DatePickerComponent
+            disabled={disable}
+            placeholder="End date"
+            className="!w-full"
+            disabledDate={disablePastDates}
+          />
+        )}
       </FormItemComponent>
     </>
   );

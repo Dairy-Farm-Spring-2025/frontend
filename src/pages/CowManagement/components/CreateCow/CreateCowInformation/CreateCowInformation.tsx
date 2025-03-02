@@ -1,16 +1,17 @@
-import { DatePicker, SelectProps } from 'antd';
+import DatePickerComponent from '@components/DatePicker/DatePickerComponent';
+import { SelectProps } from 'antd';
 import { useEffect, useState } from 'react';
-import FormItemComponent from '../../../../../components/Form/Item/FormItemComponent';
-import LabelForm from '../../../../../components/LabelForm/LabelForm';
-import ReactQuillComponent from '../../../../../components/ReactQuill/ReactQuillComponent';
-import SelectComponent from '../../../../../components/Select/SelectComponent';
-import useFetcher from '../../../../../hooks/useFetcher';
-import { CowType } from '../../../../../model/Cow/CowType';
-import { cowOrigin } from '../../../../../service/data/cowOrigin';
-import { genderData } from '../../../../../service/data/gender';
-import Title from '../../../../../components/UI/Title';
 import { useTranslation } from 'react-i18next';
-import { cowStatus } from '../../../../../service/data/cowStatus';
+import FormItemComponent from '@components/Form/Item/FormItemComponent';
+import LabelForm from '@components/LabelForm/LabelForm';
+import ReactQuillComponent from '@components/ReactQuill/ReactQuillComponent';
+import SelectComponent from '@components/Select/SelectComponent';
+import Title from '@components/UI/Title';
+import useFetcher from '@hooks/useFetcher';
+import { CowType } from '@model/Cow/CowType';
+import { cowOrigin } from '@service/data/cowOrigin';
+import { cowStatus } from '@service/data/cowStatus';
+import { genderData } from '@service/data/gender';
 const CreateCowInformation = () => {
   const { data } = useFetcher<any[]>('cow-types', 'GET');
   const [optionsCowType, setOptionsCowType] = useState<SelectProps['options']>(
@@ -39,7 +40,7 @@ const CreateCowInformation = () => {
               name="dateOfBirth"
               label={<LabelForm>{t('Date Of Birth')}</LabelForm>}
             >
-              <DatePicker className="w-full !text-[18px]" />
+              <DatePickerComponent className="w-full !text-[18px]" />
             </FormItemComponent>
             <FormItemComponent
               rules={[
@@ -62,7 +63,7 @@ const CreateCowInformation = () => {
               name="dateOfEnter"
               label={<LabelForm>{t('Date Of Enter')}</LabelForm>}
             >
-              <DatePicker className="w-full" />
+              <DatePickerComponent className="w-full" />
             </FormItemComponent>
           </div>
         </div>

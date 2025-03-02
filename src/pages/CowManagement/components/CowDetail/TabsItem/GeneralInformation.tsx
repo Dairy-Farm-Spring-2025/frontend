@@ -1,12 +1,19 @@
-import { DatePicker, Form, SelectProps, Spin } from 'antd';
+import DatePickerComponent from '@components/DatePicker/DatePickerComponent';
+import Text from '@components/UI/Text';
+import TextBorder from '@components/UI/TextBorder';
+import { formatDateHour, formatStatusWithCamel } from '@utils/format';
+import { Form, SelectProps, Spin } from 'antd';
 import dayjs from 'dayjs';
+import { t } from 'i18next';
 import { useEffect, useState } from 'react';
 import ButtonComponent from '../../../../../components/Button/ButtonComponent';
+import CowQRImage from '../../../../../components/CowQrImage/CowQrImage';
 import FormComponent from '../../../../../components/Form/FormComponent';
 import FormItemComponent from '../../../../../components/Form/Item/FormItemComponent';
 import LabelForm from '../../../../../components/LabelForm/LabelForm';
 import ReactQuillComponent from '../../../../../components/ReactQuill/ReactQuillComponent';
 import SelectComponent from '../../../../../components/Select/SelectComponent';
+import Title from '../../../../../components/UI/Title';
 import useFetcher from '../../../../../hooks/useFetcher';
 import useToast from '../../../../../hooks/useToast';
 import { Cow } from '../../../../../model/Cow/Cow';
@@ -14,12 +21,6 @@ import { CowType } from '../../../../../model/Cow/CowType';
 import { cowOrigin } from '../../../../../service/data/cowOrigin';
 import { cowStatus } from '../../../../../service/data/cowStatus';
 import { genderData } from '../../../../../service/data/gender';
-import CowQRImage from '../../../../../components/CowQrImage/CowQrImage';
-import Title from '../../../../../components/UI/Title';
-import { t } from 'i18next';
-import { formatDateHour, formatStatusWithCamel } from '@utils/format';
-import Text from '@components/UI/Text';
-import QuillRender from '@components/UI/QuillRender';
 
 interface CowGeneralInformationProps {
   id: string;
@@ -107,9 +108,11 @@ const CowGeneralInformation = ({
                 label={<LabelForm>{t('Date Of Birth')}</LabelForm>}
               >
                 {!showEdit ? (
-                  <Text>{formatDateHour(dataDetail?.dateOfBirth)}</Text>
+                  <TextBorder>
+                    <Text>{formatDateHour(dataDetail?.dateOfBirth)}</Text>
+                  </TextBorder>
                 ) : (
-                  <DatePicker className="w-full !text-[18px] min-w-[250px]" />
+                  <DatePickerComponent className="w-full !text-[18px] min-w-[250px]" />
                 )}
               </FormItemComponent>
               <FormItemComponent
@@ -119,9 +122,11 @@ const CowGeneralInformation = ({
                 label={<LabelForm>{t('Date Of Enter')}</LabelForm>}
               >
                 {!showEdit ? (
-                  <Text>{formatDateHour(dataDetail?.dateOfEnter)}</Text>
+                  <TextBorder>
+                    <Text>{formatDateHour(dataDetail?.dateOfEnter)}</Text>
+                  </TextBorder>
                 ) : (
-                  <DatePicker className="w-full min-w-[250px]" />
+                  <DatePickerComponent className="w-full min-w-[250px]" />
                 )}
               </FormItemComponent>
               <div className="flex justify-center">
@@ -140,7 +145,9 @@ const CowGeneralInformation = ({
               label={<LabelForm>{t('Gender')}</LabelForm>}
             >
               {!showEdit ? (
-                <Text>{formatStatusWithCamel(dataDetail?.gender)}</Text>
+                <TextBorder>
+                  <Text>{formatStatusWithCamel(dataDetail?.gender)}</Text>
+                </TextBorder>
               ) : (
                 <SelectComponent options={genderData} className="w-full" />
               )}
@@ -152,7 +159,11 @@ const CowGeneralInformation = ({
               label={<LabelForm>{t('Cow Type')}</LabelForm>}
             >
               {!showEdit ? (
-                <Text>{formatStatusWithCamel(dataDetail?.cowType?.name)}</Text>
+                <TextBorder>
+                  <Text>
+                    {formatStatusWithCamel(dataDetail?.cowType?.name)}
+                  </Text>
+                </TextBorder>
               ) : (
                 <SelectComponent options={optionsCowType} className="w-full" />
               )}
@@ -164,7 +175,9 @@ const CowGeneralInformation = ({
               label={<LabelForm>{t('Cow Status')}</LabelForm>}
             >
               {!showEdit ? (
-                <Text>{formatStatusWithCamel(dataDetail?.cowStatus)}</Text>
+                <TextBorder>
+                  <Text>{formatStatusWithCamel(dataDetail?.cowStatus)}</Text>
+                </TextBorder>
               ) : (
                 <SelectComponent options={cowStatus} className="w-full" />
               )}
@@ -176,7 +189,9 @@ const CowGeneralInformation = ({
               label={<LabelForm>{t('Origin')}</LabelForm>}
             >
               {!showEdit ? (
-                <Text>{formatStatusWithCamel(dataDetail?.cowOrigin)}</Text>
+                <TextBorder>
+                  <Text>{formatStatusWithCamel(dataDetail?.cowOrigin)}</Text>
+                </TextBorder>
               ) : (
                 <SelectComponent options={cowOrigin} className="w-full" />
               )}
@@ -190,11 +205,7 @@ const CowGeneralInformation = ({
         rules={[{ required: true }]}
         label={<LabelForm>{t('Description')}</LabelForm>}
       >
-        {!showEdit ? (
-          <QuillRender description={dataDetail?.description} />
-        ) : (
-          <ReactQuillComponent />
-        )}
+        <ReactQuillComponent readOnly={!showEdit} />
       </FormItemComponent>
       <div className="flex justify-end items-center w-full gap-3">
         <p className="text-lg text-orange-600 font-semibold">
