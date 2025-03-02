@@ -57,7 +57,7 @@ const MoveCow: FC<MoveCowProps> = ({ isOpen, onClose, mutateHistory }) => {
         await moveCow({ body: { cowId: id, penId: selectedPen } });
         mutateHistory();
         toast.showSuccess(t('Move cow successfully'));
-        onClose();
+        handleClose();
     };
     const handleClose = () => {
         setSelectedPen(null);
