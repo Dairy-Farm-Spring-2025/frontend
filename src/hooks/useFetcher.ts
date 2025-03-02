@@ -54,6 +54,7 @@ const useFetcher = <T>(
     error: swrError,
   } = useSWR<T>(method === 'GET' ? url : null, () => fetcher(url, method), {
     revalidateOnFocus: false,
+    shouldRetryOnError: false,
     onError: (err) => {
       setError(err);
     },

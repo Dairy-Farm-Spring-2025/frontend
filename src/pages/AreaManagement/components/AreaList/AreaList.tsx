@@ -24,17 +24,18 @@ import { useNavigate } from 'react-router-dom';
 import '../../index.scss';
 import ModalCreateArea from '../ModalCreateArea/ModalCreateArea';
 import ModalEditPens from '../ModalEditPen';
+import useToast from '@hooks/useToast';
 
 const AreaList = () => {
   const modalEdit = useModal();
   const modalCreate = useModal();
   const navigate = useNavigate();
   const { data, isLoading, mutate } = useFetcher<Pen[]>('pens', 'GET');
-  const { data: dataArea } = useFetcher<Area[]>('areas', 'GET');
+  const { data: dataArea, error } = useFetcher<Area[]>('areas', 'GET');
   const { t } = useTranslation();
   const [id, setId] = useState<number>(0);
   const [dataGroup, setDataGroup] = useState<any[]>([]);
-
+  const toast = useToast();
   useEffect(() => {
     if (dataArea) {
       console.log(data);
@@ -44,10 +45,14 @@ const AreaList = () => {
           data?.filter((pen) => pen.area?.areaId === area.areaId).slice(0, 5) ||
           [],
       }));
-
       setDataGroup(groupedData);
     }
   }, [data, dataArea]);
+  useEffect(() => {
+    if (error) {
+      toast.showError(error.message);
+    }
+  }, [error]);
   const handleEdit = (id: number) => {
     setId(id);
     modalEdit.openModal();
