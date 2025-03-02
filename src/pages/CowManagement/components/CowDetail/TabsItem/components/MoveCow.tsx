@@ -13,8 +13,9 @@ import useToast from '@hooks/useToast';
 interface MoveCowProps {
     isOpen: boolean;
     onClose: () => void;
+    mutateHistory: () => void; // Thêm props để cập nhật lịch sử
 }
-const MoveCow: FC<MoveCowProps> = ({ isOpen, onClose }) => {
+const MoveCow: FC<MoveCowProps> = ({ isOpen, onClose, mutateHistory }) => {
     const { id } = useParams();
     const toast = useToast();
     const [selectedPen, setSelectedPen] = useState(null);
@@ -38,8 +39,10 @@ const MoveCow: FC<MoveCowProps> = ({ isOpen, onClose }) => {
         await moveCow({
             body: { cowId: id, penId: selectedPen }
         });
+        mutateHistory();
         toast.showSuccess("Move cow successfully");
         onClose();
+
     };
 
     return (
