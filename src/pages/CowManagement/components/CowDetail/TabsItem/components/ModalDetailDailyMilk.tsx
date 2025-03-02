@@ -68,7 +68,6 @@ const ModalDetailDailyMilk = ({
   };
 
   const onConfirm = async (id: string) => {
-    console.log(1);
     try {
       await trigger({ url: `dailymilks/${id}` });
       toast.showSuccess('Delete success');

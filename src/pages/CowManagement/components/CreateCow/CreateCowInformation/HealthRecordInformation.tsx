@@ -1,11 +1,11 @@
 import { useTranslation } from 'react-i18next';
-import FormItemComponent from '../../../../../components/Form/Item/FormItemComponent';
-import InputComponent from '../../../../../components/Input/InputComponent';
-import LabelForm from '../../../../../components/LabelForm/LabelForm';
-import SelectComponent from '../../../../../components/Select/SelectComponent';
-import Title from '../../../../../components/UI/Title';
-import { cowStatus } from '../../../../../service/data/cowStatus';
-import { HEALTH_RECORD_STATUS } from '../../../../../service/data/healthRecordStatus';
+import FormItemComponent from '@components/Form/Item/FormItemComponent';
+import InputComponent from '@components/Input/InputComponent';
+import LabelForm from '@components/LabelForm/LabelForm';
+import SelectComponent from '@components/Select/SelectComponent';
+import Title from '@components/UI/Title';
+import { cowStatus } from '@service/data/cowStatus';
+import { HEALTH_RECORD_STATUS } from '@service/data/healthRecordStatus';
 
 const HealthRecordInformation = () => {
   const { t } = useTranslation();
