@@ -15,9 +15,13 @@ import { DailyMilkModel } from '../../../../model/DailyMilk/DailyMilk';
 import DailyMilk from './TabsItem/DailyMilk';
 import CowGeneralInformation from './TabsItem/GeneralInformation';
 import HealthRecordCow from './TabsItem/HealthRecordCow';
+import { useState } from 'react';
+import MoveCow from './TabsItem/components/MoveCow';
+import ButtonComponent from '@components/Button/ButtonComponent';
 
 const CowDetail = () => {
   const { id } = useParams();
+  const [isOpen, setIsOpen] = useState(false);
   const {
     data: dataMilk,
     isLoading: isLoadingDaily,
@@ -80,6 +84,8 @@ const CowDetail = () => {
         <p className="text-4xl font-bold !h-fit my-4 text-primary">
           {dataDetail?.name}
         </p>
+        <ButtonComponent onClick={() => setIsOpen(true)}>Open MoveCow Modal</ButtonComponent>
+        <MoveCow isOpen={isOpen} onClose={() => setIsOpen(false)} />
         <TabsComponent
           items={items}
           destroyInactiveTabPane

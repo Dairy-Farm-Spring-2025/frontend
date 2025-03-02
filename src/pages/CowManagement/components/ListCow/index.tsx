@@ -1,5 +1,5 @@
-import { Image } from 'antd';
-import { useEffect, useState } from 'react';
+import { Divider, Image } from 'antd';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IoMdFemale, IoMdMale } from 'react-icons/io';
 import cowImage from '../../../../assets/cow.jpg';
@@ -19,12 +19,20 @@ import {
 import { cowStatus } from '../../../../service/data/cowStatus';
 import { formatDateHour, formatSTT } from '../../../../utils/format';
 import { getLabelByValue } from '../../../../utils/getLabel';
+import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
+import CreateBulkModal from '@pages/CowPenManagement/components/MoveCowManagement/components/ListCowNotInPen/components/CreateBulk/CreateBulk';
+import useModal from '@hooks/useModal';
+import { PenEntity } from '@model/CowPen/CowPen';
+
+
 const ListCow = () => {
   const { t } = useTranslation();
   const [cow, setCow] = useState<Cow[]>([]);
-  const { data, error, isLoading } = useFetch<Cow[]>('cows', 'GET');
+  const { data, error, isLoading, mutate: mutateCows } = useFetch<Cow[]>('cows', 'GET');
   console.log(isLoading);
   const toast = useToast();
+  const modal = useModal();
+  const [selectedRows, setSelectedRows] = useState<Cow[]>([]);
   const columns: Column[] = [
     {
       dataIndex: 'cowId',
@@ -113,22 +121,57 @@ const ListCow = () => {
       title: t('Cow Status'),
       render: (data) => getLabelByValue(data, cowStatus),
     },
+    {
+      dataIndex: 'inPen',
+      key: 'inPen',
+      title: t('In Pen'),
+      render: (data) =>
+        data ? (
+          <CheckCircleOutlined style={{ color: 'green' }} />
+        ) : (
+          <CloseCircleOutlined style={{ color: 'red' }} />
+        ),
+    },
   ];
   useEffect(() => {
     if (data) {
       setCow(data);
     }
     if (error) {
-      toast.showError(error.message);
+      toast.showError(error);
     }
   }, [data, error, toast]);
+  const rowSelection = {
+    onChange: (selectedRowKeys: React.Key[], selectedRows: Cow[]) => {
+      console.log('Selected Row Keys:', selectedRowKeys);
+      console.log('Selected Rows:', selectedRows);
+      setSelectedRows(selectedRows); // Lưu các dòng được chọn vào state
+    },
+  };
+  const filteredCows: Cow[] = useMemo(
+    () => (data ? data.filter((item) => !item.inPen) : []),
+    [data]
+  );
+
+  useEffect(() => {
+    setCow(filteredCows);
+  }, [filteredCows]);
   return (
     <AnimationAppear duration={0.5}>
       <WhiteBackground>
+        <CreateBulkModal
+          modal={modal}
+          availableCows={filteredCows}
+
+          mutateCows={mutateCows}
+        />
+        <Divider className='my-4' />
         <TableComponent
           loading={isLoading}
           columns={columns}
-          dataSource={cow ? formatSTT(cow) : []}
+          dataSource={formatSTT(cow)}
+        // rowSelection={rowSelection} // Thêm tính năng chọn hàng
+        // rowKey="cowId" // Định danh duy nhất cho từng dòng
         />
       </WhiteBackground>
     </AnimationAppear>
