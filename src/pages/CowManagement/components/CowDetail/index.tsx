@@ -15,9 +15,6 @@ import { DailyMilkModel } from '../../../../model/DailyMilk/DailyMilk';
 import DailyMilk from './TabsItem/DailyMilk';
 import CowGeneralInformation from './TabsItem/GeneralInformation';
 import HealthRecordCow from './TabsItem/HealthRecordCow';
-import { useState } from 'react';
-import MoveCow from './TabsItem/components/MoveCow';
-import ButtonComponent from '@components/Button/ButtonComponent';
 import { useTranslation } from 'react-i18next';
 import HistoryMoveCow from './TabsItem/HistoryMoveCow';
 import {
