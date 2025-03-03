@@ -17,6 +17,8 @@ import ApplicationType from '@pages/ApplicationManagement/ApplicationType';
 import { SiHappycow } from 'react-icons/si';
 import ErrorPageNotification from '@pages/Error';
 import Equipment from '@pages/WarehouseManagement/components/Equipment';
+import TaskManagement from '@pages/TaskManagement';
+import TaskType from '@pages/TaskManagement/TaskType';
 const AreaDetail = lazy(
   () => import('@pages/AreaManagement/components/AreaDetail/AreaDetail')
 );
@@ -416,6 +418,22 @@ const AppRouting = () => {
               path: 'veterinarian',
               element: SuspenseWrapper(<ListVeterinarian />),
             },
+          ],
+        },
+        {
+          path: 'task-management',
+          element: SuspenseWrapper(<TaskManagement />),
+          children: [
+            {
+              path: '',
+              element: <Navigate to={'task-type'} />,
+            },
+
+            {
+              path: 'task-type',
+              element: SuspenseWrapper(<TaskType />),
+            },
+
           ],
         },
         {
