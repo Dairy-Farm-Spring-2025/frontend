@@ -31,7 +31,8 @@ const Application = () => {
     const statusColor = {
         processing: 'orange',
         complete: 'green',
-        cancel: 'red'
+        cancel: 'pink',
+        reject: 'red'
     };
     const columns: Column[] = [
         {
