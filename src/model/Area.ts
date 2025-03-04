@@ -7,4 +7,7 @@ export type Area = {
   penWidth: number;
   areaType: 'cowHousing' | 'milkingParlor' | 'wareHouse';
   areaId: number;
+  occupiedPens: number;
+  emptyPens: number;
+  damagedPens: number;
 };

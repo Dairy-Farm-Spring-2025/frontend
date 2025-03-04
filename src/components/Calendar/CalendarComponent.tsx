@@ -16,11 +16,12 @@ interface CustomCalendarProps {
     end?: string;
   };
   events?: EventInput[];
-  height?: string | number;
+  height?: number;
   slotMinTime?: string;
   slotMaxTime?: string;
   eventContentRenderer?: (eventInfo: EventContentArg) => React.ReactNode;
   className?: string;
+  eventClick?: any;
 }
 
 const CalendarComponent: React.FC<CustomCalendarProps> = ({
@@ -31,10 +32,11 @@ const CalendarComponent: React.FC<CustomCalendarProps> = ({
     end: 'dayGridMonth timeGridWeek timeGridDay',
   },
   events = [],
-  height = '90vh',
+  height = 700,
   slotMinTime = '00:00:00',
   slotMaxTime = '24:00:00',
   eventContentRenderer,
+  eventClick,
   ...props
 }) => {
   const mainCalendarRef = useRef<FullCalendar>(null);
@@ -109,6 +111,24 @@ const CalendarComponent: React.FC<CustomCalendarProps> = ({
       {/* Main Calendar */}
       <div className={`p-4 bg-white rounded-md shadow-lg calendar w-full`}>
         <FullCalendar
+          eventClick={eventClick}
+          allDaySlot={false}
+          slotMinTime="00:00:00"
+          slotMaxTime="24:00:00"
+          slotDuration="06:00:00"
+          slotLabelContent={(arg) => {
+            const shiftLabels = ['Shift 1', 'Shift 2', 'Shift 3', 'Shift 4'];
+            const index = Math.floor(arg.date.getHours() / 6);
+
+            return <div>{shiftLabels[index] || ''}</div>;
+          }}
+          eventMaxStack={
+            currentView === 'timeGridWeek'
+              ? 3
+              : currentView === 'dayGridMonth'
+              ? 5
+              : 2
+          }
           ref={mainCalendarRef}
           plugins={[dayGridPlugin, timeGridPlugin]}
           initialView={initialView}
@@ -120,7 +140,10 @@ const CalendarComponent: React.FC<CustomCalendarProps> = ({
               slotMaxTime,
             },
           }}
+          expandRows={true}
           events={events}
+          eventOverlap={false}
+          slotEventOverlap={false}
           eventContent={(eventInfo) =>
             eventContentRenderer ? eventContentRenderer(eventInfo) : null
           }

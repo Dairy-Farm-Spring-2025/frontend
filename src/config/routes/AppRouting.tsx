@@ -456,6 +456,10 @@ const AppRouting = () => {
           ],
         },
         {
+          path: 'task-management',
+          element: SuspenseWrapper(<TaskManagement /> ),
+        },
+        {
           path: 'profile',
           element: SuspenseWrapper(<Profile />),
         },
