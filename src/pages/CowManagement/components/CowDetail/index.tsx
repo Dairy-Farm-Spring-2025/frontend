@@ -15,12 +15,11 @@ import { DailyMilkModel } from '../../../../model/DailyMilk/DailyMilk';
 import DailyMilk from './TabsItem/DailyMilk';
 import CowGeneralInformation from './TabsItem/GeneralInformation';
 import HealthRecordCow from './TabsItem/HealthRecordCow';
-import { useState } from 'react';
-import MoveCow from './TabsItem/components/MoveCow';
-import ButtonComponent from '@components/Button/ButtonComponent';
 import { useTranslation } from 'react-i18next';
 import HistoryMoveCow from './TabsItem/HistoryMoveCow';
-
+import {
+  RetweetOutlined
+} from '@ant-design/icons';
 const CowDetail = () => {
   const { t } = useTranslation();
   const { id } = useParams();
@@ -82,16 +81,14 @@ const CowDetail = () => {
     },
     {
       key: 'history',
-      label: 'History Move Cow',
+      label: 'Move Cow',
       children: (
         <HistoryMoveCow
           id={id as string}
-          dataHistory={dataDetail as Cow}
           isLoadingHistory={isLoadingDetail}
-          mutateHistory={mutateDetail}
         />
       ),
-      icon: <ProfileOutlined />,
+      icon: <RetweetOutlined />,
     }
 
   ];

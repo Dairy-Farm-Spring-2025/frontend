@@ -1,15 +1,7 @@
-import AnimationAppear from '@components/UI/AnimationAppear';
-import WhiteBackground from '@components/UI/WhiteBackground';
-import TaskSchedule from './components/components/TaskSchedule';
+import { Outlet } from 'react-router-dom';
 
 const TaskManagement = () => {
-  return (
-    <AnimationAppear>
-      <WhiteBackground>
-        <TaskSchedule />
-      </WhiteBackground>
-    </AnimationAppear>
-  );
+  return <Outlet />;
 };
 
 export default TaskManagement;
