@@ -25,7 +25,7 @@ const ModalDetailApplication = ({ modal, mutate, id }: ModalDetailApplicationPro
     const toast = useToast();
 
     const { trigger: approvalRequest, isLoading } = useFetcher(`application/approval-request/${id}`, 'PUT');
-    const { trigger: cancelRequest } = useFetcher(`application/cancel-request/${id}`, 'PUT');
+    // const { trigger: cancelRequest } = useFetcher(`application/cancel-request/${id}`, 'PUT');
     const { data, isLoading: isLoadingDetail, mutate: mutateEdit } = useFetcher<Application>(`application/${id}`, 'GET');
 
     useEffect(() => {
@@ -72,10 +72,15 @@ const ModalDetailApplication = ({ modal, mutate, id }: ModalDetailApplicationPro
         }
     };
 
-    const handleCancel = async () => {
+    const handleReject = async () => {
         try {
-            await cancelRequest();
-            toast.showSuccess(t('Cancel success'));
+            await approvalRequest({
+                body: {
+                    approvalStatus: "reject",
+                    commentApprove: comment
+                }
+            });
+            toast.showSuccess(t('Reject success'));
 
             mutateEdit();
             handleClose();
@@ -94,7 +99,8 @@ const ModalDetailApplication = ({ modal, mutate, id }: ModalDetailApplicationPro
     const statusColor = {
         processing: 'orange',
         complete: 'green',
-        cancel: 'red'
+        cancel: 'pink',
+        reject: 'red'
     };
 
     const items: DescriptionPropsItem['items'] = [
@@ -127,7 +133,7 @@ const ModalDetailApplication = ({ modal, mutate, id }: ModalDetailApplicationPro
                     <ButtonComponent
                         key="cancel"
                         danger
-                        onClick={handleCancel}
+                        onClick={handleReject}
                         icon={<CloseOutlined />}
                         size="large"
                         disabled={data?.status === "complete" || data?.status === "cancel"}

@@ -56,8 +56,18 @@ const ModalDetailTaskType = ({ modal, mutate, id }: ModalDetailApplicationProps)
 
 
     const items: DescriptionPropsItem['items'] = [
-        { key: 'name', label: t('Task Type'), children: data?.name || 'N/A', span: 2 },
-        { key: 'roleId', label: t('Role'), children: data?.roleId?.name || 'N/A', span: 2 },
+        {
+            key: 'name',
+            label: t('Task Type'),
+            children: data?.name || 'N/A',
+            span: 2
+        },
+        {
+            key: 'roleId',
+            label: t('Role'),
+            children: data?.roleId?.name || 'N/A',
+            span: 2
+        },
         {
             key: 'description',
             label: t('Description'),
