@@ -19,6 +19,9 @@ import ErrorPageNotification from '@pages/Error';
 import Equipment from '@pages/WarehouseManagement/components/Equipment';
 import TaskManagement from '@pages/TaskManagement';
 import TaskType from '@pages/TaskManagement/TaskType';
+const TaskSchedule = lazy(
+  () => import('@pages/TaskManagement/TaskSchedule/TaskSchedule')
+);
 const AreaDetail = lazy(
   () => import('@pages/AreaManagement/components/AreaDetail/AreaDetail')
 );
@@ -426,14 +429,16 @@ const AppRouting = () => {
           children: [
             {
               path: '',
-              element: <Navigate to={'task-type'} />,
+              element: <Navigate to={'list'} />,
             },
-
+            {
+              path: 'list',
+              element: SuspenseWrapper(<TaskSchedule />),
+            },
             {
               path: 'task-type',
               element: SuspenseWrapper(<TaskType />),
             },
-
           ],
         },
         {
@@ -457,7 +462,7 @@ const AppRouting = () => {
         },
         {
           path: 'task-management',
-          element: SuspenseWrapper(<TaskManagement /> ),
+          element: SuspenseWrapper(<TaskManagement />),
         },
         {
           path: 'profile',

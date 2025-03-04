@@ -1,5 +1,6 @@
 import { Select, SelectProps } from 'antd';
 import './index.scss';
+import { t } from 'i18next';
 
 interface SelectComponentProps extends SelectProps {
   className?: string;
@@ -16,7 +17,7 @@ const SelectComponent = ({
   return (
     <Select
       className={`select-component ${className}`}
-      placeholder="Select..."
+      placeholder={t('Select')}
       options={options}
       showSearch={search}
       filterOption={

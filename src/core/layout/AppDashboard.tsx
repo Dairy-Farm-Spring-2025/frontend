@@ -94,8 +94,9 @@ const AppDashboard: React.FC = () => {
 
   const breadcrumbItems = pathSegments.map((segment, index) => ({
     title: t(
-      `${breadcumData[segment] ||
-      segment.charAt(0).toUpperCase() + segment.slice(1)
+      `${
+        breadcumData[segment] ||
+        segment.charAt(0).toUpperCase() + segment.slice(1)
       }`
     ),
     href: '/' + pathSegments.slice(0, index + 1).join('/'),
@@ -297,6 +298,11 @@ const AppDashboard: React.FC = () => {
 
         getItem(t('Schedule'), 'dairy/schedule-management', <MdSchedule />),
         getItem(t('Task'), 'dairy/task-management', <BiTask />, [
+          getItem(
+            t('Task type'),
+            'dairy/task-management/list',
+            <CiBoxList size={sizeIcon} />
+          ),
           getItem(
             t('Task type'),
             'dairy/task-management/task-type',

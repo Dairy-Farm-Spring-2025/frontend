@@ -24,3 +24,14 @@ export const shiftData = [
     end: 24,
   },
 ];
+
+export const SHIFT_TASK = [
+  {
+    value: 'dayShift',
+    label: 'Day shift',
+  },
+  {
+    value: 'nightShift',
+    label: 'Night shift',
+  },
+];
