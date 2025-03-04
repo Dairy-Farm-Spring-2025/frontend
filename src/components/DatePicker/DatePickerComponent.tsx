@@ -8,7 +8,11 @@ const DatePickerComponent = ({
   ...props
 }: DatePickerComponentProps) => {
   return (
-    <DatePicker format={'DD / MM / YYYY'} className={className} {...props} />
+    <DatePicker
+      format={'DD / MM / YYYY'}
+      className={` w-full ${className}`}
+      {...props}
+    />
   );
 };
 

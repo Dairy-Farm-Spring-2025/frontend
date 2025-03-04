@@ -34,11 +34,17 @@ const DailyMilk = ({
     let end = entry.milkDate;
 
     if (entry.shift === 'shiftOne') {
-      start = `${entry.milkDate}T08:00:00`;
-      end = `${entry.milkDate}T15:00:00`;
+      start = `${entry.milkDate}T00:00:00`;
+      end = `${entry.milkDate}T05:59:59`;
     } else if (entry.shift === 'shiftTwo') {
+      start = `${entry.milkDate}T06:00:00`;
+      end = `${entry.milkDate}T11:59:59`;
+    } else if (entry.shift === 'shiftThree') {
+      start = `${entry.milkDate}T12:00:00`;
+      end = `${entry.milkDate}T17:59:59`;
+    } else if (entry.shift === 'shiftFour') {
       start = `${entry.milkDate}T18:00:00`;
-      end = `${entry.milkDate}T24:00:00`;
+      end = `${entry.milkDate}T23:59:59`;
     }
 
     return {
@@ -81,25 +87,21 @@ const DailyMilk = ({
           </ButtonComponent>
         )}
       </div>
-      <div className="flex">
-        <div className="w-1/2 items-center">
+      <div className="flex flex-col gap-10">
+        <div className="">
           <CalendarComponent
+            eventClick={(info: any) => openDailyModal(info.event)} // Handle click event
             events={events}
             initialView="dayGridMonth"
             eventContentRenderer={(eventInfo) => (
-              <div
-                className="text-center"
-                onClick={() => openDailyModal(eventInfo.event)}
-              >
-                <p>
-                  <span>{eventInfo.event.extendedProps.volume} (lit)</span>
-                </p>
+              <div className="text-center w-full">
+                <p>{eventInfo.event.extendedProps.volume} (lit)</p>
               </div>
             )}
             height={700}
           />
         </div>
-        <div className="w-1/2">
+        <div className="">
           <DailyMilkRecord id={id} />
         </div>
       </div>

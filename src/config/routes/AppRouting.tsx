@@ -17,6 +17,7 @@ import ApplicationType from '@pages/ApplicationManagement/ApplicationType';
 import { SiHappycow } from 'react-icons/si';
 import ErrorPageNotification from '@pages/Error';
 import Equipment from '@pages/WarehouseManagement/components/Equipment';
+import TaskManagement from '@pages/TaskManagement';
 const AreaDetail = lazy(
   () => import('@pages/AreaManagement/components/AreaDetail/AreaDetail')
 );
@@ -436,6 +437,10 @@ const AppRouting = () => {
               element: SuspenseWrapper(<ApplicationType />),
             },
           ],
+        },
+        {
+          path: 'task-management',
+          element: SuspenseWrapper(<TaskManagement /> ),
         },
         {
           path: 'profile',
