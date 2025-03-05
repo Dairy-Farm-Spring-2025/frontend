@@ -12,14 +12,16 @@ const PopconfirmComponent = ({
   confirm,
   cancel,
   children,
+  ...props
 }: PopconfirmComponentPorps) => {
   return (
     <Popconfirm
-      title={t('Are you sure to delete?')}
+      description={t('Are you sure to delete?')}
       okText={t('Yes')}
       cancelText={t('No')}
       onConfirm={confirm}
       onCancel={cancel}
+      {...props}
     >
       {children}
     </Popconfirm>

@@ -24,7 +24,12 @@ const ModalTypes = ({ mutate, modal }: ModalTypesProps) => {
   const [form] = Form.useForm();
   const formValues = Form.useWatch([], form);
   const [disabledButton, setDisabledButton] = useState(true);
-
+  useEffect(() => {
+    if (modal.open) {
+      form.resetFields(); // Reset form khi modal mở
+      setDisabledButton(true); // Disable nút ngay từ đầu
+    }
+  }, [form, modal.open]);
   useEffect(() => {
     const isButtonDisabled =
       !formValues || Object.values(formValues).some((value) => !value);

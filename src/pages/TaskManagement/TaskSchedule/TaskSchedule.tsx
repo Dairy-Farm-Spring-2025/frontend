@@ -14,7 +14,7 @@ import { formatDateHour, formatStatusWithCamel } from '@utils/format';
 import { Popover, Select, Table } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import PopoverTaskContent from './components/PopoverTaskContent';
 import TaskCreateModal from './components/TaskCreateModal';
 import { t } from 'i18next';
@@ -55,8 +55,9 @@ const TaskSchedule: React.FC = () => {
     );
   };
 
-  const weekDays = Array.from({ length: 7 }, (_, i) =>
-    currentWeekStart.add(i, 'day')
+  const weekDays = useMemo(
+    () => Array.from({ length: 7 }, (_, i) => currentWeekStart.add(i, 'day')),
+    [currentWeekStart]
   );
 
   const jumpToToday = () => {
@@ -121,7 +122,7 @@ const TaskSchedule: React.FC = () => {
 
           const isSingleDay = fromDate.isSame(toDate, 'day');
           const isRange = actualEndIndex > actualStartIndex;
-          const width = (actualEndIndex - actualStartIndex + 1) * 200;
+          const width = (actualEndIndex - actualStartIndex + 1) * 195;
 
           const content = (
             <Popover
