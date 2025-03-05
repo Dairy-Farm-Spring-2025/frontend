@@ -21,7 +21,7 @@ import { getAvatar } from '@utils/getImage';
 import { Avatar, Divider, Form } from 'antd';
 import dayjs from 'dayjs';
 import { t } from 'i18next';
-import { useEffect, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { LiaChartAreaSolid } from 'react-icons/lia';
 
 interface TaskCreateModalProps {
@@ -32,8 +32,6 @@ interface TaskCreateModalProps {
 const TaskCreateModal = ({ modal, mutate }: TaskCreateModalProps) => {
   const { data: dataTaskTypes } = useFetcher<TaskType[]>('task_types', 'GET');
   const { data: dataAreas } = useFetcher<Area[]>('areas', 'GET');
-  const [optionsAreas, setOptionsArea] = useState<any[]>([]);
-  const [optionsDataTaskTypes, setOptionDataTaskTypes] = useState<any[]>([]);
   const { trigger, isLoading } = useFetcher('tasks/create', 'POST');
   const toast = useToast();
   const { data: dataWorker } = useFetcher<UserProfileData[]>(
@@ -44,7 +42,6 @@ const TaskCreateModal = ({ modal, mutate }: TaskCreateModalProps) => {
     'users/veterinarians',
     'GET'
   );
-  const [assignees, setAssignees] = useState<any[]>([]);
   const [selectedRole, setSelectedRole] = useState<
     'Veterinarians' | 'Worker' | undefined
   >(undefined);
@@ -54,7 +51,19 @@ const TaskCreateModal = ({ modal, mutate }: TaskCreateModalProps) => {
   const [disabledButton, setDisabledButton] = useState(true);
   const [isToDateDisabled, setIsToDateDisabled] = useState(true); // State to control To Date DatePicker
 
-  // Effect to enable/disable To Date DatePicker based on fromDate
+  useEffect(() => {
+    if (modal.open) {
+      form.resetFields(); // Reset form khi modal mở
+      setDisabledButton(true); // Disable nút ngay từ đầu
+    }
+  }, [form, modal.open]);
+
+  useEffect(() => {
+    const isButtonDisabled =
+      !formValues || Object.values(formValues).some((value) => !value);
+    setDisabledButton(isButtonDisabled);
+  }, [formValues]);
+
   useEffect(() => {
     if (fromDate) {
       setIsToDateDisabled(false); // Enable To Date if fromDate is selected
@@ -64,62 +73,37 @@ const TaskCreateModal = ({ modal, mutate }: TaskCreateModalProps) => {
     }
   }, [fromDate, form]);
 
-  useEffect(() => {
-    if (selectedRole === 'Worker') {
-      form.setFieldsValue({
-        assineeIds: [],
-      });
-      setAssignees(
-        (dataWorker || []).map((element) => ({
-          label: element.name,
-          value: element.id,
-          desc: element,
-          searchLabel: element.name,
-        }))
-      );
-    } else {
-      form.setFieldsValue({
-        assineeIds: [],
-      });
-      setAssignees(
-        (dataVeterinarians || []).map((element) => ({
-          label: element.name,
-          value: element.id,
-          desc: element,
-          searchLabel: element.name,
-        }))
-      );
-    }
-  }, [dataVeterinarians, dataWorker, form, selectedRole]);
+  const assignees = useMemo(() => {
+    const data = selectedRole === 'Worker' ? dataWorker : dataVeterinarians;
+    return (data || []).map((element) => ({
+      label: element.name,
+      value: element.id,
+      desc: element,
+      searchLabel: element.name,
+    }));
+  }, [selectedRole, dataWorker, dataVeterinarians]);
 
-  useEffect(() => {
-    if (dataAreas && dataTaskTypes) {
-      setOptionDataTaskTypes(
-        dataTaskTypes.map((element) => ({
-          label: element.name,
-          value: element.taskTypeId,
-          desc: element,
-          searchLabel: element.name,
-        }))
-      );
-      setOptionsArea(
-        dataAreas.map((element) => ({
-          label: element.name,
-          value: element.areaId,
-          desc: element,
-          searchLabel: element.name,
-        }))
-      );
-    }
-  }, [dataAreas, dataTaskTypes]);
+  const optionsDataTaskTypes = useMemo(
+    () =>
+      (dataTaskTypes || []).map((element) => ({
+        label: element.name,
+        value: element.taskTypeId,
+        desc: element,
+        searchLabel: element.name,
+      })),
+    [dataTaskTypes]
+  );
 
-  useEffect(() => {
-    if (modal.open) {
-      const isButtonDisabled =
-        !formValues || Object.values(formValues).some((value) => !value);
-      setDisabledButton(isButtonDisabled);
-    }
-  }, [formValues, modal.open]);
+  const optionsAreas = useMemo(
+    () =>
+      (dataAreas || []).map((element) => ({
+        label: element.name,
+        value: element.areaId,
+        desc: element,
+        searchLabel: element.name,
+      })),
+    [dataAreas]
+  );
 
   const disabledFromDate = (current: dayjs.Dayjs) => {
     return current && current.isBefore(dayjs().startOf('day'));
@@ -135,33 +119,36 @@ const TaskCreateModal = ({ modal, mutate }: TaskCreateModalProps) => {
     return current && (current.isBefore(minDate) || current.isAfter(maxDate));
   };
 
-  const handleCancel = () => {
+  const handleCancel = useCallback(() => {
     form.resetFields();
     setSelectedRole(undefined);
-    setIsToDateDisabled(true); // Reset To Date disabled state on cancel
+    setIsToDateDisabled(true);
     modal.closeModal();
-  };
+  }, [form, modal]);
 
-  const onFinish = async (values: TaskPayload) => {
-    try {
-      const payload: TaskPayload = {
-        areaId: values.areaId,
-        assigneeIds: values.assigneeIds,
-        description: values.description,
-        fromDate: dayjs(values.fromDate).format('YYYY-MM-DD'),
-        toDate: dayjs(values.toDate).format('YYYY-MM-DD'),
-        priority: values.priority,
-        shift: values.shift,
-        taskTypeId: values.taskTypeId,
-      };
-      const response = await trigger({ body: payload });
-      toast.showSuccess(response.message);
-      handleCancel();
-      mutate();
-    } catch (error: any) {
-      toast.showError(error.message);
-    }
-  };
+  const onFinish = useCallback(
+    async (values: TaskPayload) => {
+      try {
+        const payload: TaskPayload = {
+          areaId: values.areaId,
+          assigneeIds: values.assigneeIds,
+          description: values.description,
+          fromDate: dayjs(values.fromDate).format('YYYY-MM-DD'),
+          toDate: dayjs(values.toDate).format('YYYY-MM-DD'),
+          priority: values.priority,
+          shift: values.shift,
+          taskTypeId: values.taskTypeId,
+        };
+        const response = await trigger({ body: payload });
+        toast.showSuccess(response.message);
+        handleCancel();
+        mutate();
+      } catch (error: any) {
+        toast.showError(error.message);
+      }
+    },
+    [handleCancel, mutate, toast, trigger]
+  );
 
   return (
     <ModalComponent
@@ -344,4 +331,4 @@ const TaskCreateModal = ({ modal, mutate }: TaskCreateModalProps) => {
   );
 };
 
-export default TaskCreateModal;
+export default memo(TaskCreateModal);

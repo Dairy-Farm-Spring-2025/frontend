@@ -9,6 +9,7 @@ import { formatDateHour, formatStatusWithCamel } from '@utils/format';
 import { Divider } from 'antd';
 import dayjs from 'dayjs';
 import { t } from 'i18next';
+import { useCallback } from 'react';
 
 interface PopoverTaskContent {
   task: Task;
@@ -36,15 +37,18 @@ const PopoverTaskContent = ({ task, mutate }: PopoverTaskContent) => {
     `tasks/delete`,
     'DELETE'
   );
-  const handleDeleteTasks = async (id: number) => {
-    try {
-      const response = await triggerDelete({ url: `tasks/${id}` });
-      toast.showSuccess(response.message);
-      mutate();
-    } catch (error: any) {
-      toast.showError(error.message);
-    }
-  };
+  const handleDeleteTasks = useCallback(
+    async (id: number) => {
+      try {
+        const response = await triggerDelete({ url: `tasks/${id}` });
+        toast.showSuccess(response.message);
+        mutate();
+      } catch (error: any) {
+        toast.showError(error.message);
+      }
+    },
+    [mutate, toast, triggerDelete]
+  );
   return (
     <div className="flex flex-col gap-1">
       <div className="grid grid-cols-3">
