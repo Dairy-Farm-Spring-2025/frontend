@@ -3,6 +3,7 @@ import { Button, ConfigProvider, Modal, ModalProps, Typography } from 'antd';
 import { CgClose } from 'react-icons/cg';
 import ButtonComponent from '../Button/ButtonComponent';
 import './index.scss';
+import { t } from 'i18next';
 
 interface ModalComponentInterface extends ModalProps {
   children: React.ReactNode;
@@ -33,7 +34,7 @@ const ModalComponent = memo(
             color="danger"
             key={'cancel'}
           >
-            Cancel
+            {t('Cancel')}
           </ButtonComponent>,
           <ButtonComponent
             key={'confirm'}
@@ -41,7 +42,7 @@ const ModalComponent = memo(
             type="primary"
             disabled={disabledButtonOk}
           >
-            Confirm
+            {t('Confirm')}
           </ButtonComponent>,
         ],
       [footer, onCancel, onOk, disabledButtonOk]

@@ -28,6 +28,21 @@ export interface Task {
   completionNotes: string;
 }
 
+export interface TaskDateRange {
+  taskId: number;
+  description: string;
+  status: StatusTask;
+  fromDate: string;
+  toDate: string;
+  areaName: string; // Changed from areaId: Area
+  taskTypeName: string; // Changed from taskTypeId: TaskType
+  assignerName: string; // Changed from assigner: UserProfileData
+  assigneeName: string; // Changed from assignee: UserProfileData
+  priority: Priority;
+  shift: ShiftTask;
+  completionNotes: string | null;
+}
+
 export type Priority = 'low' | 'medium' | 'high' | 'critical';
 export type ShiftTask = 'dayShift' | 'nightShift';
 export type StatusTask = 'pending' | 'inProgress' | 'completed' | 'reviewed';

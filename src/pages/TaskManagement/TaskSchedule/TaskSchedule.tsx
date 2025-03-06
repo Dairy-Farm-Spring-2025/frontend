@@ -5,46 +5,74 @@ import {
 } from '@ant-design/icons';
 import ButtonComponent from '@components/Button/ButtonComponent';
 import AnimationAppear from '@components/UI/AnimationAppear';
+import Text from '@components/UI/Text';
 import Title from '@components/UI/Title';
 import WhiteBackground from '@components/UI/WhiteBackground';
 import useFetcher from '@hooks/useFetcher';
 import useModal from '@hooks/useModal';
-import { StatusTask, Task } from '@model/Task/Task';
-import { formatDateHour, formatStatusWithCamel } from '@utils/format';
+import { TaskDateRange } from '@model/Task/Task';
+import { formatStatusWithCamel } from '@utils/format';
 import { Popover, Select, Table } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
-import React, { useMemo, useState } from 'react';
+import { t } from 'i18next';
+import React, { useEffect, useMemo, useState } from 'react';
 import PopoverTaskContent from './components/PopoverTaskContent';
 import TaskCreateModal from './components/TaskCreateModal';
-import { t } from 'i18next';
 import './index.scss';
-import Text from '@components/UI/Text';
+import TagComponents from '@components/UI/TagComponents';
 
 const { Option } = Select;
 
 const shifts = ['dayShift', 'nightShift'];
 
-const statusColors: Record<StatusTask, string> = {
-  pending: '#FEF9C3', // Light Yellow
-  inProgress: '#DBEAFE', // Light Blue
-  completed: '#D1FAE5', // Light Green
-  reviewed: '#E9D5FF', // Light Purple
+const statusColors: Record<any, string> = {
+  pending: '#FEF9C3',
+  inProgress: '#DBEAFE',
+  completed: '#D1FAE5',
+  reviewed: '#E9D5FF',
 };
-
+const stringToDarkColor = (str: string) => {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const hue = hash % 360; // Hue value between 0 and 359
+  return `hsl(${hue}, 80%, 30%)`; // Dark colors: high saturation (80%), low lightness (30%)
+};
 const TaskSchedule: React.FC = () => {
-  const {
-    data: dataTasks,
-    isLoading,
-    mutate,
-  } = useFetcher<Task[]>('tasks', 'GET');
-  const modal = useModal();
   const [selectedYear, setSelectedYear] = useState<number>(dayjs().year());
+  const [refetch, setRefetch] = useState(false);
+  const [rawData, setRawData] = useState<any[]>([]);
   const [currentWeekStart, setCurrentWeekStart] = useState(
     selectedYear === dayjs().year()
       ? dayjs().startOf('week')
       : dayjs(`${selectedYear}-01-01`).startOf('week')
   );
+
+  const fromDate = currentWeekStart.startOf('day').format('YYYY-MM-DD');
+  const toDate = currentWeekStart
+    .add(6, 'day')
+    .endOf('day')
+    .format('YYYY-MM-DD');
+
+  const { isLoading, mutate, trigger } = useFetcher<{
+    [key: string]: TaskDateRange[] | null;
+  }>('tasks/by-date-range', 'POST');
+
+  const modal = useModal();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await trigger({ body: { fromDate, toDate } });
+      setRawData(response.data);
+    };
+    if (refetch) {
+      fetchData();
+      setRefetch(false);
+    }
+    fetchData();
+  }, [fromDate, toDate, refetch]);
 
   const handleYearChange = (year: number) => {
     setSelectedYear(year);
@@ -78,98 +106,66 @@ const TaskSchedule: React.FC = () => {
       );
     });
 
-    dataTasks
-      ?.filter((task) => task.shift === shift)
-      .sort((a, b) => {
-        const aIsSingleDay = dayjs(a.fromDate).isSame(a.toDate, 'day');
-        const bIsSingleDay = dayjs(b.fromDate).isSame(b.toDate, 'day');
-
-        if (aIsSingleDay && !bIsSingleDay) return -1; // Single-day tasks first
-        if (!aIsSingleDay && bIsSingleDay) return 1; // Multi-day tasks last
-
-        // If both are multi-day, sort by start date
-        return dayjs(a.fromDate).isBefore(b.fromDate) ? -1 : 1;
-      })
-      .forEach((task, taskIndex) => {
-        const fromDate = dayjs(task.fromDate).startOf('day');
-        const toDate = dayjs(task.toDate).startOf('day');
-        const weekStart = weekDays[0].startOf('day');
-        const weekEnd = weekDays[6].startOf('day');
-
-        const startIndex = Math.max(
-          0,
-          weekDays.findIndex((d) => d.startOf('day').isSame(fromDate, 'day'))
-        );
-        const endIndex = Math.min(
-          6,
-          weekDays.findIndex((d) => d.startOf('day').isSame(toDate, 'day'))
-        );
-
-        if (
-          fromDate.isBefore(weekEnd.add(1, 'day')) &&
-          toDate.isAfter(weekStart.subtract(1, 'day'))
-        ) {
-          const actualStartIndex = fromDate.isBefore(weekStart)
-            ? 0
-            : startIndex === -1
-            ? 0
-            : startIndex;
-          const actualEndIndex = toDate.isAfter(weekEnd)
-            ? 6
-            : endIndex === -1
-            ? 6
-            : endIndex;
-
-          const isSingleDay = fromDate.isSame(toDate, 'day');
-          const isRange = actualEndIndex > actualStartIndex;
-          const width = (actualEndIndex - actualStartIndex + 1) * 195;
-
-          const content = (
-            <Popover
-              trigger={'click'}
-              className="cursor-pointer"
-              placement="topLeft"
-              color="white"
-              content={<PopoverTaskContent mutate={mutate} task={task} />}
-            >
-              <div
-                key={task.taskId}
-                className="border-2 rounded-lg border-primary"
-                style={{
-                  position: isSingleDay ? 'relative' : 'absolute', // Single-day tasks should be relative
-                  width: isRange ? `${width}px` : 'auto',
-                  backgroundColor: statusColors[task.status],
-                  padding: '4px 8px',
-                  margin: '2px 0',
-                  fontWeight: 'bold',
-                  zIndex:
-                    isSingleDay || startIndex !== actualStartIndex
-                      ? 1 + taskIndex // Ensure single-day tasks are on top
-                      : 1,
-                  fontSize: 12,
-                }}
-              >
-                <div className="overflow-y-auto text-clip max-w-full">
-                  <p className="truncate">
-                    {task?.taskTypeId?.name}{' '}
-                    <span className="font-bold text-rose-600">
-                      {task.fromDate === task.toDate
-                        ? ''
-                        : `(${formatDateHour(task.fromDate)} - ${formatDateHour(
-                            task.toDate
-                          )})`}
-                    </span>
-                  </p>
-                </div>
-                <p>👤 ({task?.assignee?.name})</p>
-              </div>
-            </Popover>
-          );
-
-          const startDay = weekDays[actualStartIndex].format('dddd');
-          dayContents[startDay].push(content);
+    // Populate tasks based on rawData date keys
+    if (rawData) {
+      Object.entries(rawData).forEach(([date, tasks]) => {
+        if (tasks && tasks.length > 0) {
+          const day = dayjs(date);
+          const dayKey = day.format('dddd');
+          // Check if the date falls within the current week
+          if (weekDays.some((d) => d.isSame(day, 'day'))) {
+            tasks
+              .filter((task: TaskDateRange) => task.shift === shift)
+              .forEach((task: TaskDateRange, taskIndex: number) => {
+                const uniqueTag = `${task.taskId}-${date}`;
+                const tagColor = stringToDarkColor(uniqueTag); // Generate color based on uniqueTag
+                const content = (
+                  <Popover
+                    key={uniqueTag}
+                    trigger={'click'}
+                    className="cursor-pointer"
+                    placement="topLeft"
+                    color="white"
+                    content={
+                      <PopoverTaskContent
+                        setRefetch={setRefetch}
+                        mutate={mutate}
+                        task={task}
+                      />
+                    }
+                  >
+                    <div
+                      className="border-2 rounded-lg border-primary"
+                      style={{
+                        position: 'relative', // Always relative, no spanning
+                        width: 'auto', // Fixed width, no stretching
+                        backgroundColor: statusColors[task.status],
+                        padding: '0px 8px',
+                        fontWeight: 'bold',
+                        zIndex: 1 + taskIndex, // Stack tasks vertically
+                        fontSize: 12,
+                      }}
+                    >
+                      <div className="overflow-y-auto text-clip max-w-full">
+                        <p className="truncate">{task.taskTypeName}</p>
+                      </div>
+                      <TagComponents
+                        className="text-xs !font-bold overflow-y-auto text-clip max-w-full !py-[2px] rounded-lg !px-2"
+                        style={{ backgroundColor: tagColor }}
+                      >
+                        <p className="truncate text-white">
+                          🧑‍🦱 {task.assigneeName}
+                        </p>
+                      </TagComponents>
+                    </div>
+                  </Popover>
+                );
+                dayContents[dayKey].push(content);
+              });
+          }
         }
       });
+    }
 
     weekDays.forEach((day) => {
       const dayKey = day.format('dddd');
@@ -177,7 +173,6 @@ const TaskSchedule: React.FC = () => {
         row[dayKey] = (
           <div
             style={{
-              position: 'relative',
               minHeight: 40 + (dayContents[dayKey].length - 1) * 65,
             }}
             className="h-full"
@@ -187,9 +182,10 @@ const TaskSchedule: React.FC = () => {
                 key={index}
                 style={{
                   position: 'absolute',
-                  top: `${index * 55}px`,
+                  top: `${index * 60}px`,
                   left: 0,
                   width: '100%',
+                  padding: 10,
                 }}
               >
                 {taskContent}
@@ -225,10 +221,7 @@ const TaskSchedule: React.FC = () => {
     ...weekDays.map((day) => ({
       title: (
         <div
-          style={{
-            padding: '5px',
-            borderRadius: '5px',
-          }}
+          style={{ padding: '5px', borderRadius: '5px' }}
           className={`${
             day.isSame(dayjs(), 'day')
               ? 'font-bold bg-gradient-to-r from-green-700 via-green-600 to-green-500 text-white'
@@ -249,25 +242,7 @@ const TaskSchedule: React.FC = () => {
     <AnimationAppear>
       <WhiteBackground>
         <div>
-          <div className="flex gap-10 mb-5">
-            <div className="flex gap-2 items-center">
-              <div className="w-4 h-4 border-[1px] border-yellow-400 rounded-xl bg-[#FEF9C3]"></div>
-              <Text>{t('Pending')}</Text>
-            </div>
-            <div className="flex gap-2 items-center">
-              <div className="w-4 h-4 border-[1px] border-blue-400 rounded-xl bg-[#DBEAFE]"></div>
-              <Text>{t('In progress')}</Text>
-            </div>
-            <div className="flex gap-2 items-center">
-              <div className="w-4 h-4 border-[1px] border-green-400 rounded-xl bg-[#D1FAE5]"></div>
-              <Text>{t('Completed')}</Text>
-            </div>
-            <div className="flex gap-2 items-center">
-              <div className="w-4 h-4 border-[1px] border-purple-400 rounded-xl bg-[#E9D5FF]"></div>
-              <Text>{t('Reviewed')}</Text>
-            </div>
-          </div>
-          <div style={{ display: 'flex', gap: '10px', marginBottom: 16 }}>
+          <div style={{ display: 'flex', gap: '10px' }}>
             <Select
               value={selectedYear}
               onChange={handleYearChange}
@@ -294,6 +269,24 @@ const TaskSchedule: React.FC = () => {
             >
               {t('Add Task')}
             </ButtonComponent>
+          </div>
+          <div className="flex gap-10 mb-5">
+            <div className="flex gap-2 items-center">
+              <div className="w-4 h-4 border-[1px] border-yellow-400 rounded-xl bg-[#FEF9C3]"></div>
+              <Text>{t('Pending')}</Text>
+            </div>
+            <div className="flex gap-2 items-center">
+              <div className="w-4 h-4 border-[1px] border-blue-400 rounded-xl bg-[#DBEAFE]"></div>
+              <Text>{t('In progress')}</Text>
+            </div>
+            <div className="flex gap-2 items-center">
+              <div className="w-4 h-4 border-[1px] border-green-400 rounded-xl bg-[#D1FAE5]"></div>
+              <Text>{t('Completed')}</Text>
+            </div>
+            <div className="flex gap-2 items-center">
+              <div className="w-4 h-4 border-[1px] border-purple-400 rounded-xl bg-[#E9D5FF]"></div>
+              <Text>{t('Reviewed')}</Text>
+            </div>
           </div>
           <div
             style={{
@@ -334,7 +327,11 @@ const TaskSchedule: React.FC = () => {
             rowKey="key"
           />
 
-          <TaskCreateModal modal={modal as any} mutate={mutate} />
+          <TaskCreateModal
+            setRefetch={setRefetch}
+            modal={modal as any}
+            mutate={mutate}
+          />
         </div>
       </WhiteBackground>
     </AnimationAppear>

@@ -4,7 +4,7 @@ import PopconfirmComponent from '@components/Popconfirm/PopconfirmComponent';
 import TagComponents from '@components/UI/TagComponents';
 import useFetcher from '@hooks/useFetcher';
 import useToast from '@hooks/useToast';
-import { Priority, StatusTask, Task } from '@model/Task/Task';
+import { Priority, StatusTask, TaskDateRange } from '@model/Task/Task';
 import { formatDateHour, formatStatusWithCamel } from '@utils/format';
 import { Divider } from 'antd';
 import dayjs from 'dayjs';
@@ -12,8 +12,9 @@ import { t } from 'i18next';
 import { useCallback } from 'react';
 
 interface PopoverTaskContent {
-  task: Task;
+  task: TaskDateRange;
   mutate: any;
+  setRefetch: any;
 }
 
 const priorityColors: Record<Priority, string> = {
@@ -30,7 +31,11 @@ const statusColors: Record<StatusTask, string> = {
   reviewed: '#E9D5FF', // Light Purple
 };
 
-const PopoverTaskContent = ({ task, mutate }: PopoverTaskContent) => {
+const PopoverTaskContent = ({
+  task,
+  mutate,
+  setRefetch,
+}: PopoverTaskContent) => {
   const toast = useToast();
   const isDeleteDisabled = dayjs().isAfter(dayjs(task.fromDate), 'day');
   const { trigger: triggerDelete, isLoading: loadingDelete } = useFetcher(
@@ -43,11 +48,12 @@ const PopoverTaskContent = ({ task, mutate }: PopoverTaskContent) => {
         const response = await triggerDelete({ url: `tasks/${id}` });
         toast.showSuccess(response.message);
         mutate();
+        setRefetch(true);
       } catch (error: any) {
         toast.showError(error.message);
       }
     },
-    [mutate, toast, triggerDelete]
+    [mutate, setRefetch, toast, triggerDelete]
   );
   return (
     <div className="flex flex-col gap-1">

@@ -2,7 +2,9 @@ import {
   FunnelPlotOutlined,
   PlusCircleOutlined,
   ProfileOutlined,
+  RetweetOutlined,
 } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import TabsComponent, {
   TabsItemProps,
@@ -15,11 +17,7 @@ import { DailyMilkModel } from '../../../../model/DailyMilk/DailyMilk';
 import DailyMilk from './TabsItem/DailyMilk';
 import CowGeneralInformation from './TabsItem/GeneralInformation';
 import HealthRecordCow from './TabsItem/HealthRecordCow';
-import { useTranslation } from 'react-i18next';
 import HistoryMoveCow from './TabsItem/HistoryMoveCow';
-import {
-  RetweetOutlined
-} from '@ant-design/icons';
 const CowDetail = () => {
   const { t } = useTranslation();
   const { id } = useParams();
@@ -42,7 +40,7 @@ const CowDetail = () => {
   const items: TabsItemProps['items'] = [
     {
       key: 'information',
-      label: 'General Information',
+      label: t('General information'),
       children: (
         <CowGeneralInformation
           id={id as string}
@@ -55,7 +53,7 @@ const CowDetail = () => {
     },
     {
       key: 'health',
-      label: 'Health Record',
+      label: t('Health record'),
       children: (
         <HealthRecordCow
           cowId={id as string}
@@ -67,7 +65,7 @@ const CowDetail = () => {
     },
     {
       key: 'milk',
-      label: 'Daily Milk',
+      label: t('Daily milk'),
       children: (
         <DailyMilk
           detailCow={dataDetail as Cow}
@@ -81,32 +79,28 @@ const CowDetail = () => {
     },
     {
       key: 'history',
-      label: 'Move Cow',
+      label: t('Move cow'),
       children: (
-        <HistoryMoveCow
-          id={id as string}
-          isLoadingHistory={isLoadingDetail}
-        />
+        <HistoryMoveCow id={id as string} isLoadingHistory={isLoadingDetail} />
       ),
       icon: <RetweetOutlined />,
-    }
-
+    },
   ];
   return (
     <AnimationAppear>
       <WhiteBackground className="min-h-[70vh]">
         <div className="flex items-center justify-between my-4">
-          <p className="text-4xl font-bold text-primary">
-            {dataDetail?.name}
-          </p>
-
+          <p className="text-4xl font-bold text-primary">{dataDetail?.name}</p>
         </div>
 
-        <TabsComponent items={items} destroyInactiveTabPane className="!h-full" />
+        <TabsComponent
+          items={items}
+          destroyInactiveTabPane
+          className="!h-full"
+        />
       </WhiteBackground>
     </AnimationAppear>
   );
-
 };
 
 export default CowDetail;

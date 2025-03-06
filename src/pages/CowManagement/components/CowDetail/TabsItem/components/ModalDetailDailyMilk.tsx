@@ -1,5 +1,5 @@
 import { Form } from 'antd';
-import { useState } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { PiPencil } from 'react-icons/pi';
 import ButtonComponent from '../../../../../../components/Button/ButtonComponent';
 import DescriptionComponent from '../../../../../../components/Description/DescriptionComponent';
@@ -10,6 +10,8 @@ import ModalComponent from '../../../../../../components/Modal/ModalComponent';
 import PopconfirmComponent from '../../../../../../components/Popconfirm/PopconfirmComponent';
 import useFetcher from '../../../../../../hooks/useFetcher';
 import useToast from '../../../../../../hooks/useToast';
+import { t } from 'i18next';
+
 const classNameStyle = '!text-xs lg:!text-sm !text-center !p-2';
 
 interface ModalDetailDailyMilkProps {
@@ -25,62 +27,130 @@ const ModalDetailDailyMilk = ({
 }: ModalDetailDailyMilkProps) => {
   const [form] = Form.useForm();
   const [edit, setEdit] = useState(false);
-  const { trigger } = useFetcher(`dailymilks`, 'DELETE');
+  const { trigger } = useFetcher('dailymilks', 'DELETE');
   const { trigger: triggerEdit, isLoading: isLoadingEdit } = useFetcher(
     'dailymilks/volume',
     'PUT'
   );
   const toast = useToast();
 
-  const toogleEdit = (id: string, volume: number) => {
-    setEdit(!edit);
-    if (edit === false) {
-      form.setFieldsValue({
-        newVolume: volume,
-        id: id,
+  const toggleEdit = useCallback(
+    (id: string, volume: number) => {
+      setEdit((prev) => {
+        if (!prev) {
+          form.setFieldsValue({ newVolume: volume, id });
+        } else {
+          form.resetFields();
+        }
+        return !prev;
       });
-    } else {
-      form.resetFields();
-    }
-  };
+    },
+    [form]
+  );
 
-  const onFinish = async (values: any) => {
-    const data = {
-      id: values.id,
-      volume: values.newVolume,
-    };
-    try {
-      await triggerEdit({
-        url: `dailymilks/volume/${data.id}?newVolume=${data.volume}`,
-      });
-      toast.showSuccess('Edit Success');
-      handleCloseModal();
-      mutateDaily();
-    } catch (error: any) {
-      toast.showError(error.message);
-    }
-  };
+  const onFinish = useCallback(
+    async (values: any) => {
+      try {
+        const response = await triggerEdit({
+          url: `dailymilks/volume/${values.id}?newVolume=${values.newVolume}`,
+        });
+        toast.showSuccess(response?.message);
+        handleCloseModal();
+        mutateDaily();
+      } catch (error: any) {
+        toast.showError(error.message);
+      }
+    },
+    [triggerEdit, toast, mutateDaily]
+  );
 
-  const handleCloseModal = () => {
+  const handleCloseModal = useCallback(() => {
     form.resetFields();
     modal.closeModal();
     setEdit(false);
-  };
+  }, [form, modal]);
 
-  const onConfirm = async (id: string) => {
-    try {
-      await trigger({ url: `dailymilks/${id}` });
-      toast.showSuccess('Delete success');
-      mutateDaily();
-      handleCloseModal();
-    } catch (error: any) {
-      toast.showError(error.message);
-    }
-  };
+  const onConfirm = useCallback(
+    async (id: string) => {
+      try {
+        const response = await trigger({ url: `dailymilks/${id}` });
+        toast.showSuccess(response?.message);
+        mutateDaily();
+        handleCloseModal();
+      } catch (error: any) {
+        toast.showError(error.message);
+      }
+    },
+    [trigger, toast, mutateDaily, handleCloseModal]
+  );
+
+  const descriptionItems = useMemo(
+    () => [
+      {
+        label: <p>{t('Worker')}</p>,
+        children: (
+          <div>
+            <p className="font-bold">
+              {dailyMilk?.extendedProps?.worker?.name}
+            </p>
+            <p className="text-gray-400">
+              ID: {dailyMilk?.extendedProps?.worker?.employeeId}
+            </p>
+          </div>
+        ),
+        className: classNameStyle,
+        span: 3,
+      },
+      {
+        label: <p>{t('Shift')}</p>,
+        children: dailyMilk?.extendedProps?.shift,
+        className: classNameStyle,
+        span: 3,
+      },
+      {
+        label: (
+          <div className="flex gap-2 justify-center items-center">
+            <p>
+              {t('Volume')} <span className="text-orange-500">(lit)</span>
+            </p>
+            <PiPencil
+              size={20}
+              className="cursor-pointer hover:opacity-50 duration-100"
+              onClick={() =>
+                toggleEdit(dailyMilk?.id, dailyMilk?.extendedProps?.volume)
+              }
+            />
+          </div>
+        ),
+        children: !edit ? (
+          <p>{dailyMilk?.extendedProps?.volume}</p>
+        ) : (
+          <FormComponent form={form} onFinish={onFinish}>
+            <FormItemComponent name="id" hidden>
+              <InputComponent />
+            </FormItemComponent>
+            <FormItemComponent name="newVolume" rules={[{ required: true }]}>
+              <InputComponent />
+            </FormItemComponent>
+            <ButtonComponent
+              loading={isLoadingEdit}
+              htmlType="submit"
+              type="primary"
+              className="!text-sm"
+            >
+              {t('Submit')}
+            </ButtonComponent>
+          </FormComponent>
+        ),
+        className: classNameStyle,
+      },
+    ],
+    [dailyMilk, edit, form, isLoadingEdit, onFinish, toggleEdit]
+  );
 
   return (
     <ModalComponent
-      title={dailyMilk.title + ' Daily Milk'}
+      title={`${dailyMilk?.title} Daily Milk`}
       open={modal.open}
       onCancel={handleCloseModal}
       footer={[]}
@@ -89,86 +159,24 @@ const ModalDetailDailyMilk = ({
       <div className="relative w-full text-xs lg:text-base text-wrap !h-fit cursor-default flex flex-col gap-2">
         <div className="flex justify-between items-center">
           <p className="mt-3">
-            <strong>{dailyMilk.title}</strong>
+            <strong>{dailyMilk?.title}</strong>
           </p>
           <PopconfirmComponent
-            title="Delete?"
-            onConfirm={() => onConfirm(dailyMilk.id)}
+            title={undefined}
+            onConfirm={() => onConfirm(dailyMilk?.id)}
           >
             <ButtonComponent type="primary" danger>
-              Delete
+              {t('Delete')}
             </ButtonComponent>
           </PopconfirmComponent>
         </div>
         <DescriptionComponent
           className="!bg-white overflow-auto w-full"
-          items={[
-            {
-              label: <p>Worker</p>,
-              children: (
-                <div>
-                  <p className="font-bold">
-                    {dailyMilk?.extendedProps?.worker.name}
-                  </p>
-                  <p className="text-gray-400">
-                    ID: {dailyMilk.extendedProps?.worker.employeeId}
-                  </p>
-                </div>
-              ),
-              className: classNameStyle,
-              span: 3,
-            },
-            {
-              label: <p>Shift</p>,
-              children: dailyMilk.extendedProps?.shift,
-              className: classNameStyle,
-              span: 3,
-            },
-            {
-              label: (
-                <div className="flex gap-2 justify-center items-center">
-                  <p>
-                    Volume <span className="text-orange-500">(lit)</span>
-                  </p>
-                  <PiPencil
-                    size={20}
-                    className="cursor-pointer hover:opacity-50 duration-100"
-                    onClick={() =>
-                      toogleEdit(dailyMilk?.id, dailyMilk?.extendedProps.volume)
-                    }
-                  />
-                </div>
-              ),
-              children: !edit ? (
-                <p>{dailyMilk?.extendedProps?.volume}</p>
-              ) : (
-                <FormComponent form={form} onFinish={onFinish}>
-                  <FormItemComponent name="id" hidden>
-                    <InputComponent />
-                  </FormItemComponent>
-                  <FormItemComponent
-                    name="newVolume"
-                    rules={[{ required: true }]}
-                  >
-                    <InputComponent />
-                  </FormItemComponent>
-                  <ButtonComponent
-                    loading={isLoadingEdit}
-                    htmlType="submit"
-                    type="primary"
-                    className="!text-sm"
-                  >
-                    Submit
-                  </ButtonComponent>
-                </FormComponent>
-              ),
-              className: classNameStyle,
-            },
-          ]}
+          items={descriptionItems}
         />
       </div>
     </ModalComponent>
   );
 };
 
-export default ModalDetailDailyMilk;
+export default React.memo(ModalDetailDailyMilk);

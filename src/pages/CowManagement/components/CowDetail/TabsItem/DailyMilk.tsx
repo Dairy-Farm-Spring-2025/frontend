@@ -6,10 +6,10 @@ import CalendarComponent from '../../../../../components/Calendar/CalendarCompon
 import useModal from '../../../../../hooks/useModal';
 import { Cow } from '../../../../../model/Cow/Cow';
 import { DailyMilkModel } from '../../../../../model/DailyMilk/DailyMilk';
-import CreateDailyMilkModal from './components/CreateDailyMilkModal';
 import ModalDetailDailyMilk from './components/ModalDetailDailyMilk';
 import DailyMilkRecord from './DailyMilkRecord';
 import { t } from 'i18next';
+import CreateDailyMilkModal from './components/CreateDailyMilkModal';
 
 interface DailyMilkProps {
   id: string;
@@ -90,6 +90,11 @@ const DailyMilk = ({
       <div className="flex flex-col gap-10">
         <div className="">
           <CalendarComponent
+            headerToolbar={{
+              start: 'today prev,next',
+              center: 'title',
+              end: 'dayGridMonth',
+            }}
             eventClick={(info: any) => openDailyModal(info.event)} // Handle click event
             events={events}
             initialView="dayGridMonth"
@@ -105,13 +110,11 @@ const DailyMilk = ({
           <DailyMilkRecord id={id} />
         </div>
       </div>
-      {modalDailyMilk.open && (
-        <ModalDetailDailyMilk
-          dailyMilk={dailyMilk}
-          modal={modalDailyMilk}
-          mutateDaily={mutateDaily}
-        />
-      )}
+      <ModalDetailDailyMilk
+        dailyMilk={dailyMilk}
+        modal={modalDailyMilk}
+        mutateDaily={mutateDaily}
+      />
 
       <CreateDailyMilkModal id={id} modal={modal} mutate={mutateDaily} />
     </div>

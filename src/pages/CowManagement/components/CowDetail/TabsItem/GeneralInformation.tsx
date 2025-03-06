@@ -209,7 +209,7 @@ const CowGeneralInformation = ({
       </FormItemComponent>
       <div className="flex justify-end items-center w-full gap-3">
         <p className="text-lg text-orange-600 font-semibold">
-          (You can edit cow's information)
+          ({t("You can edit cow's information")})
         </p>
         {!showEdit ? (
           <ButtonComponent type="primary" onClick={() => setShowEdit(true)}>

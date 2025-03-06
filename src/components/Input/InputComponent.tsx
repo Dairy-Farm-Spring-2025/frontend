@@ -7,6 +7,7 @@ import {
 } from 'antd';
 import { TextAreaProps } from 'antd/es/input';
 import './index.scss';
+import { t } from 'i18next';
 type SearchProps = GetProps<typeof Input.Search>;
 interface InputComponentProps extends InputProps {
   className?: string;
@@ -29,11 +30,18 @@ interface PasswordProps extends InputProps {
 }
 
 const InputComponent = ({ className, ...props }: InputComponentProps) => {
-  return <Input className={`input-component ${className}`} {...props} />;
+  return (
+    <Input
+      className={`input-component ${className}`}
+      placeholder={`${t('Enter')}...`}
+      {...props}
+    />
+  );
 };
 
 const TextArea = ({ className, ...props }: TextAreaComponentProp) => (
   <Input.TextArea
+    placeholder={`${t('Enter')}...`}
     className={`input-component text-area-component ${className || ''}`}
     {...props}
   />
@@ -46,7 +54,7 @@ const Number = ({ className, decimal = false, ...props }: NumberProps) => {
         className || ''
       }`}
       min={0}
-      placeholder="Enter..."
+      placeholder={`${t('Enter')}...`}
       {...props}
     />
   ) : (
@@ -55,7 +63,7 @@ const Number = ({ className, decimal = false, ...props }: NumberProps) => {
         className || ''
       }`}
       min={0}
-      placeholder="Enter..."
+      placeholder={`${t('Enter')}...`}
       step={0.1} // Allows increments of 0.1
       precision={2} // Restricts to 2 decimal places
       {...props}
@@ -66,7 +74,7 @@ const Number = ({ className, decimal = false, ...props }: NumberProps) => {
 const Password = ({ className, ...props }: PasswordProps) => {
   return (
     <Input.Password
-      placeholder="Enter Password..."
+      placeholder={`${t('Enter password')}...`}
       className={`input-component ${className}`}
       {...props}
     />
@@ -76,7 +84,7 @@ const Password = ({ className, ...props }: PasswordProps) => {
 const Search = ({ className, ...props }: SearchComponentProps) => {
   return (
     <Input.Search
-      placeholder="Search..."
+      placeholder={`${t('Search')}...`}
       className={`input-component ${className}`}
       {...props}
     />
