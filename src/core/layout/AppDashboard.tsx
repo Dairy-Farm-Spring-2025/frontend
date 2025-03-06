@@ -13,6 +13,7 @@ import {
 
 import React, { useEffect } from 'react';
 
+import { useTranslation } from 'react-i18next';
 import {
   AiOutlineDashboard,
   AiOutlineIssuesClose,
@@ -21,7 +22,6 @@ import {
 import { BiCategory, BiTask, BiUser } from 'react-icons/bi';
 import { CiBoxList, CiExport } from 'react-icons/ci';
 import { FaWpforms } from 'react-icons/fa';
-import { GiCage } from 'react-icons/gi';
 import { IoIosLogOut, IoIosNotifications } from 'react-icons/io';
 import { LiaChartAreaSolid, LiaProductHunt } from 'react-icons/lia';
 import { LuGitPullRequest, LuMilk } from 'react-icons/lu';
@@ -29,8 +29,6 @@ import {
   MdOutlineFastfood,
   MdOutlineHealthAndSafety,
   MdOutlineVaccines,
-  MdSchedule,
-  MdSwapVert,
 } from 'react-icons/md';
 import { PiCow, PiPlus, PiWarehouse } from 'react-icons/pi';
 import { RiAlignItemLeftLine } from 'react-icons/ri';
@@ -47,7 +45,6 @@ import { setAvatarFunction } from '../store/slice/avatarSlice';
 import { logout } from '../store/slice/userSlice';
 import LabelDashboard from './components/LabelDashboard';
 import './index.scss';
-import { useTranslation } from 'react-i18next';
 const { Header, Content, Sider } = Layout;
 type MenuItem = Required<MenuProps>['items'][number];
 const { useToken } = theme;
@@ -146,8 +143,8 @@ const AppDashboard: React.FC = () => {
 
       type: 'group',
       children: [
-        getItem(t('user'), 'dairy/user-management', <BiUser />),
-        getItem(t('role'), 'dairy/role-management', <BiCategory />),
+        getItem(t('user_management'), 'dairy/user-management', <BiUser />),
+        getItem(t('Role management'), 'dairy/role-management', <BiCategory />),
       ],
     },
     getItem(t('dashboard'), 'dairy/dashboard', <AiOutlineDashboard />, [
@@ -158,7 +155,7 @@ const AppDashboard: React.FC = () => {
       label: <LabelDashboard>{t('dairy_management')}</LabelDashboard>,
       type: 'group',
       children: [
-        getItem(t('Cow'), 'dairy/cow-management', <PiCow />, [
+        getItem(t('Cow management'), 'dairy/cow-management', <PiCow />, [
           getItem(
             t('List'),
             'dairy/cow-management/list-cow',
@@ -187,25 +184,28 @@ const AppDashboard: React.FC = () => {
             ]
           ),
         ]),
-        getItem(t('Feed'), 'dairy/feed-management', <MdOutlineFastfood />, [
-          getItem(
-            t('List'),
-            'dairy/feed-management/list',
-            <CiBoxList size={sizeIcon} />
-          ),
-          getItem(
-            t('Create feed meal'),
-            'dairy/feed-management/create-feed-meal',
-            <PiPlus size={sizeIcon} />
-          ),
-        ]),
+        getItem(
+          t('Feed management'),
+          'dairy/feed-management',
+          <MdOutlineFastfood />,
+          [
+            getItem(
+              t('List'),
+              'dairy/feed-management/list',
+              <CiBoxList size={sizeIcon} />
+            ),
+            getItem(
+              t('Create feed meal'),
+              'dairy/feed-management/create-feed-meal',
+              <PiPlus size={sizeIcon} />
+            ),
+          ]
+        ),
         getItem(
           t('Area & Pen Management'),
           'dairy/area-management',
           <LiaChartAreaSolid />
         ),
-        getItem(t('Pen'), 'dairy/pen-management', <GiCage />),
-        getItem(t('Move cow'), 'dairy/move-cow-management', <MdSwapVert />),
       ],
     },
     {
@@ -213,7 +213,7 @@ const AppDashboard: React.FC = () => {
       label: <LabelDashboard>{t('warehouse-management')}</LabelDashboard>,
       type: 'group',
       children: [
-        getItem(t('Milk'), 'dairy/milk-management', <LuMilk />, [
+        getItem(t('Milk management'), 'dairy/milk-management', <LuMilk />, [
           getItem(
             t('Milk batch'),
             'dairy/milk-management/milk-batch',
@@ -221,7 +221,7 @@ const AppDashboard: React.FC = () => {
           ),
         ]),
         getItem(
-          t('Vaccine cycle'),
+          t('Vaccine management'),
           'dairy/vaccine-cycle-management',
           <MdOutlineVaccines />,
           [
@@ -232,58 +232,63 @@ const AppDashboard: React.FC = () => {
             ),
           ]
         ),
-        getItem(t('warehouse'), 'dairy/warehouse-management', <PiWarehouse />, [
-          getItem(
-            t('warehouse'),
-            'dairy/warehouse-management/warehouse',
-            <PiWarehouse size={sizeIcon} />
-          ),
-          getItem(
-            t('Category'),
-            'dairy/warehouse-management/category',
-            <BiCategory size={sizeIcon} />
-          ),
-          getItem(
-            t('Item'),
-            'dairy/warehouse-management/item-management',
-            <RiAlignItemLeftLine size={sizeIcon} />,
-            [
-              getItem(
-                t('List'),
-                'dairy/warehouse-management/item-management',
-                <CiBoxList size={sizeIcon} />
-              ),
-              getItem(
-                t('Item batch'),
-                'dairy/warehouse-management/item-management/item-batch',
-                <BiCategory size={sizeIcon} />
-              ),
-              getItem(
-                t('Export item'),
-                'dairy/warehouse-management/item-management/export-item',
-                <CiExport size={sizeIcon} />
-              ),
-            ]
-          ),
-          getItem(
-            t('Supplier'),
-            'dairy/warehouse-management/supplier',
-            <LiaProductHunt size={sizeIcon} />
-          ),
-          getItem(
-            t('Equipment'),
-            'dairy/warehouse-management/equipment',
-            <AiTwotoneTool size={sizeIcon} />
-          ),
-        ]),
+        getItem(
+          t('Warehouse management'),
+          'dairy/warehouse-management',
+          <PiWarehouse />,
+          [
+            getItem(
+              t('warehouse'),
+              'dairy/warehouse-management/warehouse',
+              <PiWarehouse size={sizeIcon} />
+            ),
+            getItem(
+              t('Category'),
+              'dairy/warehouse-management/category',
+              <BiCategory size={sizeIcon} />
+            ),
+            getItem(
+              t('Item'),
+              'dairy/warehouse-management/item-management',
+              <RiAlignItemLeftLine size={sizeIcon} />,
+              [
+                getItem(
+                  t('List'),
+                  'dairy/warehouse-management/item-management',
+                  <CiBoxList size={sizeIcon} />
+                ),
+                getItem(
+                  t('Item batch'),
+                  'dairy/warehouse-management/item-management/item-batch',
+                  <BiCategory size={sizeIcon} />
+                ),
+                getItem(
+                  t('Export item'),
+                  'dairy/warehouse-management/item-management/export-item',
+                  <CiExport size={sizeIcon} />
+                ),
+              ]
+            ),
+            getItem(
+              t('Supplier'),
+              'dairy/warehouse-management/supplier',
+              <LiaProductHunt size={sizeIcon} />
+            ),
+            getItem(
+              t('Equipment'),
+              'dairy/warehouse-management/equipment',
+              <AiTwotoneTool size={sizeIcon} />
+            ),
+          ]
+        ),
       ],
     },
     {
       key: 'group-schedule',
-      label: <LabelDashboard>{t('hr_management')}</LabelDashboard>,
+      label: <LabelDashboard>{t('HR management')}</LabelDashboard>,
       type: 'group',
       children: [
-        getItem(t('Human'), 'dairy/human-management', <BiUser />, [
+        getItem(t('Human management'), 'dairy/human-management', <BiUser />, [
           getItem(
             t('Worker'),
             'dairy/human-management/worker',
@@ -295,11 +300,9 @@ const AppDashboard: React.FC = () => {
             <CiBoxList size={sizeIcon} />
           ),
         ]),
-
-        getItem(t('Schedule'), 'dairy/schedule-management', <MdSchedule />),
-        getItem(t('Task'), 'dairy/task-management', <BiTask />, [
+        getItem(t('Task management'), 'dairy/task-management', <BiTask />, [
           getItem(
-            t('Task type'),
+            t('Task'),
             'dairy/task-management/list',
             <CiBoxList size={sizeIcon} />
           ),
@@ -311,7 +314,7 @@ const AppDashboard: React.FC = () => {
         ]),
 
         getItem(
-          t('Application'),
+          t('Application management'),
           'dairy/application-management',
           <FaWpforms />,
           [
@@ -327,7 +330,11 @@ const AppDashboard: React.FC = () => {
             ),
           ]
         ),
-        getItem(t('Issue'), 'dairy/issue-management', <AiOutlineIssuesClose />),
+        getItem(
+          t('Issue management'),
+          'dairy/issue-management',
+          <AiOutlineIssuesClose />
+        ),
         getItem(
           t('Request schedule'),
           'dairy/request-schedule-management',

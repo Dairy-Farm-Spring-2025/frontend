@@ -39,6 +39,7 @@ const CalendarComponent: React.FC<CustomCalendarProps> = ({
   eventClick,
   ...props
 }) => {
+  const language = localStorage.getItem('i18nextLng');
   const mainCalendarRef = useRef<FullCalendar>(null);
   const [currentView, setCurrentView] = useState(initialView);
   const [popoverVisible, setPopoverVisible] = useState(false);
@@ -111,14 +112,15 @@ const CalendarComponent: React.FC<CustomCalendarProps> = ({
       {/* Main Calendar */}
       <div className={`p-4 bg-white rounded-md shadow-lg calendar w-full`}>
         <FullCalendar
+          locale={language ? language : 'en'}
           eventClick={eventClick}
           allDaySlot={false}
           slotMinTime="00:00:00"
           slotMaxTime="24:00:00"
-          slotDuration="06:00:00"
+          slotDuration="12:00:00"
           slotLabelContent={(arg) => {
-            const shiftLabels = ['Shift 1', 'Shift 2', 'Shift 3', 'Shift 4'];
-            const index = Math.floor(arg.date.getHours() / 6);
+            const shiftLabels = ['Shift 1', 'Shift 2'];
+            const index = Math.floor(arg.date.getHours() / 12);
 
             return <div>{shiftLabels[index] || ''}</div>;
           }}

@@ -27,9 +27,14 @@ import { LiaChartAreaSolid } from 'react-icons/lia';
 interface TaskCreateModalProps {
   modal: ModalActionProps;
   mutate?: any;
+  setRefetch: any;
 }
 
-const TaskCreateModal = ({ modal, mutate }: TaskCreateModalProps) => {
+const TaskCreateModal = ({
+  modal,
+  mutate,
+  setRefetch,
+}: TaskCreateModalProps) => {
   const { data: dataTaskTypes } = useFetcher<TaskType[]>('task_types', 'GET');
   const { data: dataAreas } = useFetcher<Area[]>('areas', 'GET');
   const { trigger, isLoading } = useFetcher('tasks/create', 'POST');
@@ -143,11 +148,12 @@ const TaskCreateModal = ({ modal, mutate }: TaskCreateModalProps) => {
         toast.showSuccess(response.message);
         handleCancel();
         mutate();
+        setRefetch(true);
       } catch (error: any) {
         toast.showError(error.message);
       }
     },
-    [handleCancel, mutate, toast, trigger]
+    [handleCancel, mutate, setRefetch, toast, trigger]
   );
 
   return (
