@@ -4,7 +4,9 @@ import { WarehouseType } from '../../../../model/Warehouse/warehouse';
 import useToast from '../../../../hooks/useToast';
 import useModal from '../../../../hooks/useModal';
 import { useTranslation } from 'react-i18next';
-import TableComponent, { Column } from '../../../../components/Table/TableComponent';
+import TableComponent, {
+  Column,
+} from '../../../../components/Table/TableComponent';
 import PopconfirmComponent from '../../../../components/Popconfirm/PopconfirmComponent';
 import ButtonComponent from '../../../../components/Button/ButtonComponent';
 import AnimationAppear from '../../../../components/UI/AnimationAppear';
@@ -12,10 +14,11 @@ import WhiteBackground from '../../../../components/UI/WhiteBackground';
 import ModalAddWarehouse from './components/ModalAddWarehouse';
 import ModalDetailWarehouse from './components/ModalDetailWarehouse';
 
-
-
 const Warehouse = () => {
-  const { data, isLoading, mutate } = useFetcher<WarehouseType[]>('warehouses', 'GET');
+  const { data, isLoading, mutate } = useFetcher<WarehouseType[]>(
+    'warehouses',
+    'GET'
+  );
   const [id, setId] = useState('');
   const toast = useToast();
   const { trigger, isLoading: loadingDelete } = useFetcher(
@@ -69,19 +72,18 @@ const Warehouse = () => {
       title: t('Action'),
       render: (data) => (
         <div className="flex gap-5">
-
           <ButtonComponent
             type="primary"
             onClick={() => handleOpenModalDetail(data)}
           >
-            {t("View Detail")}
+            {t('View Detail')}
           </ButtonComponent>
           <PopconfirmComponent
             title={t('Delete?')}
             onConfirm={() => onConfirm(data)}
           >
             <ButtonComponent type="primary" danger>
-              {t("Delete")}
+              {t('Delete')}
             </ButtonComponent>
           </PopconfirmComponent>
         </div>
@@ -98,7 +100,7 @@ const Warehouse = () => {
             type="primary"
             onClick={handleOpenModalAdd}
           >
-            {t("Create Warehouse")}
+            {t('Create storage')}
           </ButtonComponent>
           <TableComponent
             dataSource={data || []}

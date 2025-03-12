@@ -97,27 +97,27 @@ const ModalDetailWarehouse = ({
 
   return (
     <ModalComponent
-      title={t("Create Warehouse")}
+      title={t('Detail')}
       open={modal.open}
       onCancel={handleClose}
       loading={isLoadingDetail}
       footer={[
         !edit && (
           <ButtonComponent type="primary" onClick={() => setEdit(true)}>
-            {t("Edit")}
+            {t('Edit')}
           </ButtonComponent>
         ),
         edit && (
           <div className="flex gap-5 justify-end">
             <ButtonComponent onClick={() => setEdit(false)}>
-              Cancel
+              {t('Cancel')}
             </ButtonComponent>
             <ButtonComponent
               loading={isLoading}
               type="primary"
               onClick={() => form.submit()}
             >
-              {t("Save")}
+              {t('Save')}
             </ButtonComponent>
           </div>
         ),

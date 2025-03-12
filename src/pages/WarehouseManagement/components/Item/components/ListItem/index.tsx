@@ -100,7 +100,7 @@ const ListItemManagement = () => {
     {
       key: 'warehouseLocationEntity',
       dataIndex: 'warehouseLocationEntity',
-      title: t('Warehouse Location'),
+      title: t('Storage Location'),
       render: (data) => data?.name,
     },
     {
@@ -192,7 +192,7 @@ const ListItemManagement = () => {
   const items: TabsItemProps['items'] = [
     {
       key: 'all',
-      label: t('View All'),
+      label: t('View all'),
       children: (
         <ListAllItem
           column={columnsItemByWarehouse}
@@ -207,7 +207,7 @@ const ListItemManagement = () => {
     },
     {
       key: 'view-by-warehouse',
-      label: t('View By Warehouse'),
+      label: t('View by storage'),
       children: (
         <ListItemWarehouse
           column={column}
@@ -219,7 +219,7 @@ const ListItemManagement = () => {
     },
     {
       key: 'view-by-category',
-      label: t('View By Category'),
+      label: t('View by category'),
       children: (
         <ListItemCategory
           column={column}

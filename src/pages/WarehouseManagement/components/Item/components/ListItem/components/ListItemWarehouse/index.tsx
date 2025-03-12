@@ -1,12 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import SelectComponent from '../../../../../../../../components/Select/SelectComponent';
-import TableComponent, {
-  Column,
-} from '../../../../../../../../components/Table/TableComponent';
-import { RootState } from '../../../../../../../../core/store/store';
-import useToast from '../../../../../../../../hooks/useToast';
-import { Item } from '../../../../../../../../model/Warehouse/items';
+import SelectComponent from '@components/Select/SelectComponent';
+import TableComponent, { Column } from '@components/Table/TableComponent';
+import { RootState } from '@core/store/store';
+import useToast from '@hooks/useToast';
+import { Item } from '@model/Warehouse/items';
 import { useTranslation } from 'react-i18next';
 
 interface ListItemWarehouseProps {
@@ -47,7 +45,7 @@ const ListItemWarehouse = ({
   return (
     <div className="w-full min-h-[400px] flex flex-col gap-5">
       <div className="flex flex-col gap-3">
-        <p className="text-base font-bold">{t("Select warehouse")}:</p>
+        <p className="text-base font-bold">{t('Select storage')}:</p>
         <SelectComponent
           onChange={handleChangeId}
           options={itemManagementWarehouse.warehouses}

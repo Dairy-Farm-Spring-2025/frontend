@@ -37,7 +37,7 @@ const ModalAddWarehouse = ({ modal, mutate }: ModalAddWarehouseProps) => {
   };
   return (
     <ModalComponent
-      title={t("Create Warehouse")}
+      title={t('Create storage')}
       open={modal.open}
       onCancel={handleClose}
       loading={isLoading}
@@ -46,21 +46,21 @@ const ModalAddWarehouse = ({ modal, mutate }: ModalAddWarehouseProps) => {
       <FormComponent form={form} onFinish={handleFinish}>
         <FormItemComponent
           name="name"
-          label={<LabelForm>{t("Name")}</LabelForm>}
+          label={<LabelForm>{t('Name')}</LabelForm>}
           rules={[{ required: true }]}
         >
           <InputComponent />
         </FormItemComponent>
         <FormItemComponent
           name="type"
-          label={<LabelForm>{t("Type")}</LabelForm>}
+          label={<LabelForm>{t('Type')}</LabelForm>}
           rules={[{ required: true }]}
         >
           <SelectComponent options={warehouseType} />
         </FormItemComponent>
         <FormItemComponent
           name="description"
-          label={<LabelForm>{t("Description")}</LabelForm>}
+          label={<LabelForm>{t('Description')}</LabelForm>}
           rules={[{ required: true }]}
         >
           <InputComponent.TextArea />

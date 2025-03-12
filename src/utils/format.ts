@@ -6,7 +6,7 @@ export const formatDateHour = (data: any) => {
 };
 
 export const formatSTT = (data: any[]) => {
-  return data.sort(
+  return data?.sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
 };
@@ -18,9 +18,9 @@ export const formatAddMilkBatch = (data: any[]) => {
 export const formatAreaType = (type: string) => {
   // Thay thế các dấu gạch dưới (_) thành khoảng trắng và viết hoa chữ cái đầu mỗi từ
   return type
-    .replace(/([A-Z])/g, ' $1') // Thêm khoảng trắng trước chữ hoa
-    .replace(/^./, (str) => str.toUpperCase()) // Viết hoa chữ cái đầu tiên
-    .trim(); // Loại bỏ khoảng trắng dư thừa
+    ?.replace(/([A-Z])/g, ' $1') // Thêm khoảng trắng trước chữ hoa
+    ?.replace(/^./, (str) => str.toUpperCase()) // Viết hoa chữ cái đầu tiên
+    ?.trim(); // Loại bỏ khoảng trắng dư thừa
 };
 
 export const validateInput = (rule: any, value: string) => {

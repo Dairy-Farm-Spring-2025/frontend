@@ -233,12 +233,12 @@ const AppDashboard: React.FC = () => {
           ]
         ),
         getItem(
-          t('Warehouse management'),
+          t('Storage management'),
           'dairy/warehouse-management',
           <PiWarehouse />,
           [
             getItem(
-              t('warehouse'),
+              t('Storage'),
               'dairy/warehouse-management/warehouse',
               <PiWarehouse size={sizeIcon} />
             ),
