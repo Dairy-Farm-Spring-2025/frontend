@@ -1,16 +1,17 @@
 import { Form, Input, Select } from 'antd';
-import ButtonComponent from '../../../../../../components/Button/ButtonComponent';
-import FormComponent from '../../../../../../components/Form/FormComponent';
-import FormItemComponent from '../../../../../../components/Form/Item/FormItemComponent';
-import LabelForm from '../../../../../../components/LabelForm/LabelForm';
-import ModalComponent from '../../../../../../components/Modal/ModalComponent';
-import useFetcher from '../../../../../../hooks/useFetcher';
-import useToast from '../../../../../../hooks/useToast';
-import { CowTypeRequest } from '../../../../../../model/Cow/CowType';
-import { cowTypesStatus } from '../../../../../../service/data/cowTypesStatus';
+import ButtonComponent from '@components/Button/ButtonComponent';
+import FormComponent from '@components/Form/FormComponent';
+import FormItemComponent from '@components/Form/Item/FormItemComponent';
+import LabelForm from '@components/LabelForm/LabelForm';
+import ModalComponent from '@components/Modal/ModalComponent';
+import useFetcher from '@hooks/useFetcher';
+import useToast from '@hooks/useToast';
+import { CowTypeRequest } from '@model/Cow/CowType';
+import { cowTypesStatus } from '@service/data/cowTypesStatus';
 import { useTranslation } from 'react-i18next';
-import InputComponent from '../../../../../../components/Input/InputComponent';
+import InputComponent from '@components/Input/InputComponent';
 import { useEffect, useState } from 'react';
+import { COW_TYPE_PATH } from '@service/api/CowType/cowType';
 
 interface ModalTypesProps {
   mutate: any;
@@ -20,7 +21,10 @@ interface ModalTypesProps {
 const ModalTypes = ({ mutate, modal }: ModalTypesProps) => {
   const { t } = useTranslation();
   const toast = useToast();
-  const { trigger, isLoading } = useFetcher('cow-types/create', 'POST');
+  const { trigger, isLoading } = useFetcher(
+    COW_TYPE_PATH.COW_TYPES_CREATE,
+    'POST'
+  );
   const [form] = Form.useForm();
   const formValues = Form.useWatch([], form);
   const [disabledButton, setDisabledButton] = useState(true);

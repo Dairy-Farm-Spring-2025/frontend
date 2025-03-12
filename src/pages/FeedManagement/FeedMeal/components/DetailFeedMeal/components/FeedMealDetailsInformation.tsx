@@ -1,9 +1,9 @@
 import { List } from 'antd';
 import { useTranslation } from 'react-i18next';
-import DescriptionComponent from '../../../../../../components/Description/DescriptionComponent';
-import ListComponent from '../../../../../../components/List/ListComponent';
-import Title from '../../../../../../components/UI/Title';
-import { FeedMealDetails } from '../../../../../../model/Feed/Feed';
+import DescriptionComponent from '@components/Description/DescriptionComponent';
+import ListComponent from '@components/List/ListComponent';
+import Title from '@components/UI/Title';
+import { FeedMealDetails } from '@model/Feed/Feed';
 
 interface FeedMealDetailsInformationProps {
   detailData: FeedMealDetails[];

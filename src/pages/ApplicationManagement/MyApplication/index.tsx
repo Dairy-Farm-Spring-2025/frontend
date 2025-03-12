@@ -10,11 +10,12 @@ import useModal from '../../../hooks/useModal';
 import { formatAreaType, formatDateHour } from '../../../utils/format';
 import ModalDetailMyApplication from './components/ModalDetailMyApplication';
 import ModalRequestMyApplication from './components/ModalRequestApplication';
+import { APPLICATION_PATH } from '@service/api/Application/applicationApi';
 
 const MyApplication = () => {
   const { t } = useTranslation();
   const { data, isLoading, mutate } = useFetcher<any>(
-    'application/my-request',
+    APPLICATION_PATH.APPLICATION_MY_REQUEST,
     'GET'
   );
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -38,7 +39,12 @@ const MyApplication = () => {
 
   const columns: Column[] = useMemo(
     () => [
-      { dataIndex: 'applicationId', key: 'applicationId', title: '#' },
+      {
+        dataIndex: 'applicationId',
+        key: 'applicationId',
+        title: '#',
+        render: (_, __, index) => index + 1,
+      },
       {
         dataIndex: 'type',
         key: 'type',

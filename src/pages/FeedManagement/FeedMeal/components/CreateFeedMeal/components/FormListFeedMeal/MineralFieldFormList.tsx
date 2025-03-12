@@ -1,11 +1,11 @@
 import { PlusOutlined } from '@ant-design/icons';
 import { Divider, Form } from 'antd';
 import { useTranslation } from 'react-i18next';
-import ButtonComponent from '../../../../../../../components/Button/ButtonComponent';
-import FormItemComponent from '../../../../../../../components/Form/Item/FormItemComponent';
-import InputComponent from '../../../../../../../components/Input/InputComponent';
-import SelectComponent from '../../../../../../../components/Select/SelectComponent';
-import Title from '../../../../../../../components/UI/Title';
+import ButtonComponent from '@components/Button/ButtonComponent';
+import FormItemComponent from '@components/Form/Item/FormItemComponent';
+import InputComponent from '@components/Input/InputComponent';
+import SelectComponent from '@components/Select/SelectComponent';
+import Title from '@components/UI/Title';
 interface MineralFieldFormListProps {
   mineralTotal: number;
   minerals: any;

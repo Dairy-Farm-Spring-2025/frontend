@@ -6,23 +6,18 @@ import { Divider, Image } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IoMdFemale, IoMdMale } from 'react-icons/io';
-import cowImage from '../../../../assets/cow.jpg';
-import TableComponent, {
-  Column,
-} from '../../../../components/Table/TableComponent';
-import AnimationAppear from '../../../../components/UI/AnimationAppear';
-import TextLink from '../../../../components/UI/TextLink';
-import WhiteBackground from '../../../../components/UI/WhiteBackground';
-import useFetch from '../../../../hooks/useFetcher';
-import useToast from '../../../../hooks/useToast';
-import { Cow } from '../../../../model/Cow/Cow';
-import {
-  cowOrigin,
-  cowOriginFiltered,
-} from '../../../../service/data/cowOrigin';
-import { cowStatus } from '../../../../service/data/cowStatus';
-import { formatDateHour, formatSTT } from '../../../../utils/format';
-import { getLabelByValue } from '../../../../utils/getLabel';
+import cowImage from '@assets/cow.jpg';
+import TableComponent, { Column } from '@components/Table/TableComponent';
+import AnimationAppear from '@components/UI/AnimationAppear';
+import TextLink from '@components/UI/TextLink';
+import WhiteBackground from '@components/UI/WhiteBackground';
+import useFetch from '@hooks/useFetcher';
+import useToast from '@hooks/useToast';
+import { Cow } from '@model/Cow/Cow';
+import { cowOrigin, cowOriginFiltered } from '@service/data/cowOrigin';
+import { cowStatus } from '@service/data/cowStatus';
+import { formatDateHour, formatSTT } from '@utils/format';
+import { getLabelByValue } from '@utils/getLabel';
 
 const ListCow = () => {
   const { t } = useTranslation();
