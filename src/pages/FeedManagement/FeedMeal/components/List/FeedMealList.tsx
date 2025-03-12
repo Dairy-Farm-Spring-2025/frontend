@@ -1,21 +1,20 @@
 import { useTranslation } from 'react-i18next';
-import ButtonComponent from '../../../../../components/Button/ButtonComponent';
-import PopconfirmComponent from '../../../../../components/Popconfirm/PopconfirmComponent';
-import TableComponent, {
-  Column,
-} from '../../../../../components/Table/TableComponent';
-import AnimationAppear from '../../../../../components/UI/AnimationAppear';
-import WhiteBackground from '../../../../../components/UI/WhiteBackground';
-import useFetcher from '../../../../../hooks/useFetcher';
-import useToast from '../../../../../hooks/useToast';
-import { FeedType } from '../../../../../model/Feed/Feed';
-import { formatStatusWithCamel } from '../../../../../utils/format';
+import ButtonComponent from '@components/Button/ButtonComponent';
+import PopconfirmComponent from '@components/Popconfirm/PopconfirmComponent';
+import TableComponent, { Column } from '@components/Table/TableComponent';
+import AnimationAppear from '@components/UI/AnimationAppear';
+import WhiteBackground from '@components/UI/WhiteBackground';
+import useFetcher from '@hooks/useFetcher';
+import useToast from '@hooks/useToast';
+import { FeedType } from '@model/Feed/Feed';
+import { formatStatusWithCamel } from '@utils/format';
 import { Spin } from 'antd';
 import { useNavigate } from 'react-router-dom';
+import { FEED_PATH } from '@service/api/Feed/feedApi';
 
 const FeedMealList = () => {
   const { data, isLoading, mutate } = useFetcher<FeedType[]>(
-    'feedmeals',
+    FEED_PATH.FEED_MEALS,
     'GET'
   );
   const toast = useToast();
@@ -27,8 +26,8 @@ const FeedMealList = () => {
   const { t } = useTranslation();
   const onConfirm = async (id: string) => {
     try {
-      await trigger({ url: `feedmeals/${id}` });
-      toast.showSuccess(t('Delete success'));
+      const response = await trigger({ url: FEED_PATH.DELETE_FEED_MEALS(id) });
+      toast.showSuccess(response.message);
       mutate();
     } catch (error: any) {
       toast.showError(t(error.message));

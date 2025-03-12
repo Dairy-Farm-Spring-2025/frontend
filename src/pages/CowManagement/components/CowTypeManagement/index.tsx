@@ -1,27 +1,29 @@
 import { Divider } from 'antd';
-import ButtonComponent from '../../../../components/Button/ButtonComponent';
-import TableComponent, {
-  Column,
-} from '../../../../components/Table/TableComponent';
-import AnimationAppear from '../../../../components/UI/AnimationAppear';
-import WhiteBackground from '../../../../components/UI/WhiteBackground';
-import useFetcher from '../../../../hooks/useFetcher';
-import useModal from '../../../../hooks/useModal';
-import { formatDateHour, formatSTT } from '../../../../utils/format';
+import ButtonComponent from '@components/Button/ButtonComponent';
+import TableComponent, { Column } from '@components/Table/TableComponent';
+import AnimationAppear from '@components/UI/AnimationAppear';
+import WhiteBackground from '@components/UI/WhiteBackground';
+import useFetcher from '@hooks/useFetcher';
+import useModal from '@hooks/useModal';
+import { formatDateHour, formatSTT } from '@utils/format';
 import ModalTypes from './components/ModalAddTypes/ModalTypes';
 import { useState } from 'react';
 import ModalEditTypes from './components/ModalEditTypes/ModalEditTypes';
-import { CowType } from '../../../../model/Cow/CowType';
+import { CowType } from '@model/Cow/CowType';
 import { useTranslation } from 'react-i18next';
+import { COW_TYPE_PATH } from '@service/api/CowType/cowType';
 
 const CowTypeManagement = () => {
   const { t } = useTranslation();
   const modal = useModal();
   const modalEdit = useModal();
-  const { data, isLoading, mutate } = useFetcher<CowType[]>('cow-types', 'GET');
-  const [id, setId] = useState<number>(0);
+  const { data, isLoading, mutate } = useFetcher<CowType[]>(
+    COW_TYPE_PATH.COW_TYPES,
+    'GET'
+  );
+  const [id, setId] = useState<string>('');
 
-  const handleEdit = (id: number) => {
+  const handleEdit = (id: string) => {
     setId(id);
     modalEdit.openModal();
   };

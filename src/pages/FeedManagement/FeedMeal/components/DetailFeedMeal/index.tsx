@@ -1,17 +1,18 @@
 import { useParams } from 'react-router-dom';
-import useFetcher from '../../../../../hooks/useFetcher';
-import AnimationAppear from '../../../../../components/UI/AnimationAppear';
-import WhiteBackground from '../../../../../components/UI/WhiteBackground';
+import useFetcher from '@hooks/useFetcher';
+import AnimationAppear from '@components/UI/AnimationAppear';
+import WhiteBackground from '@components/UI/WhiteBackground';
 import { Divider, Spin } from 'antd';
 import FeedMealInformation from './components/FeedMealInformation';
-import { FeedMealDetails, FeedMeals } from '../../../../../model/Feed/Feed';
-import Title from '../../../../../components/UI/Title';
+import { FeedMealDetails, FeedMeals } from '@model/Feed/Feed';
+import Title from '@components/UI/Title';
 import FeedMealDetailsInformation from './components/FeedMealDetailsInformation';
+import { FEED_PATH } from '@service/api/Feed/feedApi';
 
 const DetailFeedMeal = () => {
   const { id } = useParams();
   const { data: detailFeedMeal, isLoading: isLoading } = useFetcher<FeedMeals>(
-    `feedmeals/${id}`,
+    FEED_PATH.DETAIL_FEED_MEALS(id ? id : ''),
     'GET'
   );
   return (

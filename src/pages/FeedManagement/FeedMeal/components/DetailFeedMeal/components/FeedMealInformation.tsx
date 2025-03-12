@@ -12,7 +12,6 @@ interface FeedMealInformationProps {
 }
 const FeedMealInformation = ({ data }: FeedMealInformationProps) => {
   const { t } = useTranslation();
-  console.log(data?.cowStatus);
   const items: DescriptionPropsItem['items'] = [
     {
       label: t('Cow Type'),
