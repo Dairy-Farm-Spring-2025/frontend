@@ -13,6 +13,7 @@ import useToast from '../../../../../hooks/useToast';
 
 import { useTranslation } from 'react-i18next';
 import { WarehouseType } from '../../../../../model/Warehouse/warehouse';
+import { STORAGE_PATH } from '@service/api/Storage/storageApi';
 
 interface ModalDetailWarehouseProps {
   modal: any;
@@ -27,13 +28,16 @@ const ModalDetailWarehouse = ({
 }: ModalDetailWarehouseProps) => {
   const [form] = Form.useForm();
   const toast = useToast();
-  const { trigger, isLoading } = useFetcher(`warehouses/${id}`, 'PUT');
+  const { trigger, isLoading } = useFetcher(
+    STORAGE_PATH.UPDATE_STORAGE(id),
+    'PUT'
+  );
   const [edit, setEdit] = useState(false);
   const {
     data,
     isLoading: isLoadingDetail,
     mutate: mutateEdit,
-  } = useFetcher<WarehouseType>(`warehouses/${id}`, 'GET');
+  } = useFetcher<WarehouseType>(STORAGE_PATH.STORAGE_DETAIL(id), 'GET');
   const { t } = useTranslation();
   useEffect(() => {
     if (data) {
@@ -97,27 +101,27 @@ const ModalDetailWarehouse = ({
 
   return (
     <ModalComponent
-      title={t("Create Warehouse")}
+      title={t('Detail')}
       open={modal.open}
       onCancel={handleClose}
       loading={isLoadingDetail}
       footer={[
         !edit && (
           <ButtonComponent type="primary" onClick={() => setEdit(true)}>
-            {t("Edit")}
+            {t('Edit')}
           </ButtonComponent>
         ),
         edit && (
           <div className="flex gap-5 justify-end">
             <ButtonComponent onClick={() => setEdit(false)}>
-              Cancel
+              {t('Cancel')}
             </ButtonComponent>
             <ButtonComponent
               loading={isLoading}
               type="primary"
               onClick={() => form.submit()}
             >
-              {t("Save")}
+              {t('Save')}
             </ButtonComponent>
           </div>
         ),

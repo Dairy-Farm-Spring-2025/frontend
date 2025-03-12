@@ -1,4 +1,4 @@
-import { Divider, message } from 'antd';
+import { Divider } from 'antd';
 
 import useFetcher from '../../../hooks/useFetcher';
 
@@ -10,13 +10,17 @@ import AnimationAppear from '../../../components/UI/AnimationAppear';
 import WhiteBackground from '../../../components/UI/WhiteBackground';
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import ButtonComponent from '../../../components/Button/ButtonComponent';
 import useModal from '../../../hooks/useModal';
 import { MilkBatch } from '../../../model/DailyMilk/MilkBatch';
-import { formatAreaType, formatDateHour, formatSTT } from '../../../utils/format';
+import {
+  formatAreaType,
+  formatDateHour,
+  formatSTT,
+} from '../../../utils/format';
 import CreateMilkBatchModal from './components/ModalCreateMilkBatch/CreateMilkBatchModal';
 import ModalMilkBatchDetail from './components/ModalMilkBatchDetail';
-import { useTranslation } from 'react-i18next';
 
 const MilkBatchManagement = () => {
   const modalBatch = useModal();
@@ -82,14 +86,14 @@ const MilkBatchManagement = () => {
       render: (_, record) => (
         <div>
           <ButtonComponent onClick={() => handleOpenEdit(record)}>
-            {t(" View Detail")}
+            {t(' View Detail')}
           </ButtonComponent>
           <ButtonComponent
             danger
             onClick={() => console.log(record.milkBatchId)}
             style={{ marginLeft: 8 }}
           >
-            {t("Delete")}
+            {t('Delete')}
           </ButtonComponent>
         </div>
       ),
@@ -110,7 +114,7 @@ const MilkBatchManagement = () => {
         />
         <CreateMilkBatchModal modal={modalBatch} mutate={mutate} />
         <ButtonComponent onClick={openModalBatch} type="primary">
-          {t("Create Milk Batch")}
+          {t('Create Milk Batch')}
         </ButtonComponent>
         <Divider className="my-4" />
         <TableComponent

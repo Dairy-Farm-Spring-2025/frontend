@@ -6,18 +6,18 @@ import {
 } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import TabsComponent, {
-  TabsItemProps,
-} from '../../../../components/Tabs/TabsComponent';
-import AnimationAppear from '../../../../components/UI/AnimationAppear';
-import WhiteBackground from '../../../../components/UI/WhiteBackground';
-import useFetcher from '../../../../hooks/useFetcher';
-import { Cow, HealthResponse } from '../../../../model/Cow/Cow';
-import { DailyMilkModel } from '../../../../model/DailyMilk/DailyMilk';
+import TabsComponent, { TabsItemProps } from '@components/Tabs/TabsComponent';
+import AnimationAppear from '@components/UI/AnimationAppear';
+import WhiteBackground from '@components/UI/WhiteBackground';
+import useFetcher from '@hooks/useFetcher';
+import { Cow, HealthResponse } from '@model/Cow/Cow';
+import { DailyMilkModel } from '@model/DailyMilk/DailyMilk';
 import DailyMilk from './TabsItem/DailyMilk';
 import CowGeneralInformation from './TabsItem/GeneralInformation';
 import HealthRecordCow from './TabsItem/HealthRecordCow';
 import HistoryMoveCow from './TabsItem/HistoryMoveCow';
+import { COW_PATH } from '@service/api/Cow/cowApi';
+import { DAILY_MILK_PATH } from '@service/api/DailyMilk/dailyMilkApi';
 const CowDetail = () => {
   const { t } = useTranslation();
   const { id } = useParams();
@@ -26,12 +26,15 @@ const CowDetail = () => {
     data: dataMilk,
     isLoading: isLoadingDaily,
     mutate: mutateDaily,
-  } = useFetcher<DailyMilkModel[]>(`dailymilks/cow/${id}`, 'GET');
+  } = useFetcher<DailyMilkModel[]>(
+    DAILY_MILK_PATH.DAILY_MILKS_COWS(id ? id : ''),
+    'GET'
+  );
   const {
     data: dataDetail,
     isLoading: isLoadingDetail,
     mutate: mutateDetail,
-  } = useFetcher<Cow>(`cows/${id}`, 'GET');
+  } = useFetcher<Cow>(COW_PATH.COW_DETAIL(id ? id : ''), 'GET');
 
   // const { data: dataDetailQR, isLoading: isLoadingDetailQR } = useFetcher<any>(
   //   `cows/qr/${id}`,

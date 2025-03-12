@@ -11,6 +11,7 @@ import PopconfirmComponent from '../../../../../../components/Popconfirm/Popconf
 import useFetcher from '../../../../../../hooks/useFetcher';
 import useToast from '../../../../../../hooks/useToast';
 import { t } from 'i18next';
+import { DAILY_MILK_PATH } from '@service/api/DailyMilk/dailyMilkApi';
 
 const classNameStyle = '!text-xs lg:!text-sm !text-center !p-2';
 
@@ -52,7 +53,10 @@ const ModalDetailDailyMilk = ({
     async (values: any) => {
       try {
         const response = await triggerEdit({
-          url: `dailymilks/volume/${values.id}?newVolume=${values.newVolume}`,
+          url: DAILY_MILK_PATH.DAILY_MILK_UPDATE_VOLUME(
+            values.id,
+            values.newVolume
+          ),
         });
         toast.showSuccess(response?.message);
         handleCloseModal();
@@ -73,7 +77,9 @@ const ModalDetailDailyMilk = ({
   const onConfirm = useCallback(
     async (id: string) => {
       try {
-        const response = await trigger({ url: `dailymilks/${id}` });
+        const response = await trigger({
+          url: DAILY_MILK_PATH.DAILY_MILK_DELETE(id),
+        });
         toast.showSuccess(response?.message);
         mutateDaily();
         handleCloseModal();

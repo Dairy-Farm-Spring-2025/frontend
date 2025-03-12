@@ -25,13 +25,15 @@ import '../../index.scss';
 import ModalCreateArea from '../ModalCreateArea/ModalCreateArea';
 import ModalEditPens from '../ModalEditPen';
 import useToast from '@hooks/useToast';
+import { AREA_PATH } from '@service/api/Area/areaApi';
+import { PEN_PATH } from '@service/api/Pen/penApi';
 
 const AreaList = () => {
   const modalEdit = useModal();
   const modalCreate = useModal();
   const navigate = useNavigate();
-  const { data, isLoading, mutate } = useFetcher<Pen[]>('pens', 'GET');
-  const { data: dataArea, error } = useFetcher<Area[]>('areas', 'GET');
+  const { data, isLoading, mutate } = useFetcher<Pen[]>(PEN_PATH.PENS, 'GET');
+  const { data: dataArea, error } = useFetcher<Area[]>(AREA_PATH.AREAS, 'GET');
   const { t } = useTranslation();
   const [id, setId] = useState<number>(0);
   const [dataGroup, setDataGroup] = useState<any[]>([]);

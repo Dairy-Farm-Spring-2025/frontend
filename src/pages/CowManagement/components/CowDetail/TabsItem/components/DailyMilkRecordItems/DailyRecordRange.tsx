@@ -6,6 +6,7 @@ import FormItemComponent from '@components/Form/Item/FormItemComponent';
 import LabelForm from '@components/LabelForm/LabelForm';
 import useFetcher from '@hooks/useFetcher';
 import useToast from '@hooks/useToast';
+import { DAILY_MILK_PATH } from '@service/api/DailyMilk/dailyMilkApi';
 import { Form, Skeleton } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import { t } from 'i18next';
@@ -19,7 +20,7 @@ const DailyRecordRange = ({ id }: DailyRecordRangeProps) => {
   const [startDate, setStartDate] = useState<Dayjs | null>(null);
   const toast = useToast();
   const [data, setData] = useState<any[]>([]);
-  const { trigger, isLoading } = useFetcher(`dailymilks/range`);
+  const { trigger, isLoading } = useFetcher(DAILY_MILK_PATH.DAILY_MILK_RANGE);
 
   const onFinish = async (values: { startDate: any; endDate: any }) => {
     try {

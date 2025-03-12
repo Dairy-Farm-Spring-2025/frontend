@@ -18,6 +18,9 @@ import { useTranslation } from 'react-i18next';
 import ButtonComponent from '@components/Button/ButtonComponent';
 import useModal from '@hooks/useModal';
 import ModalCreatePen from '../ModalCreatePen';
+import { AREA_PATH } from '@service/api/Area/areaApi';
+import { PEN_PATH } from '@service/api/Pen/penApi';
+import { useEffect } from 'react';
 
 const AreaDetail = () => {
   const { id } = useParams();
@@ -27,13 +30,17 @@ const AreaDetail = () => {
     data: area,
     isLoading: isLoadingArea,
     mutate,
-  } = useFetcher<Area>(`areas/${id}`);
+  } = useFetcher<Area>(AREA_PATH.AREA_DETAIL(id ? id : ''));
   const {
     data: pens,
     isLoading: isLoadingPens,
     mutate: mutatePen,
-  } = useFetcher<Pen[]>(`pens/area/${id}`);
+  } = useFetcher<Pen[]>(PEN_PATH.PEN_AREA(id ? id : ''));
   const { t } = useTranslation();
+
+  useEffect(() => {
+    console.log(pens);
+  }, []);
 
   const columns: Column[] = [
     {

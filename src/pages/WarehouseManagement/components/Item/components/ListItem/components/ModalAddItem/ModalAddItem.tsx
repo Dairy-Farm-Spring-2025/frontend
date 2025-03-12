@@ -1,23 +1,22 @@
 import { Form, Spin } from 'antd';
 import { useSelector } from 'react-redux';
-import FormComponent from '../../../../../../../../components/Form/FormComponent';
-import FormItemComponent from '../../../../../../../../components/Form/Item/FormItemComponent';
-import InputComponent from '../../../../../../../../components/Input/InputComponent';
-import LabelForm from '../../../../../../../../components/LabelForm/LabelForm';
-import ModalComponent from '../../../../../../../../components/Modal/ModalComponent';
-import { RootState } from '../../../../../../../../core/store/store';
-import SelectComponent from '../../../../../../../../components/Select/SelectComponent';
-import {
-  statusOptions,
-  unitOptions,
-} from '../../../../../../../../service/data/item';
+import FormComponent from '@components/Form/FormComponent';
+import FormItemComponent from '@components/Form/Item/FormItemComponent';
+import InputComponent from '@components/Input/InputComponent';
+import LabelForm from '@components/LabelForm/LabelForm';
+import ModalComponent from '@components/Modal/ModalComponent';
+import { RootState } from '@core/store/store';
+import SelectComponent from '@components/Select/SelectComponent';
+import { statusOptions, unitOptions } from '@service/data/item';
 import { useEffect, useState } from 'react';
-import { Warehouse } from '../../../../../../../../model/Warehouse/warehouse';
-import useFetcher from '../../../../../../../../hooks/useFetcher';
-import useToast from '../../../../../../../../hooks/useToast';
-import CardComponent from '../../../../../../../../components/Card/CardComponent';
-import { ItemRequestBody } from '../../../../../../../../model/Warehouse/items';
+import { WarehouseType } from '@model/Warehouse/warehouse';
+import useFetcher from '@hooks/useFetcher';
+import useToast from '@hooks/useToast';
+import CardComponent from '@components/Card/CardComponent';
+import { ItemRequestBody } from '@model/Warehouse/items';
 import { useTranslation } from 'react-i18next';
+import { ITEMS_PATH } from '@service/api/Storage/itemApi';
+import { STORAGE_PATH } from '@service/api/Storage/storageApi';
 
 interface ModalAddItemProps {
   modal: any;
@@ -25,35 +24,52 @@ interface ModalAddItemProps {
 }
 
 const ModalAddItem = ({ modal, mutate }: ModalAddItemProps) => {
-  const [idWarehouse, setIdWarehouse] = useState<number>(0);
-  const [warehouse, setWarehouse] = useState<Warehouse>();
+  const [idWarehouse, setIdWarehouse] = useState<string>('');
+  const [form] = Form.useForm();
+  const formValues = Form.useWatch([], form);
+  const [disabledButton, setDisabledButton] = useState(true);
+  const [warehouse, setWarehouse] = useState<WarehouseType>();
   const [available, setAvailable] = useState(false);
   const itemManagementWarehouse = useSelector(
     (state: RootState) => state.itemManagement
   );
   const { t } = useTranslation();
-  const [form] = Form.useForm();
   const toast = useToast();
-  const { isLoading, trigger } = useFetcher<Warehouse>('');
+  const { isLoading, trigger } = useFetcher<WarehouseType>('');
   const { isLoading: loadingFinish, trigger: triggerFinish } = useFetcher(
-    'items/create',
+    ITEMS_PATH.ITEMS_CREATE,
     'POST'
   );
+
   useEffect(() => {
-    const fetchWarehouse = async (id: number) => {
+    if (modal.open) {
+      setDisabledButton(true); // Disable nút ngay từ đầu
+    }
+  }, [modal.open]);
+
+  useEffect(() => {
+    const isButtonDisabled =
+      !formValues || Object.values(formValues).some((value) => !value);
+    setDisabledButton(isButtonDisabled);
+  }, [formValues]);
+
+  useEffect(() => {
+    const fetchWarehouse = async (id: string) => {
       try {
-        const response = await trigger({ url: `warehouses/${id}` });
+        const response = await trigger({
+          url: STORAGE_PATH.STORAGE_DETAIL(id),
+        });
         setWarehouse(response);
       } catch (error: any) {
         toast.showError(error.message);
       }
     };
-    if (idWarehouse !== 0) {
+    if (idWarehouse !== '') {
       fetchWarehouse(idWarehouse);
     }
   }, [idWarehouse]);
 
-  const handleChangeWarehouse = (id: number) => {
+  const handleChangeWarehouse = (id: string) => {
     setIdWarehouse(id);
   };
 
@@ -63,7 +79,7 @@ const ModalAddItem = ({ modal, mutate }: ModalAddItemProps) => {
 
   const handleCancel = () => {
     form.resetFields();
-    setIdWarehouse(0);
+    setIdWarehouse('');
     setAvailable(false);
     setWarehouse(undefined);
     modal.closeModal();
@@ -87,8 +103,9 @@ const ModalAddItem = ({ modal, mutate }: ModalAddItemProps) => {
   return (
     <div>
       <ModalComponent
+        disabledButtonOk={disabledButton}
         loading={loadingFinish}
-        title={t("Create Item")}
+        title={t('Create Item')}
         open={modal.open}
         onCancel={handleCancel}
         onOk={handleOk}
@@ -98,7 +115,7 @@ const ModalAddItem = ({ modal, mutate }: ModalAddItemProps) => {
           <FormItemComponent
             rules={[{ required: true }]}
             name="name"
-            label={<LabelForm>{t("Name")}</LabelForm>}
+            label={<LabelForm>{t('Name')}</LabelForm>}
           >
             <InputComponent />
           </FormItemComponent>
@@ -106,7 +123,7 @@ const ModalAddItem = ({ modal, mutate }: ModalAddItemProps) => {
             <FormItemComponent
               rules={[{ required: true }]}
               name="unit"
-              label={<LabelForm>{t("Unit")}</LabelForm>}
+              label={<LabelForm>{t('Unit')}</LabelForm>}
             >
               <SelectComponent
                 options={unitOptions}
@@ -116,7 +133,7 @@ const ModalAddItem = ({ modal, mutate }: ModalAddItemProps) => {
             <FormItemComponent
               name="quantity"
               rules={[{ required: true }]}
-              label={<LabelForm>{t("Quantity")}</LabelForm>}
+              label={<LabelForm>{t('Quantity')}</LabelForm>}
             >
               <InputComponent.Number disabled={!available} />
             </FormItemComponent>
@@ -125,14 +142,14 @@ const ModalAddItem = ({ modal, mutate }: ModalAddItemProps) => {
             <FormItemComponent
               name="categoryId"
               rules={[{ required: true }]}
-              label={<LabelForm>{t("Category")}</LabelForm>}
+              label={<LabelForm>{t('Category')}</LabelForm>}
             >
               <SelectComponent options={itemManagementWarehouse.categories} />
             </FormItemComponent>
             <FormItemComponent
               name="status"
               rules={[{ required: true }]}
-              label={<LabelForm>{t("Status")}</LabelForm>}
+              label={<LabelForm>{t('Status')}</LabelForm>}
             >
               <SelectComponent options={statusOptions} />
             </FormItemComponent>
@@ -140,7 +157,7 @@ const ModalAddItem = ({ modal, mutate }: ModalAddItemProps) => {
           <FormItemComponent
             name="locationId"
             rules={[{ required: true }]}
-            label={<LabelForm>{t("Location")}</LabelForm>}
+            label={<LabelForm>{t('Location')}</LabelForm>}
           >
             <SelectComponent
               options={itemManagementWarehouse.warehouses}

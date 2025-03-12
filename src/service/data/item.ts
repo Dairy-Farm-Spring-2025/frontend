@@ -19,6 +19,19 @@ export const unitOptions = [
   { value: 'box', label: 'Box' },
 ];
 
+export const UNIT_FILTER = [
+  { value: 'kilogram', text: 'Kilogram (kg)' },
+  { value: 'gram', text: 'Gram (g)' },
+  { value: 'liter', text: 'Liter (L)' },
+  { value: 'milliliter', text: 'Milliliter (mL)' },
+  { value: 'piece', text: 'Piece' },
+  { value: 'pack', text: 'Pack' },
+  { value: 'squareMeter', text: 'Square Meter (m²)' },
+  { value: 'bottle', text: 'Bottle' },
+  { value: 'bag', text: 'Bag' },
+  { value: 'box', text: 'Box' },
+];
+
 export const ITEM_BATCH_OPTIONS = [
   { label: 'Available', value: 'available' },
   { label: 'In Use', value: 'inUse' },

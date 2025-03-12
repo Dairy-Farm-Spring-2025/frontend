@@ -11,6 +11,7 @@ import useFetcher from '../../../../../../hooks/useFetcher';
 import useToast from '../../../../../../hooks/useToast';
 import { t } from 'i18next';
 import React, { useCallback, useMemo } from 'react';
+import { DAILY_MILK_PATH } from '@service/api/DailyMilk/dailyMilkApi';
 
 interface DailMilkModalProps {
   id: string;
@@ -22,7 +23,10 @@ const CreateDailyMilkModal: React.FC<DailMilkModalProps> = React.memo(
   ({ modal, id, mutate }) => {
     const [form] = Form.useForm();
     const toast = useToast();
-    const { trigger, isLoading } = useFetcher<any>('dailymilks/create', 'POST');
+    const { trigger, isLoading } = useFetcher<any>(
+      DAILY_MILK_PATH.DAILY_MILK_CREATE,
+      'POST'
+    );
 
     const handleClose = useCallback(() => {
       form.resetFields();

@@ -1,136 +1,63 @@
-import {
-  AppstoreOutlined,
-  HomeOutlined,
-  UnorderedListOutlined,
-} from '@ant-design/icons';
-import { Column } from '../../../../../../components/Table/TableComponent';
-import TabsComponent, {
-  TabsItemProps,
-} from '../../../../../../components/Tabs/TabsComponent';
-import AnimationAppear from '../../../../../../components/UI/AnimationAppear';
-import WhiteBackground from '../../../../../../components/UI/WhiteBackground';
-import useFetcher from '../../../../../../hooks/useFetcher';
-import { Item } from '../../../../../../model/Warehouse/items';
-import ListAllItem from './components/ListAllItem';
-import ListItemCategory from './components/ListItemCategory';
-import ListItemWarehouse from './components/ListItemWarehouse';
-import TextLink from '../../../../../../components/UI/TextLink';
-import useToast from '../../../../../../hooks/useToast';
-import PopconfirmComponent from '../../../../../../components/Popconfirm/PopconfirmComponent';
-import ButtonComponent from '../../../../../../components/Button/ButtonComponent';
+import TagComponents from '@components/UI/TagComponents';
+import { RootState } from '@core/store/store';
+import { ITEMS_PATH } from '@service/api/Storage/itemApi';
+import { UNIT_FILTER } from '@service/data/item';
+import { formatStatusWithCamel } from '@utils/format';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-
-const convertToTreeDataByWarehouse = (items: Item[]) => {
-  const warehouseMap = new Map();
-
-  items.forEach((item) => {
-    const warehouseId = item.warehouseLocationEntity?.warehouseLocationId;
-    const warehouseName = item.warehouseLocationEntity?.name;
-
-    if (!warehouseMap.has(warehouseId)) {
-      warehouseMap.set(warehouseId, {
-        key: `warehouse-${warehouseId}`,
-        name: warehouseName,
-        quantity: '',
-        unit: '',
-        categoryEntity: '',
-        status: '',
-        children: [],
-      });
-    }
-    warehouseMap.get(warehouseId).children.push({
-      ...item,
-      key: `item-${item.itemId}`,
-    });
-  });
-
-  return Array.from(warehouseMap.values());
-};
+import { useSelector } from 'react-redux';
+import ButtonComponent from '../../../../../../components/Button/ButtonComponent';
+import PopconfirmComponent from '../../../../../../components/Popconfirm/PopconfirmComponent';
+import { Column } from '../../../../../../components/Table/TableComponent';
+import AnimationAppear from '../../../../../../components/UI/AnimationAppear';
+import TextLink from '../../../../../../components/UI/TextLink';
+import WhiteBackground from '../../../../../../components/UI/WhiteBackground';
+import useFetcher from '../../../../../../hooks/useFetcher';
+import useToast from '../../../../../../hooks/useToast';
+import { Item } from '../../../../../../model/Warehouse/items';
+import ListAllItem from './components/ListAllItem';
 
 const ListItemManagement = () => {
-  const [activeTab, setActiveTab] = useState<string>('all'); // Track active tab key
+  const [optionsWarehouse, setOptionWarehouse] = useState<any[]>([]);
+  const [optionCategory, setOptionCategory] = useState<any[]>([]);
+  const itemManagementWarehouse = useSelector(
+    (state: RootState) => state.itemManagement
+  );
   const toast = useToast();
   const {
     data: itemData,
     isLoading: isLoadingItem,
     mutate: mutateItem,
-  } = useFetcher<Item[] | any>('items', 'GET');
-  const {
-    isLoading: isLoadingWarehouse,
-    trigger: triggerWarehouse,
-    mutate: mutateWarehouseItem,
-  } = useFetcher('items/warehouse');
-  const {
-    isLoading: isLoadingCategory,
-    trigger: triggerCategory,
-    mutate: mutateCategoryItem,
-  } = useFetcher('items/category');
+  } = useFetcher<Item[] | any>(ITEMS_PATH.ITEMS, 'GET');
   const { isLoading: isLoadingDeleteItem, trigger: triggerDeleteItem } =
     useFetcher(`items/delete`, 'DELETE');
   const { t } = useTranslation();
-  const column: Column[] = [
-    {
-      key: 'itemId',
-      dataIndex: 'itemId',
-      title: '#',
-    },
-    {
-      key: 'name',
-      dataIndex: 'name',
-      title: t('Name'),
-      render: (name, data) => <TextLink to={`${data.itemId}`}>{name}</TextLink>,
-    },
-    {
-      key: 'quantity',
-      dataIndex: 'quantity',
-      title: t('Quantity'),
-    },
-    {
-      key: 'unit',
-      dataIndex: 'unit',
-      title: t('Unit'),
-    },
-    {
-      key: 'categoryEntity',
-      dataIndex: 'categoryEntity',
-      title: t('Category'),
-      render: (data) => data?.name,
-    },
-    {
-      key: 'warehouseLocationEntity',
-      dataIndex: 'warehouseLocationEntity',
-      title: t('Warehouse Location'),
-      render: (data) => data?.name,
-    },
-    {
-      key: 'status',
-      dataIndex: 'status',
-      title: t('Status'),
-    },
-    // {
-    //   key: 'action',
-    //   dataIndex: 'itemId',
-    //   title: 'Action',
-    //   render: (data) => (
-    //     <PopconfirmComponent
-    //       title={'Delete this item?'}
-    //       onConfirm={() => handleDelete(data)}
-    //     >
-    //       <ButtonComponent danger type="primary">
-    //         Delete
-    //       </ButtonComponent>
-    //     </PopconfirmComponent>
-    //   ),
-    // },
-  ];
+
+  useEffect(() => {
+    if (itemManagementWarehouse) {
+      setOptionWarehouse(
+        itemManagementWarehouse.warehouses.map((element: any) => ({
+          text: element.label,
+          value: element.label,
+        }))
+      );
+      setOptionCategory(
+        itemManagementWarehouse.categories.map((element: any) => ({
+          text: element.label,
+          value: element.label,
+        }))
+      );
+    }
+    console.log(itemManagementWarehouse.warehouses);
+  }, [itemManagementWarehouse]);
 
   const columnsItemByWarehouse: Column[] = [
     {
-      title: 'ID',
+      title: '#',
       dataIndex: 'itemId',
       key: 'itemId',
       width: 100,
+      render: (_, __, index) => index + 1,
     },
     {
       title: t('Name'),
@@ -142,33 +69,58 @@ const ListItemManagement = () => {
         ) : (
           <TextLink to={`${data.itemId}`}>{name}</TextLink>
         ),
+      searchable: true,
+      width: 300,
     },
     {
       title: t('Quantity'),
       dataIndex: 'quantity',
       key: 'quantity',
       width: 120,
+      sorter: (a: any, b: any) => a.quantity - b.quantity,
     },
     {
       title: t('Unit'),
       dataIndex: 'unit',
       key: 'unit',
-      width: 120,
+      width: 200,
+      filterable: true,
+      filterOptions: UNIT_FILTER,
     },
     {
       title: t('Category'),
       dataIndex: 'categoryEntity',
       key: 'categoryEntity',
       render: (category) => category?.name || '-',
+      width: 200,
+      filterable: true,
+      filterOptions: optionCategory,
+      objectKeyFilter: 'name',
     },
     {
       title: t('Status'),
       dataIndex: 'status',
       key: 'status',
-      width: 120,
+      width: 150,
+      render: (data) => (
+        <TagComponents color="cyan">
+          {formatStatusWithCamel(data)}
+        </TagComponents>
+      ),
+    },
+    {
+      key: 'warehouseLocationEntity',
+      width: 200,
+      dataIndex: 'warehouseLocationEntity',
+      title: t('Storage Location'),
+      render: (data) => data?.name,
+      filterable: true,
+      filterOptions: optionsWarehouse,
+      objectKeyFilter: 'name',
     },
     {
       key: 'action',
+      width: 250,
       dataIndex: 'itemId',
       title: t('Action'),
       render: (data) =>
@@ -182,85 +134,33 @@ const ListItemManagement = () => {
               type="primary"
               loading={isLoadingDeleteItem}
             >
-              Delete
+              {t('Delete')}
             </ButtonComponent>
           </PopconfirmComponent>
         ),
     },
   ];
 
-  const items: TabsItemProps['items'] = [
-    {
-      key: 'all',
-      label: t('View All'),
-      children: (
-        <ListAllItem
-          column={columnsItemByWarehouse}
-          isLoading={isLoadingItem}
-          itemData={
-            itemData ? convertToTreeDataByWarehouse(itemData) : itemData
-          }
-          mutate={mutateItem}
-        />
-      ),
-      icon: <UnorderedListOutlined />,
-    },
-    {
-      key: 'view-by-warehouse',
-      label: t('View By Warehouse'),
-      children: (
-        <ListItemWarehouse
-          column={column}
-          isLoading={isLoadingWarehouse}
-          trigger={triggerWarehouse}
-        />
-      ),
-      icon: <HomeOutlined />,
-    },
-    {
-      key: 'view-by-category',
-      label: t('View By Category'),
-      children: (
-        <ListItemCategory
-          column={column}
-          isLoading={isLoadingCategory}
-          trigger={triggerCategory}
-        />
-      ),
-      icon: <AppstoreOutlined />,
-    },
-  ];
-
   const handleDelete = async (id: string) => {
     try {
-      const response = await triggerDeleteItem({ url: `items/${id}` });
+      const response = await triggerDeleteItem({
+        url: ITEMS_PATH.ITEMS_DELETE(id),
+      });
       toast.showSuccess(response?.message);
-      if (activeTab === 'all') {
-        mutateItem();
-      }
-      if (activeTab === 'view-by-category') {
-        mutateCategoryItem();
-      }
-      if (activeTab === 'view-by-warehouse') {
-        mutateWarehouseItem();
-      }
+      mutateItem();
     } catch (error: any) {
       toast.showError(error?.message);
     }
   };
 
-  useEffect(() => {
-    console.log(activeTab);
-  }, [activeTab]);
-
   return (
     <AnimationAppear>
       <WhiteBackground>
-        <TabsComponent
-          activeKey={activeTab}
-          onChange={setActiveTab}
-          items={items}
-          destroyInactiveTabPane
+        <ListAllItem
+          column={columnsItemByWarehouse}
+          isLoading={isLoadingItem}
+          itemData={itemData}
+          mutate={mutateItem}
         />
       </WhiteBackground>
     </AnimationAppear>

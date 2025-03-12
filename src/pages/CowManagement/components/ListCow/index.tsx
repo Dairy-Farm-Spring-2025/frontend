@@ -1,3 +1,7 @@
+import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
+import useModal from '@hooks/useModal';
+import CreateBulkModal from '@pages/CowPenManagement/components/MoveCowManagement/components/ListCowNotInPen/components/CreateBulk/CreateBulk';
+import { COW_PATH } from '@service/api/Cow/cowApi';
 import { Divider, Image } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -19,20 +23,18 @@ import {
 import { cowStatus } from '../../../../service/data/cowStatus';
 import { formatDateHour, formatSTT } from '../../../../utils/format';
 import { getLabelByValue } from '../../../../utils/getLabel';
-import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
-import CreateBulkModal from '@pages/CowPenManagement/components/MoveCowManagement/components/ListCowNotInPen/components/CreateBulk/CreateBulk';
-import useModal from '@hooks/useModal';
-import { PenEntity } from '@model/CowPen/CowPen';
-
 
 const ListCow = () => {
   const { t } = useTranslation();
   const [cow, setCow] = useState<Cow[]>([]);
-  const { data, error, isLoading, mutate: mutateCows } = useFetch<Cow[]>('cows', 'GET');
-  console.log(isLoading);
+  const {
+    data,
+    error,
+    isLoading,
+    mutate: mutateCows,
+  } = useFetch<Cow[]>(COW_PATH.COWS, 'GET');
   const toast = useToast();
   const modal = useModal();
-  const [selectedRows, setSelectedRows] = useState<Cow[]>([]);
   const columns: Column[] = [
     {
       dataIndex: 'cowId',
@@ -141,13 +143,6 @@ const ListCow = () => {
       toast.showError(error);
     }
   }, [data, error, toast]);
-  const rowSelection = {
-    onChange: (selectedRowKeys: React.Key[], selectedRows: Cow[]) => {
-      console.log('Selected Row Keys:', selectedRowKeys);
-      console.log('Selected Rows:', selectedRows);
-      setSelectedRows(selectedRows); // Lưu các dòng được chọn vào state
-    },
-  };
   const filteredCows: Cow[] = useMemo(
     () => (data ? data.filter((item) => !item.inPen) : []),
     [data]
@@ -162,16 +157,15 @@ const ListCow = () => {
         <CreateBulkModal
           modal={modal}
           availableCows={filteredCows}
-
           mutateCows={mutateCows}
         />
-        <Divider className='my-4' />
+        <Divider className="my-4" />
         <TableComponent
           loading={isLoading}
           columns={columns}
           dataSource={formatSTT(cow)}
-        // rowSelection={rowSelection} // Thêm tính năng chọn hàng
-        // rowKey="cowId" // Định danh duy nhất cho từng dòng
+          // rowSelection={rowSelection} // Thêm tính năng chọn hàng
+          // rowKey="cowId" // Định danh duy nhất cho từng dòng
         />
       </WhiteBackground>
     </AnimationAppear>

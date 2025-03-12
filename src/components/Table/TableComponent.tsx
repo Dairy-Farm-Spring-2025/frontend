@@ -14,6 +14,7 @@ export interface Column extends ColumnProps<any> {
   filterOptions?: { text: string; value: any }[];
   filteredDate?: boolean;
   searchText?: boolean;
+  objectKeyFilter?: string;
 }
 
 interface TableComponentProps extends TableProps<any> {
@@ -42,9 +43,16 @@ const TableComponent = ({
 
     Object.keys(selectedFilters).forEach((key) => {
       if (selectedFilters[key]) {
-        filtered = filtered.filter(
-          (item) => item[key] === selectedFilters[key]
-        );
+        filtered = filtered.filter((item) => {
+          let fieldValue = item[key];
+          if (fieldValue && typeof fieldValue === 'object' && columns) {
+            const column = columns.find((col) => col.key === key);
+            if (column?.objectKeyFilter) {
+              fieldValue = fieldValue[column.objectKeyFilter]; // Lấy giá trị từ objectKeyFilter
+            }
+          }
+          return fieldValue === selectedFilters[key];
+        });
       }
     });
 

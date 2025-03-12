@@ -21,6 +21,8 @@ import { CowType } from '../../../../../model/Cow/CowType';
 import { cowOrigin } from '../../../../../service/data/cowOrigin';
 import { cowStatus } from '../../../../../service/data/cowStatus';
 import { genderData } from '../../../../../service/data/gender';
+import { COW_PATH } from '@service/api/Cow/cowApi';
+import { COW_TYPE_PATH } from '@service/api/CowType/cowType';
 
 interface CowGeneralInformationProps {
   id: string;
@@ -36,8 +38,8 @@ const CowGeneralInformation = ({
   mutateDetail,
 }: CowGeneralInformationProps) => {
   const [form] = Form.useForm();
-  const { trigger, isLoading } = useFetcher(`cows/${id}`, 'PUT');
-  const { data } = useFetcher<any[]>('cow-types', 'GET');
+  const { trigger, isLoading } = useFetcher(COW_PATH.COW_UPDATE(id), 'PUT');
+  const { data } = useFetcher<any[]>(COW_TYPE_PATH.COW_TYPES, 'GET');
   const [optionsCowType, setOptionsCowType] = useState<SelectProps['options']>(
     []
   );
