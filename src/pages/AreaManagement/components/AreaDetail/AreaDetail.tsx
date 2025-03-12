@@ -20,6 +20,7 @@ import useModal from '@hooks/useModal';
 import ModalCreatePen from '../ModalCreatePen';
 import { AREA_PATH } from '@service/api/Area/areaApi';
 import { PEN_PATH } from '@service/api/Pen/penApi';
+import { useEffect } from 'react';
 
 const AreaDetail = () => {
   const { id } = useParams();
@@ -34,8 +35,12 @@ const AreaDetail = () => {
     data: pens,
     isLoading: isLoadingPens,
     mutate: mutatePen,
-  } = useFetcher<Pen[]>(PEN_PATH.PEN_DETAIL(id ? id : ''));
+  } = useFetcher<Pen[]>(PEN_PATH.PEN_AREA(id ? id : ''));
   const { t } = useTranslation();
+
+  useEffect(() => {
+    console.log(pens);
+  }, []);
 
   const columns: Column[] = [
     {

@@ -9,6 +9,7 @@ import useToast from '../../../../../hooks/useToast';
 import { useTranslation } from 'react-i18next';
 import SelectComponent from '../../../../../components/Select/SelectComponent';
 import { warehouseType } from '../../../../../service/data/warehouse';
+import { STORAGE_PATH } from '@service/api/Storage/storageApi';
 
 interface ModalAddWarehouseProps {
   modal: any;
@@ -18,7 +19,10 @@ interface ModalAddWarehouseProps {
 const ModalAddWarehouse = ({ modal, mutate }: ModalAddWarehouseProps) => {
   const [form] = Form.useForm();
   const toast = useToast();
-  const { trigger, isLoading } = useFetcher('warehouses/create', 'POST');
+  const { trigger, isLoading } = useFetcher(
+    STORAGE_PATH.STORAGE_CREATE,
+    'POST'
+  );
   const { t } = useTranslation();
   const handleFinish = async (values: any) => {
     try {

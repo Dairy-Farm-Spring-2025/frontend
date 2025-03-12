@@ -1,20 +1,33 @@
-import { Outlet } from 'react-router-dom';
-import useFetcher from '../../../../hooks/useFetcher';
-import { useDispatch } from 'react-redux';
 import {
   resetItemManagement,
   setCategories,
   setExportItems,
   setWarehouses,
-} from '../../../../core/store/slice/itemManagementSlice';
+} from '@core/store/slice/itemManagementSlice';
+import useFetcher from '@hooks/useFetcher';
+import { WarehouseType } from '@model/Warehouse/warehouse';
+import { CATEGORY_PATH } from '@service/api/Storage/categoryApi';
+import { EXPORT_PATH } from '@service/api/Storage/exportApi';
+import { STORAGE_PATH } from '@service/api/Storage/storageApi';
 import { useEffect } from 'react';
-import { WarehouseType } from '../../../../model/Warehouse/warehouse';
+import { useDispatch } from 'react-redux';
+import { Outlet } from 'react-router-dom';
 
 const ItemManagement = () => {
   const dispatch = useDispatch();
-  const { data: warehousesData } = useFetcher<WarehouseType[]>('warehouses', 'GET');
-  const { data: categoryData } = useFetcher<any[]>('categories', 'GET');
-  const { data: exportItemsData } = useFetcher<any[]>('export_items', 'GET');
+
+  const { data: warehousesData } = useFetcher<WarehouseType[]>(
+    STORAGE_PATH.STORAGES,
+    'GET'
+  );
+  const { data: categoryData } = useFetcher<any[]>(
+    CATEGORY_PATH.CATEGORIES,
+    'GET'
+  );
+  const { data: exportItemsData } = useFetcher<any[]>(
+    EXPORT_PATH.EXPORT_ITEMS,
+    'GET'
+  );
   useEffect(() => {
     if (warehousesData) {
       const filteredData = warehousesData.map((element) => ({

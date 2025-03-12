@@ -13,10 +13,11 @@ import AnimationAppear from '../../../../components/UI/AnimationAppear';
 import WhiteBackground from '../../../../components/UI/WhiteBackground';
 import ModalAddWarehouse from './components/ModalAddWarehouse';
 import ModalDetailWarehouse from './components/ModalDetailWarehouse';
+import { STORAGE_PATH } from '@service/api/Storage/storageApi';
 
 const Warehouse = () => {
   const { data, isLoading, mutate } = useFetcher<WarehouseType[]>(
-    'warehouses',
+    STORAGE_PATH.STORAGES,
     'GET'
   );
   const [id, setId] = useState('');
@@ -30,7 +31,7 @@ const Warehouse = () => {
   const { t } = useTranslation();
   const onConfirm = async (id: string) => {
     try {
-      await trigger({ url: `warehouses/${id}` });
+      await trigger({ url: STORAGE_PATH.STORAGE_DELETE(id) });
       toast.showSuccess('Delete success');
       mutate();
     } catch (error: any) {

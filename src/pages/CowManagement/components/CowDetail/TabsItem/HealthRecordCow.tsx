@@ -19,6 +19,7 @@ import { IllnessCow } from '@model/Cow/Illness';
 import { formatDateHour, formatToTitleCase } from '@utils/format';
 import HealthRecordForm from './components/SplitterSide/HealthRecordForm';
 import IllnessRecordForm from './components/SplitterSide/IllnessRecordForm';
+import { HEALTH_RECORD_PATH } from '@service/api/HealthRecord/healthRecordApi';
 
 interface HealthRecordCowProps {
   data: HealthResponse[];
@@ -37,9 +38,9 @@ const HealthRecordCow = ({ cowId, data, mutate }: HealthRecordCowProps) => {
   const { trigger: triggerUpdateHealthRecord, isLoading: loadingUpdateHealth } =
     useFetcher('update/health-record', 'PUT');
   const { trigger: triggerUpdateIllness, isLoading: isLoadingUpdateIllness } =
-    useFetcher(`illness`, 'PUT');
+    useFetcher('update/illness', 'PUT');
   const { isLoading: isLoadingHealthRecord, trigger: triggerHealthRecord } =
-    useFetcher('health-record', 'POST');
+    useFetcher(HEALTH_RECORD_PATH.CREATE_HEALTH_RECORD, 'POST');
   const handleOpenLeftSide = (
     type: 'HEALTH_RECORD' | 'ILLNESS' | any,
     data: HealthRecord & IllnessCow
@@ -79,7 +80,7 @@ const HealthRecordCow = ({ cowId, data, mutate }: HealthRecordCowProps) => {
     };
     try {
       const response = await triggerUpdateHealthRecord({
-        url: `health-record/${values.healthId}`,
+        url: HEALTH_RECORD_PATH.UPDATE_HEALTH_RECORD(values.healthId),
         body: payload,
       });
       toast.showSuccess(response.message);
@@ -100,7 +101,7 @@ const HealthRecordCow = ({ cowId, data, mutate }: HealthRecordCowProps) => {
         cowId: values?.cowId,
       };
       const response = await triggerUpdateIllness({
-        url: `illness/${values?.illnessId}`,
+        url: HEALTH_RECORD_PATH.UPDATE_ILLNESS(values.illnessId),
         body: payload,
       });
       toast.showSuccess(response.message);
