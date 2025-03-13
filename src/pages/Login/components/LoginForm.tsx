@@ -11,10 +11,12 @@ import useToast from '../../../hooks/useToast';
 import UserRequest from '../../../model/Authentication/UserRequest';
 import UserResponse from '../../../model/Authentication/UserResponse';
 import { login } from '../../../core/store/slice/userSlice';
+import { t } from 'i18next';
+import { USER_PATH } from '@service/api/User/userApi';
 const LoginForm = () => {
   const navigate = useNavigate();
   const { trigger, isLoading } = useFetcher<UserResponse>(
-    'users/signin',
+    USER_PATH.SIGN_IN,
     'POST'
   );
   const dispatch = useDispatch();
@@ -30,7 +32,6 @@ const LoginForm = () => {
     };
     try {
       const response: UserResponse = await trigger({ body: data });
-      console.log(response);
       if (response.message && response.data) {
         const role = response.data.roleName;
         if (
@@ -38,9 +39,9 @@ const LoginForm = () => {
           role !== 'Admin' &&
           role !== 'Veterinarians'
         ) {
-          toast.showError('You do not permission to access');
+          toast.showError(t('You do not permission to access'));
         } else {
-          toast.showSuccess('Signin Success');
+          toast.showSuccess(response.message);
           dispatch(login(response.data));
           navigate('/dairy');
         }
@@ -57,7 +58,7 @@ const LoginForm = () => {
   return (
     <div>
       <div className="text-center">
-        <h2 className="text-3xl font-bold text-darkGreen">Welcome Back</h2>
+        <h2 className="text-3xl font-bold text-darkGreen">{t('Welcome')}</h2>
       </div>
       <Divider className="my-5" />
       <div className="w-full">
@@ -80,60 +81,23 @@ const LoginForm = () => {
           </FormItemComponent>
 
           <FormItemComponent
-            label={<span className="text-base font-semibold">Password</span>}
+            label={
+              <span className="text-base font-semibold">{t('Password')}</span>
+            }
             name="password"
             rules={[{ required: true }]}
           >
             <Input.Password
               prefix={<LockOutlined className="text-gray-500" />}
-              placeholder="Password"
+              placeholder={`${t('Password')}...`}
               className="py-3 px-5 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
             />
           </FormItemComponent>
-
-          {/* <Popover
-            placement="topLeft"
-            trigger="click"
-            open={open}
-            onOpenChange={handleOpenChange}
-            content={
-              <div className="p-4">
-                <Form
-                  onFinish={(values) => {
-                    toast.success("Check your email for reset instructions");
-                    setOpen(false);
-                  }}
-                  layout="vertical"
-                >
-                  <Form.Item
-                    name="email"
-                    label={<LabelForm>Enter your email:</LabelForm>}
-                    rules={[
-                      { required: true, message: "Email is required" },
-                      { type: "email", message: "Invalid email format" },
-                    ]}
-                  >
-                    <Input placeholder="example@gmail.com" />
-                  </Form.Item>
-                  <ButtonComponent
-                    type="primary"
-                    htmlType="submit"
-                    block
-                    className="mt-2"
-                  >
-                    Submit
-                  </ButtonComponent>
-                </Form>
-              </div>
-            }
-          >
-
-          </Popover> */}
           <ButtonComponent
             onClick={handleForgetPassword}
             className="text-blue-500 hover:text-blue-700 forgot-password-btn"
           >
-            Forgot Password?
+            {t('Forgot Password?')}
           </ButtonComponent>
           <ButtonComponent
             loading={isLoading}
@@ -141,7 +105,7 @@ const LoginForm = () => {
             type="primary"
             className="!w-full "
           >
-            Login
+            {t('Login')}
           </ButtonComponent>
         </FormComponent>
       </div>

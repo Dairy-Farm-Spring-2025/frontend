@@ -1,3 +1,6 @@
+import { RootState } from '@core/store/store';
+import { CowPenManagement } from '@pages/CowPenManagement';
+import { MoveCowManagement } from '@pages/CowPenManagement/components/MoveCowManagement';
 import { Spin } from 'antd';
 import { lazy, Suspense } from 'react';
 import { useSelector } from 'react-redux';
@@ -6,19 +9,16 @@ import {
   Navigate,
   RouterProvider,
 } from 'react-router-dom';
-import { RootState } from '@core/store/store';
-import { CowPenManagement } from '@pages/CowPenManagement';
-import { MoveCowManagement } from '@pages/CowPenManagement/components/MoveCowManagement';
 
 import ApplicationManagement from '@pages/ApplicationManagement';
 import Application from '@pages/ApplicationManagement/Application-management';
 import ApplicationType from '@pages/ApplicationManagement/ApplicationType';
 
-import { SiHappycow } from 'react-icons/si';
 import ErrorPageNotification from '@pages/Error';
-import Equipment from '@pages/WarehouseManagement/components/Equipment';
 import TaskManagement from '@pages/TaskManagement';
 import TaskType from '@pages/TaskManagement/TaskType';
+import Equipment from '@pages/WarehouseManagement/components/Equipment';
+import { SiHappycow } from 'react-icons/si';
 const TaskSchedule = lazy(
   () => import('@pages/TaskManagement/TaskSchedule/TaskSchedule')
 );
@@ -150,6 +150,7 @@ const IllNess = lazy(
 
 const AppRouting = () => {
   const user = useSelector((state: RootState) => state.user);
+  console.log(user);
   const SuspenseWrapper = (Component: JSX.Element) => (
     <Suspense
       fallback={
@@ -183,7 +184,7 @@ const AppRouting = () => {
   const router = createBrowserRouter([
     {
       path: '',
-      element: <Navigate to={user !== null ? '/dairy' : '/login'} />, // Redirect to /dashboard or another default path
+      element: <Navigate to={user.userId !== 0 ? '/dairy' : '/login'} />,
     },
     {
       path: '/login',
@@ -203,7 +204,7 @@ const AppRouting = () => {
     {
       path: 'dairy',
       element:
-        user !== null ? (
+        user.userId !== 0 ? (
           AppWrapper(<AppDashboard />)
         ) : (
           <Navigate to={'/login'} />

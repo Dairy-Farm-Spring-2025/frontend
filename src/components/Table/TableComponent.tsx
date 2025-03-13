@@ -1,9 +1,9 @@
-import { ConfigProvider, DatePicker, Select, Table, Input, Button } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
+import { Button, ConfigProvider, DatePicker, Input, Select, Table } from 'antd';
 import { ColumnProps, TableProps } from 'antd/es/table';
-import { useCallback, useEffect, useMemo, useState } from 'react';
 import dayjs from 'dayjs';
 import { t } from 'i18next';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 export interface Column extends ColumnProps<any> {
   title: string;
@@ -98,39 +98,48 @@ const TableComponent = ({
       ...col,
       filterDropdown:
         col.searchable || col.searchText
-          ? ({ setSelectedKeys, selectedKeys, confirm, clearFilters }: any) => (
-              <div style={{ padding: 8 }}>
-                <Input
-                  placeholder={`Search ${col.title}`}
-                  value={selectedKeys[0]}
-                  onChange={(e) => {
-                    setSelectedKeys(e.target.value ? [e.target.value] : []);
-                    handleSearchTextFilter(e.target.value, col.dataIndex);
-                  }}
-                  onPressEnter={() => confirm()}
-                  style={{ marginBottom: 8, display: 'block' }}
-                />
-                <Button
-                  type="primary"
-                  onClick={() => confirm()}
-                  icon={<SearchOutlined />}
-                  size="small"
-                  style={{ width: 90, marginRight: 8 }}
-                >
-                  Search
-                </Button>
-                <Button
-                  onClick={() => {
-                    clearFilters();
-                    handleSearchTextFilter('', col.dataIndex);
-                  }}
-                  size="small"
-                  style={{ width: 90 }}
-                >
-                  Reset
-                </Button>
-              </div>
-            )
+          ? ({ setSelectedKeys, selectedKeys, confirm, clearFilters }: any) => {
+              const handleReset = (clearFilters: () => void) => {
+                clearFilters();
+                setSelectedKeys([]);
+                confirm();
+                setSearchTextFilters({});
+              };
+              return (
+                <div style={{ padding: 8 }}>
+                  <Input
+                    placeholder={`${t('Search')} ${col.title}`}
+                    value={selectedKeys[0] || ``}
+                    onChange={(e) => {
+                      setSelectedKeys(e.target.value ? [e.target.value] : []);
+                    }}
+                    onPressEnter={() =>
+                      handleSearchTextFilter(selectedKeys[0], col.dataIndex)
+                    }
+                    style={{ marginBottom: 8, display: 'block' }}
+                  />
+                  <Button
+                    type="primary"
+                    onClick={() => {
+                      handleSearchTextFilter(selectedKeys[0], col.dataIndex);
+                      confirm();
+                    }}
+                    icon={<SearchOutlined />}
+                    size="small"
+                    style={{ width: 90, marginRight: 8 }}
+                  >
+                    {t('Search')}
+                  </Button>
+                  <Button
+                    onClick={() => clearFilters && handleReset(clearFilters)}
+                    size="small"
+                    style={{ width: 90 }}
+                  >
+                    {t('Reset')}
+                  </Button>
+                </div>
+              );
+            }
           : col.filterable
           ? () => (
               <div style={{ padding: 8 }}>
