@@ -17,7 +17,7 @@ const PopconfirmComponent = ({
 }: PopconfirmComponentProps) => {
   return (
     <Popconfirm
-      title={title === undefined ? t('Are you sure?') : title}
+      title={title ?? t('Are you sure?')}
       okText={t('Yes')}
       cancelText={t('No')}
       onConfirm={confirm}

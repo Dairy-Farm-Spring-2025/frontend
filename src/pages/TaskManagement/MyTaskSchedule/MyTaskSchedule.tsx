@@ -1,8 +1,4 @@
-import {
-  LeftOutlined,
-  PlusCircleFilled,
-  RightOutlined,
-} from '@ant-design/icons';
+import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import ButtonComponent from '@components/Button/ButtonComponent';
 import AnimationAppear from '@components/UI/AnimationAppear';
 import TagComponents from '@components/UI/TagComponents';
@@ -10,7 +6,6 @@ import Text from '@components/UI/Text';
 import Title from '@components/UI/Title';
 import WhiteBackground from '@components/UI/WhiteBackground';
 import useFetcher from '@hooks/useFetcher';
-import useModal from '@hooks/useModal';
 import { TaskDateRange } from '@model/Task/Task';
 import { formatStatusWithCamel } from '@utils/format';
 import { Popover, Select, Table } from 'antd';
@@ -19,8 +14,7 @@ import dayjs from 'dayjs';
 import { t } from 'i18next';
 import React, { useEffect, useMemo, useState } from 'react';
 import '../index.scss';
-import TaskCreateModal from './components/TaskCreateModal';
-import PopoverTaskContent from './components/PopoverTaskContent';
+import PopoverMyTaskContent from './components/PopoverMyTaskContent';
 
 const { Option } = Select;
 
@@ -40,7 +34,7 @@ const stringToDarkColor = (str: string) => {
   const hue = hash % 360; // Hue value between 0 and 359
   return `hsl(${hue}, 80%, 30%)`; // Dark colors: high saturation (80%), low lightness (30%)
 };
-const TaskSchedule: React.FC = () => {
+const MyTaskSchedule: React.FC = () => {
   const [selectedYear, setSelectedYear] = useState<number>(dayjs().year());
   const [refetch, setRefetch] = useState(false);
   const [rawData, setRawData] = useState<any[]>([]);
@@ -58,9 +52,7 @@ const TaskSchedule: React.FC = () => {
 
   const { isLoading, mutate, trigger } = useFetcher<{
     [key: string]: TaskDateRange[] | null;
-  }>('tasks/by-date-range', 'POST');
-
-  const modal = useModal();
+  }>('tasks/myTasks/by-date-range', 'POST');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -114,12 +106,7 @@ const TaskSchedule: React.FC = () => {
           const dayKey = day.format('dddd');
           // Check if the date falls within the current week
           if (weekDays.some((d) => d.isSame(day, 'day'))) {
-            const tasksForShift = tasks.filter(
-              (task: TaskDateRange) => task.shift === shift
-            );
-            const visibleTasks = tasksForShift.slice(0, 5);
-            const hiddenTasks = tasksForShift.slice(5);
-            visibleTasks
+            tasks
               .filter((task: TaskDateRange) => task.shift === shift)
               .forEach((task: TaskDateRange, taskIndex: number) => {
                 const uniqueTag = `${task.taskId}-${date}`;
@@ -132,7 +119,7 @@ const TaskSchedule: React.FC = () => {
                     placement="topLeft"
                     color="white"
                     content={
-                      <PopoverTaskContent
+                      <PopoverMyTaskContent
                         setRefetch={setRefetch}
                         mutate={mutate}
                         task={task}
@@ -167,68 +154,6 @@ const TaskSchedule: React.FC = () => {
                 );
                 dayContents[dayKey].push(content);
               });
-            if (hiddenTasks.length > 0) {
-              const popoverContent = (
-                <div className="max-h-60 min-w-44 overflow-auto">
-                  {hiddenTasks.map((task: TaskDateRange) => {
-                    const uniqueTag = `${task.taskId}-${date}`;
-                    const tagColor = stringToDarkColor(uniqueTag);
-
-                    return (
-                      <Popover
-                        key={uniqueTag}
-                        trigger={'click'}
-                        className="cursor-pointer"
-                        placement="topLeft"
-                        color="white"
-                        content={
-                          <PopoverTaskContent
-                            setRefetch={setRefetch}
-                            mutate={mutate}
-                            task={task}
-                          />
-                        }
-                      >
-                        <div
-                          key={uniqueTag}
-                          className="border-2 rounded-lg border-primary mb-2"
-                          style={{
-                            backgroundColor: statusColors[task.status],
-                            padding: '0px 8px',
-                            fontWeight: 'bold',
-                            fontSize: 12,
-                          }}
-                        >
-                          <p className="truncate">{task.taskTypeName}</p>
-                          <TagComponents
-                            className="text-xs !font-bold !py-[2px] rounded-lg !px-2"
-                            style={{ backgroundColor: tagColor }}
-                          >
-                            <p className="truncate text-white">
-                              🧑‍🦱 {task.assigneeName}
-                            </p>
-                          </TagComponents>
-                        </div>
-                      </Popover>
-                    );
-                  })}
-                </div>
-              );
-
-              const viewMoreButton = (
-                <Popover
-                  placement="left"
-                  content={popoverContent}
-                  trigger="click"
-                >
-                  <p className="text-blue-500 text-sm cursor-pointer mt-2 text-center font-bold">
-                    {`Xem thêm ${hiddenTasks.length} task`}
-                  </p>
-                </Popover>
-              );
-
-              dayContents[dayKey].push(viewMoreButton);
-            }
           }
         }
       });
@@ -309,7 +234,7 @@ const TaskSchedule: React.FC = () => {
     <AnimationAppear>
       <WhiteBackground>
         <div>
-          <div style={{ display: 'flex', gap: '10px' }}>
+          <div style={{ display: 'flex', gap: '10px', marginBottom: 16 }}>
             <Select
               value={selectedYear}
               onChange={handleYearChange}
@@ -326,15 +251,6 @@ const TaskSchedule: React.FC = () => {
 
             <ButtonComponent onClick={jumpToToday}>
               {t('Today')}
-            </ButtonComponent>
-
-            <ButtonComponent
-              type="primary"
-              icon={<PlusCircleFilled />}
-              onClick={modal.openModal}
-              style={{ marginBottom: 16 }}
-            >
-              {t('Add Task')}
             </ButtonComponent>
           </div>
           <div className="flex gap-10 mb-5">
@@ -393,16 +309,10 @@ const TaskSchedule: React.FC = () => {
             pagination={false}
             rowKey="key"
           />
-
-          <TaskCreateModal
-            setRefetch={setRefetch}
-            modal={modal as any}
-            mutate={mutate}
-          />
         </div>
       </WhiteBackground>
     </AnimationAppear>
   );
 };
 
-export default TaskSchedule;
+export default MyTaskSchedule;
