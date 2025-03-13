@@ -126,7 +126,7 @@ const ListItemManagement = () => {
       render: (data) =>
         data && (
           <PopconfirmComponent
-            title={t('Delete this item?')}
+            title={undefined}
             onConfirm={() => handleDelete(data)}
           >
             <ButtonComponent

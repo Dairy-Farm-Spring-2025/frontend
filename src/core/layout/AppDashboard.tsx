@@ -91,12 +91,12 @@ const AppDashboard: React.FC = () => {
   );
   const openKeys = useSelector((state: RootState) => state.sidebar.openKeys);
   const { data, mutate } = useFetcher<any>('users/profile', 'GET');
-
+  const { roleName } = useSelector((state: RootState) => state.user);
   useEffect(() => {
     if (data) {
       dispatch(setAvatarFunction(mutate));
     }
-  }, []);
+  }, [data, dispatch, mutate]);
 
   const handleMenuClick = (e: any) => {
     dispatch(setSelectedKey(e.key));
@@ -286,7 +286,7 @@ const AppDashboard: React.FC = () => {
               [
                 getItem(
                   t('List'),
-                  'dairy/warehouse-management/item-management',
+                  'dairy/warehouse-management/item-management/list',
                   <CiBoxList size={sizeIcon} />
                 ),
                 getItem(
@@ -333,16 +333,27 @@ const AppDashboard: React.FC = () => {
           ),
         ]),
         getItem(t('Task management'), 'dairy/task-management', <BiTask />, [
-          getItem(
-            t('Task'),
-            'dairy/task-management/list',
-            <CiBoxList size={sizeIcon} />
-          ),
-          getItem(
-            t('Task type'),
-            'dairy/task-management/task-type',
-            <BiCategory size={sizeIcon} />
-          ),
+          roleName !== 'Manager'
+            ? null
+            : getItem(
+                t('Task'),
+                'dairy/task-management/list',
+                <CiBoxList size={sizeIcon} />
+              ),
+          roleName === 'Veterinarians'
+            ? getItem(
+                t('My task'),
+                'dairy/task-management/my-task',
+                <CiBoxList size={sizeIcon} />
+              )
+            : null,
+          roleName !== 'Manager'
+            ? null
+            : getItem(
+                t('Task type'),
+                'dairy/task-management/task-type',
+                <BiCategory size={sizeIcon} />
+              ),
         ]),
 
         getItem(

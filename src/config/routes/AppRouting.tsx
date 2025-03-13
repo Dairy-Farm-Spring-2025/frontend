@@ -19,6 +19,9 @@ import TaskManagement from '@pages/TaskManagement';
 import TaskType from '@pages/TaskManagement/TaskType';
 import Equipment from '@pages/WarehouseManagement/components/Equipment';
 import { SiHappycow } from 'react-icons/si';
+const MyTaskSchedule = lazy(
+  () => import('@pages/TaskManagement/MyTaskSchedule/MyTaskSchedule')
+);
 const TaskSchedule = lazy(
   () => import('@pages/TaskManagement/TaskSchedule/TaskSchedule')
 );
@@ -329,6 +332,10 @@ const AppRouting = () => {
               children: [
                 {
                   path: '',
+                  element: <Navigate to={'list'} />,
+                },
+                {
+                  path: 'list',
                   element: SuspenseWrapper(<ListItemManagement />),
                 },
                 {
@@ -431,6 +438,10 @@ const AppRouting = () => {
             {
               path: '',
               element: <Navigate to={'list'} />,
+            },
+            {
+              path: 'my-task',
+              element: SuspenseWrapper(<MyTaskSchedule />),
             },
             {
               path: 'list',
