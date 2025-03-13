@@ -6,7 +6,7 @@ import { Divider, Image } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IoMdFemale, IoMdMale } from 'react-icons/io';
-import cowImage from '@assets/cow.jpg';
+import cowImage from '../../../../assets/cow.jpg';
 import TableComponent, { Column } from '@components/Table/TableComponent';
 import AnimationAppear from '@components/UI/AnimationAppear';
 import TextLink from '@components/UI/TextLink';

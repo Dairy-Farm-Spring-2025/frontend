@@ -2,7 +2,7 @@ import { Popconfirm, PopconfirmProps } from 'antd';
 import { t } from 'i18next';
 import React from 'react';
 
-interface PopconfirmComponentPorps extends PopconfirmProps {
+interface PopconfirmComponentProps extends PopconfirmProps {
   confirm?: PopconfirmProps['onConfirm'];
   cancel?: PopconfirmProps['onCancel'];
   children?: React.ReactNode;
@@ -11,12 +11,13 @@ interface PopconfirmComponentPorps extends PopconfirmProps {
 const PopconfirmComponent = ({
   confirm,
   cancel,
+  title,
   children,
   ...props
-}: PopconfirmComponentPorps) => {
+}: PopconfirmComponentProps) => {
   return (
     <Popconfirm
-      description={t('Are you sure to delete?')}
+      title={title === undefined ? t('Are you sure?') : title}
       okText={t('Yes')}
       cancelText={t('No')}
       onConfirm={confirm}

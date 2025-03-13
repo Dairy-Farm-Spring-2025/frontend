@@ -45,6 +45,13 @@ import { setAvatarFunction } from '../store/slice/avatarSlice';
 import { logout } from '../store/slice/userSlice';
 import LabelDashboard from './components/LabelDashboard';
 import './index.scss';
+import { useSelector } from 'react-redux';
+import { RootState } from '@core/store/store';
+import {
+  resetSidebar,
+  setOpenKeys,
+  setSelectedKey,
+} from '@core/store/slice/sidebarSlice';
 const { Header, Content, Sider } = Layout;
 type MenuItem = Required<MenuProps>['items'][number];
 const { useToken } = theme;
@@ -79,6 +86,10 @@ const AppDashboard: React.FC = () => {
   const location = useLocation();
   const dispatch = useDispatch();
   const pathSegments = location.pathname.split('/').filter(Boolean);
+  const selectedKey = useSelector(
+    (state: RootState) => state.sidebar.selectedKey
+  );
+  const openKeys = useSelector((state: RootState) => state.sidebar.openKeys);
   const { data, mutate } = useFetcher<any>('users/profile', 'GET');
 
   useEffect(() => {
@@ -87,7 +98,13 @@ const AppDashboard: React.FC = () => {
     }
   }, []);
 
-  console.log(data);
+  const handleMenuClick = (e: any) => {
+    dispatch(setSelectedKey(e.key));
+  };
+
+  const handleOpenChange = (keys: string[]) => {
+    dispatch(setOpenKeys(keys));
+  };
 
   const breadcrumbItems = pathSegments.map((segment, index) => ({
     title: t(
@@ -113,12 +130,27 @@ const AppDashboard: React.FC = () => {
   };
   const sizeIcon = 15;
 
+  // useEffect(() => {
+  //   const savedKey = localStorage.getItem('activeSidebar');
+  //   const savedOpenKeys = JSON.parse(
+  //     localStorage.getItem('openSidebar') || '[]'
+  //   );
+
+  //   if (savedKey) {
+  //     setSelectedKey(savedKey);
+  //   }
+  //   if (savedOpenKeys.length) {
+  //     setOpenKeys(savedOpenKeys);
+  //   }
+  // }, []);
+
   const handleNavigate = (link: string) => navigate(link);
 
   const handleLogout = () => {
     dispatch(logout());
-    toast.showSuccess('Login success');
+    toast.showSuccess(t('Logout success'));
     handleNavigate('/login');
+    dispatch(resetSidebar()); // Reset sidebar khi logout
   };
   const userRole = data?.roleId.name || ''; // Lấy role từ API
   const items: MenuProps['items'] = [
@@ -364,7 +396,10 @@ const AppDashboard: React.FC = () => {
             mode="inline"
             items={itemsMenu}
             className="menu-sider !text-base"
-            selectedKeys={[location.pathname.slice(1)]} // Dynamically select menu item
+            selectedKeys={[selectedKey]}
+            openKeys={openKeys} // Đặt danh sách menu cha mở
+            onOpenChange={handleOpenChange} // Xử lý khi người dùng mở menu cha
+            onClick={handleMenuClick}
           />
         </Sider>
         <Layout style={{ marginLeft: 270 }} className="duration-300">
@@ -433,9 +468,6 @@ const AppDashboard: React.FC = () => {
               className="!h-full"
             >
               <Breadcrumb style={{ margin: '16px 0' }}>
-                <Breadcrumb.Item>
-                  <Link to="/">Home</Link>
-                </Breadcrumb.Item>
                 {breadcrumbItems.map((item, index) => (
                   <Breadcrumb.Item key={index}>
                     <Link to={item.href}>{item.title}</Link>
