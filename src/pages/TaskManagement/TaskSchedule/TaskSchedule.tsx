@@ -21,6 +21,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import '../index.scss';
 import TaskCreateModal from './components/TaskCreateModal';
 import PopoverTaskContent from './components/PopoverTaskContent';
+import WeekSelectorDropdown from '../components/WeekSelectorDropdown';
 
 const { Option } = Select;
 
@@ -324,7 +325,13 @@ const TaskSchedule: React.FC = () => {
               )}
             </Select>
 
-            <ButtonComponent onClick={jumpToToday}>
+            <WeekSelectorDropdown
+              selectedYear={selectedYear}
+              currentWeekStart={currentWeekStart}
+              setCurrentWeekStart={setCurrentWeekStart}
+            />
+
+            <ButtonComponent className="shadow-md" onClick={jumpToToday}>
               {t('Today')}
             </ButtonComponent>
 
