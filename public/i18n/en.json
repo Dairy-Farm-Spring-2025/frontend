@@ -65,5 +65,12 @@
   "minerals": "Minerals",
   "total_quantity_range": "Total quantity must be between {{min}} (kg) and {{max}} (kg)",
   "warehouse-management": "Warehouse management",
-  "volume": "Volume"
+  "volume": "Volume",
+  "area_modal": {
+    "minimum_length_area": "Minimun length is {{length}}m",
+    "minimun_width_area": "Minimum width is {{width}}m"
+  },
+  "pagination": {
+    "total_page": "Total {{items}} items"
+  }
 }

@@ -11,8 +11,9 @@ import {
   theme,
 } from 'antd';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
+import { RootState } from '@core/store/store';
 import { useTranslation } from 'react-i18next';
 import {
   AiOutlineDashboard,
@@ -33,25 +34,18 @@ import {
 import { PiCow, PiPlus, PiWarehouse } from 'react-icons/pi';
 import { RiAlignItemLeftLine } from 'react-icons/ri';
 import { SiHappycow } from 'react-icons/si';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import ButtonComponent from '../../components/Button/ButtonComponent';
-import AnimationAppear from '../../components/UI/AnimationAppear';
-import useFetcher from '../../hooks/useFetcher';
-import useToast from '../../hooks/useToast';
-import { breadcumData } from '../../service/data/breadcumData';
-import { getAvatar } from '../../utils/getImage';
-import { setAvatarFunction } from '../store/slice/avatarSlice';
-import { logout } from '../store/slice/userSlice';
+import ButtonComponent from '@components/Button/ButtonComponent';
+import AnimationAppear from '@components/UI/AnimationAppear';
+import useFetcher from '@hooks/useFetcher';
+import useToast from '@hooks/useToast';
+import { breadcumData } from '@service/data/breadcumData';
+import { getAvatar } from '@utils/getImage';
 import LabelDashboard from './components/LabelDashboard';
 import './index.scss';
-import { useSelector } from 'react-redux';
-import { RootState } from '@core/store/store';
-import {
-  resetSidebar,
-  setOpenKeys,
-  setSelectedKey,
-} from '@core/store/slice/sidebarSlice';
+import { setAvatarFunction } from '@core/store/slice/avatarSlice';
+import { logout } from '@core/store/slice/userSlice';
 const { Header, Content, Sider } = Layout;
 type MenuItem = Required<MenuProps>['items'][number];
 const { useToken } = theme;
@@ -86,10 +80,10 @@ const AppDashboard: React.FC = () => {
   const location = useLocation();
   const dispatch = useDispatch();
   const pathSegments = location.pathname.split('/').filter(Boolean);
-  const selectedKey = useSelector(
-    (state: RootState) => state.sidebar.selectedKey
-  );
-  const openKeys = useSelector((state: RootState) => state.sidebar.openKeys);
+  const selectedKey = location.pathname.replace(/^\//, ''); // Lấy path và bỏ dấu '/'
+
+  const [openKeys, setOpenKeys] = useState<string[]>([]);
+
   const { data, mutate } = useFetcher<any>('users/profile', 'GET');
   const { roleName } = useSelector((state: RootState) => state.user);
   useEffect(() => {
@@ -98,12 +92,15 @@ const AppDashboard: React.FC = () => {
     }
   }, [data, dispatch, mutate]);
 
-  const handleMenuClick = (e: any) => {
-    dispatch(setSelectedKey(e.key));
-  };
+  useEffect(() => {
+    const pathSegments = location.pathname.split('/').filter(Boolean);
+    if (pathSegments.length > 1) {
+      setOpenKeys([pathSegments.slice(0, -1).join('/')]); // Mở menu cha
+    }
+  }, [location.pathname]);
 
   const handleOpenChange = (keys: string[]) => {
-    dispatch(setOpenKeys(keys));
+    setOpenKeys(keys);
   };
 
   const breadcrumbItems = pathSegments.map((segment, index) => ({
@@ -150,7 +147,6 @@ const AppDashboard: React.FC = () => {
     dispatch(logout());
     toast.showSuccess(t('Logout success'));
     handleNavigate('/login');
-    dispatch(resetSidebar()); // Reset sidebar khi logout
   };
   const userRole = data?.roleId.name || ''; // Lấy role từ API
   const items: MenuProps['items'] = [
@@ -210,7 +206,7 @@ const AppDashboard: React.FC = () => {
             [
               getItem(
                 t('Illness'),
-                'dairy/cow-management/health-report/ill-ness',
+                'dairy/cow-management/health-report/illness',
                 <BiCategory size={sizeIcon} />
               ),
             ]
@@ -404,13 +400,12 @@ const AppDashboard: React.FC = () => {
           <Divider className="!m-0 border-white" />
           <Menu
             theme="light"
-            mode="inline"
             items={itemsMenu}
             className="menu-sider !text-base"
             selectedKeys={[selectedKey]}
-            openKeys={openKeys} // Đặt danh sách menu cha mở
-            onOpenChange={handleOpenChange} // Xử lý khi người dùng mở menu cha
-            onClick={handleMenuClick}
+            openKeys={openKeys}
+            mode="inline"
+            onOpenChange={handleOpenChange}
           />
         </Sider>
         <Layout style={{ marginLeft: 270 }} className="duration-300">

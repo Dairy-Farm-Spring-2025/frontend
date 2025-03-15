@@ -376,5 +376,26 @@
   "September": "Tháng 9",
   "October": "Tháng 10",
   "November": "Tháng 11",
-  "December": "Tháng 12"
+  "December": "Tháng 12",
+  "Max pen": "Số chuồng tối đa",
+  "Number in row": "Số chuồng mỗi hàng",
+  "area_modal": {
+    "minimum_length_area": "Chiều dài tối thiểu là {{length}}m",
+    "minimun_width_area": "Chiều rộng tối thiểu là {{width}}m"
+  },
+  "Pen Length must be greater than or equal to the Pen Width": "Chiều dài chuồng phải lớn hơn hoặc bằng chiều rộng chuồng",
+  "Pen length must be smaller than area length": "Chiều dài chuồng phải nhỏ hơn chiều dài khu vực",
+  "Pen Width must be smaller than or equal to the Pen Length": "Chiều rộng chuồng phải nhỏ hơn hoặc bằng chiều dài chuồng",
+  "Pen width must be smaller than area width": "Chiều rộng chuồng phải nhỏ hơn chiều rộng khu vực",
+  "Warehouse": "Nhà kho",
+  "Create New Area": "Tạo mới khu vực",
+  "Area dimension": "Kích thước khu vực",
+  "Pen dimension": "Kích thước chuồng",
+  "Occupied pens": "Chuồng đang sử dụng",
+  "Empty pens": "Chuồng trống",
+  "Damaged pens": "Chuồng hư hại",
+  "pagination": {
+    "total_page": "Tổng {{items}} thành phần"
+  },
+  "Please choose area type first": "Hãy chọn loại khu vực trước"
 }
