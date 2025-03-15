@@ -50,12 +50,6 @@ const Warehouse = () => {
 
   const column: Column[] = [
     {
-      dataIndex: 'warehouseLocationId',
-      key: 'warehouseLocationId',
-      title: '#',
-      render: (_, __, index) => index + 1,
-    },
-    {
       dataIndex: 'name',
       key: 'name',
       title: t('Name'),

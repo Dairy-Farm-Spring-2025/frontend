@@ -36,12 +36,6 @@ const FeedMealList = () => {
 
   const column: Column[] = [
     {
-      dataIndex: 'feedMealId',
-      key: 'feedMealId',
-      title: '#',
-      render: (_, __, index) => index + 1,
-    },
-    {
       dataIndex: 'name',
       key: 'name',
       title: t('Name'),

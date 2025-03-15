@@ -64,11 +64,6 @@ const CreateMilkBatchModal = ({ modal, mutate }: CreateMilkBatchModalProps) => {
 
   const columns: Column[] = [
     {
-      dataIndex: 'dailyMilkId',
-      key: 'dailyMilkId',
-      title: '#',
-    },
-    {
       dataIndex: 'volume',
       key: 'volume',
       title: t('Volume'),
@@ -157,7 +152,7 @@ const CreateMilkBatchModal = ({ modal, mutate }: CreateMilkBatchModalProps) => {
     <ModalComponent
       loading={isLoadingCreate}
       width={1000}
-      title={t("Create Milk Batch")}
+      title={t('Create Milk Batch')}
       className=""
       open={modal.open}
       onCancel={handleCancel}
@@ -166,7 +161,8 @@ const CreateMilkBatchModal = ({ modal, mutate }: CreateMilkBatchModalProps) => {
       <div className="flex justify-evenly items-center gap-5 w-4/5">
         <div className="flex flex-col gap-2 w-1/2">
           <label className="text-base font-bold">
-            {t("Select Area")}<sup className="text-red-500">*</sup>:
+            {t('Select Area')}
+            <sup className="text-red-500">*</sup>:
           </label>
           <SelectComponent
             placeholder={selectedArea === '' && 'Select Area...'}
@@ -180,7 +176,8 @@ const CreateMilkBatchModal = ({ modal, mutate }: CreateMilkBatchModalProps) => {
         <p className="mt-8">or</p>
         <div className="flex flex-col gap-2 w-1/2">
           <label className="text-base font-bold">
-            {t("Select Shift")}<sup className="text-red-500">*</sup>:
+            {t('Select Shift')}
+            <sup className="text-red-500">*</sup>:
           </label>
           <SelectComponent
             placeholder={selectedArea === '' && 'Select Area...'}

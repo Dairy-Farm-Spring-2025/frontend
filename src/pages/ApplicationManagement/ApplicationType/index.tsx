@@ -15,11 +15,6 @@ const ApplicationType = () => {
   const { t } = useTranslation();
   const columns: Column[] = [
     {
-      dataIndex: 'applicationId',
-      key: 'applicationId',
-      title: '#',
-    },
-    {
       dataIndex: 'name',
       key: 'name',
       title: t('Name'),

@@ -61,12 +61,6 @@ const ListItemBatch = () => {
 
   const column: Column[] = [
     {
-      dataIndex: 'itemBatchId',
-      key: 'itemBatchId',
-      title: '#',
-      render: (_, __, index) => index + 1,
-    },
-    {
       dataIndex: 'quantity',
       key: 'quantity',
       title: t('Quantity'),

@@ -11,7 +11,7 @@ import {
   theme,
 } from 'antd';
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { RootState } from '@core/store/store';
 import { useTranslation } from 'react-i18next';
@@ -75,11 +75,10 @@ const siderStyle: React.CSSProperties = {
   zIndex: 1,
 };
 
-const AppDashboard: React.FC = () => {
+const AppDashboard: React.FC = React.memo(() => {
   const { t } = useTranslation();
   const location = useLocation();
   const dispatch = useDispatch();
-  const pathSegments = location.pathname.split('/').filter(Boolean);
   const selectedKey = location.pathname.replace(/^\//, ''); // Lấy path và bỏ dấu '/'
 
   const [openKeys, setOpenKeys] = useState<string[]>([]);
@@ -94,24 +93,38 @@ const AppDashboard: React.FC = () => {
 
   useEffect(() => {
     const pathSegments = location.pathname.split('/').filter(Boolean);
-    if (pathSegments.length > 1) {
-      setOpenKeys([pathSegments.slice(0, -1).join('/')]); // Mở menu cha
-    }
+    const parentPaths = pathSegments.map((_, index) =>
+      pathSegments.slice(0, index + 1).join('/')
+    );
+    setOpenKeys((prevKeys) =>
+      Array.from(new Set([...prevKeys, ...parentPaths]))
+    );
   }, [location.pathname]);
 
-  const handleOpenChange = (keys: string[]) => {
-    setOpenKeys(keys);
-  };
+  const handleOpenChange = useCallback((keys: string[]) => {
+    setOpenKeys((prevKeys) => {
+      const latestKey = keys.find((key) => !prevKeys.includes(key));
+      return latestKey ? [...prevKeys, latestKey] : keys;
+    });
+  }, []);
 
-  const breadcrumbItems = pathSegments.map((segment, index) => ({
-    title: t(
-      `${
-        breadcumData[segment] ||
-        segment.charAt(0).toUpperCase() + segment.slice(1)
-      }`
-    ),
-    href: '/' + pathSegments.slice(0, index + 1).join('/'),
-  }));
+  const breadcrumbItems = useMemo(() => {
+    return location.pathname
+      .split('/')
+      .filter(Boolean)
+      .map((segment, index) => ({
+        title: t(
+          breadcumData[segment] ||
+            segment.charAt(0).toUpperCase() + segment.slice(1)
+        ),
+        href:
+          '/' +
+          location.pathname
+            .split('/')
+            .slice(0, index + 1)
+            .join('/'),
+      }));
+  }, [location.pathname, t]);
   const navigate = useNavigate();
   const toast = useToast();
   const { token } = useToken();
@@ -127,42 +140,25 @@ const AppDashboard: React.FC = () => {
   };
   const sizeIcon = 15;
 
-  // useEffect(() => {
-  //   const savedKey = localStorage.getItem('activeSidebar');
-  //   const savedOpenKeys = JSON.parse(
-  //     localStorage.getItem('openSidebar') || '[]'
-  //   );
-
-  //   if (savedKey) {
-  //     setSelectedKey(savedKey);
-  //   }
-  //   if (savedOpenKeys.length) {
-  //     setOpenKeys(savedOpenKeys);
-  //   }
-  // }, []);
-
-  const handleNavigate = (link: string) => navigate(link);
-
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     dispatch(logout());
     toast.showSuccess(t('Logout success'));
-    handleNavigate('/login');
-  };
-  const userRole = data?.roleId.name || ''; // Lấy role từ API
-  const items: MenuProps['items'] = [
-    {
-      key: '1',
-      label: (
-        <div
-          className="flex flex-col"
-          onClick={() => handleNavigate('profile')}
-        >
-          <p className="text-base font-bold">{data?.name}</p>
-          <p className="text-slate-500">{t(userRole)}</p>
-        </div>
-      ),
-    },
-  ];
+    navigate('/login');
+  }, [dispatch, toast, t, navigate]);
+  const items = useMemo(
+    () => [
+      {
+        key: '1',
+        label: (
+          <div className="flex flex-col" onClick={() => navigate('profile')}>
+            <p className="text-base font-bold">{data?.name}</p>
+            <p className="text-slate-500">{t(data?.roleId?.name || '')}</p>
+          </div>
+        ),
+      },
+    ],
+    [data, t, navigate]
+  );
 
   const itemsMenu: MenuItem[] = [
     {
@@ -487,6 +483,6 @@ const AppDashboard: React.FC = () => {
       </Layout>
     </AnimationAppear>
   );
-};
+});
 
 export default AppDashboard;

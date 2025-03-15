@@ -1,23 +1,24 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import useFetcher from '../../../../../../hooks/useFetcher';
-import { Cow } from '../../../../../../model/Cow/Cow'; // Import the correct Cow type
-import TableComponent, { Column } from '../../../../../../components/Table/TableComponent';
-import cowImage from '../../../../../../assets/cow.jpg';
 import { Image } from 'antd';
-import { formatDateHour, formatSTT } from '../../../../../../utils/format';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import cowImage from '../../../../../../assets/cow.jpg';
+import ButtonComponent from '../../../../../../components/Button/ButtonComponent';
+import TableComponent, {
+  Column,
+} from '../../../../../../components/Table/TableComponent';
+import AnimationAppear from '../../../../../../components/UI/AnimationAppear';
 import TextLink from '../../../../../../components/UI/TextLink';
-import { getLabelByValue } from '../../../../../../utils/getLabel';
+import WhiteBackground from '../../../../../../components/UI/WhiteBackground';
+import useFetcher from '../../../../../../hooks/useFetcher';
+import useModal from '../../../../../../hooks/useModal';
+import useToast from '../../../../../../hooks/useToast';
+import { Cow } from '../../../../../../model/Cow/Cow'; // Import the correct Cow type
+import { PenEntity } from '../../../../../../model/CowPen/CowPen';
 import { cowOrigin } from '../../../../../../service/data/cowOrigin';
 import { cowStatus } from '../../../../../../service/data/cowStatus';
-import ButtonComponent from '../../../../../../components/Button/ButtonComponent';
-import AnimationAppear from '../../../../../../components/UI/AnimationAppear';
-import WhiteBackground from '../../../../../../components/UI/WhiteBackground';
-import useToast from '../../../../../../hooks/useToast';
+import { formatDateHour, formatSTT } from '../../../../../../utils/format';
+import { getLabelByValue } from '../../../../../../utils/getLabel';
 import CreateBulkModal from './components/CreateBulk/CreateBulk';
-import useModal from '../../../../../../hooks/useModal';
-import { Pen } from '../../../../../../model/Pen';
-import { PenEntity } from '../../../../../../model/CowPen/CowPen';
-import { useTranslation } from 'react-i18next';
 
 interface ListCowNotInPenProps {
   availablePens: PenEntity[];
@@ -25,17 +26,17 @@ interface ListCowNotInPenProps {
 }
 
 const ListCowNotInPen: React.FC<ListCowNotInPenProps> = () => {
-  const { data, error, isLoading, mutate: mutateCows } = useFetcher<Cow[]>('cows', 'GET');
+  const {
+    data,
+    error,
+    isLoading,
+    mutate: mutateCows,
+  } = useFetcher<Cow[]>('cows', 'GET');
   const [cow, setCow] = useState<Cow[]>([]);
   const toast = useToast();
   const modal = useModal();
   const { t } = useTranslation();
   const columns: Column[] = [
-    {
-      dataIndex: 'cowId',
-      key: 'cowId',
-      title: '#',
-    },
     {
       dataIndex: 'image',
       key: 'image',
@@ -54,7 +55,9 @@ const ListCowNotInPen: React.FC<ListCowNotInPenProps> = () => {
       key: 'name',
       title: t('Name'),
       render: (element: string, data) => (
-        <TextLink to={`/dairy/cow-management/${data.cowId}`}>{element}</TextLink>
+        <TextLink to={`/dairy/cow-management/${data.cowId}`}>
+          {element}
+        </TextLink>
       ),
       width: 200,
     },
@@ -111,8 +114,8 @@ const ListCowNotInPen: React.FC<ListCowNotInPenProps> = () => {
       key: 'action',
       title: t('Action'),
       render: () => (
-        <ButtonComponent type='primary' danger>
-          {t("Delete")}
+        <ButtonComponent type="primary" danger>
+          {t('Delete')}
         </ButtonComponent>
       ),
     },
@@ -131,11 +134,13 @@ const ListCowNotInPen: React.FC<ListCowNotInPenProps> = () => {
         <CreateBulkModal
           modal={modal}
           availableCows={filteredCows}
-
-
           mutateCows={mutateCows}
         />
-        <TableComponent loading={isLoading} columns={columns} dataSource={formatSTT(cow)} />
+        <TableComponent
+          loading={isLoading}
+          columns={columns}
+          dataSource={formatSTT(cow)}
+        />
       </WhiteBackground>
     </AnimationAppear>
   );

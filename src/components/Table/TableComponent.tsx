@@ -37,6 +37,7 @@ const TableComponent = ({
   const [searchTextFilters, setSearchTextFilters] = useState<
     Record<string, string>
   >({});
+  const [pagination, setPagination] = useState({ current: 1, pageSize: 10 });
 
   useEffect(() => {
     let filtered = dataSource;
@@ -48,7 +49,7 @@ const TableComponent = ({
           if (fieldValue && typeof fieldValue === 'object' && columns) {
             const column = columns.find((col) => col.key === key);
             if (column?.objectKeyFilter) {
-              fieldValue = fieldValue[column.objectKeyFilter]; // Lấy giá trị từ objectKeyFilter
+              fieldValue = fieldValue[column.objectKeyFilter];
             }
           }
           return fieldValue === selectedFilters[key];
@@ -78,6 +79,10 @@ const TableComponent = ({
     setFilteredData(filtered);
   }, [selectedFilters, selectedDateFilters, searchTextFilters, dataSource]);
 
+  const handleTableChange = (pagination: any) => {
+    setPagination(pagination);
+  };
+
   const handleSelectFilter = useCallback((value: any, key: string) => {
     setSelectedFilters((prev) => ({ ...prev, [key]: value }));
   }, []);
@@ -93,8 +98,21 @@ const TableComponent = ({
     setSearchTextFilters((prev) => ({ ...prev, [key]: value }));
   }, []);
 
+  const getRowIndex = (index: number) => {
+    return (pagination.current - 1) * pagination.pageSize + index + 1;
+  };
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const indexColumn: Column = {
+    dataIndex: 'index',
+    key: 'index',
+    title: '#',
+    render: (_, __, index) => getRowIndex(index),
+    width: 60,
+  };
+
   const enhancedColumns = useMemo(() => {
-    return columns.map((col) => ({
+    return [indexColumn, ...columns].map((col) => ({
       ...col,
       filterDropdown:
         col.searchable || col.searchText
@@ -180,11 +198,12 @@ const TableComponent = ({
           : undefined,
     }));
   }, [
+    indexColumn,
     columns,
+    handleSearchTextFilter,
     selectedFilters,
     handleSelectFilter,
     handleDateFilter,
-    handleSearchTextFilter,
   ]);
 
   return (
@@ -193,6 +212,7 @@ const TableComponent = ({
         <Table
           bordered
           columns={enhancedColumns}
+          onChange={handleTableChange} // Captures pagination updates
           dataSource={filteredData}
           pagination={{ position: ['bottomCenter'] }}
           title={() => (

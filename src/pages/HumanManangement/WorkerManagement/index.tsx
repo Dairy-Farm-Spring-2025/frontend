@@ -19,13 +19,6 @@ const ListWorker = () => {
   const { t } = useTranslation();
   const columns: Column[] = [
     {
-      dataIndex: 'id',
-      key: 'id',
-      title: '#',
-      render: (_, __, index) => index + 1,
-      width: '5%',
-    },
-    {
       dataIndex: 'employeeNumber',
       key: 'employeeNumber',
       title: t('Employee Number'),

@@ -52,12 +52,6 @@ const IllNess = () => {
 
   const columns: Column[] = [
     {
-      dataIndex: 'illnessId',
-      key: 'illnessId',
-      title: '#',
-      render: (__, _, index) => <p className="text-base">{index + 1}</p>,
-    },
-    {
       dataIndex: 'cowEntity',
       key: 'cowEntity',
       title: t('Cow'),
