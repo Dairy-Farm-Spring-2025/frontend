@@ -40,12 +40,6 @@ const MyApplication = () => {
   const columns: Column[] = useMemo(
     () => [
       {
-        dataIndex: 'applicationId',
-        key: 'applicationId',
-        title: '#',
-        render: (_, __, index) => index + 1,
-      },
-      {
         dataIndex: 'type',
         key: 'type',
         title: t('Type'),

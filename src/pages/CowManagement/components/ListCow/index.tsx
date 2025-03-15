@@ -32,12 +32,6 @@ const ListCow = () => {
   const modal = useModal();
   const columns: Column[] = [
     {
-      dataIndex: 'cowId',
-      key: 'cowId',
-      title: '#',
-      render: (__, _, index) => <p className="text-base">{index + 1}</p>,
-    },
-    {
       dataIndex: 'image',
       key: 'image',
       title: t('Image'),

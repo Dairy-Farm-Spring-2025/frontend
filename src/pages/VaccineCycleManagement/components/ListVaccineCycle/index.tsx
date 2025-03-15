@@ -41,12 +41,6 @@ const ListVaccineCycle = () => {
 
   const columns: Column[] = [
     {
-      dataIndex: 'vaccineCycleId',
-      key: 'vaccineCycleId',
-      title: '#',
-      render: (_, __, index) => index + 1,
-    },
-    {
       dataIndex: 'createdAt',
       key: 'createdAt',
       title: t('Created At'),
@@ -67,14 +61,14 @@ const ListVaccineCycle = () => {
             type="primary"
             onClick={() => navigate(`../${data}`)}
           >
-            {t("View Detail")}
+            {t('View Detail')}
           </ButtonComponent>
           <PopconfirmComponent
             onConfirm={() => handleDelete(data)}
             title={t('Are you sure to delete this?')}
           >
             <ButtonComponent loading={isLoadingDelete} danger type="primary">
-              {t("Delete")}
+              {t('Delete')}
             </ButtonComponent>
           </PopconfirmComponent>
         </div>
@@ -85,7 +79,7 @@ const ListVaccineCycle = () => {
     <AnimationAppear>
       <WhiteBackground>
         <ButtonComponent type="primary" onClick={() => modal.openModal()}>
-          {t("Create Vaccine Cycle")}
+          {t('Create Vaccine Cycle')}
         </ButtonComponent>
         <Divider />
         <TableComponent

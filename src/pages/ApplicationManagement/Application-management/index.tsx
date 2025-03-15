@@ -34,11 +34,6 @@ const Application = () => {
   };
   const columns: Column[] = [
     {
-      dataIndex: 'applicationId',
-      key: 'applicationId',
-      title: '#',
-    },
-    {
       dataIndex: 'type',
       key: 'type',
       title: t('Type'),

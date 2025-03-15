@@ -52,11 +52,6 @@ const MilkBatchManagement = () => {
   // };
   const columns: Column[] = [
     {
-      dataIndex: 'milkBatchId',
-      key: 'milkBatchId',
-      title: '#',
-    },
-    {
       dataIndex: 'totalVolume',
       key: 'totalVolume',
       title: t('Total Volume'),

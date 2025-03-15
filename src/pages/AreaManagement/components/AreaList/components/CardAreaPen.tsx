@@ -27,12 +27,6 @@ const CardAreaPen = ({ element, handleEdit }: CardAreaPenProps) => {
 
   const columns: Column[] = [
     {
-      dataIndex: 'penId',
-      key: 'penId',
-      title: '#',
-      render: (_, __, index) => index + 1,
-    },
-    {
       dataIndex: 'createdAt',
       key: 'createdAt',
       title: t('Created Date'),

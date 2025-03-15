@@ -53,13 +53,6 @@ const ListItemManagement = () => {
 
   const columnsItemByWarehouse: Column[] = [
     {
-      title: '#',
-      dataIndex: 'itemId',
-      key: 'itemId',
-      width: 100,
-      render: (_, __, index) => index + 1,
-    },
-    {
       title: t('Name'),
       dataIndex: 'name',
       key: 'name',

@@ -48,12 +48,6 @@ const Category = () => {
 
   const column: Column[] = [
     {
-      dataIndex: 'categoryId',
-      key: 'categoryId',
-      title: '#',
-      render: (_, __, index) => index + 1,
-    },
-    {
       dataIndex: 'name',
       key: 'name',
       title: t('Name'),

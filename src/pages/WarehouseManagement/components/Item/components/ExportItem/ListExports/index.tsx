@@ -95,12 +95,6 @@ const ListExports = () => {
   // Columns for the table
   const column: Column[] = [
     {
-      dataIndex: 'exportItemId',
-      key: 'exportItemId',
-      title: '#',
-      render: (_, __, index) => index + 1,
-    },
-    {
       dataIndex: 'quantity',
       key: 'quantity',
       title: t('Quantity'),

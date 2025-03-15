@@ -30,11 +30,6 @@ const CowTypeManagement = () => {
 
   const columns: Column[] = [
     {
-      dataIndex: 'cowTypeId',
-      key: 'cowTypeId',
-      title: '#',
-    },
-    {
       dataIndex: 'createdAt',
       key: 'createdAt',
       title: t('Created Date'),
