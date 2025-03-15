@@ -265,7 +265,11 @@ const AppRouting = () => {
               element: SuspenseWrapper(<HealthReport />),
               children: [
                 {
-                  path: 'ill-ness',
+                  path: '',
+                  element: <Navigate to={'illness'} />,
+                },
+                {
+                  path: 'illness',
                   element: SuspenseWrapper(<IllNess />),
                 },
               ],

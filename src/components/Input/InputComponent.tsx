@@ -86,6 +86,7 @@ const Search = ({ className, ...props }: SearchComponentProps) => {
     <Input.Search
       placeholder={`${t('Search')}...`}
       className={`input-component ${className}`}
+      enterButton
       {...props}
     />
   );

@@ -1,20 +1,20 @@
-import { Card, Form, Input, Select, Spin } from 'antd';
-import { useEffect, useState } from 'react';
+import ButtonComponent from '@components/Button/ButtonComponent';
 import FormComponent from '@components/Form/FormComponent';
 import FormItemComponent from '@components/Form/Item/FormItemComponent';
 import LabelForm from '@components/LabelForm/LabelForm';
 import ModalComponent from '@components/Modal/ModalComponent';
+import ReactQuillComponent from '@components/ReactQuill/ReactQuillComponent';
+import QuillRender from '@components/UI/QuillRender';
+import TextBorder from '@components/UI/TextBorder';
 import useFetcher from '@hooks/useFetcher';
 import useToast from '@hooks/useToast';
 import { Area } from '@model/Area';
 import { Pen } from '@model/Pen';
 import { penStatus, penType } from '@service/data/pen';
-import QuillRender from '@components/UI/QuillRender';
-import ButtonComponent from '@components/Button/ButtonComponent';
-import { useTranslation } from 'react-i18next';
-import Text from '@components/UI/Text';
 import { formatStatusWithCamel } from '@utils/format';
-import ReactQuillComponent from '@components/ReactQuill/ReactQuillComponent';
+import { Card, Form, Input, Select, Spin } from 'antd';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface ModalTypesProps {
   mutate: any;
@@ -120,7 +120,7 @@ const ModalEditPens = ({ mutate, modal, id }: ModalTypesProps) => {
                   ]}
                 >
                   {!showEdit ? (
-                    <Text className="px-3">{dataPen?.name}</Text>
+                    <TextBorder>{dataPen?.name}</TextBorder>
                   ) : (
                     <Input placeholder="Enter pen name" />
                   )}
@@ -131,7 +131,7 @@ const ModalEditPens = ({ mutate, modal, id }: ModalTypesProps) => {
                   rules={[{ required: true, message: 'Please select an area' }]}
                 >
                   {!showEdit ? (
-                    <Text className="px-3">{dataPen?.area?.name}</Text>
+                    <TextBorder>{dataPen?.area?.name}</TextBorder>
                   ) : (
                     <Select
                       options={areas}
@@ -154,9 +154,11 @@ const ModalEditPens = ({ mutate, modal, id }: ModalTypesProps) => {
                   ]}
                 >
                   {!showEdit ? (
-                    <Text className="px-3">
-                      {formatStatusWithCamel(dataPen?.penType as string)}
-                    </Text>
+                    <TextBorder>
+                      {dataPen?.penType
+                        ? formatStatusWithCamel(dataPen?.penType as string)
+                        : 'N/A'}
+                    </TextBorder>
                   ) : (
                     <Select options={penType} placeholder="Select pen type" />
                   )}
@@ -170,9 +172,9 @@ const ModalEditPens = ({ mutate, modal, id }: ModalTypesProps) => {
                   ]}
                 >
                   {!showEdit ? (
-                    <Text className="px-3">
+                    <TextBorder>
                       {formatStatusWithCamel(dataPen?.penStatus as string)}
-                    </Text>
+                    </TextBorder>
                   ) : (
                     <Select options={penStatus} placeholder="Select status" />
                   )}
@@ -212,7 +214,7 @@ const ModalEditPens = ({ mutate, modal, id }: ModalTypesProps) => {
                   ]}
                 >
                   {!showEdit ? (
-                    <div className="px-3">
+                    <div>
                       <QuillRender
                         description={dataPen?.description as string}
                       />
