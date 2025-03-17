@@ -1,21 +1,19 @@
-import { DatePicker, Form, Select } from 'antd';
+import { DatePicker, Form, Select, Row, Col, Divider } from 'antd';
 import { useEffect, useState } from 'react';
 import ButtonComponent from '@components/Button/ButtonComponent';
-import DescriptionComponent, {
-  DescriptionPropsItem,
-} from '@components/Description/DescriptionComponent';
 import FormComponent from '@components/Form/FormComponent';
 import FormItemComponent from '@components/Form/Item/FormItemComponent';
+import LabelForm from '@components/LabelForm/LabelForm';
 import ModalComponent from '@components/Modal/ModalComponent';
 import useFetcher from '@hooks/useFetcher';
 import useToast from '@hooks/useToast';
-
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import ReactQuillComponent from '@components/ReactQuill/ReactQuillComponent';
 import { Health } from '@model/Cow/HealthReport';
 import { healthSeverity } from '@service/data/health';
 import { HEALTH_RECORD_PATH } from '@service/api/HealthRecord/healthRecordApi';
+import Title from '@components/UI/Title';
 
 interface ModalViewDetailProps {
   modal: any;
@@ -26,20 +24,25 @@ interface ModalViewDetailProps {
 const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
   const [form] = Form.useForm();
   const toast = useToast();
-  const { trigger, isLoading } = useFetcher(
-    HEALTH_RECORD_PATH.UPDATE_ILLNESS(id),
-    'PUT'
-  );
-  const [edit, setEdit] = useState(false);
   const { t } = useTranslation();
+  const [edit, setEdit] = useState(false);
+
+  // Fetch data
   const {
     data,
     isLoading: isLoadingDetail,
     mutate: mutateEdit,
+    error: fetchError,
   } = useFetcher<Health>(HEALTH_RECORD_PATH.DETAIL_ILLNESS(id), 'GET');
 
+  const { trigger, isLoading } = useFetcher(
+    HEALTH_RECORD_PATH.UPDATE_ILLNESS(id),
+    'PUT'
+  );
+
+  // Sync form with data
   useEffect(() => {
-    if (data) {
+    if (data && !edit) {
       form.setFieldsValue({
         symptoms: data.symptoms,
         severity: data.severity,
@@ -47,140 +50,88 @@ const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
         endDate: data.endDate ? dayjs(data.endDate) : null,
         prognosis: data.prognosis,
       });
+    } else if (!data && !edit) {
+      form.resetFields();
     }
-  }, [modal.open, data, form]);
+  }, [modal.open, data, edit, form]);
 
+  // Handle form submission
   const handleFinish = async (values: any) => {
     try {
-      const response = await trigger({ body: values });
-      toast.showSuccess(response.message);
+      const response = await trigger({
+        body: {
+          ...values,
+          startDate: values.startDate?.toISOString(),
+          endDate: values.endDate?.toISOString(),
+        },
+      });
+      toast.showSuccess(response.message || t('Update successful'));
       mutate();
       mutateEdit();
       setEdit(false);
       modal.closeModal();
     } catch (error: any) {
-      toast.showSuccess(error.message);
+      toast.showError(error.message || t('Update failed'));
     }
   };
 
+  // Handle modal close
   const handleClose = () => {
     modal.closeModal();
     form.resetFields();
+    setEdit(false);
   };
 
-  const items: DescriptionPropsItem['items'] = [
-    {
-      key: 'symptoms',
-      label: t('Symptoms'),
-      children: !edit ? (
-        data ? (
-          data?.symptoms.replace(/<\/?p>/g, '') // Loại bỏ thẻ <p>
-        ) : (
-          ''
-        )
-      ) : (
-        <FormItemComponent name="symptoms" rules={[{ required: true }]}>
-          <ReactQuillComponent />
-        </FormItemComponent>
-      ),
-      span: 3,
-    },
-    {
-      key: 'severity',
-      label: t('Severity'),
-      children: !edit ? (
-        data ? (
-          data?.severity
-        ) : (
-          ''
-        )
-      ) : (
-        <FormItemComponent name="severity" rules={[{ required: true }]}>
-          <Select options={healthSeverity} />
-        </FormItemComponent>
-      ),
-      span: 3,
-    },
-    {
-      key: 'prognosis',
-      label: t('Prognosis'),
-      children: !edit ? (
-        data ? (
-          data?.prognosis.replace(/<\/?p>/g, '') // Loại bỏ thẻ <p>
-        ) : (
-          ''
-        )
-      ) : (
-        <FormItemComponent name="prognosis" rules={[{ required: true }]}>
-          <ReactQuillComponent />
-        </FormItemComponent>
-      ),
-      span: 3,
-    },
+  // Render loading or error state
+  if (isLoadingDetail) {
+    return (
+      <ModalComponent
+        title={t('Loading')}
+        open={modal.open}
+        onCancel={handleClose}
+        loading={true}
+        footer={null}
+        width={800}
+      >
+        <div className="flex justify-center py-10">
+          <span>{t('Loading...')}</span>
+        </div>
+      </ModalComponent>
+    );
+  }
 
-    {
-      key: 'startDate',
-      label: t('Start Date'),
-      children: !edit ? (
-        data ? (
-          data?.startDate
-        ) : (
-          ''
-        )
-      ) : (
-        <FormItemComponent name="startDate" rules={[{ required: true }]}>
-          <DatePicker
-            value={
-              form.getFieldValue('startDate')
-                ? dayjs(form.getFieldValue('startDate'))
-                : null
-            }
-          />
-        </FormItemComponent>
-      ),
-      span: 3,
-    },
-    {
-      key: 'endDate',
-      label: t('End Date'),
-      children: !edit ? (
-        data ? (
-          data?.endDate
-        ) : (
-          ''
-        )
-      ) : (
-        <FormItemComponent name="endDate" rules={[{ required: true }]}>
-          <DatePicker
-            value={
-              form.getFieldValue('endDate')
-                ? dayjs(form.getFieldValue('endDate'))
-                : null
-            }
-          />
-        </FormItemComponent>
-      ),
-      span: 3,
-    },
-  ];
+  if (fetchError) {
+    return (
+      <ModalComponent
+        title={t('Error')}
+        open={modal.open}
+        onCancel={handleClose}
+        loading={false}
+        footer={null}
+        width={800}
+      >
+        <div className="text-red-500 text-center py-10">
+          {t('Failed to load health record details')}
+        </div>
+      </ModalComponent>
+    );
+  }
 
   return (
     <ModalComponent
-      title={t('Edit')}
+      title={t('IllNess Details')}
       open={modal.open}
       onCancel={handleClose}
       loading={isLoadingDetail}
       footer={[
         !edit && (
-          <ButtonComponent type="primary" onClick={() => setEdit(true)}>
+          <ButtonComponent key="edit" type="primary" onClick={() => setEdit(true)}>
             {t('Edit')}
           </ButtonComponent>
         ),
         edit && (
-          <div className="flex gap-5 justify-end">
-            <ButtonComponent onClick={() => setEdit(false)}>
-              {t('Cancel')}
-            </ButtonComponent>
+          <div key="actions" className="flex gap-4 justify-end">
+            <ButtonComponent onClick={() => setEdit(false)}>{t('Cancel')}</ButtonComponent>
             <ButtonComponent
               loading={isLoading}
               type="primary"
@@ -191,10 +142,127 @@ const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
           </div>
         ),
       ]}
-      width={1200}
+      width={800}
+      className="rounded-lg"
     >
-      <FormComponent form={form} onFinish={handleFinish}>
-        <DescriptionComponent items={items} />
+      <FormComponent form={form} onFinish={handleFinish} layout="vertical">
+        <div className="p-6">
+          {/* Section 1: Illness Details */}
+          <div className="mb-6">
+            <Title className="!text-2xl mb-6">{t('Illness Information')}</Title>
+            <Row gutter={[16, 16]}>
+              <Col span={24}>
+                <FormItemComponent
+                  name="symptoms"
+                  label={<LabelForm>{t('Symptoms')}</LabelForm>}
+                  rules={[{ required: edit, message: t('Please input symptoms') }]}
+                >
+                  {!edit ? (
+                    data ? (
+                      <div
+                        className="prose text-gray-700"
+                        dangerouslySetInnerHTML={{ __html: data.symptoms }}
+                      />
+                    ) : (
+                      <span className="text-gray-400">{t('No data')}</span>
+                    )
+                  ) : (
+                    <ReactQuillComponent placeholder={t('Describe the symptoms here...')} />
+                  )}
+                </FormItemComponent>
+              </Col>
+              <Col span={24}>
+                <FormItemComponent
+                  name="severity"
+                  label={<LabelForm>{t('Severity')}</LabelForm>}
+                  rules={[{ required: edit, message: t('Please select severity') }]}
+                >
+                  {!edit ? (
+                    data ? (
+                      <span className="font-medium text-gray-700">{data.severity}</span>
+                    ) : (
+                      <span className="text-gray-400">{t('No data')}</span>
+                    )
+                  ) : (
+                    <Select
+                      options={healthSeverity}
+                      placeholder={t('Select severity level')}
+                      className="w-full"
+                    />
+                  )}
+                </FormItemComponent>
+              </Col>
+              <Col span={24}>
+                <FormItemComponent
+                  name="prognosis"
+                  label={<LabelForm>{t('Prognosis')}</LabelForm>}
+                  rules={[{ required: edit, message: t('Please input prognosis') }]}
+                >
+                  {!edit ? (
+                    data ? (
+                      <div
+                        className="prose text-gray-700"
+                        dangerouslySetInnerHTML={{ __html: data.prognosis }}
+                      />
+                    ) : (
+                      <span className="text-gray-400">{t('No data')}</span>
+                    )
+                  ) : (
+                    <ReactQuillComponent placeholder={t('Describe the prognosis here...')} />
+                  )}
+                </FormItemComponent>
+              </Col>
+            </Row>
+          </div>
+
+          {/* Divider */}
+          <Divider className="my-6" />
+
+          {/* Section 2: Date Range */}
+          <div>
+            <Title className="!text-2xl mb-6">{t('Date Range')}</Title>
+            <Row gutter={[16, 16]}>
+              <Col span={12}>
+                <FormItemComponent
+                  name="startDate"
+                  label={<LabelForm>{t('Start Date')}</LabelForm>}
+                  rules={[{ required: edit, message: t('Please select start date') }]}
+                >
+                  {!edit ? (
+                    data && data.startDate ? (
+                      <span className="font-medium text-gray-700">
+                        {dayjs(data.startDate).format('DD/MM/YYYY')}
+                      </span>
+                    ) : (
+                      <span className="text-gray-400">{t('No data')}</span>
+                    )
+                  ) : (
+                    <DatePicker className="w-full" />
+                  )}
+                </FormItemComponent>
+              </Col>
+              <Col span={12}>
+                <FormItemComponent
+                  name="endDate"
+                  label={<LabelForm>{t('End Date')}</LabelForm>}
+                  rules={[{ required: edit, message: t('Please select end date') }]}
+                >
+                  {!edit ? (
+                    data && data.endDate ? (
+                      <span className="font-medium text-gray-700">
+                        {dayjs(data.endDate).format('DD/MM/YYYY')}
+                      </span>
+                    ) : (
+                      <span className="text-gray-400">{t('No data')}</span>
+                    )
+                  ) : (
+                    <DatePicker className="w-full" />
+                  )}
+                </FormItemComponent>
+              </Col>
+            </Row>
+          </div>
+        </div>
       </FormComponent>
     </ModalComponent>
   );
