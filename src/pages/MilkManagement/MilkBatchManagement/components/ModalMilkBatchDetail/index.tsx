@@ -70,41 +70,6 @@ const ModalMilkBatchDetail: React.FC<ModalMilkBatchDetailProps> = ({
     );
   };
 
-  /** Thêm Daily Milk vào batch */
-  // const handleAddDailyMilkIds = async () => {
-  //     if (!tempSelectedMilks.length) {
-  //         message.warning('Please select at least one Daily Milk ID.');
-  //         return;
-  //     }
-
-  //     try {
-  //         await trigger({ body: { dailyMilkIdsToAdd: tempSelectedMilks.map(milk => milk.dailyMilkId) } });
-  //         message.success(`Added ${tempSelectedMilks.length} Daily Milk ID(s)!`);
-  //         setSelectedMilkIds([]);
-  //         setTempSelectedMilks([]);
-  //         await refreshData();
-  //     } catch {
-  //         message.error('Error adding Daily Milk IDs.');
-  //     }
-  // };
-
-  /** Xóa Daily Milk khỏi batch */
-  // const handleBatchDelete = async () => {
-  //     if (!selectedRowKeys.length) {
-  //         message.warning('Please select at least one Daily Milk ID to delete.');
-  //         return;
-  //     }
-
-  //     try {
-  //         await trigger({ body: { dailyMilkIdsToRemove: selectedRowKeys } });
-  //         message.success(`Removed ${selectedRowKeys.length} Daily Milk ID(s)!`);
-  //         setSelectedRowKeys([]);
-  //         await refreshData();
-  //     } catch {
-  //         message.error('Error removing Daily Milk IDs.');
-  //     }
-  // };
-  /** Cập nhật Daily Milk (thêm & xóa cùng lúc) */
   const handleBatchUpdate = async () => {
     if (!tempSelectedMilks.length && !selectedRowKeys.length) {
       message.warning(
@@ -236,52 +201,49 @@ const ModalMilkBatchDetail: React.FC<ModalMilkBatchDetailProps> = ({
             options={
               Array?.isArray(availableDailyMilk ? availableDailyMilk : [])
                 ? availableDailyMilk?.map((milk: Milk) => ({
-                    value: milk.dailyMilkId,
-                    label: `ID: ${milk.dailyMilkId} - Volume: ${
-                      milk.volume
+                  value: milk.dailyMilkId,
+                  label: `ID: ${milk.dailyMilkId} - Volume: ${milk.volume
                     } - Milk Date: ${milk.milkDate} (${formatAreaType(
                       milk.shift
                     )})`,
-                  }))
+                }))
                 : []
             }
             onFocus={fetchAvailableDailyMilk} // Gọi API khi nhấn vào Select
           />
         </Col>
-        {/* <Col span={4}>
-                    <Button type="primary" onClick={handleAddDailyMilkIds}>Add Daily Milk</Button>
-                </Col> */}
+
       </Row>
 
       <AnimationAppear duration={0.5}>
-        <WhiteBackground>
-          <TableComponent
-            rowSelection={rowSelection}
-            columns={columns}
-            dataSource={combinedData}
-            rowKey="dailyMilkId"
-            loading={isLoading}
-          />
-          <Row style={{ margin: 20, textAlign: 'right' }}>
-            <Col span={24}>
-              <Popconfirm
-                title="Are you sure you want to update Daily Milk Batch?"
-                onConfirm={handleBatchUpdate}
-                okText="Yes"
-                cancelText="No"
+
+        <TableComponent
+          rowSelection={rowSelection}
+          columns={columns}
+          dataSource={combinedData}
+          rowKey="dailyMilkId"
+          loading={isLoading}
+        />
+        <Row style={{ margin: 20, textAlign: 'right' }}>
+          <Col span={24}>
+            <Popconfirm
+              title="Are you sure you want to update Daily Milk Batch?"
+              onConfirm={handleBatchUpdate}
+              okText="Yes"
+              cancelText="No"
+            >
+              <Button
+                type="primary"
+                disabled={
+                  !tempSelectedMilks.length && !selectedRowKeys.length
+                }
               >
-                <Button
-                  type="primary"
-                  disabled={
-                    !tempSelectedMilks.length && !selectedRowKeys.length
-                  }
-                >
-                  Update Daily Milk
-                </Button>
-              </Popconfirm>
-            </Col>
-          </Row>
-        </WhiteBackground>
+                Update Daily Milk
+              </Button>
+            </Popconfirm>
+          </Col>
+        </Row>
+
       </AnimationAppear>
     </ModalComponent>
   );
