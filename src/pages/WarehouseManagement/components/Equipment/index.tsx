@@ -90,6 +90,13 @@ const Equipment = () => {
       title: t('Action'),
       render: (data) => (
         <div className="flex gap-5">
+
+          <ButtonComponent
+            type="primary"
+            onClick={() => handleOpenModalDetail(data)}
+          >
+            {t('View Detail')}
+          </ButtonComponent>
           <PopconfirmComponent
             title={t('Delete?')}
             onConfirm={() => onConfirm(data)}
@@ -98,12 +105,6 @@ const Equipment = () => {
               {t('Delete')}
             </ButtonComponent>
           </PopconfirmComponent>
-          <ButtonComponent
-            type="primary"
-            onClick={() => handleOpenModalDetail(data)}
-          >
-            {t('View Detail')}
-          </ButtonComponent>
         </div>
       ),
     },
