@@ -72,5 +72,6 @@
   },
   "pagination": {
     "total_page": "Total {{items}} items"
-  }
+  },
+  "daily_milk": "Daily milk"
 }

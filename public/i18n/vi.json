@@ -397,5 +397,9 @@
   "pagination": {
     "total_page": "Tổng {{items}} thành phần"
   },
-  "Please choose area type first": "Hãy chọn loại khu vực trước"
+  "Please choose area type first": "Hãy chọn loại khu vực trước",
+  "Join task": "Tham gia công việc",
+  "View report": "Xem báo cáo",
+  "Task is expired": "Công việc đã quá hạn",
+  "Report task": "Báo cáo công việc"
 }
