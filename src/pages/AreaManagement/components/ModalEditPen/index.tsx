@@ -228,8 +228,8 @@ const ModalEditPens = ({ mutate, modal, id }: ModalTypesProps) => {
             <div className="w-full flex justify-end gap-5">
               <ButtonComponent
                 onClick={() => setShowEdit(!showEdit)}
-                colorButton="orange"
-                className="!text-white"
+                buttonType="warning"
+                type="primary"
               >
                 {showEdit ? 'Cancel' : 'Edit'}
               </ButtonComponent>

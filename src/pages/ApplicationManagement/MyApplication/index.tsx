@@ -93,8 +93,8 @@ const MyApplication = () => {
     <div>
       <div>
         <ButtonComponent
-          colorButton="orange"
-          className="!text-white"
+          buttonType="secondary"
+          type="primary"
           onClick={handleOpenModalRequest}
         >
           {t('Create Application')}

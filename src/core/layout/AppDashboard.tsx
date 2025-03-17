@@ -117,12 +117,10 @@ const AppDashboard: React.FC = React.memo(() => {
           breadcumData[segment] ||
             segment.charAt(0).toUpperCase() + segment.slice(1)
         ),
-        href:
-          '/' +
-          location.pathname
-            .split('/')
-            .slice(0, index + 1)
-            .join('/'),
+        href: location.pathname
+          .split('/')
+          .slice(0, index + 2)
+          .join('/'),
       }));
   }, [location.pathname, t]);
   const navigate = useNavigate();

@@ -6,6 +6,7 @@ import Text from '@components/UI/Text';
 import Title from '@components/UI/Title';
 import WhiteBackground from '@components/UI/WhiteBackground';
 import useFetcher from '@hooks/useFetcher';
+import useModal, { ModalActionProps } from '@hooks/useModal';
 import { TaskDateRange } from '@model/Task/Task';
 import { formatStatusWithCamel } from '@utils/format';
 import { Popover, Select, Table } from 'antd';
@@ -15,6 +16,11 @@ import { t } from 'i18next';
 import React, { useEffect, useMemo, useState } from 'react';
 import '../index.scss';
 import PopoverMyTaskContent from './components/PopoverMyTaskContent';
+import ReportTasksModal from './components/ReportTasksModal/ReportTasksModal';
+import { TASK_PATH } from '@service/api/Task/taskApi';
+import { REPORT_TASK_PATH } from '@service/api/Task/reportTaskApi';
+import useToast from '@hooks/useToast';
+import CreateReportModal from './components/CreateReportModal/CreateReportModal';
 
 const { Option } = Select;
 
@@ -43,7 +49,12 @@ const MyTaskSchedule: React.FC = () => {
       ? dayjs().startOf('week')
       : dayjs(`${selectedYear}-01-01`).startOf('week')
   );
-
+  const toast = useToast();
+  const modalReport = useModal<ModalActionProps>();
+  const modalCreateReport = useModal<ModalActionProps>();
+  const [id, setId] = useState<number>(0);
+  const [open, setOpen] = useState<Record<any, boolean>>({});
+  const [day, setDay] = useState<string>('');
   const fromDate = currentWeekStart.startOf('day').format('YYYY-MM-DD');
   const toDate = currentWeekStart
     .add(6, 'day')
@@ -52,8 +63,11 @@ const MyTaskSchedule: React.FC = () => {
 
   const { isLoading, mutate, trigger } = useFetcher<{
     [key: string]: TaskDateRange[] | null;
-  }>('tasks/myTasks/by-date-range', 'POST');
-
+  }>(TASK_PATH.TASK_DATE_RANGE, 'POST');
+  const { isLoading: loadingJoinTask, trigger: triggerJoinTask } = useFetcher(
+    'join-report',
+    'POST'
+  );
   useEffect(() => {
     const fetchData = async () => {
       const response = await trigger({ body: { fromDate, toDate } });
@@ -65,6 +79,40 @@ const MyTaskSchedule: React.FC = () => {
     }
     fetchData();
   }, [fromDate, toDate, refetch]);
+
+  useEffect(() => {
+    if (modalReport.open === false) {
+      setId(0);
+    }
+  }, [modalReport.open]);
+
+  const handleJoinTask = async (id: number) => {
+    try {
+      const response = await triggerJoinTask({
+        url: REPORT_TASK_PATH.JOIN_TASK(id),
+      });
+      toast.showSuccess(response.message);
+    } catch (error: any) {
+      toast.showError(error.message);
+    }
+  };
+
+  const handleOpenDetail = (id: number, day: string) => {
+    modalReport.openModal();
+    setId(id);
+    const formatDate = dayjs(day).format('YYYY-MM-DD');
+    setDay(formatDate);
+  };
+
+  const handleOpenCreateReport = (id: number) => {
+    setId(id);
+    modalCreateReport.openModal();
+  };
+
+  const handleOpenPopover = (index: any, newOpen: boolean) => {
+    console.log(index);
+    setOpen((prev) => ({ ...prev, [index]: newOpen }));
+  };
 
   const handleYearChange = (year: number) => {
     setSelectedYear(year);
@@ -111,18 +159,31 @@ const MyTaskSchedule: React.FC = () => {
               .forEach((task: TaskDateRange, taskIndex: number) => {
                 const uniqueTag = `${task.taskId}-${date}`;
                 const tagColor = stringToDarkColor(uniqueTag); // Generate color based on uniqueTag
+                const isTaskExpired = day.isBefore(dayjs(), 'day'); // Check if the task date is in the past
                 const content = (
                   <Popover
                     key={uniqueTag}
                     trigger={'click'}
                     className="cursor-pointer"
+                    open={!!open[uniqueTag]}
+                    onOpenChange={(newOpen) =>
+                      handleOpenPopover(uniqueTag, newOpen)
+                    }
                     placement="topLeft"
                     color="white"
                     content={
                       <PopoverMyTaskContent
-                        setRefetch={setRefetch}
-                        mutate={mutate}
+                        onOpenModal={() =>
+                          handleOpenDetail(task.taskId, day as any)
+                        }
                         task={task}
+                        setOpen={() => handleOpenPopover(uniqueTag, false)}
+                        onJoinTask={() => handleJoinTask(task.taskId)}
+                        loading={loadingJoinTask}
+                        disabledJoinTask={isTaskExpired}
+                        onOpenCreateReportModal={() =>
+                          handleOpenCreateReport(task.taskId)
+                        }
                       />
                     }
                   >
@@ -310,6 +371,17 @@ const MyTaskSchedule: React.FC = () => {
             rowKey="key"
           />
         </div>
+        <ReportTasksModal
+          modal={modalReport as any}
+          taskId={id}
+          mutate={mutate}
+          day={day}
+        />
+        <CreateReportModal
+          modal={modalCreateReport}
+          mutate={mutate}
+          taskId={id}
+        />
       </WhiteBackground>
     </AnimationAppear>
   );

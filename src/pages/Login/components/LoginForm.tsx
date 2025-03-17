@@ -41,9 +41,9 @@ const LoginForm = () => {
         ) {
           toast.showError(t('You do not permission to access'));
         } else {
-          toast.showSuccess(response.message);
           dispatch(login(response.data));
           navigate('/dairy');
+          toast.showSuccess(response.message);
         }
       } else {
         toast.showError(response.message);

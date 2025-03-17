@@ -2,12 +2,12 @@ import { useCallback, useState } from 'react';
 
 export interface ModalActionProps {
   open: boolean;
-  openModal: () => void;
-  closeModal: () => void;
-  toogleModal: () => void;
+  openModal: (beforeOpenFunction?: () => void) => void;
+  closeModal: (beforeCloseFunction?: () => void) => void;
+  toggleModal: () => void;
 }
 
-const useModal = () => {
+const useModal = <T extends ModalActionProps>() => {
   const [open, setOpen] = useState(false);
 
   const openModal = useCallback((beforeOpenFunction?: any) => {
@@ -29,7 +29,7 @@ const useModal = () => {
     openModal,
     closeModal,
     toggleModal,
-  };
+  } as T;
 };
 
 export default useModal;

@@ -9,7 +9,7 @@ import itemManagementReducer from './slice/itemManagementSlice';
 import sidebarReducer from './slice/sidebarSlice';
 
 const persistConfig = {
-  key: 'root',
+  key: 'dairy-farm',
   storage,
   blacklist: ['itemManagement'], // Không lưu itemManagement
 };

@@ -1,15 +1,23 @@
-import { AppstoreFilled } from '@ant-design/icons';
+import {
+  AppstoreFilled,
+  FormOutlined,
+  ImportOutlined,
+} from '@ant-design/icons';
 import ButtonComponent from '@components/Button/ButtonComponent';
 import TagComponents from '@components/UI/TagComponents';
 import { Priority, StatusTask, TaskDateRange } from '@model/Task/Task';
 import { formatDateHour, formatStatusWithCamel } from '@utils/format';
-import { Divider } from 'antd';
+import { Divider, Tooltip } from 'antd';
 import { t } from 'i18next';
 
 interface PopoverMyTaskContent {
   task: TaskDateRange;
-  mutate: any;
-  setRefetch: any;
+  onOpenModal: () => void;
+  setOpen?: any;
+  onJoinTask: () => void;
+  loading: boolean;
+  disabledJoinTask?: boolean;
+  onOpenCreateReportModal: () => void;
 }
 
 const priorityColors: Record<Priority, string> = {
@@ -26,7 +34,23 @@ const statusColors: Record<StatusTask, string> = {
   reviewed: '#E9D5FF', // Light Purple
 };
 
-const PopoverMyTaskContent = ({ task }: PopoverMyTaskContent) => {
+const PopoverMyTaskContent = ({
+  task,
+  onOpenModal,
+  setOpen,
+  loading,
+  onJoinTask,
+  onOpenCreateReportModal,
+  disabledJoinTask,
+}: PopoverMyTaskContent) => {
+  const handleOpenModal = () => {
+    onOpenModal();
+    setOpen(false);
+  };
+  const handleOpenCreateReportModal = () => {
+    onOpenCreateReportModal();
+    setOpen(false);
+  };
   return (
     <div className="flex flex-col gap-1">
       <div className="grid grid-cols-3">
@@ -64,11 +88,38 @@ const PopoverMyTaskContent = ({ task }: PopoverMyTaskContent) => {
       </TagComponents>
       <Divider className="my-1" />
       <div className="flex gap-2">
-        <ButtonComponent
-          shape="circle"
-          type="primary"
-          icon={<AppstoreFilled />}
-        />
+        <Tooltip title={t('View report')}>
+          <ButtonComponent
+            shape="circle"
+            type="primary"
+            icon={<AppstoreFilled />}
+            onClick={handleOpenModal}
+          />
+        </Tooltip>
+        <Tooltip
+          title={disabledJoinTask ? t('Task is expired') : t('Join task')}
+        >
+          <ButtonComponent
+            shape="circle"
+            type="primary"
+            buttonType="secondary"
+            icon={<ImportOutlined />}
+            onClick={onJoinTask}
+            loading={loading}
+            disabled={disabledJoinTask}
+          />
+        </Tooltip>
+        <Tooltip title={t('Report task')}>
+          <ButtonComponent
+            shape="circle"
+            type="primary"
+            buttonType="warning"
+            icon={<FormOutlined />}
+            onClick={handleOpenCreateReportModal}
+            loading={loading}
+            disabled={disabledJoinTask}
+          />
+        </Tooltip>
       </div>
     </div>
   );
