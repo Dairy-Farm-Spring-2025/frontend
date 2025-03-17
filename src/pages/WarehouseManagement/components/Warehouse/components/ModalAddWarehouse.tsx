@@ -9,6 +9,7 @@ import useToast from '../../../../../hooks/useToast';
 import { useTranslation } from 'react-i18next';
 import SelectComponent from '../../../../../components/Select/SelectComponent';
 import { warehouseType } from '../../../../../service/data/warehouse';
+import { STORAGE_PATH } from '@service/api/Storage/storageApi';
 
 interface ModalAddWarehouseProps {
   modal: any;
@@ -18,7 +19,10 @@ interface ModalAddWarehouseProps {
 const ModalAddWarehouse = ({ modal, mutate }: ModalAddWarehouseProps) => {
   const [form] = Form.useForm();
   const toast = useToast();
-  const { trigger, isLoading } = useFetcher('warehouses/create', 'POST');
+  const { trigger, isLoading } = useFetcher(
+    STORAGE_PATH.STORAGE_CREATE,
+    'POST'
+  );
   const { t } = useTranslation();
   const handleFinish = async (values: any) => {
     try {
@@ -37,7 +41,7 @@ const ModalAddWarehouse = ({ modal, mutate }: ModalAddWarehouseProps) => {
   };
   return (
     <ModalComponent
-      title={t("Create Warehouse")}
+      title={t('Create storage')}
       open={modal.open}
       onCancel={handleClose}
       loading={isLoading}
@@ -46,21 +50,21 @@ const ModalAddWarehouse = ({ modal, mutate }: ModalAddWarehouseProps) => {
       <FormComponent form={form} onFinish={handleFinish}>
         <FormItemComponent
           name="name"
-          label={<LabelForm>{t("Name")}</LabelForm>}
+          label={<LabelForm>{t('Name')}</LabelForm>}
           rules={[{ required: true }]}
         >
           <InputComponent />
         </FormItemComponent>
         <FormItemComponent
           name="type"
-          label={<LabelForm>{t("Type")}</LabelForm>}
+          label={<LabelForm>{t('Type')}</LabelForm>}
           rules={[{ required: true }]}
         >
           <SelectComponent options={warehouseType} />
         </FormItemComponent>
         <FormItemComponent
           name="description"
-          label={<LabelForm>{t("Description")}</LabelForm>}
+          label={<LabelForm>{t('Description')}</LabelForm>}
           rules={[{ required: true }]}
         >
           <InputComponent.TextArea />

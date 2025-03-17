@@ -1,12 +1,14 @@
-import { DatePicker, DatePickerProps } from 'antd';
+import DatePickerComponent from '@components/DatePicker/DatePickerComponent';
+import { DatePickerProps } from 'antd';
 import dayjs from 'dayjs';
+import { t } from 'i18next';
 import { useEffect, useState } from 'react';
-import useToast from '../../../../../../../hooks/useToast';
-import { dailyMilkApi } from '../../../../../../../service/api/DailyMilk/dailyMilkApi';
 import DescriptionComponent, {
   DescriptionPropsItem,
 } from '../../../../../../../components/Description/DescriptionComponent';
+import useToast from '../../../../../../../hooks/useToast';
 import { RecordDate } from '../../../../../../../model/DailyMilk/DailyMilkRecord';
+import { dailyMilkApi } from '../../../../../../../service/api/DailyMilk/dailyMilkApi';
 
 interface DailyRecordDateProps {
   id: string;
@@ -38,7 +40,7 @@ const DailyRecordDate = ({ id }: DailyRecordDateProps) => {
       key: 'total',
       label: (
         <p>
-          Total <span className="text-orange-500">(lit)</span>
+          {t('Total')} <span className="text-orange-500">(lit)</span>
         </p>
       ),
       children: (
@@ -50,21 +52,21 @@ const DailyRecordDate = ({ id }: DailyRecordDateProps) => {
           )}
         </p>
       ),
-      className: '!text-lg',
+      className: '!text-base',
     },
   ];
 
   return (
     <div>
       <div className="flex flex-col gap-2 w-full">
-        <p className="font-bold text-base">Select Date:</p>
-        <DatePicker
+        <p className="font-bold text-base">{t('Select Date')}:</p>
+        <DatePickerComponent
           onChange={onChange}
-          className="w-1/5"
+          className="!w-1/5"
           value={dateSelected}
         />
       </div>
-      <DescriptionComponent items={items} className="w-1/4 mt-5" />
+      <DescriptionComponent items={items} className="w-1/5 mt-5" />
     </div>
   );
 };

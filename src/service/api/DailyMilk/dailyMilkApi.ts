@@ -33,3 +33,12 @@ export const dailyMilkApi = {
     }
   },
 };
+
+export const DAILY_MILK_PATH = {
+  DAILY_MILKS_COWS: (id: string) => `dailymilks/cow/${id}`,
+  DAILY_MILK_RANGE: 'dailymilks/range',
+  DAILY_MILK_CREATE: 'dailymilks/create',
+  DAILY_MILK_UPDATE_VOLUME: (id: string, newVolume: number) =>
+    `dailymilks/volume/${id}?newVolume=${newVolume}`,
+  DAILY_MILK_DELETE: (id: string) => `dailymilks/${id}`,
+};

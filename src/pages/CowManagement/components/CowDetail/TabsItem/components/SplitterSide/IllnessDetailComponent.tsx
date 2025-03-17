@@ -6,13 +6,14 @@ import { GiHeartBottle } from 'react-icons/gi';
 import { MdHealing } from 'react-icons/md';
 import TimelineComponent, {
   TimelineItems,
-} from '../../../../../../../components/Timeline/TimelineComponent';
-import { IllnessDetail } from '../../../../../../../model/Cow/IllnessDetail';
-import { formatToTitleCase } from '../../../../../../../utils/format';
-import useModal from '../../../../../../../hooks/useModal';
+} from '@components/Timeline/TimelineComponent';
+import { IllnessDetail } from '@model/Cow/IllnessDetail';
+import { formatDateHour, formatToTitleCase } from '@utils/format';
+import useModal from '@hooks/useModal';
 import { useState } from 'react';
 import IllnessDetailModal from './components/IllnessDetailModal';
-import Title from '../../../../../../../components/UI/Title';
+import Title from '@components/UI/Title';
+import CardComponent from '@components/Card/CardComponent';
 
 interface IllnessDetailProps {
   data: IllnessDetail[];
@@ -33,9 +34,9 @@ const IllnessDetailComponent = ({ data }: IllnessDetailProps) => {
     children: (
       <div
         onClick={() => handleOpenModal(element)}
-        className="ml-10 w-fit cursor-pointer hover:!opacity-55 duration-200"
+        className="ml-10 w-1/2 cursor-pointer hover:!opacity-55 duration-200"
       >
-        <div className="flex gap-2">
+        <CardComponent title={formatToTitleCase(element?.status)}>
           <Tooltip title="Status">
             <p>{formatToTitleCase(element?.status)}</p>
           </Tooltip>
@@ -47,7 +48,7 @@ const IllnessDetailComponent = ({ data }: IllnessDetailProps) => {
                 : 'No veterinarian'}
             </p>
           </Tooltip>
-        </div>
+        </CardComponent>
       </div>
     ),
     dot: (
@@ -77,16 +78,15 @@ const IllnessDetailComponent = ({ data }: IllnessDetailProps) => {
               <GiHeartBottle size={SIZE_ICON} color="red" />
             </Tooltip>
           ))}
-        <p>{element.date}</p>
+        <p>{formatDateHour(element.date)}</p>
       </div>
     ),
   }));
-  console.log(data);
   return (
     <div className="pl-2">
       <div className="pt-5">
         <Title className="!text-2xl mb-5">Illness Detail</Title>
-      </div>{' '}
+      </div>
       <TimelineComponent className="mt-10 ml-10" items={items} reverse={true} />
       <IllnessDetailModal data={detail as IllnessDetail} modal={modal} />
     </div>

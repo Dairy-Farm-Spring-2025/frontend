@@ -2,22 +2,23 @@ import { Divider, Form, SelectProps, Spin, Splitter } from 'antd';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import ButtonComponent from '../../../../../../components/Button/ButtonComponent';
-import FormItemComponent from '../../../../../../components/Form/Item/FormItemComponent';
-import InputComponent from '../../../../../../components/Input/InputComponent';
-import LabelForm from '../../../../../../components/LabelForm/LabelForm';
-import ReactQuillComponent from '../../../../../../components/ReactQuill/ReactQuillComponent';
-import SelectComponent from '../../../../../../components/Select/SelectComponent';
-import Title from '../../../../../../components/UI/Title';
-import useFetcher from '../../../../../../hooks/useFetcher';
-import useToast from '../../../../../../hooks/useToast';
-import { Item } from '../../../../../../model/Warehouse/items';
-import { cowStatus } from '../../../../../../service/data/cowStatus';
+import ButtonComponent from '@components/Button/ButtonComponent';
+import FormItemComponent from '@components/Form/Item/FormItemComponent';
+import InputComponent from '@components/Input/InputComponent';
+import LabelForm from '@components/LabelForm/LabelForm';
+import ReactQuillComponent from '@components/ReactQuill/ReactQuillComponent';
+import SelectComponent from '@components/Select/SelectComponent';
+import Title from '@components/UI/Title';
+import useFetcher from '@hooks/useFetcher';
+import useToast from '@hooks/useToast';
+import { Item } from '@model/Warehouse/items';
+import { cowStatus } from '@service/data/cowStatus';
 import HayFieldFormList from './FormListFeedMeal/HayFieldFormList';
 import MineralFieldFormList from './FormListFeedMeal/MineralFieldFormList';
 import RefinedFieldFormList from './FormListFeedMeal/RefinedFieldFormList';
 import SilageFieldFormList from './FormListFeedMeal/SilageFieldFormList';
-import FormComponent from '../../../../../../components/Form/FormComponent';
+import FormComponent from '@components/Form/FormComponent';
+import { FEED_PATH } from '@service/api/Feed/feedApi';
 
 interface FeedMealFormProps {
   dry: number;
@@ -48,7 +49,7 @@ const FeedMealForm = ({
   const { data: itemsData } = useFetcher<Item[]>('items', 'GET');
   const toast = useToast();
   const { trigger: triggerFeedMeal, isLoading: isLoadingFeedMeal } = useFetcher(
-    'feedmeals',
+    FEED_PATH.CREATE_FEED_MEALS,
     'POST'
   );
   const isFormValid = (values: any): boolean => {
@@ -152,8 +153,8 @@ const FeedMealForm = ({
       ],
     };
     try {
-      await triggerFeedMeal({ body: payload });
-      toast.showSuccess('Create success');
+      const response = await triggerFeedMeal({ body: payload });
+      toast.showSuccess(response.message);
       navigate('../list');
     } catch (error: any) {
       toast.showError(error.message);

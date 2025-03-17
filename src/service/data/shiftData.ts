@@ -11,16 +11,15 @@ export const shiftData = [
     start: 6,
     end: 12,
   },
+];
+
+export const SHIFT_TASK = [
   {
-    value: 'shiftThree',
-    label: 'Shift 3 (12h - 18h)',
-    start: 12,
-    end: 18,
+    value: 'dayShift',
+    label: 'Day shift',
   },
   {
-    value: 'shiftFour',
-    label: 'Shift 4 (18h - 24h)',
-    start: 18,
-    end: 24,
+    value: 'nightShift',
+    label: 'Night shift',
   },
 ];

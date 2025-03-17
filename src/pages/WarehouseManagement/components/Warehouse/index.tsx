@@ -4,18 +4,22 @@ import { WarehouseType } from '../../../../model/Warehouse/warehouse';
 import useToast from '../../../../hooks/useToast';
 import useModal from '../../../../hooks/useModal';
 import { useTranslation } from 'react-i18next';
-import TableComponent, { Column } from '../../../../components/Table/TableComponent';
+import TableComponent, {
+  Column,
+} from '../../../../components/Table/TableComponent';
 import PopconfirmComponent from '../../../../components/Popconfirm/PopconfirmComponent';
 import ButtonComponent from '../../../../components/Button/ButtonComponent';
 import AnimationAppear from '../../../../components/UI/AnimationAppear';
 import WhiteBackground from '../../../../components/UI/WhiteBackground';
 import ModalAddWarehouse from './components/ModalAddWarehouse';
 import ModalDetailWarehouse from './components/ModalDetailWarehouse';
-
-
+import { STORAGE_PATH } from '@service/api/Storage/storageApi';
 
 const Warehouse = () => {
-  const { data, isLoading, mutate } = useFetcher<WarehouseType[]>('warehouses', 'GET');
+  const { data, isLoading, mutate } = useFetcher<WarehouseType[]>(
+    STORAGE_PATH.STORAGES,
+    'GET'
+  );
   const [id, setId] = useState('');
   const toast = useToast();
   const { trigger, isLoading: loadingDelete } = useFetcher(
@@ -27,7 +31,7 @@ const Warehouse = () => {
   const { t } = useTranslation();
   const onConfirm = async (id: string) => {
     try {
-      await trigger({ url: `warehouses/${id}` });
+      await trigger({ url: STORAGE_PATH.STORAGE_DELETE(id) });
       toast.showSuccess('Delete success');
       mutate();
     } catch (error: any) {
@@ -46,12 +50,6 @@ const Warehouse = () => {
 
   const column: Column[] = [
     {
-      dataIndex: 'warehouseLocationId',
-      key: 'warehouseLocationId',
-      title: '#',
-      render: (_, __, index) => index + 1,
-    },
-    {
       dataIndex: 'name',
       key: 'name',
       title: t('Name'),
@@ -69,19 +67,18 @@ const Warehouse = () => {
       title: t('Action'),
       render: (data) => (
         <div className="flex gap-5">
-
           <ButtonComponent
             type="primary"
             onClick={() => handleOpenModalDetail(data)}
           >
-            {t("View Detail")}
+            {t('View Detail')}
           </ButtonComponent>
           <PopconfirmComponent
             title={t('Delete?')}
             onConfirm={() => onConfirm(data)}
           >
             <ButtonComponent type="primary" danger>
-              {t("Delete")}
+              {t('Delete')}
             </ButtonComponent>
           </PopconfirmComponent>
         </div>
@@ -98,7 +95,7 @@ const Warehouse = () => {
             type="primary"
             onClick={handleOpenModalAdd}
           >
-            {t("Create Warehouse")}
+            {t('Create storage')}
           </ButtonComponent>
           <TableComponent
             dataSource={data || []}

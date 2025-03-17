@@ -7,6 +7,7 @@ import ModalComponent from '../../../../../components/Modal/ModalComponent';
 import useFetcher from '../../../../../hooks/useFetcher';
 import useToast from '../../../../../hooks/useToast';
 import { useTranslation } from 'react-i18next';
+import { CATEGORY_PATH } from '@service/api/Storage/categoryApi';
 
 interface ModalAddCategoryProps {
   modal: any;
@@ -16,7 +17,10 @@ interface ModalAddCategoryProps {
 const ModalAddCategory = ({ modal, mutate }: ModalAddCategoryProps) => {
   const [form] = Form.useForm();
   const toast = useToast();
-  const { trigger, isLoading } = useFetcher('categories/create', 'POST');
+  const { trigger, isLoading } = useFetcher(
+    CATEGORY_PATH.CATEGORY_CREATE,
+    'POST'
+  );
 
   const handleFinish = async (values: any) => {
     try {
@@ -35,7 +39,7 @@ const ModalAddCategory = ({ modal, mutate }: ModalAddCategoryProps) => {
   };
   return (
     <ModalComponent
-      title={t("Create Category")}
+      title={t('Create Category')}
       open={modal.open}
       onCancel={handleClose}
       loading={isLoading}
@@ -44,13 +48,11 @@ const ModalAddCategory = ({ modal, mutate }: ModalAddCategoryProps) => {
       <FormComponent form={form} onFinish={handleFinish}>
         <FormItemComponent
           name="name"
-          label={<LabelForm>{t("Name")}</LabelForm>}
+          label={<LabelForm>{t('Name')}</LabelForm>}
           rules={[{ required: true }]}
         >
-          <InputComponent
-            placeholder='Enter name of Category' />
+          <InputComponent placeholder="Enter name of Category" />
         </FormItemComponent>
-
       </FormComponent>
     </ModalComponent>
   );

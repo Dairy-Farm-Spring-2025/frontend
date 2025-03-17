@@ -2,20 +2,22 @@ import { Form, SelectProps, Spin, Steps } from 'antd';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IoMdArrowRoundBack } from 'react-icons/io';
-import ButtonComponent from '../../../../../components/Button/ButtonComponent';
-import FormComponent from '../../../../../components/Form/FormComponent';
-import FormItemComponent from '../../../../../components/Form/Item/FormItemComponent';
-import LabelForm from '../../../../../components/LabelForm/LabelForm';
-import SelectComponent from '../../../../../components/Select/SelectComponent';
-import { StepItem } from '../../../../../components/Steps/StepsComponent';
-import AnimationAppear from '../../../../../components/UI/AnimationAppear';
-import TagComponents from '../../../../../components/UI/TagComponents';
-import WhiteBackground from '../../../../../components/UI/WhiteBackground';
-import useFetcher from '../../../../../hooks/useFetcher';
-import useToast from '../../../../../hooks/useToast';
-import { CowType } from '../../../../../model/Cow/CowType';
-import { COW_STATUS_DRY_MATTER } from '../../../../../service/data/cowStatus';
+import ButtonComponent from '@components/Button/ButtonComponent';
+import FormComponent from '@components/Form/FormComponent';
+import FormItemComponent from '@components/Form/Item/FormItemComponent';
+import LabelForm from '@components/LabelForm/LabelForm';
+import SelectComponent from '@components/Select/SelectComponent';
+import { StepItem } from '@components/Steps/StepsComponent';
+import AnimationAppear from '@components/UI/AnimationAppear';
+import TagComponents from '@components/UI/TagComponents';
+import WhiteBackground from '@components/UI/WhiteBackground';
+import useFetcher from '@hooks/useFetcher';
+import useToast from '@hooks/useToast';
+import { CowType } from '@model/Cow/CowType';
+import { COW_STATUS_DRY_MATTER } from '@service/data/cowStatus';
 import FeedMealForm from './components/FeedMealForm';
+import { COW_TYPE_PATH } from '@service/api/CowType/cowType';
+import { FEED_PATH } from '@service/api/Feed/feedApi';
 
 const CreateFeedMeal = () => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -29,13 +31,13 @@ const CreateFeedMeal = () => {
   const [cowStatusSelected, setCowStatusSelected] = useState('');
   const [dry, setDry] = useState<number>(0);
   const { data: cowType, isLoading: isLoadingCowType } = useFetcher<CowType[]>(
-    'cow-types',
+    COW_TYPE_PATH.COW_TYPES,
     'GET'
   );
   const [disabledButton, setDisabledButton] = useState(true);
 
   const { trigger: triggerDryMatter, isLoading: loadingDryMatter } = useFetcher(
-    'feedmeals/drymatter',
+    FEED_PATH.FEED_MEAL_DRY_MATTER,
     'POST'
   );
 

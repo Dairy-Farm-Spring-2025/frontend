@@ -1,25 +1,25 @@
-import { Empty, Flex, Form, Splitter, Tooltip } from 'antd';
+import CardComponent from '@components/Card/CardComponent';
+import { Flex, Form, Splitter, Tooltip } from 'antd';
 import dayjs from 'dayjs';
 import { useState } from 'react';
 import { BsClipboard2, BsEmojiDizzy } from 'react-icons/bs';
 import { CgSmileSad } from 'react-icons/cg';
 import { HiOutlineEmojiHappy } from 'react-icons/hi';
 import { RiEmotionNormalLine } from 'react-icons/ri';
-import FormComponent from '../../../../../components/Form/FormComponent';
+import FormComponent from '@components/Form/FormComponent';
 import TimelineComponent, {
   TimelineItems,
-} from '../../../../../components/Timeline/TimelineComponent';
-import useFetcher from '../../../../../hooks/useFetcher';
-import useToast from '../../../../../hooks/useToast';
-import { HealthResponse } from '../../../../../model/Cow/Cow';
-import { HealthRecord } from '../../../../../model/Cow/HealthRecord';
-import { IllnessCow } from '../../../../../model/Cow/Illness';
+} from '@components/Timeline/TimelineComponent';
+import Title from '@components/UI/Title';
+import useFetcher from '@hooks/useFetcher';
+import useToast from '@hooks/useToast';
+import { HealthResponse } from '@model/Cow/Cow';
+import { HealthRecord } from '@model/Cow/HealthRecord';
+import { IllnessCow } from '@model/Cow/Illness';
+import { formatDateHour, formatToTitleCase } from '@utils/format';
 import HealthRecordForm from './components/SplitterSide/HealthRecordForm';
 import IllnessRecordForm from './components/SplitterSide/IllnessRecordForm';
-import { formatToTitleCase } from '../../../../../utils/format';
-import IllnessDetailComponent from './components/SplitterSide/IllnessDetailComponent';
-import { IllnessDetail } from '../../../../../model/Cow/IllnessDetail';
-import Title from '../../../../../components/UI/Title';
+import { HEALTH_RECORD_PATH } from '@service/api/HealthRecord/healthRecordApi';
 
 interface HealthRecordCowProps {
   data: HealthResponse[];
@@ -38,9 +38,9 @@ const HealthRecordCow = ({ cowId, data, mutate }: HealthRecordCowProps) => {
   const { trigger: triggerUpdateHealthRecord, isLoading: loadingUpdateHealth } =
     useFetcher('update/health-record', 'PUT');
   const { trigger: triggerUpdateIllness, isLoading: isLoadingUpdateIllness } =
-    useFetcher(`illness`, 'PUT');
+    useFetcher('update/illness', 'PUT');
   const { isLoading: isLoadingHealthRecord, trigger: triggerHealthRecord } =
-    useFetcher('health-record', 'POST');
+    useFetcher(HEALTH_RECORD_PATH.CREATE_HEALTH_RECORD, 'POST');
   const handleOpenLeftSide = (
     type: 'HEALTH_RECORD' | 'ILLNESS' | any,
     data: HealthRecord & IllnessCow
@@ -80,7 +80,7 @@ const HealthRecordCow = ({ cowId, data, mutate }: HealthRecordCowProps) => {
     };
     try {
       const response = await triggerUpdateHealthRecord({
-        url: `health-record/${values.healthId}`,
+        url: HEALTH_RECORD_PATH.UPDATE_HEALTH_RECORD(values.healthId),
         body: payload,
       });
       toast.showSuccess(response.message);
@@ -101,7 +101,7 @@ const HealthRecordCow = ({ cowId, data, mutate }: HealthRecordCowProps) => {
         cowId: values?.cowId,
       };
       const response = await triggerUpdateIllness({
-        url: `illness/${values?.illnessId}`,
+        url: HEALTH_RECORD_PATH.UPDATE_ILLNESS(values.illnessId),
         body: payload,
       });
       toast.showSuccess(response.message);
@@ -133,12 +133,10 @@ const HealthRecordCow = ({ cowId, data, mutate }: HealthRecordCowProps) => {
   const items: TimelineItems[] = data.map((element) => ({
     children: (
       <div
-        className="ml-10 w-fit cursor-pointer hover:!opacity-55 duration-200"
+        className="ml-10 w-3/4 cursor-pointer hover:!opacity-55 duration-200"
         onClick={() => handleOpenLeftSide(element?.type, element?.health)}
       >
-        <div className="flex gap-2">
-          <p>{formatToTitleCase(element?.type)}</p>
-          <p>-</p>
+        <CardComponent title={formatToTitleCase(element?.type)}>
           {(element.type === 'HEALTH_RECORD' && (
             <>
               <Tooltip title="Status">
@@ -147,8 +145,8 @@ const HealthRecordCow = ({ cowId, data, mutate }: HealthRecordCowProps) => {
             </>
           )) ||
             (element.type === 'ILLNESS' && (
-              <>
-                <Tooltip title="Seveiry">
+              <div className="flex gap-2">
+                <Tooltip title="Severity">
                   <p>{formatToTitleCase(element?.health?.severity)}</p>
                 </Tooltip>
                 <p>-</p>
@@ -159,9 +157,9 @@ const HealthRecordCow = ({ cowId, data, mutate }: HealthRecordCowProps) => {
                       : 'No veterinarian'}
                   </p>
                 </Tooltip>
-              </>
+              </div>
             ))}
-        </div>
+        </CardComponent>
       </div>
     ),
     dot: (
@@ -190,7 +188,7 @@ const HealthRecordCow = ({ cowId, data, mutate }: HealthRecordCowProps) => {
                   <BsEmojiDizzy size={SIZE_ICON} color="red" />
                 </Tooltip>
               ))))}
-        <p>{element.date}</p>
+        <p>{formatDateHour(element.date)}</p>
       </div>
     ),
   }));
@@ -210,16 +208,16 @@ const HealthRecordCow = ({ cowId, data, mutate }: HealthRecordCowProps) => {
         <Splitter className="flex w-full !min-h-[500px]">
           <Splitter.Panel
             className="w-fit"
-            defaultSize={'25%'}
-            min="25%"
-            max="25%"
+            defaultSize={'40%'}
+            min="40%"
+            max="40%"
           >
             <div className="pt-5">
               <Title className="!text-2xl mb-5">Record Timeline</Title>
             </div>
             <DescLeft />
           </Splitter.Panel>
-          <Splitter.Panel defaultSize="50%" min="50%" max="50%">
+          <Splitter.Panel defaultSize="60%" min="60%" max="60%">
             <div className="p-5">
               {type === 'HEALTH_RECORD' && (
                 <FormComponent
@@ -243,19 +241,6 @@ const HealthRecordCow = ({ cowId, data, mutate }: HealthRecordCowProps) => {
                 </FormComponent>
               )}
             </div>
-          </Splitter.Panel>
-          <Splitter.Panel defaultSize="25%" className="w-fit">
-            {type === undefined || type === 'HEALTH_RECORD' ? (
-              <></>
-            ) : illness?.illnessDetails.length === 0 ? (
-              <Empty />
-            ) : (
-              <>
-                <IllnessDetailComponent
-                  data={illness?.illnessDetails as IllnessDetail[]}
-                />
-              </>
-            )}
           </Splitter.Panel>
         </Splitter>
       )}

@@ -1,16 +1,18 @@
 import { Form, Steps } from 'antd';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
-import ButtonComponent from '../../../../components/Button/ButtonComponent';
-import FormComponent from '../../../../components/Form/FormComponent';
-import WhiteBackground from '../../../../components/UI/WhiteBackground';
-import useFetcher from '../../../../hooks/useFetcher';
-import useToast from '../../../../hooks/useToast';
-import { Cow } from '../../../../model/Cow/Cow';
+import ButtonComponent from '@components/Button/ButtonComponent';
+import FormComponent from '@components/Form/FormComponent';
+import WhiteBackground from '@components/UI/WhiteBackground';
+import useFetcher from '@hooks/useFetcher';
+import useToast from '@hooks/useToast';
+import { Cow } from '@model/Cow/Cow';
 import CreateCowInformation from './CreateCowInformation/CreateCowInformation';
-import AnimationAppear from '../../../../components/UI/AnimationAppear';
+import AnimationAppear from '@components/UI/AnimationAppear';
 import HealthRecordInformation from './CreateCowInformation/HealthRecordInformation';
 import { useTranslation } from 'react-i18next';
+import { COW_PATH } from '@service/api/Cow/cowApi';
+import { HEALTH_RECORD_PATH } from '@service/api/HealthRecord/healthRecordApi';
 
 const CreateCow = () => {
   const [form] = Form.useForm();
@@ -18,10 +20,10 @@ const CreateCow = () => {
   const [disabledButton, setDisabledButton] = useState(true);
   const [currentStep, setCurrentStep] = useState(0);
   const [inforData, setInforData] = useState<Cow>();
-  const { trigger, isLoading } = useFetcher('cows/create', 'POST');
+  const { trigger, isLoading } = useFetcher(COW_PATH.COW_CREATE, 'POST');
   const { t } = useTranslation();
   const { isLoading: isLoadingHealthRecord, trigger: triggerHealthRecord } =
-    useFetcher('health-record', 'POST');
+    useFetcher(HEALTH_RECORD_PATH.CREATE_HEALTH_RECORD, 'POST');
   const toast = useToast();
 
   useEffect(() => {

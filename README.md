@@ -5,16 +5,14 @@
 # structure
 - public
 - src
-  - assets
   - components
   - config 
     - axios
+    - i18n
     - routes
   - core
     - layout
     - store
-      - slice
-      store.ts
   - hooks
   - pages
   - service
@@ -22,6 +20,3 @@
     - model
   - styles
   - utils
-  App.tsx
-  index.scss
-  main.tsx

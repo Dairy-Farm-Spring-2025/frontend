@@ -5,7 +5,9 @@ import { useNavigate } from 'react-router-dom';
 import useToast from '../../../../../../../hooks/useToast';
 import useFetcher from '../../../../../../../hooks/useFetcher';
 import useModal from '../../../../../../../hooks/useModal';
-import TableComponent, { Column } from '../../../../../../../components/Table/TableComponent';
+import TableComponent, {
+  Column,
+} from '../../../../../../../components/Table/TableComponent';
 import SelectComponent from '../../../../../../../components/Select/SelectComponent';
 import ButtonComponent from '../../../../../../../components/Button/ButtonComponent';
 // import PopconfirmComponent from '../../../../../../../components/Popconfirm/PopconfirmComponent';
@@ -18,7 +20,10 @@ import { useTranslation } from 'react-i18next';
 const ListExports = () => {
   const navigate = useNavigate();
   const toast = useToast();
-  const { data, isLoading, mutate } = useFetcher<any[] | []>('export_items', 'GET');
+  const { data, isLoading, mutate } = useFetcher<any[] | []>(
+    'export_items',
+    'GET'
+  );
   // const { isLoading: deleteLoading, trigger } = useFetcher(`export_items/delete`, 'DELETE');
   const { isLoading: updateLoading, trigger: triggerUpdate } = useFetcher(
     'export_items/update',
@@ -90,12 +95,6 @@ const ListExports = () => {
   // Columns for the table
   const column: Column[] = [
     {
-      dataIndex: 'exportItemId',
-      key: 'exportItemId',
-      title: '#',
-      render: (_, __, index) => index + 1,
-    },
-    {
       dataIndex: 'quantity',
       key: 'quantity',
       title: t('Quantity'),
@@ -108,21 +107,24 @@ const ListExports = () => {
       render: (data) => (
         <div>
           <div>{data?.itemEntity?.name}</div>
-          <div className='text-sm text-gray-500'>{data?.itemEntity?.categoryEntity?.name}</div>
+          <div className="text-sm text-gray-500">
+            {data?.itemEntity?.categoryEntity?.name}
+          </div>
         </div>
       ),
     },
     {
       dataIndex: 'itemBatchEntity',
       key: 'warehouseLocation',
-      title: t('Warehouse Location'),
+      title: t('Storage Location'),
       render: (data) => data?.itemEntity?.warehouseLocationEntity?.name,
     },
     {
       dataIndex: 'itemBatchEntity',
       key: 'expiryDate',
       title: t('Expiry Date'),
-      render: (data) => (data?.expiryDate ? formatDate(data.expiryDate) : 'N/A'),
+      render: (data) =>
+        data?.expiryDate ? formatDate(data.expiryDate) : 'N/A',
     },
     {
       dataIndex: 'exportDate',
@@ -139,7 +141,7 @@ const ListExports = () => {
         if (data == 'pending') {
           return (
             <SelectComponent
-              className='w-full'
+              className="w-full"
               options={EXPORT_STATUS_OPTIONS}
               defaultValue={data}
               onChange={(value) => handleAction(record?.exportItemId, value)}
@@ -149,7 +151,7 @@ const ListExports = () => {
         }
 
         // Show simple text when status is "cancel"
-        return <Tag color='red'>{data}</Tag>;
+        return <Tag color="red">{data}</Tag>;
       },
     },
     {
@@ -163,8 +165,8 @@ const ListExports = () => {
       key: 'action',
       title: t('Action'),
       render: (data) => (
-        <div className='flex gap-4'>
-          <ButtonComponent type='primary' onClick={() => navigate(`${data}`)}>
+        <div className="flex gap-4">
+          <ButtonComponent type="primary" onClick={() => navigate(`${data}`)}>
             View Detail
           </ButtonComponent>
           {/* <PopconfirmComponent
@@ -183,7 +185,7 @@ const ListExports = () => {
   return (
     <AnimationAppear>
       <WhiteBackground>
-        <div className='flex justify-between items-center mb-4'>
+        <div className="flex justify-between items-center mb-4">
           {/* <Tooltip
             title={
               isBulkActionDisabled
@@ -196,7 +198,7 @@ const ListExports = () => {
             </Dropdown>
           </Tooltip> */}
         </div>
-        <Divider className='!my-4' />
+        <Divider className="!my-4" />
         <TableComponent
           columns={column}
           dataSource={data}

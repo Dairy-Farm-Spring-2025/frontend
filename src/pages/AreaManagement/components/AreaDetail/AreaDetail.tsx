@@ -18,6 +18,9 @@ import { useTranslation } from 'react-i18next';
 import ButtonComponent from '@components/Button/ButtonComponent';
 import useModal from '@hooks/useModal';
 import ModalCreatePen from '../ModalCreatePen';
+import { AREA_PATH } from '@service/api/Area/areaApi';
+import { PEN_PATH } from '@service/api/Pen/penApi';
+import { useEffect } from 'react';
 
 const AreaDetail = () => {
   const { id } = useParams();
@@ -27,21 +30,19 @@ const AreaDetail = () => {
     data: area,
     isLoading: isLoadingArea,
     mutate,
-  } = useFetcher<Area>(`areas/${id}`);
+  } = useFetcher<Area>(AREA_PATH.AREA_DETAIL(id ? id : ''));
   const {
     data: pens,
     isLoading: isLoadingPens,
     mutate: mutatePen,
-  } = useFetcher<Pen[]>(`pens/area/${id}`);
+  } = useFetcher<Pen[]>(PEN_PATH.PEN_AREA(id ? id : ''));
   const { t } = useTranslation();
 
+  useEffect(() => {
+    console.log(pens);
+  }, []);
+
   const columns: Column[] = [
-    {
-      dataIndex: 'penId',
-      key: 'penId',
-      title: '#',
-      render: (_, __, index) => index + 1,
-    },
     {
       dataIndex: 'createdAt',
       key: 'createdAt',
@@ -127,7 +128,7 @@ const AreaDetail = () => {
     <AnimationAppear>
       <WhiteBackground>
         <div className="p-4">
-          <div className="flex justify-between">
+          <div className="flex flex-col">
             <div>
               <h2 className="text-2xl font-bold">{area.name}</h2>
 
@@ -141,7 +142,9 @@ const AreaDetail = () => {
                 <strong>Số Pen có thể chứa:</strong> {numPensX * numPensY}
               </p>
             </div>
-            <AreaDimension area={area} pens={pens as Pen[]} />
+            <div className="h-full">
+              <AreaDimension area={area} pens={pens as Pen[]} />
+            </div>{' '}
           </div>
           <Divider />
 

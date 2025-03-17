@@ -15,44 +15,28 @@ const HealthRecordForm = ({ loading }: HealthRecordFormProps) => {
   return (
     <div>
       <Title className="!text-2xl mb-5">Health Record: </Title>
-      <div className="flex flex-col gap-8 w-full">
-        <div className="grid grid-cols-2 gap-5">
-          <FormItemComponent
-            rules={[{ required: true }]}
-            name="status"
-            label={<LabelForm>Status:</LabelForm>}
-          >
-            <SelectComponent
-              disabled={loading}
-              options={HEALTH_RECORD_STATUS}
-            />
-          </FormItemComponent>
-          <FormItemComponent
-            rules={[{ required: true }]}
-            name="period"
-            label={<LabelForm>Period:</LabelForm>}
-          >
-            <SelectComponent disabled={loading} options={cowStatus} />
-          </FormItemComponent>
-        </div>
-      </div>
-      <div className="flex flex-col gap-8 w-full">
-        <div className="grid grid-cols-2 gap-5">
-          <FormItemComponent
-            rules={[{ required: true }]}
-            name="weight"
-            label={<LabelForm>Weight (kilogram):</LabelForm>}
-          >
-            <InputComponent.Number disabled={loading} />
-          </FormItemComponent>
-          <FormItemComponent
-            rules={[{ required: true }]}
-            name="size"
-            label={<LabelForm>Size (meter):</LabelForm>}
-          >
-            <InputComponent.Number disabled={loading} />
-          </FormItemComponent>
-        </div>
+      <div className="flex flex-col gap-2 w-full">
+        <FormItemComponent
+          rules={[{ required: true }]}
+          name="status"
+          label={<LabelForm>Status:</LabelForm>}
+        >
+          <SelectComponent disabled={loading} options={HEALTH_RECORD_STATUS} />
+        </FormItemComponent>
+        <FormItemComponent
+          rules={[{ required: true }]}
+          name="period"
+          label={<LabelForm>Period:</LabelForm>}
+        >
+          <SelectComponent disabled={loading} options={cowStatus} />
+        </FormItemComponent>
+        <FormItemComponent
+          rules={[{ required: true }]}
+          name="size"
+          label={<LabelForm>Size (meter):</LabelForm>}
+        >
+          <InputComponent.Number disabled={loading} />
+        </FormItemComponent>
       </div>
       <FormItemComponent name="cowId" hidden>
         <InputComponent />

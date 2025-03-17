@@ -1,10 +1,8 @@
 import { BarChartOutlined, CalendarOutlined } from '@ant-design/icons';
-import TabsComponent, {
-  TabsItemProps,
-} from '../../../../components/Tabs/TabsComponent';
+import TabsComponent, { TabsItemProps } from '@components/Tabs/TabsComponent';
 import DailyMilkTotalMonth from './components/DailyMilkTotalMonth';
-import AnimationAppear from '../../../../components/UI/AnimationAppear';
-import WhiteBackground from '../../../../components/UI/WhiteBackground';
+import AnimationAppear from '@components/UI/AnimationAppear';
+import WhiteBackground from '@components/UI/WhiteBackground';
 import DailyMilkTotalDate from './components/DailyMilkTotalDate';
 import { useTranslation } from 'react-i18next';
 

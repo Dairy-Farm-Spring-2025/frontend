@@ -1,37 +1,51 @@
+import { useTranslation } from 'react-i18next';
 import TabsComponent, {
   TabsItemProps,
 } from '../../../../../components/Tabs/TabsComponent';
 import DailyRecordDate from './components/DailyMilkRecordItems/DailyRecordDate';
 import DailyRecordMonth from './components/DailyMilkRecordItems/DailyRecordMonth';
 import { BarChartOutlined, CalendarOutlined } from '@ant-design/icons';
+import DailyRecordRange from './components/DailyMilkRecordItems/DailyRecordRange';
 
 interface DailyMilkRecordProps {
   id: any;
 }
 
 const DailyMilkRecord = ({ id }: DailyMilkRecordProps) => {
+  const { t } = useTranslation();
   const items: TabsItemProps['items'] = [
     {
       key: 'dateRecord',
-      label: 'Date Record',
+      label: t('Daily record'),
       children: <DailyRecordDate id={id} />,
       icon: <CalendarOutlined />,
     },
     {
+      key: 'rangeRecord',
+      label: t('Range record'),
+      children: <DailyRecordRange id={id} />,
+      icon: <BarChartOutlined />,
+    },
+    {
       key: 'monthRecord',
-      label: 'Monthly Record',
+      label: t('Monthly record'),
       children: <DailyRecordMonth id={id} />,
       icon: <BarChartOutlined />,
     },
   ];
   return (
-    <TabsComponent
-      defaultActiveKey="date"
-      items={items}
-      tabPosition="left"
-      centered={true}
-      className="min-h-[500px]"
-    />
+    <div>
+      <div className="text-center mb-5">
+        <p className="text-lg font-bold text-primary">{t('Milk record')}</p>
+      </div>
+      <TabsComponent
+        defaultActiveKey="date"
+        items={items}
+        tabPosition="left"
+        centered={true}
+        className="min-h-full"
+      />
+    </div>
   );
 };
 

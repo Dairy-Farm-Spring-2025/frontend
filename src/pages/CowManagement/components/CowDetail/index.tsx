@@ -2,34 +2,39 @@ import {
   FunnelPlotOutlined,
   PlusCircleOutlined,
   ProfileOutlined,
-  SaveOutlined,
+  RetweetOutlined,
 } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import TabsComponent, {
-  TabsItemProps,
-} from '../../../../components/Tabs/TabsComponent';
-import AnimationAppear from '../../../../components/UI/AnimationAppear';
-import WhiteBackground from '../../../../components/UI/WhiteBackground';
+import TabsComponent, { TabsItemProps } from '@components/Tabs/TabsComponent';
+import AnimationAppear from '@components/UI/AnimationAppear';
+import WhiteBackground from '@components/UI/WhiteBackground';
+import useFetcher from '@hooks/useFetcher';
+import { Cow, HealthResponse } from '@model/Cow/Cow';
+import { DailyMilkModel } from '@model/DailyMilk/DailyMilk';
 import DailyMilk from './TabsItem/DailyMilk';
 import CowGeneralInformation from './TabsItem/GeneralInformation';
-import useFetcher from '../../../../hooks/useFetcher';
-import { DailyMilkModel } from '../../../../model/DailyMilk/DailyMilk';
-import DailyMilkRecord from './TabsItem/DailyMilkRecord';
 import HealthRecordCow from './TabsItem/HealthRecordCow';
-import { Cow, HealthResponse } from '../../../../model/Cow/Cow';
-
+import HistoryMoveCow from './TabsItem/HistoryMoveCow';
+import { COW_PATH } from '@service/api/Cow/cowApi';
+import { DAILY_MILK_PATH } from '@service/api/DailyMilk/dailyMilkApi';
 const CowDetail = () => {
+  const { t } = useTranslation();
   const { id } = useParams();
+
   const {
     data: dataMilk,
     isLoading: isLoadingDaily,
     mutate: mutateDaily,
-  } = useFetcher<DailyMilkModel[]>(`dailymilks/cow/${id}`, 'GET');
+  } = useFetcher<DailyMilkModel[]>(
+    DAILY_MILK_PATH.DAILY_MILKS_COWS(id ? id : ''),
+    'GET'
+  );
   const {
     data: dataDetail,
     isLoading: isLoadingDetail,
     mutate: mutateDetail,
-  } = useFetcher<Cow>(`cows/${id}`, 'GET');
+  } = useFetcher<Cow>(COW_PATH.COW_DETAIL(id ? id : ''), 'GET');
 
   // const { data: dataDetailQR, isLoading: isLoadingDetailQR } = useFetcher<any>(
   //   `cows/qr/${id}`,
@@ -38,7 +43,7 @@ const CowDetail = () => {
   const items: TabsItemProps['items'] = [
     {
       key: 'information',
-      label: 'General Information',
+      label: t('General information'),
       children: (
         <CowGeneralInformation
           id={id as string}
@@ -51,7 +56,7 @@ const CowDetail = () => {
     },
     {
       key: 'health',
-      label: 'Health Record',
+      label: t('Health record'),
       children: (
         <HealthRecordCow
           cowId={id as string}
@@ -63,7 +68,7 @@ const CowDetail = () => {
     },
     {
       key: 'milk',
-      label: 'Daily Milk',
+      label: t('Daily milk'),
       children: (
         <DailyMilk
           detailCow={dataDetail as Cow}
@@ -76,18 +81,21 @@ const CowDetail = () => {
       icon: <FunnelPlotOutlined />,
     },
     {
-      key: 'record',
-      label: 'Daily Milk Record',
-      children: <DailyMilkRecord id={id} />,
-      icon: <SaveOutlined />,
+      key: 'history',
+      label: t('Move cow'),
+      children: (
+        <HistoryMoveCow id={id as string} isLoadingHistory={isLoadingDetail} />
+      ),
+      icon: <RetweetOutlined />,
     },
   ];
   return (
     <AnimationAppear>
       <WhiteBackground className="min-h-[70vh]">
-        <p className="text-4xl font-bold !h-fit my-4 text-primary">
-          {dataDetail?.name}
-        </p>
+        <div className="flex items-center justify-between my-4">
+          <p className="text-4xl font-bold text-primary">{dataDetail?.name}</p>
+        </div>
+
         <TabsComponent
           items={items}
           destroyInactiveTabPane

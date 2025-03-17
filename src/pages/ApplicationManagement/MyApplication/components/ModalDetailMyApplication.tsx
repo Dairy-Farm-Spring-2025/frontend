@@ -9,6 +9,7 @@ import ModalComponent from '../../../../components/Modal/ModalComponent';
 import useFetcher from '../../../../hooks/useFetcher';
 import { Application } from '../../../../model/ApplicationType/application';
 import { formatDateHour } from '../../../../utils/format';
+import { APPLICATION_PATH } from '@service/api/Application/applicationApi';
 
 interface ModalDetailMyApplicationProps {
   modal: any;
@@ -27,7 +28,7 @@ const ModalDetailMyApplication = ({
     data,
     isLoading: isLoadingDetail,
     mutate: mutateEdit,
-  } = useFetcher<Application>(`application/${id}`, 'GET');
+  } = useFetcher<Application>(APPLICATION_PATH.APPLICATION_DETAIL(id), 'GET');
 
   useEffect(() => {
     if (data) {
