@@ -60,7 +60,7 @@ const ListItemManagement = () => {
         data.children ? (
           <strong>{name}</strong>
         ) : (
-          <TextLink to={`${data.itemId}`}>{name}</TextLink>
+          <TextLink to={`../${data.itemId}`}>{name}</TextLink>
         ),
       searchable: true,
       width: 300,

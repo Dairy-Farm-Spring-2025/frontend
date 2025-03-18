@@ -67,6 +67,13 @@ const ModalCreateArea = ({ mutate, modal }: ModalCreateAreaProps) => {
   };
 
   useEffect(() => {
+    if (modal.open) {
+      form.resetFields(); // Reset form khi modal mở
+      setDisabledButton(true); // Disable nút ngay từ đầu
+    }
+  }, [form, modal.open]);
+
+  useEffect(() => {
     const isButtonDisabled =
       !formValues || Object.values(formValues).some((value) => !value);
     setDisabledButton(isButtonDisabled);
@@ -97,6 +104,7 @@ const ModalCreateArea = ({ mutate, modal }: ModalCreateAreaProps) => {
     setAreaTypeSelected(null);
     modal.closeModal();
     form.resetFields();
+    setOpen(false);
   };
 
   return (
@@ -116,7 +124,7 @@ const ModalCreateArea = ({ mutate, modal }: ModalCreateAreaProps) => {
       >
         <FormComponent form={form} onFinish={onFinish}>
           <FormItemComponent
-            rules={[{ required: true, message: 'Area type is required' }]}
+            rules={[{ required: true }]}
             name="areaType"
             label={<LabelForm>{t('Area Type')}:</LabelForm>}
           >

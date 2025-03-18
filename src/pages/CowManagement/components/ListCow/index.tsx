@@ -1,23 +1,23 @@
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
-import useModal from '@hooks/useModal';
-import CreateBulkModal from '@pages/CowPenManagement/components/MoveCowManagement/components/ListCowNotInPen/components/CreateBulk/CreateBulk';
-import { COW_PATH } from '@service/api/Cow/cowApi';
-import { Divider, Image } from 'antd';
-import { useEffect, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { IoMdFemale, IoMdMale } from 'react-icons/io';
-import cowImage from '../../../../assets/cow.jpg';
+import ErrorComponent from '@components/Error/ErrorComponent';
 import TableComponent, { Column } from '@components/Table/TableComponent';
 import AnimationAppear from '@components/UI/AnimationAppear';
 import TextLink from '@components/UI/TextLink';
 import WhiteBackground from '@components/UI/WhiteBackground';
 import useFetch from '@hooks/useFetcher';
-import useToast from '@hooks/useToast';
+import useModal from '@hooks/useModal';
 import { Cow } from '@model/Cow/Cow';
+import CreateBulkModal from '@pages/CowPenManagement/components/MoveCowManagement/components/ListCowNotInPen/components/CreateBulk/CreateBulk';
+import { COW_PATH } from '@service/api/Cow/cowApi';
 import { cowOrigin, cowOriginFiltered } from '@service/data/cowOrigin';
 import { cowStatus } from '@service/data/cowStatus';
 import { formatDateHour, formatSTT } from '@utils/format';
 import { getLabelByValue } from '@utils/getLabel';
+import { Divider, Image } from 'antd';
+import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { IoMdFemale, IoMdMale } from 'react-icons/io';
+import cowImage from '../../../../assets/cow.jpg';
 
 const ListCow = () => {
   const { t } = useTranslation();
@@ -28,7 +28,6 @@ const ListCow = () => {
     isLoading,
     mutate: mutateCows,
   } = useFetch<Cow[]>(COW_PATH.COWS, 'GET');
-  const toast = useToast();
   const modal = useModal();
   const columns: Column[] = [
     {
@@ -124,14 +123,7 @@ const ListCow = () => {
         ),
     },
   ];
-  useEffect(() => {
-    if (data) {
-      setCow(data);
-    }
-    if (error) {
-      toast.showError(error);
-    }
-  }, [data, error, toast]);
+
   const filteredCows: Cow[] = useMemo(
     () => (data ? data.filter((item) => !item.inPen) : []),
     [data]
@@ -140,22 +132,33 @@ const ListCow = () => {
   useEffect(() => {
     setCow(filteredCows);
   }, [filteredCows]);
+
   return (
     <AnimationAppear duration={0.5}>
       <WhiteBackground>
-        <CreateBulkModal
-          modal={modal}
-          availableCows={filteredCows}
-          mutateCows={mutateCows}
-        />
-        <Divider className="my-4" />
-        <TableComponent
-          loading={isLoading}
-          columns={columns}
-          dataSource={formatSTT(cow)}
-          // rowSelection={rowSelection} // Thêm tính năng chọn hàng
-          // rowKey="cowId" // Định danh duy nhất cho từng dòng
-        />
+        {error ? (
+          <ErrorComponent
+            status={error.code}
+            title={t('Error')}
+            subTitle={error.message}
+          />
+        ) : (
+          <>
+            <CreateBulkModal
+              modal={modal}
+              availableCows={filteredCows}
+              mutateCows={mutateCows}
+            />
+            <Divider className="my-4" />
+            <TableComponent
+              loading={isLoading}
+              columns={columns}
+              dataSource={formatSTT(cow)}
+              // rowSelection={rowSelection} // Thêm tính năng chọn hàng
+              // rowKey="cowId" // Định danh duy nhất cho từng dòng
+            />
+          </>
+        )}
       </WhiteBackground>
     </AnimationAppear>
   );

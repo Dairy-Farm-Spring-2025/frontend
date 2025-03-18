@@ -11,7 +11,7 @@ const ReactQuillComponent = ({
   const modules = {
     toolbar: {
       container: [
-        [{ header: '2' }, { header: '3' }],
+        [{ header: '2' }],
         [{ list: 'ordered' }, { list: 'bullet' }],
         ['bold', 'italic', 'underline', 'strike'],
         ['link'],

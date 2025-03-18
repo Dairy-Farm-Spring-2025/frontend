@@ -116,7 +116,6 @@ const PopoverMyTaskContent = ({
             buttonType="warning"
             icon={<FormOutlined />}
             onClick={handleOpenCreateReportModal}
-            loading={loading}
             disabled={disabledJoinTask}
           />
         </Tooltip>

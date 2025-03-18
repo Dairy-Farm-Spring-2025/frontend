@@ -2,7 +2,15 @@ import dayjs from 'dayjs';
 import { InjectionSite } from '../model/Vaccine/VaccineCycle/vaccineCycle';
 
 export const formatDateHour = (data: any) => {
-  return dayjs(data).format('DD / MM / YYYY');
+  const date = dayjs(data);
+
+  // Kiểm tra xem dữ liệu có chứa giờ không
+  const hasTime =
+    date.hour() !== 0 || date.minute() !== 0 || date.second() !== 0;
+
+  return hasTime
+    ? date.format('DD / MM / YYYY HH:mm')
+    : date.format('DD / MM / YYYY');
 };
 
 export const formatSTT = (data: any[]) => {

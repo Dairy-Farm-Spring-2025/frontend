@@ -52,21 +52,27 @@ const ModalComponent = memo(
       <ConfigProvider
         modal={{
           closable: false,
+
           styles: {
             content: {
               padding: 0,
             },
             body: {
               padding: '0px 30px',
+              overflowY: 'auto',
+              maxHeight: 600,
             },
             footer: {
               padding: '15px 30px',
+            },
+            wrapper: {
+              height: '100vh',
             },
           },
         }}
       >
         <Modal
-          onCancel={onCancel}
+          onClose={onCancel}
           className="!rounded-lg"
           title={
             <div className="flex justify-between items-center py-3 px-5 !rounded-lg">
