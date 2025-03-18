@@ -16,6 +16,7 @@ import useFetcher from '../../../../../../hooks/useFetcher';
 import useToast from '../../../../../../hooks/useToast';
 import { Item } from '../../../../../../model/Warehouse/items';
 import ListAllItem from './components/ListAllItem';
+import { getItemStatusColor } from '@utils/statusRender/itemStatusRender';
 
 const ListItemManagement = () => {
   const [optionsWarehouse, setOptionWarehouse] = useState<any[]>([]);
@@ -96,7 +97,7 @@ const ListItemManagement = () => {
       key: 'status',
       width: 150,
       render: (data) => (
-        <TagComponents color="cyan">
+        <TagComponents color={getItemStatusColor(data)}>
           {formatStatusWithCamel(data)}
         </TagComponents>
       ),

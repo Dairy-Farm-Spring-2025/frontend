@@ -1,9 +1,13 @@
 .quill-render {
   .ql-container.ql-snow {
-    border: 0;
-    .ql-editor {
-      padding: 0;
-      border: 0px;
-    }
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    border-top-right-radius: 8px;
+    border-top-left-radius: 8px;
+    padding: 4px;
+  }
+  .ql-container.ql-snow:hover {
+    border-color: green;
+    transition: border-color 0.3s;
   }
 }

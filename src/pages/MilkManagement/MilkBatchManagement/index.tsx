@@ -21,6 +21,8 @@ import {
 } from '../../../utils/format';
 import CreateMilkBatchModal from './components/ModalCreateMilkBatch/CreateMilkBatchModal';
 import ModalMilkBatchDetail from './components/ModalMilkBatchDetail';
+import TagComponents from '@components/UI/TagComponents';
+import { getMilkBatchStatusColor } from '@utils/statusRender/milkBatchStatusRender';
 
 const MilkBatchManagement = () => {
   const modalBatch = useModal();
@@ -72,7 +74,11 @@ const MilkBatchManagement = () => {
       dataIndex: 'status',
       key: 'status',
       title: t('Status'),
-      render: (data) => formatAreaType(data),
+      render: (data) => (
+        <TagComponents color={getMilkBatchStatusColor(data)}>
+          {formatAreaType(data)}
+        </TagComponents>
+      ),
     },
     {
       dataIndex: 'action',

@@ -15,6 +15,8 @@ import { EquipmentType } from '../../../../model/Warehouse/equipment';
 import ModalAddEquipment from './components/ModalAddEquipment';
 import ModalDetailEquipment from './components/ModalDeatialEquipment';
 import { formatAreaType } from '../../../../utils/format';
+import TagComponents from '@components/UI/TagComponents';
+import { getEquipmentStatusTag } from '@utils/statusRender/equipmentStatusRender';
 
 const Equipment = () => {
   const { data, isLoading, mutate } = useFetcher<EquipmentType[]>(
@@ -69,7 +71,12 @@ const Equipment = () => {
       key: 'status',
       title: t('Status'),
       render: (data) => (
-        <p className="text-base font-bold">{formatAreaType(data)}</p>
+        <TagComponents
+          color={getEquipmentStatusTag(data)}
+          className="text-base font-bold"
+        >
+          {formatAreaType(data)}
+        </TagComponents>
       ),
     },
     {
@@ -90,7 +97,6 @@ const Equipment = () => {
       title: t('Action'),
       render: (data) => (
         <div className="flex gap-5">
-
           <ButtonComponent
             type="primary"
             onClick={() => handleOpenModalDetail(data)}
