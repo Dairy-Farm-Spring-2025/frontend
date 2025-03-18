@@ -4,8 +4,12 @@ import PopconfirmComponent from '@components/Popconfirm/PopconfirmComponent';
 import TagComponents from '@components/UI/TagComponents';
 import useFetcher from '@hooks/useFetcher';
 import useToast from '@hooks/useToast';
-import { Priority, StatusTask, TaskDateRange } from '@model/Task/Task';
+import { TaskDateRange } from '@model/Task/Task';
 import { formatDateHour, formatStatusWithCamel } from '@utils/format';
+import {
+  priorityColors,
+  statusColors,
+} from '@utils/statusRender/taskStatusRender';
 import { Divider, Tooltip } from 'antd';
 import dayjs from 'dayjs';
 import { t } from 'i18next';
@@ -20,20 +24,6 @@ interface PopoverTaskContent {
   setOpenViewMore: any;
   disabledReportButton: boolean;
 }
-
-const priorityColors: Record<Priority, string> = {
-  low: 'green',
-  medium: 'yellow',
-  high: 'red',
-  critical: 'darkred',
-};
-
-const statusColors: Record<StatusTask, string> = {
-  pending: '#FEF9C3', // Light Yellow
-  inProgress: '#DBEAFE', // Light Blue
-  completed: '#D1FAE5', // Light Green
-  reviewed: '#E9D5FF', // Light Purple
-};
 
 const PopoverTaskContent = ({
   task,

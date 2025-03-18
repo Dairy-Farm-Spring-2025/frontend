@@ -1,32 +1,66 @@
 import DatePickerComponent from '@components/DatePicker/DatePickerComponent';
-import SelectComponent from '@components/Select/SelectComponent';
 import TableComponent, { Column } from '@components/Table/TableComponent';
+import TagComponents from '@components/UI/TagComponents';
 import TextTitle from '@components/UI/TextTitle';
-import Title from '@components/UI/Title';
+import useFetcher from '@hooks/useFetcher';
+import { ReportTaskDate } from '@model/Task/ReportTask';
+import { Task } from '@model/Task/Task';
+import { REPORT_TASK_PATH } from '@service/api/Task/reportTaskApi';
+import { formatStatusWithCamel } from '@utils/format';
 import dayjs from 'dayjs';
 import { t } from 'i18next';
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
+import CommentReport from './components/CommentReport';
+import { getReportTaskStatusColor } from '@utils/statusRender/reportStatusRender';
 
 const ReportTask = () => {
   const [day, setDay] = useState<any>(dayjs(new Date()));
+  const { data, isLoading } = useFetcher<ReportTaskDate[]>(
+    REPORT_TASK_PATH.REPORT_TASK_BY_DATE(dayjs(day).format('YYYY-MM-DD')),
+    'GET'
+  );
+  const [selectedTask, setSelectedTask] = useState<ReportTaskDate | null>(null);
+  useEffect(() => {
+    if (data && data?.length > 0) {
+      setSelectedTask(data[0]);
+    }
+  }, [data]);
+
   const handleChangeDay = (value: any) => {
     setDay(dayjs(value));
   };
+
   const columns: Column[] = [
     {
-      title: 'Name',
-      dataIndex: 'name',
-      key: 'name',
+      title: t('Task'),
+      dataIndex: 'taskId',
+      key: 'task',
+      render: (data: Task) => data.taskTypeId.name,
     },
     {
-      title: 'Status',
+      title: t('Status'),
       dataIndex: 'status',
       key: 'status',
+      render: (data) => (
+        <TagComponents
+          className="!text-sm"
+          color={getReportTaskStatusColor(data)}
+        >
+          {formatStatusWithCamel(data)}
+        </TagComponents>
+      ),
     },
     {
-      title: 'Type',
-      dataIndex: 'type',
+      title: t('Task type'),
+      dataIndex: 'taskId',
       key: 'type',
+      render: (data: Task) => t(data.taskTypeId.roleId.name),
+    },
+    {
+      title: t('Assignee'),
+      dataIndex: 'taskId',
+      key: 'assignee',
+      render: (data: Task) => data?.assignee?.name,
     },
   ];
   return (
@@ -42,12 +76,25 @@ const ReportTask = () => {
           />
         }
       />
-      <div className="flex gap-5">
+      <div className="flex gap-10">
         <div className="w-1/2 flex flex-col gap-5">
-          <TableComponent columns={columns} dataSource={[]} />
+          <TableComponent
+            columns={columns}
+            dataSource={data as any}
+            loading={isLoading}
+            rowKey={'taskId'}
+            onRow={(record) => ({
+              onClick: () => setSelectedTask(record),
+              style: {
+                cursor: 'pointer',
+                backgroundColor:
+                  selectedTask?.taskId === record.taskId ? '#f0f0f0' : 'white',
+              },
+            })}
+          />
         </div>
         <div className="w-1/2">
-          <Title>Comment</Title>
+          <CommentReport selectedTask={selectedTask as ReportTaskDate} />
         </div>
       </div>
     </div>
