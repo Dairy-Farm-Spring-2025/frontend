@@ -1,4 +1,4 @@
-import { AppstoreFilled, DeleteOutlined } from '@ant-design/icons';
+import { AppstoreFilled, DeleteOutlined, EyeFilled } from '@ant-design/icons';
 import ButtonComponent from '@components/Button/ButtonComponent';
 import PopconfirmComponent from '@components/Popconfirm/PopconfirmComponent';
 import TagComponents from '@components/UI/TagComponents';
@@ -6,7 +6,7 @@ import useFetcher from '@hooks/useFetcher';
 import useToast from '@hooks/useToast';
 import { Priority, StatusTask, TaskDateRange } from '@model/Task/Task';
 import { formatDateHour, formatStatusWithCamel } from '@utils/format';
-import { Divider } from 'antd';
+import { Divider, Tooltip } from 'antd';
 import dayjs from 'dayjs';
 import { t } from 'i18next';
 import { useCallback } from 'react';
@@ -15,6 +15,10 @@ interface PopoverTaskContent {
   task: TaskDateRange;
   mutate: any;
   setRefetch: any;
+  openReportTask: () => void;
+  setOpen: any;
+  setOpenViewMore: any;
+  disabledReportButton: boolean;
 }
 
 const priorityColors: Record<Priority, string> = {
@@ -35,6 +39,9 @@ const PopoverTaskContent = ({
   task,
   mutate,
   setRefetch,
+  setOpen,
+  openReportTask,
+  disabledReportButton,
 }: PopoverTaskContent) => {
   const toast = useToast();
   const isDeleteDisabled = dayjs().isAfter(dayjs(task.fromDate), 'day');
@@ -42,6 +49,14 @@ const PopoverTaskContent = ({
     `tasks/delete`,
     'DELETE'
   );
+  const handleOpenReportTask = () => {
+    setOpen((prev: any) => {
+      const newState = { ...prev };
+      Object.keys(newState).forEach((key) => (newState[key] = false));
+      return newState;
+    });
+    openReportTask();
+  };
   const handleDeleteTasks = useCallback(
     async (id: number) => {
       try {
@@ -110,6 +125,16 @@ const PopoverTaskContent = ({
           type="primary"
           icon={<AppstoreFilled />}
         />
+        <Tooltip title={t('View report')}>
+          <ButtonComponent
+            icon={<EyeFilled />}
+            shape="circle"
+            type="primary"
+            buttonType="secondary"
+            onClick={handleOpenReportTask}
+            disabled={disabledReportButton}
+          />
+        </Tooltip>
       </div>
     </div>
   );

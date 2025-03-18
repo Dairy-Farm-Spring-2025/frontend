@@ -401,5 +401,11 @@
   "Join task": "Tham gia công việc",
   "View report": "Xem báo cáo",
   "Task is expired": "Công việc đã quá hạn",
-  "Report task": "Báo cáo công việc"
+  "Report task": "Báo cáo công việc",
+  "Error": "Lỗi",
+  "task_schedule": {
+    "task_view_more": "Xem thêm {{hiddenTask}} công việc"
+  },
+  "Hide": "Ẩn",
+  "Timetable": "Thời gian biểu"
 }

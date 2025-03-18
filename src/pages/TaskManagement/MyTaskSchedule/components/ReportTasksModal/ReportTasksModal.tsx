@@ -13,7 +13,6 @@ interface ReportTasksModalProps {
 }
 
 const ReportTasksModal = ({ modal, taskId, day }: ReportTasksModalProps) => {
-  console.log(day, taskId);
   const { data, isLoading } = useFetcher(
     REPORT_TASK_PATH.REPORT_TASK_DATE(taskId, day),
     'GET'

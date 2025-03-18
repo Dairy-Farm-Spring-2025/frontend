@@ -7,20 +7,20 @@ import Title from '@components/UI/Title';
 import WhiteBackground from '@components/UI/WhiteBackground';
 import useFetcher from '@hooks/useFetcher';
 import useModal, { ModalActionProps } from '@hooks/useModal';
+import useToast from '@hooks/useToast';
 import { TaskDateRange } from '@model/Task/Task';
-import { formatStatusWithCamel } from '@utils/format';
+import { REPORT_TASK_PATH } from '@service/api/Task/reportTaskApi';
+import { TASK_PATH } from '@service/api/Task/taskApi';
 import { Popover, Select, Table } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import { t } from 'i18next';
 import React, { useEffect, useMemo, useState } from 'react';
+import ShiftTitle from '../components/ShiftTitle';
 import '../index.scss';
+import CreateReportModal from './components/CreateReportModal/CreateReportModal';
 import PopoverMyTaskContent from './components/PopoverMyTaskContent';
 import ReportTasksModal from './components/ReportTasksModal/ReportTasksModal';
-import { TASK_PATH } from '@service/api/Task/taskApi';
-import { REPORT_TASK_PATH } from '@service/api/Task/reportTaskApi';
-import useToast from '@hooks/useToast';
-import CreateReportModal from './components/CreateReportModal/CreateReportModal';
 
 const { Option } = Select;
 
@@ -110,7 +110,6 @@ const MyTaskSchedule: React.FC = () => {
   };
 
   const handleOpenPopover = (index: any, newOpen: boolean) => {
-    console.log(index);
     setOpen((prev) => ({ ...prev, [index]: newOpen }));
   };
 
@@ -159,7 +158,7 @@ const MyTaskSchedule: React.FC = () => {
               .forEach((task: TaskDateRange, taskIndex: number) => {
                 const uniqueTag = `${task.taskId}-${date}`;
                 const tagColor = stringToDarkColor(uniqueTag); // Generate color based on uniqueTag
-                const isTaskExpired = day.isBefore(dayjs(), 'day'); // Check if the task date is in the past
+                const isTaskExpired = !day.isSame(dayjs(), 'day'); // Check if the task date is in the past
                 const content = (
                   <Popover
                     key={uniqueTag}
@@ -258,18 +257,7 @@ const MyTaskSchedule: React.FC = () => {
       dataIndex: 'shift',
       key: 'shift',
       width: 80,
-      render: (data) => (
-        <p
-          className={`!px-2 !py-5 !h-full font-black text-base rounded-lg  ${
-            data === 'dayShift'
-              ? 'bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-200 '
-              : 'bg-gradient-to-r from-blue-700 via-blue-600 to-blue-500 text-white'
-          }`}
-        >
-          {data === 'dayShift' ? '☀️ ' : '🌙 '}
-          {t(formatStatusWithCamel(data))}
-        </p>
-      ),
+      render: (data) => <ShiftTitle data={data} />,
     },
     ...weekDays.map((day) => ({
       title: (

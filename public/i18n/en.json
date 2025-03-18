@@ -73,5 +73,8 @@
   "pagination": {
     "total_page": "Total {{items}} items"
   },
-  "daily_milk": "Daily milk"
+  "daily_milk": "Daily milk",
+  "task_schedule": {
+    "task_view_more": "View more {{hiddenTask}} task"
+  }
 }

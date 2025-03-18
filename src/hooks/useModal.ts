@@ -2,8 +2,8 @@ import { useCallback, useState } from 'react';
 
 export interface ModalActionProps {
   open: boolean;
-  openModal: (beforeOpenFunction?: () => void) => void;
-  closeModal: (beforeCloseFunction?: () => void) => void;
+  openModal: () => void;
+  closeModal: () => void;
   toggleModal: () => void;
 }
 
