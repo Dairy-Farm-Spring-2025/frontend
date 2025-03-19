@@ -16,9 +16,10 @@ import { t } from 'i18next';
 
 interface CommentReportProps {
   selectedTask: ReportTaskDate;
+  mutate: any;
 }
 
-const CommentReport = ({ selectedTask }: CommentReportProps) => {
+const CommentReport = ({ selectedTask, mutate }: CommentReportProps) => {
   const [form] = Form.useForm();
   const toast = useToast();
   const { isLoading, trigger } = useFetcher(
@@ -30,6 +31,7 @@ const CommentReport = ({ selectedTask }: CommentReportProps) => {
     try {
       const response = await trigger({ body: values });
       toast.showSuccess(response.message);
+      mutate();
     } catch (error: any) {
       toast.showError(error.message);
     }
@@ -58,9 +60,11 @@ const CommentReport = ({ selectedTask }: CommentReportProps) => {
           title={t('Image')}
           description={
             selectedTask && selectedTask.reportImages.length > 0 ? (
-              selectedTask?.reportImages?.map((element) => (
-                <Image src={getImage(element)} />
-              ))
+              <div className="flex gap-5">
+                {selectedTask?.reportImages?.map((element) => (
+                  <Image width={150} src={getImage(element.url)} />
+                ))}
+              </div>
             ) : (
               <p className="text-base">{t('No images found')}</p>
             )
@@ -68,7 +72,7 @@ const CommentReport = ({ selectedTask }: CommentReportProps) => {
         />
       </div>
       <Divider className="my-2" />
-      <Title>{t('Comment')}</Title>
+      <Title>{t('Review')}</Title>
       {selectedTask?.status !== 'closed' ? (
         <FormComponent form={form} onFinish={handleFinish}>
           <FormItemComponent

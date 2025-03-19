@@ -13,7 +13,6 @@ import {
 import ApplicationManagement from '@pages/ApplicationManagement';
 import Application from '@pages/ApplicationManagement/Application-management';
 import ApplicationType from '@pages/ApplicationManagement/ApplicationType';
-
 import ErrorPageNotification from '@pages/Error';
 import TaskManagement from '@pages/TaskManagement';
 import TaskType from '@pages/TaskManagement/TaskType';
@@ -28,8 +27,8 @@ const TaskSchedule = lazy(
 const AreaDetail = lazy(
   () => import('@pages/AreaManagement/components/AreaDetail/AreaDetail')
 );
-const AreaList = lazy(
-  () => import('@pages/AreaManagement/components/AreaList/AreaList')
+const AreaAndPenTab = lazy(
+  () => import('@pages/AreaManagement/components/index')
 );
 const DetailFeedMeal = lazy(
   () => import('@pages/FeedManagement/FeedMeal/components/DetailFeedMeal')
@@ -302,7 +301,7 @@ const AppRouting = () => {
           path: 'area-management',
           element: SuspenseWrapper(<AreaAndPenManagement />),
           children: [
-            { path: '', element: SuspenseWrapper(<AreaList />) },
+            { path: '', element: SuspenseWrapper(<AreaAndPenTab />) },
             { path: ':id', element: SuspenseWrapper(<AreaDetail />) },
           ],
         },

@@ -195,7 +195,7 @@ const CardAreaPen = ({ element, handleEdit }: CardAreaPenProps) => {
           className="!shadow-none"
           columns={columns}
           dataSource={element?.pens ? formatSTT(element?.pens) : []}
-          pagination={false}
+          pagination={{ pageSize: 5 }}
         />
       </div>
     </CardComponent>

@@ -1,20 +1,14 @@
-import AnimationAppear from '@components/UI/AnimationAppear';
-import WhiteBackground from '@components/UI/WhiteBackground';
-import useFetcher from '@hooks/useFetcher';
+import InputComponent from '@components/Input/InputComponent';
 import useModal from '@hooks/useModal';
-import useToast from '@hooks/useToast';
 import { Area } from '@model/Area';
 import { Pen } from '@model/Pen';
-import { AREA_PATH } from '@service/api/Area/areaApi';
-import { PEN_PATH } from '@service/api/Pen/penApi';
 import { Divider, Pagination, PaginationProps, Spin } from 'antd';
-import { useEffect, useState } from 'react';
+import { t } from 'i18next';
+import { useState } from 'react';
 import '../../index.scss';
 import ModalCreateArea from '../ModalCreateArea/ModalCreateArea';
 import ModalEditPens from '../ModalEditPen';
 import CardAreaPen from './components/CardAreaPen';
-import { t } from 'i18next';
-import InputComponent from '@components/Input/InputComponent';
 
 export type DataGroupAreaPen = {
   area: Area;
@@ -23,34 +17,18 @@ export type DataGroupAreaPen = {
 
 const ITEMS_PER_PAGE = 6;
 
-const AreaList = () => {
+interface AreaListProps {
+  dataGroup: DataGroupAreaPen[];
+  mutate: any;
+  isLoading: boolean;
+}
+
+const AreaList = ({ dataGroup, mutate, isLoading }: AreaListProps) => {
   const modalEdit = useModal();
   const modalCreate = useModal();
-  const { data, isLoading, mutate } = useFetcher<Pen[]>(PEN_PATH.PENS, 'GET');
-  const { data: dataArea, error } = useFetcher<Area[]>(AREA_PATH.AREAS, 'GET');
   const [id, setId] = useState<number>(0);
-  const [dataGroup, setDataGroup] = useState<DataGroupAreaPen[]>([]);
   const [searchText, setSearchText] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const toast = useToast();
-
-  useEffect(() => {
-    if (dataArea) {
-      const groupedData: DataGroupAreaPen[] = dataArea.map((area) => ({
-        area,
-        pens:
-          data?.filter((pen) => pen.area?.areaId === area.areaId).slice(0, 5) ||
-          [],
-      }));
-      setDataGroup(groupedData);
-    }
-  }, [data, dataArea]);
-
-  useEffect(() => {
-    if (error) {
-      toast.showError(error.message);
-    }
-  }, [error]);
 
   const handleEdit = (id: number) => {
     setId(id);
@@ -80,44 +58,42 @@ const AreaList = () => {
   if (isLoading) return <Spin />;
 
   return (
-    <AnimationAppear duration={0.5}>
-      <WhiteBackground>
-        <ModalCreateArea modal={modalCreate} mutate={mutate} />
-        <ModalEditPens id={id} modal={modalEdit} mutate={mutate} />
-        <Divider className="my-4" />
-        <div className="flex flex-col gap-5 mb-5">
-          <InputComponent.Search
-            allowClear
-            onSearch={(e) => setSearchText(e)}
-            className="!w-[49%]"
-          />
-          {searchText !== '' && (
-            <p className="text-blue-600">
-              {filteredData.length}{' '}
-              {filteredData.length > 1 ? t('results') : t('result')}
-            </p>
-          )}
+    <>
+      <ModalCreateArea modal={modalCreate} mutate={mutate} />
+      <ModalEditPens id={id} modal={modalEdit} mutate={mutate} />
+      <Divider className="my-4" />
+      <div className="flex flex-col gap-5 mb-5">
+        <InputComponent.Search
+          allowClear
+          onSearch={(e) => setSearchText(e)}
+          className="!w-[49%]"
+        />
+        {searchText !== '' && (
+          <p className="text-blue-600">
+            {filteredData.length}{' '}
+            {filteredData.length > 1 ? t('results') : t('result')}
+          </p>
+        )}
+      </div>
+      <div>
+        <div className="grid grid-cols-2 gap-10">
+          {paginatedData.map((element) => (
+            <CardAreaPen element={element} handleEdit={handleEdit} />
+          ))}
         </div>
-        <div>
-          <div className="grid grid-cols-2 gap-10">
-            {paginatedData.map((element) => (
-              <CardAreaPen element={element} handleEdit={handleEdit} />
-            ))}
-          </div>
-        </div>
-        <div className="w-full flex justify-center">
-          <Pagination
-            current={currentPage}
-            pageSize={ITEMS_PER_PAGE}
-            total={filteredData.length}
-            showSizeChanger={false}
-            showTotal={showTotal}
-            onChange={(page) => setCurrentPage(page)}
-            className="mt-5"
-          />
-        </div>
-      </WhiteBackground>
-    </AnimationAppear>
+      </div>
+      <div className="w-full flex justify-center">
+        <Pagination
+          current={currentPage}
+          pageSize={ITEMS_PER_PAGE}
+          total={filteredData.length}
+          showSizeChanger={false}
+          showTotal={showTotal}
+          onChange={(page) => setCurrentPage(page)}
+          className="mt-5"
+        />
+      </div>
+    </>
   );
 };
 

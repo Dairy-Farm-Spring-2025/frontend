@@ -1,4 +1,5 @@
 import DatePickerComponent from '@components/DatePicker/DatePickerComponent';
+import EmptyComponent from '@components/Error/EmptyComponent';
 import TableComponent, { Column } from '@components/Table/TableComponent';
 import TagComponents from '@components/UI/TagComponents';
 import TextTitle from '@components/UI/TextTitle';
@@ -7,27 +8,33 @@ import { ReportTaskDate } from '@model/Task/ReportTask';
 import { Task } from '@model/Task/Task';
 import { REPORT_TASK_PATH } from '@service/api/Task/reportTaskApi';
 import { formatStatusWithCamel } from '@utils/format';
+import { getReportTaskStatusColor } from '@utils/statusRender/reportStatusRender';
 import dayjs from 'dayjs';
 import { t } from 'i18next';
 import { useEffect, useState } from 'react';
 import CommentReport from './components/CommentReport';
-import { getReportTaskStatusColor } from '@utils/statusRender/reportStatusRender';
 
 const ReportTask = () => {
   const [day, setDay] = useState<any>(dayjs(new Date()));
-  const { data, isLoading } = useFetcher<ReportTaskDate[]>(
+  const { data, isLoading, mutate } = useFetcher<ReportTaskDate[]>(
     REPORT_TASK_PATH.REPORT_TASK_BY_DATE(dayjs(day).format('YYYY-MM-DD')),
     'GET'
   );
   const [selectedTask, setSelectedTask] = useState<ReportTaskDate | null>(null);
+
   useEffect(() => {
     if (data && data?.length > 0) {
       setSelectedTask(data[0]);
     }
-  }, [data]);
+  }, [data, day]);
 
   const handleChangeDay = (value: any) => {
     setDay(dayjs(value));
+  };
+
+  const handleMutate = async () => {
+    await mutate();
+    setDay(day);
   };
 
   const columns: Column[] = [
@@ -94,7 +101,14 @@ const ReportTask = () => {
           />
         </div>
         <div className="w-1/2">
-          <CommentReport selectedTask={selectedTask as ReportTaskDate} />
+          {data && data.length > 0 ? (
+            <CommentReport
+              mutate={handleMutate}
+              selectedTask={selectedTask as ReportTaskDate}
+            />
+          ) : (
+            <EmptyComponent />
+          )}
         </div>
       </div>
     </div>

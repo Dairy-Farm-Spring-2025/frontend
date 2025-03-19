@@ -77,7 +77,11 @@ const PopoverTaskContent = ({
         <p className="text-black font-bold flex items-center gap-1 col-span-2">
           <span
             className="w-3 h-3 rounded-full"
-            style={{ backgroundColor: statusColors[task.status] }}
+            style={{
+              backgroundColor: task?.reportTask
+                ? statusColors[task.status]
+                : '#DEDEDE',
+            }}
           ></span>
           {t(formatStatusWithCamel(task?.status))}
         </p>

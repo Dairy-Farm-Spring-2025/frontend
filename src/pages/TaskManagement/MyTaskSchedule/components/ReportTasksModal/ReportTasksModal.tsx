@@ -10,6 +10,7 @@ interface ReportTasksModalProps {
   taskId: number;
   mutate: any;
   day: string;
+  setRefetch: any;
 }
 
 const ReportTasksModal = ({ modal, taskId, day }: ReportTasksModalProps) => {
