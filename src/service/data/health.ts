@@ -2,6 +2,10 @@
 
 export const healthSeverity = [
     {
+        value: 'none',
+        label: 'None',
+    },
+    {
         value: 'mild',
         label: 'Mild',
     },

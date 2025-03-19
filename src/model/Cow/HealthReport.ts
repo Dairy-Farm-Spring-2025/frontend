@@ -12,13 +12,22 @@ export type Health = {
     endDate: string;
     dateOfOut: string;
     prognosis: string;
-    cowOrigin: string;
+    illnessStatus: string;
     gender: 'male' | 'female';
     cowType: CowType;
-    cowTypeEntity: CowType;
+
     userEntity: UserProfileData
     createdAt: string;
     updatedAt: string;
     inPen: boolean;
-    cowId: string;
+    cowEntity: {
+        cowId: string,
+        name: string,
+        cowStatus: string,
+        cowOrigin: string;
+        gender: string,
+        dateOfBirth: Date,
+        cowTypeEntity: CowType;
+    }
+
 };

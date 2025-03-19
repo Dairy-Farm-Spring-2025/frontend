@@ -3,7 +3,7 @@ import { HealthRecord } from './HealthRecord';
 import { IllnessCow } from './Illness';
 
 export type Cow = {
-  cowId: number;
+  cowId: string;
   name: string;
   cowStatus: CowStatus;
   dateOfBirth: string;

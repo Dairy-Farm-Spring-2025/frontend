@@ -1,4 +1,4 @@
-import { Divider, Tooltip } from 'antd';
+import { Divider, Tag, Tooltip } from 'antd';
 import { useEffect, useState } from 'react';
 import ButtonComponent from '@components/Button/ButtonComponent';
 import PopconfirmComponent from '@components/Popconfirm/PopconfirmComponent';
@@ -49,7 +49,13 @@ const IllNess = () => {
     setId(id);
     modalViewDetail.openModal();
   };
-
+  const statusColor = {
+    pending: 'blue',
+    processing: 'orange',
+    complete: 'green',
+    cancel: 'pink',
+    fail: 'red',
+  };
   const columns: Column[] = [
     {
       dataIndex: 'cowEntity',
@@ -144,6 +150,18 @@ const IllNess = () => {
         >
           <span className="text-blue-500 ">{data.name}</span>
         </Tooltip>
+      ),
+    },
+    {
+      dataIndex: 'illnessStatus',
+      key: 'illnessStatus',
+      title: t('Status'),
+      render: (status: string) => (
+        <Tag
+          color={statusColor[status as keyof typeof statusColor] || 'default'}
+        >
+          {t(status)}
+        </Tag>
       ),
     },
     {
