@@ -2,7 +2,6 @@ import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import ButtonComponent from '@components/Button/ButtonComponent';
 import AnimationAppear from '@components/UI/AnimationAppear';
 import TagComponents from '@components/UI/TagComponents';
-import Text from '@components/UI/Text';
 import Title from '@components/UI/Title';
 import WhiteBackground from '@components/UI/WhiteBackground';
 import useFetcher from '@hooks/useFetcher';
@@ -17,6 +16,7 @@ import dayjs from 'dayjs';
 import { t } from 'i18next';
 import React, { useEffect, useMemo, useState } from 'react';
 import ShiftTitle from '../components/ShiftTitle';
+import StatusTask from '../components/StatusTask';
 import '../index.scss';
 import CreateReportModal from './components/CreateReportModal/CreateReportModal';
 import PopoverMyTaskContent from './components/PopoverMyTaskContent';
@@ -31,6 +31,8 @@ const statusColors: Record<any, string> = {
   inProgress: '#DBEAFE',
   completed: '#D1FAE5',
   reviewed: '#E9D5FF',
+  processing: '#DBEAFE',
+  closed: '#D1FAE5',
 };
 const stringToDarkColor = (str: string) => {
   let hash = 0;
@@ -92,6 +94,7 @@ const MyTaskSchedule: React.FC = () => {
         url: REPORT_TASK_PATH.JOIN_TASK(id),
       });
       toast.showSuccess(response.message);
+      setRefetch(true);
     } catch (error: any) {
       toast.showError(error.message);
     }
@@ -159,6 +162,7 @@ const MyTaskSchedule: React.FC = () => {
                 const uniqueTag = `${task.taskId}-${date}`;
                 const tagColor = stringToDarkColor(uniqueTag); // Generate color based on uniqueTag
                 const isTaskExpired = !day.isSame(dayjs(), 'day'); // Check if the task date is in the past
+                console.log(task);
                 const content = (
                   <Popover
                     key={uniqueTag}
@@ -181,17 +185,19 @@ const MyTaskSchedule: React.FC = () => {
                         loading={loadingJoinTask}
                         disabledJoinTask={isTaskExpired}
                         onOpenCreateReportModal={() =>
-                          handleOpenCreateReport(task.taskId)
+                          handleOpenCreateReport(task.reportTask.reportTaskId)
                         }
                       />
                     }
                   >
                     <div
-                      className="border-2 rounded-lg border-primary"
+                      className="rounded-lg"
                       style={{
                         position: 'relative', // Always relative, no spanning
                         width: 'auto', // Fixed width, no stretching
-                        backgroundColor: statusColors[task.status],
+                        backgroundColor: task.reportTask
+                          ? statusColors[task.reportTask.status]
+                          : '#DEDEDE',
                         padding: '0px 8px',
                         fontWeight: 'bold',
                         zIndex: 1 + taskIndex, // Stack tasks vertically
@@ -199,7 +205,7 @@ const MyTaskSchedule: React.FC = () => {
                       }}
                     >
                       <div className="overflow-y-auto text-clip max-w-full">
-                        <p className="truncate">{task.taskTypeName}</p>
+                        <p className="truncate">{task.taskTypeId.name}</p>
                       </div>
                       <TagComponents
                         className="text-xs !font-bold overflow-y-auto text-clip max-w-full !py-[2px] rounded-lg !px-2"
@@ -302,24 +308,7 @@ const MyTaskSchedule: React.FC = () => {
               {t('Today')}
             </ButtonComponent>
           </div>
-          <div className="flex gap-10 mb-5">
-            <div className="flex gap-2 items-center">
-              <div className="w-4 h-4 border-[1px] border-yellow-400 rounded-xl bg-[#FEF9C3]"></div>
-              <Text>{t('Pending')}</Text>
-            </div>
-            <div className="flex gap-2 items-center">
-              <div className="w-4 h-4 border-[1px] border-blue-400 rounded-xl bg-[#DBEAFE]"></div>
-              <Text>{t('In progress')}</Text>
-            </div>
-            <div className="flex gap-2 items-center">
-              <div className="w-4 h-4 border-[1px] border-green-400 rounded-xl bg-[#D1FAE5]"></div>
-              <Text>{t('Completed')}</Text>
-            </div>
-            <div className="flex gap-2 items-center">
-              <div className="w-4 h-4 border-[1px] border-purple-400 rounded-xl bg-[#E9D5FF]"></div>
-              <Text>{t('Reviewed')}</Text>
-            </div>
-          </div>
+          <StatusTask />
           <div
             style={{
               display: 'flex',
@@ -364,11 +353,13 @@ const MyTaskSchedule: React.FC = () => {
           taskId={id}
           mutate={mutate}
           day={day}
+          setRefetch={setRefetch}
         />
         <CreateReportModal
           modal={modalCreateReport}
           mutate={mutate}
           taskId={id}
+          setRefetch={setRefetch}
         />
       </WhiteBackground>
     </AnimationAppear>

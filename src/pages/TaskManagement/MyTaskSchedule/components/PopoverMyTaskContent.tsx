@@ -58,9 +58,17 @@ const PopoverMyTaskContent = ({
         <p className="text-black font-bold flex items-center gap-1 col-span-2">
           <span
             className="w-3 h-3 rounded-full"
-            style={{ backgroundColor: statusColors[task.status] }}
+            style={{
+              backgroundColor: task?.reportTask
+                ? statusColors[task.reportTask.status]
+                : '#DEDEDE',
+            }}
           ></span>
-          {t(formatStatusWithCamel(task?.status))}
+          {t(
+            task.reportTask
+              ? formatStatusWithCamel(task?.reportTask.status)
+              : 'Not start'
+          )}
         </p>
       </div>
       <TagComponents className="text-sm" color="blue">
@@ -87,7 +95,13 @@ const PopoverMyTaskContent = ({
           />
         </Tooltip>
         <Tooltip
-          title={disabledJoinTask ? t('Task is expired') : t('Join task')}
+          title={
+            disabledJoinTask
+              ? t('Task is not available to join')
+              : task.reportTask
+              ? t('Task is reported')
+              : t('Join task')
+          }
         >
           <ButtonComponent
             shape="circle"
@@ -96,7 +110,7 @@ const PopoverMyTaskContent = ({
             icon={<ImportOutlined />}
             onClick={onJoinTask}
             loading={loading}
-            disabled={disabledJoinTask}
+            disabled={disabledJoinTask || !!task.reportTask}
           />
         </Tooltip>
         <Tooltip title={t('Report task')}>
@@ -106,7 +120,11 @@ const PopoverMyTaskContent = ({
             buttonType="warning"
             icon={<FormOutlined />}
             onClick={handleOpenCreateReportModal}
-            disabled={disabledJoinTask}
+            disabled={
+              disabledJoinTask ||
+              task.reportTask === null ||
+              task.reportTask?.description !== null
+            }
           />
         </Tooltip>
       </div>

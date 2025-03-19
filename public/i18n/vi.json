@@ -391,7 +391,7 @@
   "Create New Area": "Tạo mới khu vực",
   "Area dimension": "Kích thước khu vực",
   "Pen dimension": "Kích thước chuồng",
-  "Occupied pens": "Chuồng đang sử dụng",
+  "Occupied pens": "Chuồng sử dụng",
   "Empty pens": "Chuồng trống",
   "Damaged pens": "Chuồng hư hại",
   "pagination": {
@@ -407,5 +407,17 @@
     "task_view_more": "Xem thêm {{hiddenTask}} công việc"
   },
   "Hide": "Ẩn",
-  "Timetable": "Thời gian biểu"
+  "Timetable": "Thời gian biểu",
+  "Select task type": "Chọn loại công việc",
+  "No data found": "Không có dữ liệu",
+  "Area list": "Danh sách khu vực",
+  "Area map": "Sơ đồ khu vực",
+  "Processing": "Đang thực hiện",
+  "Closed": "Đóng",
+  "Not start": "Chưa bắt đầu",
+  "Task is not available to join": "Công việc chưa được phép tham gia",
+  "Task is reported": "Công việc đã được báo cáo",
+  "Review": "Đánh giá",
+  "Review the task": "Đánh giá công việc",
+  "No images found": "Không có ảnh"
 }

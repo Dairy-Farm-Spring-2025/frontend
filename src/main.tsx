@@ -9,6 +9,7 @@ import './index.scss';
 import './config/i18n';
 import { Suspense } from 'react';
 import { SiHappycow } from 'react-icons/si';
+import '@xyflow/react/dist/style.css';
 
 createRoot(document.getElementById('root')!).render(
   <>

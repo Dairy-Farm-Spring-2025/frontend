@@ -9,7 +9,7 @@ export interface ReportTaskByDate {
   date: string;
   comment: string;
   reviewer_id: number;
-  reportImages: string[];
+  reportImages: ImageReport[];
 }
 
 export interface ReportTaskDate {
@@ -21,8 +21,13 @@ export interface ReportTaskDate {
   date: string;
   comment: string;
   reviewer_id: number;
-  reportImages: string[];
+  reportImages: ImageReport[];
   taskId: Task;
 }
+
+type ImageReport = {
+  reportTaskImageId: number;
+  url: string;
+};
 
 export type StatusReportTask = 'pending' | 'processing' | 'closed';

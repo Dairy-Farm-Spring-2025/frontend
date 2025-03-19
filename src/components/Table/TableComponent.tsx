@@ -1,4 +1,5 @@
 import { SearchOutlined } from '@ant-design/icons';
+import EmptyComponent from '@components/Error/EmptyComponent';
 import { Button, ConfigProvider, DatePicker, Input, Select, Table } from 'antd';
 import { ColumnProps, TableProps } from 'antd/es/table';
 import dayjs from 'dayjs';
@@ -221,6 +222,9 @@ const TableComponent = ({
               {t(`result${filteredData?.length > 1 ? 's' : ''}`)})
             </p>
           )}
+          locale={{
+            emptyText: <EmptyComponent />,
+          }}
           {...props}
         />
       </ConfigProvider>
