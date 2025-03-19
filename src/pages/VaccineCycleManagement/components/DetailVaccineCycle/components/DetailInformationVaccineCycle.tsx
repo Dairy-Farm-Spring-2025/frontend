@@ -17,7 +17,6 @@ const DetailInformationVaccineCycle = ({ data }: DetailInformationVaccineCyclePr
       <div className="space-y-8">
         {/* Section 1: Vaccine Cycle Information */}
         <div>
-          <Title className="!text-xl mb-4">Vaccine Cycle Information</Title>
           <div className="mb-4">
             <TextTitle
               title={<span className="font-semibold text-gray-600">Description</span>}
