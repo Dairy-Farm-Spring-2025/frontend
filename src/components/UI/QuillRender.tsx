@@ -2,6 +2,7 @@ import ReactQuill from 'react-quill';
 import './styles/QuillRenderStyle.scss';
 interface QuillRenderProps {
   description: string; // The HTML string content
+  className?: string;
 }
 const QuillRender = ({ description }: QuillRenderProps) => {
   return (

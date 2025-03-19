@@ -10,19 +10,39 @@ import { useState } from 'react';
 import useModal from '@hooks/useModal';
 import ButtonComponent from '@components/Button/ButtonComponent';
 
+import { Divider } from 'antd';
+import CreateTaskType from './components/CreateTaskType';
+import PopconfirmComponent from '@components/Popconfirm/PopconfirmComponent';
+import { TASK_TYPE_PATH } from '@service/api/Task/taskType';
+import useToast from '@hooks/useToast';
+
 const TaskType = () => {
   const { data, isLoading, mutate } = useFetcher<any>('task_types', 'GET');
   console.log('check data: ', data);
+  const { trigger, isLoading: loadingDelete } = useFetcher(
+    'task_types',
+    'DELETE'
+  );
   const { t } = useTranslation();
   const [id, setId] = useState('');
   const modal = useModal();
   const modalDetail = useModal();
-
+  const modalCreate = useModal();
   const handleOpenModalDetail = (id: string) => {
     setId(id);
     modalDetail.openModal();
   };
 
+  const toast = useToast();
+  const onConfirm = async (id: string) => {
+    try {
+      await trigger({ url: TASK_TYPE_PATH.DELETE_TASK_TYPE(id) });
+      toast.showSuccess(t('Delete success'));
+      mutate();
+    } catch (error: any) {
+      toast.showError(error.message);
+    }
+  };
   const columns: Column[] = [
     {
       dataIndex: 'name',
@@ -48,6 +68,14 @@ const TaskType = () => {
           >
             {t('View Detail')}
           </ButtonComponent>
+          <PopconfirmComponent
+            title={t('Delete?')}
+            onConfirm={() => onConfirm(data)}
+          >
+            <ButtonComponent type="primary" danger>
+              {t('Delete')}
+            </ButtonComponent>
+          </PopconfirmComponent>
         </div>
       ),
     },
@@ -55,6 +83,8 @@ const TaskType = () => {
 
   return (
     <WhiteBackground>
+      <CreateTaskType modal={modalCreate} mutate={mutate} />
+      <Divider className="my-4" />
       <TableComponent
         columns={columns}
         dataSource={data || []}
