@@ -2,6 +2,8 @@ import { Area } from '@model/Area';
 import { TaskType } from './task-type';
 import { UserProfileData } from '@model/User';
 import { ReportTaskByDate } from './ReportTask';
+import { IllnessCow } from '@model/Cow/Illness';
+import { VaccineInjection } from '@model/Vaccine/VaccineCycle/VaccineInjection';
 
 export interface TaskPayload {
   description: string;
@@ -25,8 +27,10 @@ export interface Task {
   assigner: UserProfileData;
   assignee: UserProfileData;
   priority: Priority;
-  shift: ShiftTask;
+  shift: 'dayShift' | 'nightShift';
   completionNotes: string;
+  illness?: IllnessCow;
+  vaccineInjection?: VaccineInjection;
 }
 
 export interface TaskDateRange {

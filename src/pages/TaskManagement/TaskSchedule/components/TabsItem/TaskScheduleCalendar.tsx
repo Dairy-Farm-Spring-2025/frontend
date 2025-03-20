@@ -195,6 +195,7 @@ const TaskScheduleCalendar: React.FC = () => {
                     color="white"
                     content={
                       <PopoverTaskContent
+                        day={dayjs(day).format('YYYY-MM-DD')}
                         disabledReportButton={isTaskExpired}
                         setOpenViewMore={setOpenViewMore}
                         setOpen={setOpen}
@@ -275,6 +276,7 @@ const TaskScheduleCalendar: React.FC = () => {
                         color="white"
                         content={
                           <PopoverTaskContent
+                            day={dayjs(day).format('YYYY-MM-DD')}
                             disabledReportButton={isTaskExpired}
                             setOpenViewMore={setOpenViewMore}
                             setOpen={setOpen}
