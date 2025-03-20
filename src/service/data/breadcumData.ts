@@ -31,4 +31,5 @@ export const breadcumData: { [key: string]: string } = {
   'application-type': 'Application Type',
   dashboard: 'Dashboard',
   'daily-milk': 'Daily Milk',
+  'my-task': 'My Task',
 };

@@ -14,6 +14,7 @@ import { Divider, Tooltip } from 'antd';
 import dayjs from 'dayjs';
 import { t } from 'i18next';
 import { useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface PopoverTaskContent {
   task: TaskDateRange;
@@ -23,6 +24,7 @@ interface PopoverTaskContent {
   setOpen: any;
   setOpenViewMore: any;
   disabledReportButton: boolean;
+  day: string;
 }
 
 const PopoverTaskContent = ({
@@ -32,8 +34,10 @@ const PopoverTaskContent = ({
   setOpen,
   openReportTask,
   disabledReportButton,
+  day,
 }: PopoverTaskContent) => {
   const toast = useToast();
+  const navigate = useNavigate();
   const isDeleteDisabled = dayjs().isAfter(dayjs(task.fromDate), 'day');
   const { trigger: triggerDelete, isLoading: loadingDelete } = useFetcher(
     `tasks/delete`,
@@ -118,6 +122,7 @@ const PopoverTaskContent = ({
           shape="circle"
           type="primary"
           icon={<AppstoreFilled />}
+          onClick={() => navigate(`../${task.taskId}/${day}`)}
         />
         <Tooltip title={t('View report')}>
           <ButtonComponent

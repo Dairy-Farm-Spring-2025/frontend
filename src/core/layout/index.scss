@@ -1,5 +1,5 @@
-@use "../../styles/colors" as colors; /* Import the color variables */
-@use "../../styles/fontSize" as fontSize;
+@use '../../styles/colors' as colors; /* Import the color variables */
+@use '../../styles/fontSize' as fontSize;
 .layout-dairy {
   .sider-dairy {
     overflow-y: auto;
@@ -8,6 +8,13 @@
     ::-webkit-scrollbar {
       display: none;
     }
+  }
+  :where(.css-dev-only-do-not-override-6wrocv).ant-menu-light
+    .ant-menu-item-selected,
+  :where(.css-dev-only-do-not-override-6wrocv).ant-menu-light
+    > .ant-menu
+    .ant-menu-item-selected {
+    background-color: #cfcfcf;
   }
   :where(.css-dev-only-do-not-override-1jx9akp).ant-menu-light
     .ant-menu-item-selected,

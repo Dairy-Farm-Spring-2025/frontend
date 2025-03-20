@@ -13,30 +13,28 @@ import {
 } from '@utils/statusRender/taskStatusRender';
 import { Divider, Tooltip } from 'antd';
 import { t } from 'i18next';
+import { useNavigate } from 'react-router-dom';
 
 interface PopoverMyTaskContent {
   task: TaskDateRange;
-  onOpenModal: () => void;
   setOpen?: any;
   onJoinTask: () => void;
   loading: boolean;
   disabledJoinTask?: boolean;
   onOpenCreateReportModal: () => void;
+  day: string;
 }
 
 const PopoverMyTaskContent = ({
+  day,
   task,
-  onOpenModal,
   setOpen,
   loading,
   onJoinTask,
   onOpenCreateReportModal,
   disabledJoinTask,
 }: PopoverMyTaskContent) => {
-  const handleOpenModal = () => {
-    onOpenModal();
-    setOpen(false);
-  };
+  const navigate = useNavigate();
   const handleOpenCreateReportModal = () => {
     onOpenCreateReportModal();
     setOpen(false);
@@ -91,7 +89,7 @@ const PopoverMyTaskContent = ({
             shape="circle"
             type="primary"
             icon={<AppstoreFilled />}
-            onClick={handleOpenModal}
+            onClick={() => navigate(`${task.taskId}/${day}`)}
           />
         </Tooltip>
         <Tooltip

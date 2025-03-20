@@ -1,3 +1,4 @@
+import { UserProfileData } from '@model/User';
 import { Task } from './Task';
 
 export interface ReportTaskByDate {
@@ -8,7 +9,7 @@ export interface ReportTaskByDate {
   endTime: string;
   date: string;
   comment: string;
-  reviewer_id: number;
+  reviewer_id: UserProfileData;
   reportImages: ImageReport[];
 }
 
@@ -20,7 +21,7 @@ export interface ReportTaskDate {
   endTime: string;
   date: string;
   comment: string;
-  reviewer_id: number;
+  reviewer_id: UserProfileData;
   reportImages: ImageReport[];
   taskId: Task;
 }

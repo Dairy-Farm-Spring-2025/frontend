@@ -19,6 +19,14 @@ createRoot(document.getElementById('root')!).render(
           colorPrimary: 'rgb(22 101 52 / var(--tw-bg-opacity, 1))',
           fontFamily: 'Nunito',
         },
+        components: {
+          Select: {
+            optionSelectedBg: 'rgba(22, 101, 52, 0.1)', // ✅ Điều chỉnh nền mục đã chọn
+          },
+          Menu: {
+            itemSelectedBg: 'rgba(22, 101, 52, 0.1)',
+          },
+        },
       }}
     >
       <Provider store={store}>

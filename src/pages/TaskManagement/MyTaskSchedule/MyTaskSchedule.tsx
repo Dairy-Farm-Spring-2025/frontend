@@ -20,7 +20,7 @@ import StatusTask from '../components/StatusTask';
 import '../index.scss';
 import CreateReportModal from './components/CreateReportModal/CreateReportModal';
 import PopoverMyTaskContent from './components/PopoverMyTaskContent';
-import ReportTasksModal from './components/ReportTasksModal/ReportTasksModal';
+import WeekSelectorDropdown from '../components/WeekSelectorDropdown';
 
 const { Option } = Select;
 
@@ -52,11 +52,9 @@ const MyTaskSchedule: React.FC = () => {
       : dayjs(`${selectedYear}-01-01`).startOf('week')
   );
   const toast = useToast();
-  const modalReport = useModal<ModalActionProps>();
   const modalCreateReport = useModal<ModalActionProps>();
   const [id, setId] = useState<number>(0);
   const [open, setOpen] = useState<Record<any, boolean>>({});
-  const [day, setDay] = useState<string>('');
   const fromDate = currentWeekStart.startOf('day').format('YYYY-MM-DD');
   const toDate = currentWeekStart
     .add(6, 'day')
@@ -82,12 +80,6 @@ const MyTaskSchedule: React.FC = () => {
     fetchData();
   }, [fromDate, toDate, refetch]);
 
-  useEffect(() => {
-    if (modalReport.open === false) {
-      setId(0);
-    }
-  }, [modalReport.open]);
-
   const handleJoinTask = async (id: number) => {
     try {
       const response = await triggerJoinTask({
@@ -98,13 +90,6 @@ const MyTaskSchedule: React.FC = () => {
     } catch (error: any) {
       toast.showError(error.message);
     }
-  };
-
-  const handleOpenDetail = (id: number, day: string) => {
-    modalReport.openModal();
-    setId(id);
-    const formatDate = dayjs(day).format('YYYY-MM-DD');
-    setDay(formatDate);
   };
 
   const handleOpenCreateReport = (id: number) => {
@@ -162,7 +147,6 @@ const MyTaskSchedule: React.FC = () => {
                 const uniqueTag = `${task.taskId}-${date}`;
                 const tagColor = stringToDarkColor(uniqueTag); // Generate color based on uniqueTag
                 const isTaskExpired = !day.isSame(dayjs(), 'day'); // Check if the task date is in the past
-                console.log(task);
                 const content = (
                   <Popover
                     key={uniqueTag}
@@ -176,9 +160,7 @@ const MyTaskSchedule: React.FC = () => {
                     color="white"
                     content={
                       <PopoverMyTaskContent
-                        onOpenModal={() =>
-                          handleOpenDetail(task.taskId, day as any)
-                        }
+                        day={dayjs(day).format('YYYY-MM-DD')}
                         task={task}
                         setOpen={() => handleOpenPopover(uniqueTag, false)}
                         onJoinTask={() => handleJoinTask(task.taskId)}
@@ -303,6 +285,11 @@ const MyTaskSchedule: React.FC = () => {
                 )
               )}
             </Select>
+            <WeekSelectorDropdown
+              selectedYear={selectedYear}
+              currentWeekStart={currentWeekStart}
+              setCurrentWeekStart={setCurrentWeekStart}
+            />
 
             <ButtonComponent onClick={jumpToToday}>
               {t('Today')}
@@ -348,13 +335,6 @@ const MyTaskSchedule: React.FC = () => {
             rowKey="key"
           />
         </div>
-        <ReportTasksModal
-          modal={modalReport as any}
-          taskId={id}
-          mutate={mutate}
-          day={day}
-          setRefetch={setRefetch}
-        />
         <CreateReportModal
           modal={modalCreateReport}
           mutate={mutate}
