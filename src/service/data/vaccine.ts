@@ -7,3 +7,18 @@ export const injectionSiteOptions = [
   { label: 'Abdomen', value: 'abdomen' },
   { label: 'Other', value: 'other' },
 ];
+
+
+export const vaccineType = [
+  { label: 'Hormone', value: 'hormone' },
+  { label: 'Vaccine', value: 'vaccine' },
+
+];
+
+export const unitPeriodic = [
+  { label: 'Days', value: 'days' },
+  { label: 'Weeks', value: 'weeks' },
+  { label: 'Months', value: 'months' },
+  { label: 'Years', value: 'years' },
+];
+

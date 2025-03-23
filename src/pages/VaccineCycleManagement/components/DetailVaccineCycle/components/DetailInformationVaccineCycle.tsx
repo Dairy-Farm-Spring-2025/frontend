@@ -17,25 +17,42 @@ const DetailInformationVaccineCycle = ({ data }: DetailInformationVaccineCyclePr
       <div className="space-y-8">
         {/* Section 1: Vaccine Cycle Information */}
         <div>
-
-          <div className="mb-4">
-            <TextTitle
-              title={<span className="font-semibold text-gray-600">Description</span>}
-              description={
-                <QuillRender
-                  description={data?.description || 'No Description'}
-                  className="prose max-w-full p-4 bg-gray-50 rounded-lg"
-                />
-              }
-            />
-          </div>
+          <Row gutter={[24, 24]}>
+            <Col span={8}>
+              <TextTitle
+                title={<span className="font-semibold text-gray-600">Vaccine Ingredients</span>}
+                description={
+                  <p className="text-gray-600">{data?.vaccineIngredients || 'N/A'}</p>
+                }
+              />
+            </Col>
+            <Col span={8}>
+              <TextTitle
+                title={<span className="font-semibold text-gray-600">Vaccine Type</span>}
+                description={<span className="text-gray-600">{data?.vaccineType || 'N/A'}</span>}
+              />
+            </Col>
+            <Col span={8}>
+              <TextTitle
+                title={<span className="font-semibold text-gray-600">Periodic</span>}
+                description={
+                  <div className="flex items-center gap-2">
+                    <span className="text-gray-600">{data?.numberPeriodic || 'N/A'}</span>
+                    <span className="text-gray-600">({data?.unitPeriodic || 'N/A'})</span>
+                  </div>
+                }
+              />
+            </Col>
+          </Row>
+        </div>
+        <div>
           <Row gutter={[16, 16]}>
             <Col span={8}>
               <TextTitle
                 title={<span className="font-semibold text-gray-600">Dosage</span>}
                 description={
                   <p className="text-gray-600">
-                    {data?.dosage || 'N/A'} <span className="text-gray-500">({data?.dosageUnit || 'N/A'})</span>
+                    {data?.dosage || 'N/A'} <span className="text-gray-600">({data?.dosageUnit || 'N/A'})</span>
                   </p>
                 }
               />
@@ -50,13 +67,23 @@ const DetailInformationVaccineCycle = ({ data }: DetailInformationVaccineCyclePr
             </Col>
             <Col span={8}>
               <TextTitle
-                title={<span className="font-semibold text-gray-600">Age in months</span>}
-                description={<span className="text-gray-600">{data?.ageInMonths || 'N/A'}</span>}
+                title={<span className="font-semibold text-gray-600">First Injection Month</span>}
+                description={<span className="text-gray-600">{data?.firstInjectionMonth || 'N/A'}</span>}
               />
             </Col>
           </Row>
         </div>
-
+        <div className="mb-4">
+          <TextTitle
+            title={<span className="font-semibold text-gray-600">Description</span>}
+            description={
+              <QuillRender
+                description={data?.description || 'No Description'}
+                className="prose max-w-full p-4 bg-gray-50 rounded-lg"
+              />
+            }
+          />
+        </div>
         {/* Section 2: Item Details */}
         <div>
           <Title className="!text-xl mb-4">Item Details</Title>
@@ -82,9 +109,7 @@ const DetailInformationVaccineCycle = ({ data }: DetailInformationVaccineCyclePr
               <TextTitle
                 title={<span className="font-semibold text-gray-600">Description</span>}
                 description={
-                  <span className="text-gray-600">
-                    {data?.itemEntity?.description || 'No Description'}
-                  </span>
+                  <span className="text-gray-600">{data?.itemEntity?.description || 'No Description'}</span>
                 }
               />
             </Col>
@@ -100,26 +125,30 @@ const DetailInformationVaccineCycle = ({ data }: DetailInformationVaccineCyclePr
                 title={<span className="font-semibold text-gray-600">Category</span>}
                 className="h-fit shadow-sm border border-gray-200"
               >
-                <p className="text-gray-600">
-                  {data?.itemEntity?.categoryEntity?.name || 'N/A'}
-                </p>
+                <div className="space-y-2">
+                  <p className="text-gray-600">
+                    <span className="font-medium">Name:</span> {data?.itemEntity?.categoryEntity?.name || 'N/A'}
+                  </p>
+                  {/* Nếu có thêm các field khác trong categoryEntity, bạn có thể thêm ở đây */}
+                </div>
               </CardComponent>
             </Col>
             <Col span={12}>
               <CardComponent
-                title={
-                  <div className="flex gap-2">
-                    <span className="font-semibold text-gray-600">Warehouse</span>
-                    <span className="text-gray-700">
-                      {data?.itemEntity?.warehouseLocationEntity?.name || 'N/A'}
-                    </span>
-                  </div>
-                }
+                title={<span className="font-semibold text-gray-600">Warehouse</span>}
                 className="h-fit shadow-sm border border-gray-200"
               >
-                <p className="text-gray-600">
-                  {data?.itemEntity?.warehouseLocationEntity?.description || 'No Description'}
-                </p>
+                <div className="space-y-2">
+                  <p className="text-gray-600">
+                    <span className="font-medium">Name:</span> {data?.itemEntity?.warehouseLocationEntity?.name || 'N/A'}
+                  </p>
+                  <p className="text-gray-600">
+                    <span className="font-medium">Type:</span> {data?.itemEntity?.warehouseLocationEntity?.type || 'N/A'}
+                  </p>
+                  <p className="text-gray-600">
+                    <span className="font-medium">Description:</span> {data?.itemEntity?.warehouseLocationEntity?.description || 'N/A'}
+                  </p>
+                </div>
               </CardComponent>
             </Col>
           </Row>

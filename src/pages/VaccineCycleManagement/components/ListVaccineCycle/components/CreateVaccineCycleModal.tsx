@@ -14,7 +14,7 @@ import StepsComponent, {
 import useFetcher from '../../../../../hooks/useFetcher';
 import { CowType } from '../../../../../model/Cow/CowType';
 import { unitOptions } from '../../../../../service/data/item';
-import { injectionSiteOptions } from '../../../../../service/data/vaccine';
+import { injectionSiteOptions, unitPeriodic, vaccineType } from '../../../../../service/data/vaccine';
 import { Item } from '../../../../../model/Warehouse/items';
 import { VaccineCyclePayload } from '../../../../../model/Vaccine/VaccineCycle/vaccineCycle';
 import useToast from '../../../../../hooks/useToast';
@@ -146,10 +146,14 @@ const CreateVaccineCycleModal = ({
               {
                 name: '',
                 itemId: '',
+                vaccineIngredients: '',
+                vaccineType: '',
+                numberPeriodic: '',
+                unitPeriodic: '',
                 dosage: '',
                 dosageUnit: '',
                 injectionSite: '',
-                ageInMonths: '',
+                firstInjectionMonth: '',
                 description: '',
               },
             ], // Initial field
@@ -192,6 +196,58 @@ const CreateVaccineCycleModal = ({
                         </Form.Item>
                         <Form.Item
                           {...restField}
+                          label={<LabelForm>{t("Vaccine Ingredients")}</LabelForm>}
+                          name={[name, 'vaccineIngredients']}
+                          rules={[
+                            {
+                              required: true,
+                              message: 'This field is required!',
+                            },
+                          ]}
+                        >
+                          <InputComponent />
+                        </Form.Item>
+                        <Form.Item
+                          {...restField}
+                          label={<LabelForm>{t("Vaccine Type")}</LabelForm>}
+                          name={[name, 'vaccineType']}
+                          rules={[
+                            {
+                              required: true,
+                              message: 'This field is required!',
+                            },
+                          ]}
+                        >
+                          <SelectComponent options={vaccineType} />
+                        </Form.Item>
+                        <Form.Item
+                          {...restField}
+                          label={<LabelForm>{t("Number Periodic ")}</LabelForm>}
+                          name={[name, 'numberPeriodic']}
+                          rules={[
+                            {
+                              required: true,
+                              message: 'This field is required!',
+                            },
+                          ]}
+                        >
+                          <InputComponent.Number />
+                        </Form.Item>
+                        <Form.Item
+                          {...restField}
+                          label={<LabelForm>{t("Unit Periodic ")}</LabelForm>}
+                          name={[name, 'unitPeriodic']}
+                          rules={[
+                            {
+                              required: true,
+                              message: 'This field is required!',
+                            },
+                          ]}
+                        >
+                          <SelectComponent options={unitPeriodic} />
+                        </Form.Item>
+                        <Form.Item
+                          {...restField}
                           label={<LabelForm>{t("Dosage")}</LabelForm>}
                           name={[name, 'dosage']}
                           rules={[
@@ -231,8 +287,8 @@ const CreateVaccineCycleModal = ({
                         </Form.Item>
                         <Form.Item
                           {...restField}
-                          label={<LabelForm>{t("Age in months")}</LabelForm>}
-                          name={[name, 'ageInMonths']}
+                          label={<LabelForm>{t("First Injection Month")}</LabelForm>}
+                          name={[name, 'firstInjectionMonth']}
                           rules={[
                             {
                               required: true,

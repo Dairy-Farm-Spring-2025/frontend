@@ -7,11 +7,14 @@ export type VaccineCyclePayload = {
   details: [
     {
       name: string;
+      vaccineIngredients: string;
+      vaccineType: string;
       description: string;
+      numberPeriodic: number;
+      unitPeriodic: string;
       dosageUnit: Unit;
       dosage: number;
       injectionSite: InjectionSite;
-      ageInMonths: number;
       itemId: number;
     }
   ];
@@ -24,7 +27,11 @@ export type VaccineCycleDetails = {
   dosageUnit: Unit;
   dosage: 0;
   injectionSite: InjectionSite;
-  ageInMonths: 0;
+  vaccineIngredients: string;
+  vaccineType: string;
+  numberPeriodic: number;
+  unitPeriodic: string;
+  firstInjectionMonth: number;
   itemEntity: {
     itemId: 0;
     name: string;
@@ -40,6 +47,7 @@ export type VaccineCycleDetails = {
       warehouseLocationId: number;
       name: string;
       description: string;
+      type: string;
     };
   };
   vaccineCycleEntity: string;
