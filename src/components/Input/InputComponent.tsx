@@ -29,6 +29,10 @@ interface PasswordProps extends InputProps {
   className?: string;
 }
 
+interface LinkProp extends InputProps {
+  className?: string;
+}
+
 const InputComponent = ({ className, ...props }: InputComponentProps) => {
   return (
     <Input
@@ -92,9 +96,20 @@ const Search = ({ className, ...props }: SearchComponentProps) => {
   );
 };
 
+const Link = ({ className, ...props }: LinkProp) => {
+  return (
+    <Input
+      addonBefore="http://"
+      className={`input-component ${className}`}
+      {...props}
+    />
+  );
+};
+
 InputComponent.TextArea = TextArea;
 InputComponent.Number = Number;
 InputComponent.Search = Search;
 InputComponent.Password = Password;
+InputComponent.Link = Link;
 
 export default InputComponent;

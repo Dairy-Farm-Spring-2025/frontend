@@ -426,5 +426,15 @@
   "Assigner": "Người giao",
   "Not comment yet": "Chưa có đánh giá",
   "By": "Bởi",
-  "Not have report": "Chưa có báo cáo"
+  "Not have report": "Chưa có báo cáo",
+  "Notification management": "Quản lý thông báo",
+  "View detail": "Xem chi tiết",
+  "Link": "Liên kết",
+  "Category Notification": "Loại thông báo",
+  "User Notification": "Người được thông báo",
+  "Milking": "Vắt sữa",
+  "Feeding": "Cho ăn",
+  "Healthcare": "Chăm sóc sức khỏe",
+  "Other": "Khác",
+  "Notify": "Thông báo cho"
 }

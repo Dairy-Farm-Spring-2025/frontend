@@ -32,6 +32,7 @@ const CommentReport = ({ selectedTask, mutate }: CommentReportProps) => {
       const response = await trigger({ body: values });
       toast.showSuccess(response.message);
       mutate();
+      form.resetFields();
     } catch (error: any) {
       toast.showError(error.message);
     }

@@ -81,20 +81,20 @@ const TaskCreateModal = ({
   const assignees = useMemo(() => {
     const data = selectedRole === 'Worker' ? dataWorker : dataVeterinarians;
     return (data || []).map((element) => ({
-      label: element.name,
+      label: element?.name,
       value: element.id,
       desc: element,
-      searchLabel: element.name,
+      searchLabel: element?.name,
     }));
   }, [selectedRole, dataWorker, dataVeterinarians]);
 
   const optionsDataTaskTypes = useMemo(
     () =>
       (dataTaskTypes || []).map((element) => ({
-        label: element.name,
+        label: element?.name,
         value: element.taskTypeId,
         desc: element,
-        searchLabel: element.name,
+        searchLabel: element?.name,
       })),
     [dataTaskTypes]
   );

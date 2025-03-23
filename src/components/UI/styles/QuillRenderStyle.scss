@@ -4,10 +4,9 @@
     border-bottom-right-radius: 8px;
     border-top-right-radius: 8px;
     border-top-left-radius: 8px;
-    padding: 4px;
+    background-color: #e8e8e8;
   }
-  .ql-container.ql-snow:hover {
-    border-color: green;
-    transition: border-color 0.3s;
+  .ql-editor {
+    padding: 10px 15px;
   }
 }
