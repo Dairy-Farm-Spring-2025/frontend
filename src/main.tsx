@@ -26,6 +26,8 @@ createRoot(document.getElementById('root')!).render(
           Menu: {
             itemSelectedBg: 'rgba(22, 101, 52, 0.1)',
           },
+          Input: {
+          },
         },
       }}
     >

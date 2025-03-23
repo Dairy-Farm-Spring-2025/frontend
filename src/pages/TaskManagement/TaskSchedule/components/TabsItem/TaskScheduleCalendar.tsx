@@ -81,14 +81,14 @@ const TaskScheduleCalendar: React.FC = () => {
     if (dataTaskTypes) {
       setOptionsTaskTypes(
         dataTaskTypes.map((element) => {
-          const searchLabel = `${element.name} ${element.roleId.name}`;
+          const searchLabel = `${element?.name} ${element.roleId?.name}`;
           return {
-            label: element.name,
-            value: element.taskTypeId,
+            label: element?.name,
+            value: element?.taskTypeId,
             desc: (
               <div>
                 <p>
-                  {element.name} - {element.roleId.name}
+                  {element?.name} - {element?.roleId?.name}
                 </p>
               </div>
             ),
@@ -223,14 +223,14 @@ const TaskScheduleCalendar: React.FC = () => {
                       }}
                     >
                       <div className="overflow-y-auto text-clip max-w-full">
-                        <p className="truncate">{task.taskTypeId.name}</p>
+                        <p className="truncate">{task?.taskTypeId?.name}</p>
                       </div>
                       <TagComponents
                         className="text-xs !font-bold overflow-y-auto text-clip max-w-full !py-[2px] rounded-lg !px-2"
                         style={{ backgroundColor: tagColor }}
                       >
                         <p className="truncate text-white">
-                          🧑‍🦱 {task.assigneeName}
+                          🧑‍🦱 {task?.assigneeName}
                         </p>
                       </TagComponents>
                     </div>
@@ -304,7 +304,7 @@ const TaskScheduleCalendar: React.FC = () => {
                           }}
                         >
                           <div className="overflow-y-auto text-clip max-w-full">
-                            <p className="truncate">{task.taskTypeId.name}</p>
+                            <p className="truncate">{task?.taskTypeId?.name}</p>
                           </div>
                           <TagComponents
                             className="text-xs !font-bold overflow-y-auto text-clip max-w-full !py-[2px] rounded-lg !px-2"

@@ -1,7 +1,6 @@
 import { Popconfirm, PopconfirmProps } from 'antd';
 import { t } from 'i18next';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 
 interface PopconfirmComponentProps extends PopconfirmProps {
   confirm?: PopconfirmProps['onConfirm'];

@@ -69,8 +69,8 @@ const FeedMealList = () => {
             {t('View Detail')}
           </ButtonComponent>
           <PopconfirmComponent
-            title={'Delete?'}
             onConfirm={() => onConfirm(data)}
+            title={undefined}
           >
             <ButtonComponent type="primary" danger>
               {t('Delete')}

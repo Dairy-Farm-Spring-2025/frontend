@@ -7,3 +7,13 @@
   outline-style: none !important;
   box-shadow: none !important;
 }
+
+.input-component {
+  :where(.css-dev-only-do-not-override-1w3qf29).ant-input-outlined:focus,
+  :where(
+      .css-dev-only-do-not-override-1w3qf29
+    ).ant-input-outlined:focus-within {
+    outline-style: none !important;
+    box-shadow: none !important;
+  }
+}

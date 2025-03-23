@@ -18,6 +18,10 @@ import TaskManagement from '@pages/TaskManagement';
 import TaskType from '@pages/TaskManagement/TaskType';
 import Equipment from '@pages/WarehouseManagement/components/Equipment';
 import { SiHappycow } from 'react-icons/si';
+import ListNotification from '@pages/NotificationManagement/components/List/ListNotification';
+const NotificationManagement = lazy(
+  () => import('@pages/NotificationManagement')
+);
 const DetailTask = lazy(
   () => import('@pages/TaskManagement/DetailTask/DetailTask')
 );
@@ -495,8 +499,18 @@ const AppRouting = () => {
           ],
         },
         {
-          path: 'task-management',
-          element: SuspenseWrapper(<TaskManagement />),
+          path: 'notification-management',
+          element: SuspenseWrapper(<NotificationManagement />),
+          children: [
+            {
+              path: '',
+              element: <Navigate to="list" />,
+            },
+            {
+              path: 'list',
+              element: SuspenseWrapper(<ListNotification />),
+            },
+          ],
         },
         {
           path: 'profile',

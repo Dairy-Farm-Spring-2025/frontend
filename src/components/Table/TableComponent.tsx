@@ -110,6 +110,7 @@ const TableComponent = ({
     title: '#',
     render: (_, __, index) => getRowIndex(index),
     width: 60,
+    align: 'center',
   };
 
   const enhancedColumns = useMemo(() => {
@@ -214,7 +215,14 @@ const TableComponent = ({
           bordered
           columns={enhancedColumns}
           onChange={handleTableChange} // Captures pagination updates
-          dataSource={filteredData}
+          dataSource={
+            filteredData
+              ? filteredData.map((element, index) => ({
+                  ...element,
+                  key: index,
+                }))
+              : []
+          }
           pagination={{ position: ['bottomCenter'] }}
           title={() => (
             <p className="text-blue-600 text-base ">

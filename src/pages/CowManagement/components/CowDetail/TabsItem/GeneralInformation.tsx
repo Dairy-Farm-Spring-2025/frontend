@@ -23,6 +23,7 @@ import { cowStatus } from '../../../../../service/data/cowStatus';
 import { genderData } from '../../../../../service/data/gender';
 import { COW_PATH } from '@service/api/Cow/cowApi';
 import { COW_TYPE_PATH } from '@service/api/CowType/cowType';
+import QuillRender from '@components/UI/QuillRender';
 
 interface CowGeneralInformationProps {
   id: string;
@@ -207,7 +208,11 @@ const CowGeneralInformation = ({
         rules={[{ required: true }]}
         label={<LabelForm>{t('Description')}</LabelForm>}
       >
-        <ReactQuillComponent readOnly={!showEdit} />
+        {showEdit ? (
+          <ReactQuillComponent readOnly={!showEdit} />
+        ) : (
+          <QuillRender description={form.getFieldValue('description')} />
+        )}
       </FormItemComponent>
       <div className="flex justify-end items-center w-full gap-3">
         <p className="text-lg text-orange-600 font-semibold">
