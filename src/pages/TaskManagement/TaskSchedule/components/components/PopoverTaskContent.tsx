@@ -4,12 +4,17 @@ import PopconfirmComponent from '@components/Popconfirm/PopconfirmComponent';
 import TagComponents from '@components/UI/TagComponents';
 import useFetcher from '@hooks/useFetcher';
 import useToast from '@hooks/useToast';
-import { Priority, StatusTask, TaskDateRange } from '@model/Task/Task';
+import { TaskDateRange } from '@model/Task/Task';
 import { formatDateHour, formatStatusWithCamel } from '@utils/format';
+import {
+  priorityColors,
+  statusColors,
+} from '@utils/statusRender/taskStatusRender';
 import { Divider, Tooltip } from 'antd';
 import dayjs from 'dayjs';
 import { t } from 'i18next';
 import { useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface PopoverTaskContent {
   task: TaskDateRange;
@@ -19,21 +24,8 @@ interface PopoverTaskContent {
   setOpen: any;
   setOpenViewMore: any;
   disabledReportButton: boolean;
+  day: string;
 }
-
-const priorityColors: Record<Priority, string> = {
-  low: 'green',
-  medium: 'yellow',
-  high: 'red',
-  critical: 'darkred',
-};
-
-const statusColors: Record<StatusTask, string> = {
-  pending: '#FEF9C3', // Light Yellow
-  inProgress: '#DBEAFE', // Light Blue
-  completed: '#D1FAE5', // Light Green
-  reviewed: '#E9D5FF', // Light Purple
-};
 
 const PopoverTaskContent = ({
   task,
@@ -42,8 +34,10 @@ const PopoverTaskContent = ({
   setOpen,
   openReportTask,
   disabledReportButton,
+  day,
 }: PopoverTaskContent) => {
   const toast = useToast();
+  const navigate = useNavigate();
   const isDeleteDisabled = dayjs().isAfter(dayjs(task.fromDate), 'day');
   const { trigger: triggerDelete, isLoading: loadingDelete } = useFetcher(
     `tasks/delete`,
@@ -87,7 +81,11 @@ const PopoverTaskContent = ({
         <p className="text-black font-bold flex items-center gap-1 col-span-2">
           <span
             className="w-3 h-3 rounded-full"
-            style={{ backgroundColor: statusColors[task.status] }}
+            style={{
+              backgroundColor: task?.reportTask
+                ? statusColors[task.status]
+                : '#DEDEDE',
+            }}
           ></span>
           {t(formatStatusWithCamel(task?.status))}
         </p>
@@ -124,6 +122,7 @@ const PopoverTaskContent = ({
           shape="circle"
           type="primary"
           icon={<AppstoreFilled />}
+          onClick={() => navigate(`../${task.taskId}/${day}`)}
         />
         <Tooltip title={t('View report')}>
           <ButtonComponent

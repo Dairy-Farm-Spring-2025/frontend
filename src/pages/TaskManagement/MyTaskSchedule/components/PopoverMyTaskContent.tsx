@@ -5,48 +5,36 @@ import {
 } from '@ant-design/icons';
 import ButtonComponent from '@components/Button/ButtonComponent';
 import TagComponents from '@components/UI/TagComponents';
-import { Priority, StatusTask, TaskDateRange } from '@model/Task/Task';
+import { TaskDateRange } from '@model/Task/Task';
 import { formatDateHour, formatStatusWithCamel } from '@utils/format';
+import {
+  priorityColors,
+  statusColors,
+} from '@utils/statusRender/taskStatusRender';
 import { Divider, Tooltip } from 'antd';
 import { t } from 'i18next';
+import { useNavigate } from 'react-router-dom';
 
 interface PopoverMyTaskContent {
   task: TaskDateRange;
-  onOpenModal: () => void;
   setOpen?: any;
   onJoinTask: () => void;
   loading: boolean;
   disabledJoinTask?: boolean;
   onOpenCreateReportModal: () => void;
+  day: string;
 }
 
-const priorityColors: Record<Priority, string> = {
-  low: 'green',
-  medium: 'yellow',
-  high: 'red',
-  critical: 'darkred',
-};
-
-const statusColors: Record<StatusTask, string> = {
-  pending: '#FEF9C3', // Light Yellow
-  inProgress: '#DBEAFE', // Light Blue
-  completed: '#D1FAE5', // Light Green
-  reviewed: '#E9D5FF', // Light Purple
-};
-
 const PopoverMyTaskContent = ({
+  day,
   task,
-  onOpenModal,
   setOpen,
   loading,
   onJoinTask,
   onOpenCreateReportModal,
   disabledJoinTask,
 }: PopoverMyTaskContent) => {
-  const handleOpenModal = () => {
-    onOpenModal();
-    setOpen(false);
-  };
+  const navigate = useNavigate();
   const handleOpenCreateReportModal = () => {
     onOpenCreateReportModal();
     setOpen(false);
@@ -68,9 +56,17 @@ const PopoverMyTaskContent = ({
         <p className="text-black font-bold flex items-center gap-1 col-span-2">
           <span
             className="w-3 h-3 rounded-full"
-            style={{ backgroundColor: statusColors[task.status] }}
+            style={{
+              backgroundColor: task?.reportTask
+                ? statusColors[task.reportTask.status]
+                : '#DEDEDE',
+            }}
           ></span>
-          {t(formatStatusWithCamel(task?.status))}
+          {t(
+            task.reportTask
+              ? formatStatusWithCamel(task?.reportTask.status)
+              : 'Not start'
+          )}
         </p>
       </div>
       <TagComponents className="text-sm" color="blue">
@@ -93,11 +89,17 @@ const PopoverMyTaskContent = ({
             shape="circle"
             type="primary"
             icon={<AppstoreFilled />}
-            onClick={handleOpenModal}
+            onClick={() => navigate(`${task.taskId}/${day}`)}
           />
         </Tooltip>
         <Tooltip
-          title={disabledJoinTask ? t('Task is expired') : t('Join task')}
+          title={
+            disabledJoinTask
+              ? t('Task is not available to join')
+              : task.reportTask
+              ? t('Task is reported')
+              : t('Join task')
+          }
         >
           <ButtonComponent
             shape="circle"
@@ -106,7 +108,7 @@ const PopoverMyTaskContent = ({
             icon={<ImportOutlined />}
             onClick={onJoinTask}
             loading={loading}
-            disabled={disabledJoinTask}
+            disabled={disabledJoinTask || !!task.reportTask}
           />
         </Tooltip>
         <Tooltip title={t('Report task')}>
@@ -116,7 +118,11 @@ const PopoverMyTaskContent = ({
             buttonType="warning"
             icon={<FormOutlined />}
             onClick={handleOpenCreateReportModal}
-            disabled={disabledJoinTask}
+            disabled={
+              disabledJoinTask ||
+              task.reportTask === null ||
+              task.reportTask?.description !== null
+            }
           />
         </Tooltip>
       </div>

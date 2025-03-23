@@ -13,12 +13,18 @@ import {
 import ApplicationManagement from '@pages/ApplicationManagement';
 import Application from '@pages/ApplicationManagement/Application-management';
 import ApplicationType from '@pages/ApplicationManagement/ApplicationType';
-
 import ErrorPageNotification from '@pages/Error';
 import TaskManagement from '@pages/TaskManagement';
 import TaskType from '@pages/TaskManagement/TaskType';
 import Equipment from '@pages/WarehouseManagement/components/Equipment';
 import { SiHappycow } from 'react-icons/si';
+import ListNotification from '@pages/NotificationManagement/components/List/ListNotification';
+const NotificationManagement = lazy(
+  () => import('@pages/NotificationManagement')
+);
+const DetailTask = lazy(
+  () => import('@pages/TaskManagement/DetailTask/DetailTask')
+);
 const MyTaskSchedule = lazy(
   () => import('@pages/TaskManagement/MyTaskSchedule/MyTaskSchedule')
 );
@@ -28,8 +34,8 @@ const TaskSchedule = lazy(
 const AreaDetail = lazy(
   () => import('@pages/AreaManagement/components/AreaDetail/AreaDetail')
 );
-const AreaList = lazy(
-  () => import('@pages/AreaManagement/components/AreaList/AreaList')
+const AreaAndPenTab = lazy(
+  () => import('@pages/AreaManagement/components/index')
 );
 const DetailFeedMeal = lazy(
   () => import('@pages/FeedManagement/FeedMeal/components/DetailFeedMeal')
@@ -302,7 +308,7 @@ const AppRouting = () => {
           path: 'area-management',
           element: SuspenseWrapper(<AreaAndPenManagement />),
           children: [
-            { path: '', element: SuspenseWrapper(<AreaList />) },
+            { path: '', element: SuspenseWrapper(<AreaAndPenTab />) },
             { path: ':id', element: SuspenseWrapper(<AreaDetail />) },
           ],
         },
@@ -455,6 +461,22 @@ const AppRouting = () => {
               path: 'task-type',
               element: SuspenseWrapper(<TaskType />),
             },
+            {
+              path: 'my-task/:taskId',
+              element: <Navigate to={'../my-task'} />,
+            },
+            {
+              path: 'my-task/:taskId/:day',
+              element: SuspenseWrapper(<DetailTask />),
+            },
+            {
+              path: ':taskId/:day',
+              element: SuspenseWrapper(<DetailTask />),
+            },
+            {
+              path: ':taskId',
+              element: <Navigate to={'../list'} />,
+            },
           ],
         },
         {
@@ -477,8 +499,18 @@ const AppRouting = () => {
           ],
         },
         {
-          path: 'task-management',
-          element: SuspenseWrapper(<TaskManagement />),
+          path: 'notification-management',
+          element: SuspenseWrapper(<NotificationManagement />),
+          children: [
+            {
+              path: '',
+              element: <Navigate to="list" />,
+            },
+            {
+              path: 'list',
+              element: SuspenseWrapper(<ListNotification />),
+            },
+          ],
         },
         {
           path: 'profile',

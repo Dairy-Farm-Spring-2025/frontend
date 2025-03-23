@@ -1,7 +1,7 @@
-import { WalletOutlined } from '@ant-design/icons';
+import { BellOutlined, WalletOutlined } from '@ant-design/icons';
 import {
   Avatar,
-  Breadcrumb,
+  Badge,
   ConfigProvider,
   Divider,
   Dropdown,
@@ -13,7 +13,14 @@ import {
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
+import ButtonComponent from '@components/Button/ButtonComponent';
+import AnimationAppear from '@components/UI/AnimationAppear';
+import { logout } from '@core/store/slice/userSlice';
 import { RootState } from '@core/store/store';
+import useFetcher from '@hooks/useFetcher';
+import useNotification from '@hooks/useNotification';
+import useToast from '@hooks/useToast';
+import { getAvatar } from '@utils/getImage';
 import { useTranslation } from 'react-i18next';
 import {
   AiOutlineDashboard,
@@ -36,16 +43,10 @@ import { RiAlignItemLeftLine } from 'react-icons/ri';
 import { SiHappycow } from 'react-icons/si';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import ButtonComponent from '@components/Button/ButtonComponent';
-import AnimationAppear from '@components/UI/AnimationAppear';
-import useFetcher from '@hooks/useFetcher';
-import useToast from '@hooks/useToast';
-import { breadcumData } from '@service/data/breadcumData';
-import { getAvatar } from '@utils/getImage';
 import LabelDashboard from './components/LabelDashboard';
 import './index.scss';
-import { setAvatarFunction } from '@core/store/slice/avatarSlice';
-import { logout } from '@core/store/slice/userSlice';
+import { UserProfileData } from '@model/User';
+import { triggerAvatarRefresh } from '@core/store/slice/avatarSlice';
 const { Header, Content, Sider } = Layout;
 type MenuItem = Required<MenuProps>['items'][number];
 const { useToken } = theme;
@@ -82,14 +83,27 @@ const AppDashboard: React.FC = React.memo(() => {
   const selectedKey = location.pathname.replace(/^\//, ''); // Lấy path và bỏ dấu '/'
 
   const [openKeys, setOpenKeys] = useState<string[]>([]);
-
-  const { data, mutate } = useFetcher<any>('users/profile', 'GET');
+  const { data, mutate } = useFetcher<UserProfileData>('users/profile', 'GET');
   const { roleName } = useSelector((state: RootState) => state.user);
+  const accessToken = useSelector((state: RootState) => state.user.accessToken);
+  const { messages } = useNotification(String(data?.id || ''), accessToken);
+
+  const shouldRefreshAvatar = useSelector(
+    (state: RootState) => state.avatar.shouldRefreshAvatar
+  );
   useEffect(() => {
-    if (data) {
-      dispatch(setAvatarFunction(mutate));
+    console.log(messages);
+    if (messages.length > 0) {
+      console.log('New Notification: ', messages[0]);
     }
-  }, [data, dispatch, mutate]);
+  }, [messages]);
+
+  useEffect(() => {
+    if (shouldRefreshAvatar === true) {
+      mutate();
+      dispatch(triggerAvatarRefresh(false));
+    }
+  }, [dispatch, mutate, shouldRefreshAvatar]);
 
   useEffect(() => {
     const pathSegments = location.pathname.split('/').filter(Boolean);
@@ -108,21 +122,6 @@ const AppDashboard: React.FC = React.memo(() => {
     });
   }, []);
 
-  const breadcrumbItems = useMemo(() => {
-    return location.pathname
-      .split('/')
-      .filter(Boolean)
-      .map((segment, index) => ({
-        title: t(
-          breadcumData[segment] ||
-            segment.charAt(0).toUpperCase() + segment.slice(1)
-        ),
-        href: location.pathname
-          .split('/')
-          .slice(0, index + 2)
-          .join('/'),
-      }));
-  }, [location.pathname, t]);
   const navigate = useNavigate();
   const toast = useToast();
   const { token } = useToken();
@@ -369,6 +368,11 @@ const AppDashboard: React.FC = React.memo(() => {
           <AiOutlineIssuesClose />
         ),
         getItem(
+          t('Notification management'),
+          'dairy/notification-management',
+          <BellOutlined />
+        ),
+        getItem(
           t('Request schedule'),
           'dairy/request-schedule-management',
           <LuGitPullRequest />
@@ -408,10 +412,14 @@ const AppDashboard: React.FC = React.memo(() => {
             style={{ padding: 0 }}
           >
             <div className="flex items-center gap-5 pr-16">
-              <IoIosNotifications
-                className="cursor-pointer text-orange-600"
-                size={32}
-              />
+              {messages.length !== 0 ? messages[0]?.title : <p>'no'</p>}
+
+              <Badge count={99}>
+                <IoIosNotifications
+                  className="cursor-pointer text-orange-600"
+                  size={32}
+                />
+              </Badge>
               <div>
                 <ConfigProvider
                   dropdown={{
@@ -449,7 +457,10 @@ const AppDashboard: React.FC = React.memo(() => {
                       </div>
                     )}
                   >
-                    <Avatar size={32} src={getAvatar(data?.profilePhoto)} />
+                    <Avatar
+                      size={32}
+                      src={getAvatar(data?.profilePhoto as string)}
+                    />
                   </Dropdown>
                 </ConfigProvider>
               </div>
@@ -467,13 +478,6 @@ const AppDashboard: React.FC = React.memo(() => {
               }}
               className="!h-full"
             >
-              <Breadcrumb style={{ margin: '16px 0' }}>
-                {breadcrumbItems.map((item, index) => (
-                  <Breadcrumb.Item key={index}>
-                    <Link to={item.href}>{item.title}</Link>
-                  </Breadcrumb.Item>
-                ))}
-              </Breadcrumb>
               <Outlet />
             </div>
           </Content>

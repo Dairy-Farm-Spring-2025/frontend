@@ -1,14 +1,14 @@
 import { UploadOutlined } from '@ant-design/icons';
+import { triggerAvatarRefresh } from '@core/store/slice/avatarSlice';
 import { Avatar, Upload, message } from 'antd';
 import type { RcFile, UploadProps } from 'antd/es/upload';
+import { t } from 'i18next';
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import ButtonComponent from '../../../components/Button/ButtonComponent';
 import useFetcher from '../../../hooks/useFetcher';
 import useToast from '../../../hooks/useToast';
 import { getAvatar } from '../../../utils/getImage';
-import { RootState } from '../../../core/store/store';
-import { useSelector } from 'react-redux';
-import { t } from 'i18next';
 
 interface AvatarProfileProp {
   avatar: string;
@@ -21,10 +21,8 @@ const AvatarProfile = ({ avatar, mutate }: AvatarProfileProp) => {
       ? getAvatar(avatar)
       : 'https://icons.veryicon.com/png/o/miscellaneous/user-avatar/user-avatar-male-5.png'
   );
-  const avatarFunction = useSelector(
-    (state: RootState) => state.avatar.avatarFunction
-  );
   const { trigger } = useFetcher('users/update', 'PUT', 'multipart/form-data');
+  const dispatch = useDispatch();
   const toast = useToast();
   const handleUpload = (file: RcFile) => {
     const reader = new FileReader();
@@ -36,9 +34,7 @@ const AvatarProfile = ({ avatar, mutate }: AvatarProfileProp) => {
         setAvatarSrc(reader.result);
         toast.showSuccess('Image uploaded successfully!');
         mutate();
-        if (avatarFunction) {
-          avatarFunction();
-        }
+        dispatch(triggerAvatarRefresh(true)); // ✅ Notify other components
       }
     };
     reader.onerror = () => {

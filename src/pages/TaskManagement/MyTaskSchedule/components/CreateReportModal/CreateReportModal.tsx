@@ -16,12 +16,14 @@ interface CreateReportModalProps {
   modal: ModalActionProps;
   mutate: any;
   taskId: number;
+  setRefetch: any;
 }
 
 const CreateReportModal = ({
   modal,
   mutate,
   taskId,
+  setRefetch,
 }: CreateReportModalProps) => {
   const [file, setFile] = useState<UploadFile[]>([]);
   const [form] = Form.useForm();
@@ -65,8 +67,9 @@ const CreateReportModal = ({
     const formData = new FormData();
     if (values.description) formData.append('description', values.description);
     if (values.imagesFile) {
-      values.imagesFile.forEach((file: any, index: any) => {
-        formData.append(`imagesFile[${index}]`, file.originFileObj);
+      values.imagesFile.forEach((file: any) => {
+        console.log(file.originFileObj);
+        formData.append(`imagesFile`, file.originFileObj);
       });
     }
     try {
@@ -74,6 +77,7 @@ const CreateReportModal = ({
       toast.showSuccess(response.message);
       handleClose();
       mutate();
+      setRefetch(true);
     } catch (error: any) {
       toast.showError(error.message);
     }

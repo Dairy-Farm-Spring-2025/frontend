@@ -14,14 +14,13 @@ import { cowStatus } from '@service/data/cowStatus';
 import { formatDateHour, formatSTT } from '@utils/format';
 import { getLabelByValue } from '@utils/getLabel';
 import { Divider, Image } from 'antd';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IoMdFemale, IoMdMale } from 'react-icons/io';
 import cowImage from '../../../../assets/cow.jpg';
 
 const ListCow = () => {
   const { t } = useTranslation();
-  const [cow, setCow] = useState<Cow[]>([]);
   const {
     data,
     error,
@@ -129,10 +128,6 @@ const ListCow = () => {
     [data]
   );
 
-  useEffect(() => {
-    setCow(filteredCows);
-  }, [filteredCows]);
-
   return (
     <AnimationAppear duration={0.5}>
       <WhiteBackground>
@@ -153,7 +148,7 @@ const ListCow = () => {
             <TableComponent
               loading={isLoading}
               columns={columns}
-              dataSource={formatSTT(cow)}
+              dataSource={data ? formatSTT(data) : []}
               // rowSelection={rowSelection} // Thêm tính năng chọn hàng
               // rowKey="cowId" // Định danh duy nhất cho từng dòng
             />

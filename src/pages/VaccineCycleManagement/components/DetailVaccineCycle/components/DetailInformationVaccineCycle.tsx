@@ -17,7 +17,7 @@ const DetailInformationVaccineCycle = ({ data }: DetailInformationVaccineCyclePr
       <div className="space-y-8">
         {/* Section 1: Vaccine Cycle Information */}
         <div>
-          <Row gutter={[24, 24]}>
+          <Row gutter={[16, 16]}>
             <Col span={8}>
               <TextTitle
                 title={<span className="font-semibold text-gray-600">Vaccine Ingredients</span>}

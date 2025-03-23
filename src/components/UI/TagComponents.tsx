@@ -10,7 +10,7 @@ const TagComponents = ({
   ...props
 }: TagComponentsProps) => {
   return (
-    <Tag className={`text-base font-normal ${className}`} {...props}>
+    <Tag className={`text-sm font-normal my-auto ${className}`} {...props}>
       {children}
     </Tag>
   );

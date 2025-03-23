@@ -1,9 +1,12 @@
 .quill-render {
   .ql-container.ql-snow {
-    border: 0;
-    .ql-editor {
-      padding: 0;
-      border: 0px;
-    }
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    border-top-right-radius: 8px;
+    border-top-left-radius: 8px;
+    background-color: #e8e8e8;
+  }
+  .ql-editor {
+    padding: 10px 15px;
   }
 }

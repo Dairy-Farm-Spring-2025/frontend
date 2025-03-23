@@ -4,14 +4,17 @@ import {
   RightOutlined,
 } from '@ant-design/icons';
 import ButtonComponent from '@components/Button/ButtonComponent';
+import SelectComponent from '@components/Select/SelectComponent';
 import TagComponents from '@components/UI/TagComponents';
-import Text from '@components/UI/Text';
 import Title from '@components/UI/Title';
 import useFetcher from '@hooks/useFetcher';
 import useModal, { ModalActionProps } from '@hooks/useModal';
 import { TaskDateRange } from '@model/Task/Task';
+import { TaskType } from '@model/Task/task-type';
 import ShiftTitle from '@pages/TaskManagement/components/ShiftTitle';
+import StatusTask from '@pages/TaskManagement/components/StatusTask';
 import WeekSelectorDropdown from '@pages/TaskManagement/components/WeekSelectorDropdown';
+import { TASK_PATH } from '@service/api/Task/taskApi';
 import { Popover, Select, Table } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
@@ -31,6 +34,8 @@ const statusColors: Record<any, string> = {
   inProgress: '#DBEAFE',
   completed: '#D1FAE5',
   reviewed: '#E9D5FF',
+  processing: '#DBEAFE',
+  closed: '#D1FAE5',
 };
 const stringToDarkColor = (str: string) => {
   let hash = 0;
@@ -44,6 +49,10 @@ const TaskScheduleCalendar: React.FC = () => {
   const [selectedYear, setSelectedYear] = useState<number>(dayjs().year());
   const [refetch, setRefetch] = useState(false);
   const [rawData, setRawData] = useState<any[]>([]);
+  const [optionsTaskType, setOptionsTaskTypes] = useState<any[]>([]);
+  const [selectedTaskType, setSelectedTaskTypes] = useState<
+    string | undefined
+  >();
   const [open, setOpen] = useState<Record<any, boolean>>({});
   const [openViewMore, setOpenViewMore] = useState<Record<any, boolean>>({});
   const modalReportTask = useModal<ModalActionProps>();
@@ -54,18 +63,41 @@ const TaskScheduleCalendar: React.FC = () => {
       ? dayjs().startOf('week')
       : dayjs(`${selectedYear}-01-01`).startOf('week')
   );
-
   const fromDate = currentWeekStart.startOf('day').format('YYYY-MM-DD');
   const toDate = currentWeekStart
     .add(6, 'day')
     .endOf('day')
     .format('YYYY-MM-DD');
-
   const { isLoading, mutate, trigger } = useFetcher<{
     [key: string]: TaskDateRange[] | null;
-  }>('tasks/by-date-range', 'POST');
-
+  }>(TASK_PATH.TASK_MANAGER_DATE_RANGE, 'POST');
+  const { data: dataTaskTypes } = useFetcher<TaskType[]>(
+    TASK_PATH.TASKS_TYPE,
+    'GET'
+  );
   const modal = useModal();
+
+  useEffect(() => {
+    if (dataTaskTypes) {
+      setOptionsTaskTypes(
+        dataTaskTypes.map((element) => {
+          const searchLabel = `${element?.name} ${element.roleId?.name}`;
+          return {
+            label: element?.name,
+            value: element?.taskTypeId,
+            desc: (
+              <div>
+                <p>
+                  {element?.name} - {element?.roleId?.name}
+                </p>
+              </div>
+            ),
+            searchLabel: searchLabel,
+          };
+        })
+      );
+    }
+  }, [dataTaskTypes]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -78,10 +110,6 @@ const TaskScheduleCalendar: React.FC = () => {
     }
     fetchData();
   }, [fromDate, toDate, refetch]);
-
-  useEffect(() => {
-    console.log(openViewMore);
-  }, [openViewMore]);
 
   useEffect(() => {
     setOpenViewMore({}); // Reset khi tuần thay đổi
@@ -142,8 +170,13 @@ const TaskScheduleCalendar: React.FC = () => {
             const tasksForShift = tasks.filter(
               (task: TaskDateRange) => task.shift === shift
             );
-            const visibleTasks = tasksForShift.slice(0, 5);
-            const hiddenTasks = tasksForShift.slice(5);
+            const filteredTask = tasksForShift?.filter(
+              (element: TaskDateRange) =>
+                !selectedTaskType ||
+                element?.taskTypeId?.taskTypeId === selectedTaskType
+            );
+            const visibleTasks = filteredTask.slice(0, 5);
+            const hiddenTasks = filteredTask.slice(5);
             visibleTasks
               .filter((task: TaskDateRange) => task.shift === shift)
               .forEach((task: TaskDateRange, taskIndex: number) => {
@@ -162,6 +195,7 @@ const TaskScheduleCalendar: React.FC = () => {
                     color="white"
                     content={
                       <PopoverTaskContent
+                        day={dayjs(day).format('YYYY-MM-DD')}
                         disabledReportButton={isTaskExpired}
                         setOpenViewMore={setOpenViewMore}
                         setOpen={setOpen}
@@ -175,11 +209,13 @@ const TaskScheduleCalendar: React.FC = () => {
                     }
                   >
                     <div
-                      className="border-2 rounded-lg border-primary"
+                      className={'border-2 rounded-lg border-none'}
                       style={{
                         position: 'relative', // Always relative, no spanning
                         width: 'auto', // Fixed width, no stretching
-                        backgroundColor: statusColors[task.status],
+                        backgroundColor: task.reportTask
+                          ? statusColors[task.reportTask.status]
+                          : '#DEDEDE',
                         padding: '0px 8px',
                         fontWeight: 'bold',
                         zIndex: 1 + taskIndex, // Stack tasks vertically
@@ -187,14 +223,14 @@ const TaskScheduleCalendar: React.FC = () => {
                       }}
                     >
                       <div className="overflow-y-auto text-clip max-w-full">
-                        <p className="truncate">{task.taskTypeName}</p>
+                        <p className="truncate">{task?.taskTypeId?.name}</p>
                       </div>
                       <TagComponents
                         className="text-xs !font-bold overflow-y-auto text-clip max-w-full !py-[2px] rounded-lg !px-2"
                         style={{ backgroundColor: tagColor }}
                       >
                         <p className="truncate text-white">
-                          🧑‍🦱 {task.assigneeName}
+                          🧑‍🦱 {task?.assigneeName}
                         </p>
                       </TagComponents>
                     </div>
@@ -240,6 +276,7 @@ const TaskScheduleCalendar: React.FC = () => {
                         color="white"
                         content={
                           <PopoverTaskContent
+                            day={dayjs(day).format('YYYY-MM-DD')}
                             disabledReportButton={isTaskExpired}
                             setOpenViewMore={setOpenViewMore}
                             setOpen={setOpen}
@@ -257,7 +294,9 @@ const TaskScheduleCalendar: React.FC = () => {
                           style={{
                             position: 'relative', // Always relative, no spanning
                             width: 'auto', // Fixed width, no stretching
-                            backgroundColor: statusColors[task.status],
+                            backgroundColor: task.reportTask
+                              ? statusColors[task.reportTask.status]
+                              : '#DEDEDE',
                             padding: '0px 8px',
                             fontWeight: 'bold',
                             zIndex: 1 + taskIndex, // Stack tasks vertically
@@ -265,7 +304,7 @@ const TaskScheduleCalendar: React.FC = () => {
                           }}
                         >
                           <div className="overflow-y-auto text-clip max-w-full">
-                            <p className="truncate">{task.taskTypeName}</p>
+                            <p className="truncate">{task?.taskTypeId?.name}</p>
                           </div>
                           <TagComponents
                             className="text-xs !font-bold overflow-y-auto text-clip max-w-full !py-[2px] rounded-lg !px-2"
@@ -350,12 +389,33 @@ const TaskScheduleCalendar: React.FC = () => {
   ];
 
   return (
-    <div>
-      <div style={{ display: 'flex', gap: '10px' }}>
+    <div className="flex flex-col gap-5">
+      <div className="flex gap-5">
+        <div className="flex gap-2 items-center">
+          <p className="text-base font-bold">{t('Select task type')}:</p>
+          <SelectComponent
+            search={true}
+            className="!w-[240px]"
+            options={optionsTaskType}
+            optionRender={(option) => option.data.desc}
+            value={selectedTaskType}
+            onChange={setSelectedTaskTypes}
+            allowClear
+          />
+        </div>{' '}
+        <ButtonComponent
+          type="primary"
+          icon={<PlusCircleFilled />}
+          onClick={modal.openModal}
+        >
+          {t('Add Task')}
+        </ButtonComponent>
+      </div>
+      <div className="flex gap-5">
         <Select
           value={selectedYear}
+          className="!w-[120px]"
           onChange={handleYearChange}
-          style={{ width: 120 }}
         >
           {Array.from({ length: 5 }, (_, i) => dayjs().year() - 2 + i).map(
             (year) => (
@@ -375,34 +435,8 @@ const TaskScheduleCalendar: React.FC = () => {
         <ButtonComponent className="shadow-md" onClick={jumpToToday}>
           {t('Today')}
         </ButtonComponent>
-
-        <ButtonComponent
-          type="primary"
-          icon={<PlusCircleFilled />}
-          onClick={modal.openModal}
-          style={{ marginBottom: 16 }}
-        >
-          {t('Add Task')}
-        </ButtonComponent>
       </div>
-      <div className="flex gap-10 mb-5">
-        <div className="flex gap-2 items-center">
-          <div className="w-4 h-4 border-[1px] border-yellow-400 rounded-xl bg-[#FEF9C3]"></div>
-          <Text>{t('Pending')}</Text>
-        </div>
-        <div className="flex gap-2 items-center">
-          <div className="w-4 h-4 border-[1px] border-blue-400 rounded-xl bg-[#DBEAFE]"></div>
-          <Text>{t('In progress')}</Text>
-        </div>
-        <div className="flex gap-2 items-center">
-          <div className="w-4 h-4 border-[1px] border-green-400 rounded-xl bg-[#D1FAE5]"></div>
-          <Text>{t('Completed')}</Text>
-        </div>
-        <div className="flex gap-2 items-center">
-          <div className="w-4 h-4 border-[1px] border-purple-400 rounded-xl bg-[#E9D5FF]"></div>
-          <Text>{t('Reviewed')}</Text>
-        </div>
-      </div>
+      <StatusTask />
       <div
         style={{
           display: 'flex',

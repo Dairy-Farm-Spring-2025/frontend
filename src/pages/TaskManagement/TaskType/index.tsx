@@ -54,7 +54,7 @@ const TaskType = () => {
       dataIndex: 'roleId',
       key: 'roleId',
       title: t('Role'),
-      render: (data) => data.name,
+      render: (data) => data?.name,
     },
     {
       dataIndex: 'taskTypeId',

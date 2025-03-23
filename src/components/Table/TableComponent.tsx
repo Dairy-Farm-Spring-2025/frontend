@@ -1,4 +1,5 @@
 import { SearchOutlined } from '@ant-design/icons';
+import EmptyComponent from '@components/Error/EmptyComponent';
 import { Button, ConfigProvider, DatePicker, Input, Select, Table } from 'antd';
 import { ColumnProps, TableProps } from 'antd/es/table';
 import dayjs from 'dayjs';
@@ -109,6 +110,7 @@ const TableComponent = ({
     title: '#',
     render: (_, __, index) => getRowIndex(index),
     width: 60,
+    align: 'center',
   };
 
   const enhancedColumns = useMemo(() => {
@@ -213,7 +215,14 @@ const TableComponent = ({
           bordered
           columns={enhancedColumns}
           onChange={handleTableChange} // Captures pagination updates
-          dataSource={filteredData}
+          dataSource={
+            filteredData
+              ? filteredData.map((element, index) => ({
+                  ...element,
+                  key: index,
+                }))
+              : []
+          }
           pagination={{ position: ['bottomCenter'] }}
           title={() => (
             <p className="text-blue-600 text-base ">
@@ -221,6 +230,9 @@ const TableComponent = ({
               {t(`result${filteredData?.length > 1 ? 's' : ''}`)})
             </p>
           )}
+          locale={{
+            emptyText: <EmptyComponent />,
+          }}
           {...props}
         />
       </ConfigProvider>

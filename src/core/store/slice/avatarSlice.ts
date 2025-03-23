@@ -1,26 +1,27 @@
 // slice/avatarSlice.ts
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 
 interface AvatarState {
-  avatarFunction: (() => void) | null; // Store the function
+  shouldRefreshAvatar: any; // Store the function
 }
 
 const initialState: AvatarState = {
-  avatarFunction: null, // Default value
+  shouldRefreshAvatar: false, // Default value
 };
 
 const avatarSlice = createSlice({
   name: 'avatar',
   initialState,
   reducers: {
-    setAvatarFunction: (state, action: PayloadAction<() => void>) => {
-      state.avatarFunction = action.payload; // Store the function in state
+    triggerAvatarRefresh: (state, action) => {
+      state.shouldRefreshAvatar = action.payload; // Store the function in state
     },
     clearAvatarFunction: (state) => {
-      state.avatarFunction = null; // Clear the function
+      state.shouldRefreshAvatar = null; // Clear the function
     },
   },
 });
 
-export const { setAvatarFunction, clearAvatarFunction } = avatarSlice.actions;
+export const { triggerAvatarRefresh, clearAvatarFunction } =
+  avatarSlice.actions;
 export default avatarSlice.reducer;
