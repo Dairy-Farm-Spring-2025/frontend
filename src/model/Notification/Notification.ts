@@ -9,6 +9,13 @@ export type Notification = {
   userNotifications: UserNotification[];
 };
 
+export type MyNotification = {
+  id: UserId;
+  notification: Notification;
+  read: boolean;
+  user: UserProfileData;
+};
+
 type UserId = {
   userId: number;
   notificationId: number;
@@ -23,6 +30,6 @@ export type UserNotification = {
 export type CategoryNotification =
   | 'milking'
   | 'feeding'
-  | 'healthcare'
+  | 'heathcare'
   | 'task'
   | 'other';

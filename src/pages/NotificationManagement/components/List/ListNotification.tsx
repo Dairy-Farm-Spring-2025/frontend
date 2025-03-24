@@ -24,6 +24,7 @@ const ListNotification = () => {
     isLoading,
     mutate,
   } = useFetcher<Notification[]>(NOTIFICATION_PATH.GET_NOTIFICATIONS, 'GET');
+
   const { isLoading: isLoadingDelete, trigger: triggerDelete } = useFetcher(
     'delete',
     'DELETE'

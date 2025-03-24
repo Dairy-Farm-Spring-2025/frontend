@@ -6,7 +6,7 @@ export const getCategoryNotificationColor = (
   const colors: Record<CategoryNotification, string> = {
     milking: 'green', // Green
     feeding: 'orange', // Orange
-    healthcare: 'red', // Red
+    heathcare: 'red', // Red
     task: 'blue', // Blue
     other: '', // Gray
   };

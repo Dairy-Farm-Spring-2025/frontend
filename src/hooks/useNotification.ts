@@ -1,46 +1,35 @@
-import { Client } from '@stomp/stompjs';
-import { useEffect, useState } from 'react';
+import { RootState } from '@core/store/store';
+import { Stomp } from '@stomp/stompjs';
+import { useEffect, useRef } from 'react';
+import { useSelector } from 'react-redux';
 import SockJS from 'sockjs-client';
 
-const useNotification = (userId: string, token: string) => {
-  const [messages, setMessages] = useState<any[]>([]);
-  const [stompClient, setStompClient] = useState<Client | null>(null);
-  useEffect(() => {
-    console.log(userId);
-    const socket = new SockJS('http://34.124.196.11:8080/ws');
-    const client = new Client({
-      webSocketFactory: () => socket,
-      connectHeaders: {
-        Authorization: token ? `Bearer ${token}` : '',
-      },
-      debug: (str) => console.log('[STOMP DEBUG] ' + str), // ✅ Log toàn bộ hoạt động
-      reconnectDelay: 5000, // Tự động kết nối lại sau 5s nếu bị mất kết nối
-      onConnect: () => {
-        client.subscribe(`/user/${userId}/queue/notifications`, (message) => {
-          console.log('message ', message);
-          setMessages((prev) => [...prev, message.body]);
-        });
-      },
-      onStompError: (frame) => console.error('🚨 STOMP Error:', frame),
-    });
+const URL = 'http://34.124.196.11:8080/ws';
 
-    client.activate();
-    setStompClient(client);
+export const useWebSocket = () => {
+  const clientRef = useRef<any>(null); // Dùng useRef để giữ kết nối WebSocket
+  const user = useSelector((state: RootState) => state.user);
+  useEffect(() => {
+    const socket = new SockJS(URL);
+    const stompClient = Stomp.over(socket);
+
+    stompClient.connect(
+      {
+        Authorization: user ? `Bearer ${user.accessToken}` : '',
+      },
+      () => {
+        clientRef.current = stompClient;
+      }
+    );
 
     return () => {
-      client.deactivate();
+      if (stompClient.connected) {
+        clientRef.current.disconnect(() => {
+          console.log('WebSocket disconnected');
+        });
+      }
     };
-  }, [token, userId]);
+  }, []);
 
-  useEffect(() => {
-    if (messages) {
-      console.log('[MEssages]', messages);
-    } else {
-      console.log('No data');
-    }
-  }, [messages]);
-
-  return { messages, stompClient };
+  return { client: clientRef.current };
 };
-
-export default useNotification;

@@ -15,11 +15,14 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import ButtonComponent from '@components/Button/ButtonComponent';
 import AnimationAppear from '@components/UI/AnimationAppear';
+import { triggerAvatarRefresh } from '@core/store/slice/avatarSlice';
 import { logout } from '@core/store/slice/userSlice';
 import { RootState } from '@core/store/store';
 import useFetcher from '@hooks/useFetcher';
-import useNotification from '@hooks/useNotification';
 import useToast from '@hooks/useToast';
+import { MyNotification } from '@model/Notification/Notification';
+import { UserProfileData } from '@model/User';
+import { NOTIFICATION_PATH } from '@service/api/Notification/notificationApi';
 import { getAvatar } from '@utils/getImage';
 import { useTranslation } from 'react-i18next';
 import {
@@ -45,8 +48,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import LabelDashboard from './components/LabelDashboard';
 import './index.scss';
-import { UserProfileData } from '@model/User';
-import { triggerAvatarRefresh } from '@core/store/slice/avatarSlice';
 const { Header, Content, Sider } = Layout;
 type MenuItem = Required<MenuProps>['items'][number];
 const { useToken } = theme;
@@ -81,22 +82,26 @@ const AppDashboard: React.FC = React.memo(() => {
   const location = useLocation();
   const dispatch = useDispatch();
   const selectedKey = location.pathname.replace(/^\//, ''); // Lấy path và bỏ dấu '/'
-
   const [openKeys, setOpenKeys] = useState<string[]>([]);
   const { data, mutate } = useFetcher<UserProfileData>('users/profile', 'GET');
   const { roleName } = useSelector((state: RootState) => state.user);
+  const { data: dataResponseNotification } = useFetcher<MyNotification[]>(
+    NOTIFICATION_PATH.MY_NOTIFICATIONS,
+    'GET'
+  );
+  const [dataNotification, setDataNotification] = useState<MyNotification[]>(
+    []
+  );
   const accessToken = useSelector((state: RootState) => state.user.accessToken);
-  const { messages } = useNotification(String(data?.id || ''), accessToken);
 
   const shouldRefreshAvatar = useSelector(
     (state: RootState) => state.avatar.shouldRefreshAvatar
   );
   useEffect(() => {
-    console.log(messages);
-    if (messages.length > 0) {
-      console.log('New Notification: ', messages[0]);
+    if (dataResponseNotification) {
+      setDataNotification(dataResponseNotification);
     }
-  }, [messages]);
+  }, [accessToken, data, dataResponseNotification]);
 
   useEffect(() => {
     if (shouldRefreshAvatar === true) {
@@ -411,10 +416,9 @@ const AppDashboard: React.FC = React.memo(() => {
             className="!bg-white flex items-center gap-5 justify-end"
             style={{ padding: 0 }}
           >
+            {' '}
             <div className="flex items-center gap-5 pr-16">
-              {messages.length !== 0 ? messages[0]?.title : <p>'no'</p>}
-
-              <Badge count={99}>
+              <Badge count={dataNotification.length}>
                 <IoIosNotifications
                   className="cursor-pointer text-orange-600"
                   size={32}
