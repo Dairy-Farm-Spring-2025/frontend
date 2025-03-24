@@ -108,11 +108,27 @@ const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
       onCancel={handleClose}
       loading={isLoadingDetail}
       footer={[
-        !edit && <ButtonComponent key="edit" type="primary" onClick={() => setEdit(true)}>{t('Edit')}</ButtonComponent>,
+        !edit && data?.illnessStatus === 'pending' && (
+          <ButtonComponent
+            key="edit"
+            type="primary"
+            onClick={() => setEdit(true)}
+          >
+            {t('Edit')}
+          </ButtonComponent>
+        ),
         edit && (
           <div key="actions" className="flex gap-4 justify-end">
-            <ButtonComponent onClick={() => setEdit(false)}>{t('Cancel')}</ButtonComponent>
-            <ButtonComponent loading={isLoading} type="primary" onClick={() => form.submit()}>{t('Save')}</ButtonComponent>
+            <ButtonComponent onClick={() => setEdit(false)}>
+              {t('Cancel')}
+            </ButtonComponent>
+            <ButtonComponent
+              loading={isLoading}
+              type="primary"
+              onClick={() => form.submit()}
+            >
+              {t('Save')}
+            </ButtonComponent>
           </div>
         ),
       ]}
@@ -157,8 +173,9 @@ const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
           <Card>
 
             <Title className="!text-2xl mb-6">{t('Illness Information')}</Title>
-
-            <FormItemComponent
+            <LabelForm>{t('Symptoms')}</LabelForm>
+            <div className="prose mb-6" dangerouslySetInnerHTML={{ __html: data?.symptoms || t('No data') }} />
+            {/* <FormItemComponent
               name="symptoms"
               label={<LabelForm>{t('Symptoms')}</LabelForm>}
               rules={[{ required: edit, message: t('Please input symptoms') }]}
@@ -168,7 +185,7 @@ const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
               ) : (
                 <ReactQuillComponent />
               )}
-            </FormItemComponent>
+            </FormItemComponent> */}
 
             <FormItemComponent
               name="severity"
