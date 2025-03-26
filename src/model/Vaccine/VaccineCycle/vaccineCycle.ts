@@ -1,4 +1,7 @@
+import { Cow } from '@model/Cow/Cow';
 import { StatusItem, Unit } from '../../Warehouse/items';
+import { CowType } from '@model/Cow/CowType';
+import { UserProfileData } from '@model/User';
 
 export type VaccineCyclePayload = {
   name: string;
@@ -65,7 +68,18 @@ export type VaccineCycle = {
   };
   vaccineCycleDetails: VaccineCycleDetails[];
 };
+export type VaccineInjection = {
+  id: string;
+  cowEntity: Cow;
+  cowTypeEntity: {
+    cowTypeEntity: CowType
+  };
+  vaccineCycleDetail: VaccineCycleDetails;
+  injectionDate: string;
+  administeredBy: UserProfileData
+  status: string;
 
+}
 export type InjectionSite =
   | 'leftArm'
   | 'rightArm'

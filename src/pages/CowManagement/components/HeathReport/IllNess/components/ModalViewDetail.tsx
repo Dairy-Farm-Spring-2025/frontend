@@ -1,21 +1,21 @@
-import { DatePicker, Form, Select, Row, Col, Divider, Card } from 'antd';
-import { useEffect, useState } from 'react';
 import ButtonComponent from '@components/Button/ButtonComponent';
 import FormComponent from '@components/Form/FormComponent';
 import FormItemComponent from '@components/Form/Item/FormItemComponent';
 import LabelForm from '@components/LabelForm/LabelForm';
 import ModalComponent from '@components/Modal/ModalComponent';
+import ReactQuillComponent from '@components/ReactQuill/ReactQuillComponent';
+import SelectComponent from '@components/Select/SelectComponent';
+import Title from '@components/UI/Title';
 import useFetcher from '@hooks/useFetcher';
 import useToast from '@hooks/useToast';
-import dayjs from 'dayjs';
-import { useTranslation } from 'react-i18next';
-import ReactQuillComponent from '@components/ReactQuill/ReactQuillComponent';
 import { Health } from '@model/Cow/HealthReport';
-import { healthSeverity } from '@service/data/health';
 import { HEALTH_RECORD_PATH } from '@service/api/HealthRecord/healthRecordApi';
-import Title from '@components/UI/Title';
+import { healthSeverity } from '@service/data/health';
 import { formatAreaType } from '@utils/format';
-import SelectComponent from '@components/Select/SelectComponent';
+import { Card, Col, DatePicker, Divider, Form, Row } from 'antd';
+import dayjs from 'dayjs';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface ModalViewDetailProps {
   modal: any;
@@ -60,7 +60,7 @@ const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
       const response = await trigger({
         body: {
           ...values,
-          cowId: data?.cowEntity?.cowId, // Thêm cowId từ data vào payload
+          cowId: data?.cowEntity?.cowId, // Add cowId to the payload
           startDate: values.startDate?.toISOString(),
           endDate: values.endDate?.toISOString(),
         },
@@ -155,6 +155,7 @@ const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
     >
       <FormComponent form={form} onFinish={handleFinish} layout="vertical">
         <div className="p-6 space-y-6">
+          {/* Cow Information */}
           <Card>
             <Title className="!text-2xl mb-6">{t('Cow Information')}</Title>
             <Row gutter={[16, 16]}>
@@ -199,6 +200,7 @@ const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
             </Row>
           </Card>
 
+          {/* Illness Information (Including Illness Details) */}
           <Card>
             <Title className="!text-2xl mb-6">{t('Illness Information')}</Title>
             <LabelForm>{t('Symptoms')}</LabelForm>
@@ -242,7 +244,7 @@ const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
             >
               {!edit ? (
                 <div
-                  className="prose"
+                  className="prose mb-6"
                   dangerouslySetInnerHTML={{
                     __html: data?.prognosis || t('No data'),
                   }}
@@ -251,8 +253,69 @@ const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
                 <ReactQuillComponent />
               )}
             </FormItemComponent>
+            {/* Illness Details Section */}
+            <Divider />
+            <Title className="!text-xl mb-4">{t('Illness Details')}</Title>
+            {data?.illnessDetails && data.illnessDetails.length > 0 ? (
+              data.illnessDetails.map((detail, index) => (
+                <div key={detail.illnessDetailId} className="mb-6">
+                  <Row gutter={[16, 16]}>
+                    <Col span={12}>
+                      <LabelForm>{t('Date')}</LabelForm>
+                      <div className="font-medium text-gray-700">
+                        {detail.date
+                          ? dayjs(detail.date).format('DD/MM/YYYY')
+                          : t('No data')}
+                      </div>
+                    </Col>
+                    <Col span={12}>
+                      <LabelForm>{t('Description')}</LabelForm>
+                      <div className="font-medium text-gray-700">
+                        {detail.description || t('No data')}
+                      </div>
+                    </Col>
+                    <Col span={12}>
+                      <LabelForm>{t('Dosage')}</LabelForm>
+                      <div className="font-medium text-gray-700">
+                        {detail.dosage ? `${detail.dosage}` : t('No data')}
+                      </div>
+                    </Col>
+                    <Col span={12}>
+                      <LabelForm>{t('Injection Site')}</LabelForm>
+                      <div className="font-medium text-gray-700">
+                        {formatAreaType(detail.injectionSite ?? t('No data'))}
+                      </div>
+                    </Col>
+                    <Col span={12}>
+                      <LabelForm>{t('Status')}</LabelForm>
+                      <div className="font-medium text-gray-700">
+                        {formatAreaType(detail.status ?? t('No data'))}
+                      </div>
+                    </Col>
+                    <Col span={12}>
+                      <LabelForm>{t('Vaccine Name')}</LabelForm>
+                      <div className="font-medium text-gray-700">
+                        {detail.vaccine?.name || t('No data')}
+                      </div>
+                    </Col>
+                    <Col span={12}>
+                      <LabelForm>{t('Veterinarian')}</LabelForm>
+                      <div className="font-medium text-gray-700">
+                        {detail.veterinarian?.name || t('No data')}
+                      </div>
+                    </Col>
+                  </Row>
+                  {index < data.illnessDetails.length - 1 && <Divider />}
+                </div>
+              ))
+            ) : (
+              <div className="text-gray-500 text-center">
+                {t('No illness details available')}
+              </div>
+            )}
           </Card>
 
+          {/* Date Range */}
           <Card>
             <Title className="!text-2xl mb-6">{t('Date Range')}</Title>
             <Row gutter={[16, 16]}>
@@ -260,12 +323,16 @@ const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
                 <FormItemComponent
                   name="startDate"
                   label={<LabelForm>{t('Start Date')}</LabelForm>}
-                  rules={[{ required: edit }]}
+                  rules={[
+                    { required: edit, message: t('Please select start date') },
+                  ]}
                 >
                   {!edit ? (
-                    <span className="font-medium">
-                      {dayjs(data?.startDate).format('DD/MM/YYYY')}
-                    </span>
+                    <div className="font-medium text-gray-700">
+                      {data?.startDate
+                        ? dayjs(data.startDate).format('DD/MM/YYYY')
+                        : t('No data')}
+                    </div>
                   ) : (
                     <DatePicker className="w-full" />
                   )}
@@ -275,12 +342,16 @@ const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
                 <FormItemComponent
                   name="endDate"
                   label={<LabelForm>{t('End Date')}</LabelForm>}
-                  rules={[{ required: edit }]}
+                  rules={[
+                    { required: edit, message: t('Please select end date') },
+                  ]}
                 >
                   {!edit ? (
-                    <span className="font-medium">
-                      {dayjs(data?.endDate).format('DD/MM/YYYY')}
-                    </span>
+                    <div className="font-medium text-gray-700">
+                      {data?.endDate
+                        ? dayjs(data.endDate).format('DD/MM/YYYY')
+                        : t('No data')}
+                    </div>
                   ) : (
                     <DatePicker className="w-full" />
                   )}
