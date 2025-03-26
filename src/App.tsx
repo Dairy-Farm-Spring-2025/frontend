@@ -4,7 +4,7 @@ import { onMessage } from 'firebase/messaging';
 import { AnimatePresence } from 'framer-motion';
 import { useEffect } from 'react';
 import AppRouting from './config/routes/AppRouting';
-import { messaging, requestFCMToken } from './firebase';
+import { messaging, requestFCMToken } from '@utils/firebase';
 
 function App() {
   const toast = useToast();

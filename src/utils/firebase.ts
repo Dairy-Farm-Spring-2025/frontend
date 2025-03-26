@@ -30,13 +30,11 @@ const messaging = getMessaging(app);
 const requestFCMToken = async () => {
   try {
     const permission = await Notification.requestPermission();
-    console.log(permission);
     if (permission === 'granted') {
       const token = await getToken(messaging, {
         vapidKey: import.meta.env.VITE_VAPID_KEY, // Lấy từ Firebase Console
       });
-      console.log('FCM Token:', token);
-      // Gửi token lên backend
+      return token;
     } else {
       console.warn('User denied notifications.');
     }

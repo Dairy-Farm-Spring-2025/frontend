@@ -1,7 +1,6 @@
 import { BellOutlined, WalletOutlined } from '@ant-design/icons';
 import {
   Avatar,
-  Badge,
   ConfigProvider,
   Divider,
   Dropdown,
@@ -20,9 +19,9 @@ import { logout } from '@core/store/slice/userSlice';
 import { RootState } from '@core/store/store';
 import useFetcher from '@hooks/useFetcher';
 import useToast from '@hooks/useToast';
-import { MyNotification } from '@model/Notification/Notification';
 import { UserProfileData } from '@model/User';
-import { NOTIFICATION_PATH } from '@service/api/Notification/notificationApi';
+import { USER_PATH } from '@service/api/User/userApi';
+import { requestFCMToken } from '@utils/firebase';
 import { getAvatar } from '@utils/getImage';
 import { useTranslation } from 'react-i18next';
 import {
@@ -33,7 +32,7 @@ import {
 import { BiCategory, BiTask, BiUser } from 'react-icons/bi';
 import { CiBoxList, CiExport } from 'react-icons/ci';
 import { FaWpforms } from 'react-icons/fa';
-import { IoIosLogOut, IoIosNotifications } from 'react-icons/io';
+import { IoIosLogOut } from 'react-icons/io';
 import { LiaChartAreaSolid, LiaProductHunt } from 'react-icons/lia';
 import { LuGitPullRequest, LuMilk } from 'react-icons/lu';
 import {
@@ -47,6 +46,7 @@ import { SiHappycow } from 'react-icons/si';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import LabelDashboard from './components/LabelDashboard';
+import NotificationDropDown from './components/NotificationDropDown';
 import './index.scss';
 const { Header, Content, Sider } = Layout;
 type MenuItem = Required<MenuProps>['items'][number];
@@ -85,23 +85,22 @@ const AppDashboard: React.FC = React.memo(() => {
   const [openKeys, setOpenKeys] = useState<string[]>([]);
   const { data, mutate } = useFetcher<UserProfileData>('users/profile', 'GET');
   const { roleName } = useSelector((state: RootState) => state.user);
-  const { data: dataResponseNotification } = useFetcher<MyNotification[]>(
-    NOTIFICATION_PATH.MY_NOTIFICATIONS,
-    'GET'
-  );
-  const [dataNotification, setDataNotification] = useState<MyNotification[]>(
-    []
-  );
-  const accessToken = useSelector((state: RootState) => state.user.accessToken);
-
+  const user = useSelector((state: RootState) => state.user);
+  console.log(user);
+  const { trigger: triggerFCM } = useFetcher(USER_PATH.FCM_TOKEN_UPDATE, 'PUT');
   const shouldRefreshAvatar = useSelector(
     (state: RootState) => state.avatar.shouldRefreshAvatar
   );
+
   useEffect(() => {
-    if (dataResponseNotification) {
-      setDataNotification(dataResponseNotification);
-    }
-  }, [accessToken, data, dataResponseNotification]);
+    const fetchToken = async () => {
+      const fcmToken = await requestFCMToken().then((element) => element);
+      console.log(fcmToken);
+      await triggerFCM({ body: { fcmTokenWeb: fcmToken } });
+    };
+    fetchToken();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (shouldRefreshAvatar === true) {
@@ -418,12 +417,7 @@ const AppDashboard: React.FC = React.memo(() => {
           >
             {' '}
             <div className="flex items-center gap-5 pr-16">
-              <Badge count={dataNotification.length}>
-                <IoIosNotifications
-                  className="cursor-pointer text-orange-600"
-                  size={32}
-                />
-              </Badge>
+              <NotificationDropDown />
               <div>
                 <ConfigProvider
                   dropdown={{

@@ -233,7 +233,7 @@ const TaskCreateModal = ({
                   return (
                     <div>
                       <p>
-                        {taskType.name} - {taskType.roleId.name}
+                        {taskType?.name} - {taskType?.roleId?.name}
                       </p>
                     </div>
                   );
