@@ -49,7 +49,10 @@ const IllnessRecordForm = ({ loading, data }: IllnessRecordFormProps) => {
                 <Text>{formatStatusWithCamel(data?.severity)}</Text>
               </TextBorder>
             ) : (
-              <SelectComponent options={SEVERITY_OPTIONS} disabled={loading} />
+              <SelectComponent
+                options={SEVERITY_OPTIONS()}
+                disabled={loading}
+              />
             )}
           </FormItemComponent>
           <DateRangeItem

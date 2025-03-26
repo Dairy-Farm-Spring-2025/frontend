@@ -79,7 +79,7 @@ const ListItemManagement = () => {
       key: 'unit',
       width: 200,
       filterable: true,
-      filterOptions: UNIT_FILTER,
+      filterOptions: UNIT_FILTER(),
     },
     {
       title: t('Category'),

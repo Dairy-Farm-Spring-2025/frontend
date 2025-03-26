@@ -11,7 +11,6 @@ import TextLink from '../../../../../../components/UI/TextLink';
 import WhiteBackground from '../../../../../../components/UI/WhiteBackground';
 import useFetcher from '../../../../../../hooks/useFetcher';
 import useModal from '../../../../../../hooks/useModal';
-import useToast from '../../../../../../hooks/useToast';
 import { Cow } from '../../../../../../model/Cow/Cow'; // Import the correct Cow type
 import { PenEntity } from '../../../../../../model/CowPen/CowPen';
 import { cowOrigin } from '../../../../../../service/data/cowOrigin';
@@ -28,12 +27,10 @@ interface ListCowNotInPenProps {
 const ListCowNotInPen: React.FC<ListCowNotInPenProps> = () => {
   const {
     data,
-    error,
     isLoading,
     mutate: mutateCows,
   } = useFetcher<Cow[]>('cows', 'GET');
   const [cow, setCow] = useState<Cow[]>([]);
-  const toast = useToast();
   const modal = useModal();
   const { t } = useTranslation();
   const columns: Column[] = [
@@ -83,7 +80,7 @@ const ListCowNotInPen: React.FC<ListCowNotInPenProps> = () => {
       dataIndex: 'cowOrigin',
       key: 'cowOrigin',
       title: t('Origin'),
-      render: (data) => getLabelByValue(data, cowOrigin),
+      render: (data) => getLabelByValue(data, cowOrigin()),
     },
     {
       dataIndex: 'gender',
@@ -107,7 +104,7 @@ const ListCowNotInPen: React.FC<ListCowNotInPenProps> = () => {
       dataIndex: 'cowStatus',
       key: 'cowStatus',
       title: t('Cow Status'),
-      render: (data) => getLabelByValue(data, cowStatus),
+      render: (data) => getLabelByValue(data, cowStatus()),
     },
     {
       dataIndex: 'cowId',

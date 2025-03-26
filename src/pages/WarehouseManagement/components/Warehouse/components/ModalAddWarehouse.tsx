@@ -60,7 +60,7 @@ const ModalAddWarehouse = ({ modal, mutate }: ModalAddWarehouseProps) => {
           label={<LabelForm>{t('Type')}</LabelForm>}
           rules={[{ required: true }]}
         >
-          <SelectComponent options={warehouseType} />
+          <SelectComponent options={warehouseType()} />
         </FormItemComponent>
         <FormItemComponent
           name="description"

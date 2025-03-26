@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import { Tabs, Modal, Tag } from 'antd';
 import useFetcher from '../../../../hooks/useFetcher';
 import MoveCowToPenForm from './components/MoveCowToPen/MoveCowToPenForm';
-import TableComponent, { Column } from '../../../../components/Table/TableComponent';
+import TableComponent, {
+  Column,
+} from '../../../../components/Table/TableComponent';
 import useModal from '../../../../hooks/useModal';
 import dayjs from 'dayjs';
 import ModalPenDetail from './components/PenEntityDetail/ModalPenDetail';
@@ -62,7 +64,7 @@ export const MoveCowManagement: React.FC = () => {
       key: 'cowStatus',
       render: (status: string) => (
         <Tag color={status === 'healthy' ? 'green' : 'red'}>
-          {getLabelByValue(status, cowStatus)}
+          {getLabelByValue(status, cowStatus())}
         </Tag>
       ),
       searchable: true,
@@ -84,13 +86,18 @@ export const MoveCowManagement: React.FC = () => {
       dataIndex: 'action',
       render: (_, record) => (
         <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <ButtonComponent onClick={() => handleOpenEdit(record)}>View Detail</ButtonComponent>
+          <ButtonComponent onClick={() => handleOpenEdit(record)}>
+            View Detail
+          </ButtonComponent>
         </div>
       ),
     },
   ];
 
-  const handleMove = (fromDate: dayjs.Dayjs | null, toDate: dayjs.Dayjs | null) => {
+  const handleMove = (
+    fromDate: dayjs.Dayjs | null,
+    toDate: dayjs.Dayjs | null
+  ) => {
     if (selectedCow && selectedPen && fromDate) {
       confirm({
         title: t('Are you sure you want to move this cow?'),
@@ -123,9 +130,9 @@ export const MoveCowManagement: React.FC = () => {
   };
 
   return (
-    <Tabs defaultActiveKey='1'>
+    <Tabs defaultActiveKey="1">
       {/* Tab 1: View Data */}
-      <TabPane tab='View Cows & Pens' key='1'>
+      <TabPane tab="View Cows & Pens" key="1">
         {penId != 0 && <ModalPenDetail penId={penId} modal={modal} />}
         <TableComponent
           columns={columns}
@@ -137,11 +144,19 @@ export const MoveCowManagement: React.FC = () => {
         />
       </TabPane>
 
-      <TabPane className='flex justify-center items-center' tab='Move Bulk to Pen' key='2'>
+      <TabPane
+        className="flex justify-center items-center"
+        tab="Move Bulk to Pen"
+        key="2"
+      >
         <ListCowNotInPen mutate={mutate} availablePens={availablePens} />
       </TabPane>
       {/* Tab 2: Move Cow to Pen */}
-      <TabPane className='flex justify-center items-center' tab='Move Cow to Pen' key='3'>
+      <TabPane
+        className="flex justify-center items-center"
+        tab="Move Cow to Pen"
+        key="3"
+      >
         <MoveCowToPenForm
           cowPenData={cowPenData}
           availablePens={availablePens}

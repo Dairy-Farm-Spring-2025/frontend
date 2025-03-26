@@ -1,21 +1,21 @@
-import { DatePicker, Form, Select, Row, Col, Divider, Card } from 'antd';
-import { useEffect, useState } from 'react';
 import ButtonComponent from '@components/Button/ButtonComponent';
 import FormComponent from '@components/Form/FormComponent';
 import FormItemComponent from '@components/Form/Item/FormItemComponent';
 import LabelForm from '@components/LabelForm/LabelForm';
 import ModalComponent from '@components/Modal/ModalComponent';
+import ReactQuillComponent from '@components/ReactQuill/ReactQuillComponent';
+import SelectComponent from '@components/Select/SelectComponent';
+import Title from '@components/UI/Title';
 import useFetcher from '@hooks/useFetcher';
 import useToast from '@hooks/useToast';
-import dayjs from 'dayjs';
-import { useTranslation } from 'react-i18next';
-import ReactQuillComponent from '@components/ReactQuill/ReactQuillComponent';
 import { Health } from '@model/Cow/HealthReport';
-import { healthSeverity } from '@service/data/health';
 import { HEALTH_RECORD_PATH } from '@service/api/HealthRecord/healthRecordApi';
-import Title from '@components/UI/Title';
+import { healthSeverity } from '@service/data/health';
 import { formatAreaType } from '@utils/format';
-import SelectComponent from '@components/Select/SelectComponent';
+import { Card, Col, DatePicker, Divider, Form, Row } from 'antd';
+import dayjs from 'dayjs';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface ModalViewDetailProps {
   modal: any;
@@ -210,6 +210,17 @@ const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
                 __html: data?.symptoms || t('No data'),
               }}
             />
+            {/* <FormItemComponent
+              name="symptoms"
+              label={<LabelForm>{t('Symptoms')}</LabelForm>}
+              rules={[{ required: edit, message: t('Please input symptoms') }]}
+            >
+              {!edit ? (
+                <div className="prose" dangerouslySetInnerHTML={{ __html: data?.symptoms || t('No data') }} />
+              ) : (
+                <ReactQuillComponent />
+              )}
+            </FormItemComponent> */}
 
             <FormItemComponent
               name="severity"
@@ -220,7 +231,7 @@ const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
                 <div className="prose">{data?.severity || t('No data')}</div>
               ) : (
                 <SelectComponent
-                  options={healthSeverity}
+                  options={healthSeverity()}
                   placeholder={t('Select severity level')}
                 />
               )}
@@ -242,12 +253,9 @@ const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
                 <ReactQuillComponent />
               )}
             </FormItemComponent>
-
             {/* Illness Details Section */}
             <Divider />
-            <Title className="!text-xl mb-4">
-              {t('Illness Details')}
-            </Title>
+            <Title className="!text-xl mb-4">{t('Illness Details')}</Title>
             {data?.illnessDetails && data.illnessDetails.length > 0 ? (
               data.illnessDetails.map((detail, index) => (
                 <div key={detail.illnessDetailId} className="mb-6">
@@ -315,7 +323,9 @@ const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
                 <FormItemComponent
                   name="startDate"
                   label={<LabelForm>{t('Start Date')}</LabelForm>}
-                  rules={[{ required: edit, message: t('Please select start date') }]}
+                  rules={[
+                    { required: edit, message: t('Please select start date') },
+                  ]}
                 >
                   {!edit ? (
                     <div className="font-medium text-gray-700">
@@ -332,7 +342,9 @@ const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
                 <FormItemComponent
                   name="endDate"
                   label={<LabelForm>{t('End Date')}</LabelForm>}
-                  rules={[{ required: edit, message: t('Please select end date') }]}
+                  rules={[
+                    { required: edit, message: t('Please select end date') },
+                  ]}
                 >
                   {!edit ? (
                     <div className="font-medium text-gray-700">

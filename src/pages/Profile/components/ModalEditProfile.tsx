@@ -1,15 +1,15 @@
-import { DatePicker, Form, Input, Select } from "antd";
-import FormComponent from "../../../components/Form/FormComponent";
-import ModalComponent from "../../../components/Modal/ModalComponent";
-import { UserProfileData } from "../../../model/User";
-import FormItemComponent from "../../../components/Form/Item/FormItemComponent";
-import LabelForm from "../../../components/LabelForm/LabelForm";
-import { useEffect, useState } from "react";
-import { genderData } from "../../../service/data/gender";
-import useToast from "../../../hooks/useToast";
-import { profileApi } from "../../../service/api/Profile/profileApi";
-import useFetcher from "../../../hooks/useFetcher";
-import dayjs from "dayjs";
+import { DatePicker, Form, Input, Select } from 'antd';
+import dayjs from 'dayjs';
+import { useEffect, useState } from 'react';
+import FormComponent from '../../../components/Form/FormComponent';
+import FormItemComponent from '../../../components/Form/Item/FormItemComponent';
+import LabelForm from '../../../components/LabelForm/LabelForm';
+import ModalComponent from '../../../components/Modal/ModalComponent';
+import useFetcher from '../../../hooks/useFetcher';
+import useToast from '../../../hooks/useToast';
+import { UserProfileData } from '../../../model/User';
+import { profileApi } from '../../../service/api/Profile/profileApi';
+import { genderDataUser } from '../../../service/data/gender';
 
 interface ModalEditProfileProps {
   modal: any;
@@ -30,20 +30,20 @@ const ModalEditProfile = ({
   const [isDistrict, setIsDistrict] = useState(true);
   const [isWard, setIsWard] = useState(true);
   const { trigger, isLoading } = useFetcher(
-    "users/update",
-    "PUT",
-    "multipart/form-data"
+    'users/update',
+    'PUT',
+    'multipart/form-data'
   );
   const parseAddress = (fullAddress: string) => {
     const [address, ward, district, province] = fullAddress
-      .split(",")
+      .split(',')
       .map((part) => part.trim());
     return { address, ward, district, province };
   };
   useEffect(() => {
     if (modal.open) {
       const { address, ward, district, province } = parseAddress(
-        profile?.address || ""
+        profile?.address || ''
       );
       form.setFieldsValue({
         name: profile?.name,
@@ -73,7 +73,7 @@ const ModalEditProfile = ({
         setIsDistrict(false);
       }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     form,
     modal.open,
@@ -118,11 +118,11 @@ const ModalEditProfile = ({
     const address = `${values.address}, ${values.ward.label}, ${values.district.label}, ${values.province.label}`;
 
     const formData = new FormData();
-    formData.append("name", values.name);
-    formData.append("phoneNumber", values.phoneNumber);
-    formData.append("address", address);
-    formData.append("dob", dayjs(values.dob).format("YYYY-MM-DD"));
-    formData.append("gender", values.gender);
+    formData.append('name', values.name);
+    formData.append('phoneNumber', values.phoneNumber);
+    formData.append('address', address);
+    formData.append('dob', dayjs(values.dob).format('YYYY-MM-DD'));
+    formData.append('gender', values.gender);
     try {
       const response = await trigger({ body: formData });
       toast.showSuccess(response.message);
@@ -161,7 +161,7 @@ const ModalEditProfile = ({
             {
               required: true,
               pattern: /^\d{10}$/,
-              message: "Must be number and have 10 digits",
+              message: 'Must be number and have 10 digits',
             },
           ]}
           label={<LabelForm>Phone number</LabelForm>}
@@ -174,14 +174,14 @@ const ModalEditProfile = ({
             rules={[{ required: true }]}
             label={<LabelForm>Date of birth</LabelForm>}
           >
-            <DatePicker format={"DD-MM-YYYY"} className="!w-full" />
+            <DatePicker format={'DD-MM-YYYY'} className="!w-full" />
           </FormItemComponent>
           <FormItemComponent
             rules={[{ required: true }]}
             name="gender"
             label={<LabelForm>Gender</LabelForm>}
           >
-            <Select placeholder="Select gender..." options={genderData} />
+            <Select placeholder="Select gender..." options={genderDataUser()} />
           </FormItemComponent>
         </div>
 
@@ -192,7 +192,7 @@ const ModalEditProfile = ({
             label={<LabelForm>Province</LabelForm>}
           >
             <Select
-              placeholder={"Select Province..."}
+              placeholder={'Select Province...'}
               labelInValue
               optionFilterProp="children"
               showSearch
@@ -200,7 +200,7 @@ const ModalEditProfile = ({
               options={province}
               onChange={onChangeProvince}
               filterOption={(input: any, option: any) =>
-                (option?.label ?? "")
+                (option?.label ?? '')
                   .toLowerCase()
                   .includes(input.toLowerCase())
               }
@@ -215,14 +215,14 @@ const ModalEditProfile = ({
             <Select
               labelInValue
               optionFilterProp="children"
-              placeholder={"Select District..."}
+              placeholder={'Select District...'}
               disabled={isDistrict}
               showSearch
               allowClear
               options={district}
               onChange={onChangeDistrict}
               filterOption={(input: any, option: any) =>
-                (option?.label ?? "")
+                (option?.label ?? '')
                   .toLowerCase()
                   .includes(input.toLowerCase())
               }
@@ -236,14 +236,14 @@ const ModalEditProfile = ({
           >
             <Select
               labelInValue
-              placeholder={"Select Ward..."}
+              placeholder={'Select Ward...'}
               optionFilterProp="children"
               disabled={isWard}
               showSearch
               allowClear
               options={ward}
               filterOption={(input: any, option: any) =>
-                (option?.label ?? "")
+                (option?.label ?? '')
                   .toLowerCase()
                   .includes(input.toLowerCase())
               }

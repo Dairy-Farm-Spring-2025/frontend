@@ -1,18 +1,20 @@
-export const PRIORITY_DATA = [
+import { t } from 'i18next';
+
+export const PRIORITY_DATA = () => [
   {
-    label: 'Low',
+    label: t('Low'),
     value: 'low',
   },
   {
-    label: 'Medium',
+    label: t('Medium'),
     value: 'medium',
   },
   {
-    label: 'High',
+    label: t('High'),
     value: 'high',
   },
   {
-    label: 'Critical',
+    label: t('Critical'),
     value: 'critical',
   },
 ];

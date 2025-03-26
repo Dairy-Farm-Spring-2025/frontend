@@ -115,7 +115,7 @@ const ModalEditItem = ({ modal, data, mutate }: ModalEditItemProps) => {
             name="unit"
             label={<LabelForm>Unit</LabelForm>}
           >
-            <SelectComponent options={unitOptions} />
+            <SelectComponent options={unitOptions()} />
           </FormItemComponent>
           <FormItemComponent
             name="quantity"
@@ -138,7 +138,7 @@ const ModalEditItem = ({ modal, data, mutate }: ModalEditItemProps) => {
             rules={[{ required: true }]}
             label={<LabelForm>Status</LabelForm>}
           >
-            <SelectComponent options={statusOptions} />
+            <SelectComponent options={statusOptions()} />
           </FormItemComponent>
         </div>
         <FormItemComponent

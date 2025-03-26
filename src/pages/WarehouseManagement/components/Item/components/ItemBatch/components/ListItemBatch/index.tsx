@@ -84,7 +84,7 @@ const ListItemBatch = () => {
       render: (data, record: ItemBatch) => (
         <SelectComponent
           className="w-full"
-          options={ITEM_BATCH_OPTIONS}
+          options={ITEM_BATCH_OPTIONS()}
           defaultValue={data}
           onChange={() => handleUpdateStatus(record?.itemBatchId, data)}
           loading={updateLoading}

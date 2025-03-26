@@ -79,7 +79,7 @@ const PenEntityDetail: React.FC<PenEntityDetailProps> = ({
           {penEntity.areaBelongto?.name}
         </Descriptions.Item>
         <Descriptions.Item label="Area Type">
-          {getLabelByValue(penEntity.areaBelongto?.areaType, areaType)}
+          {getLabelByValue(penEntity.areaBelongto?.areaType, areaType())}
         </Descriptions.Item>
         <Descriptions.Item label="Area Description">
           {penEntity.areaBelongto?.description}

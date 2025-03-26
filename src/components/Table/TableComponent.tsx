@@ -126,7 +126,7 @@ const TableComponent = ({
                 setSearchTextFilters({});
               };
               return (
-                <div style={{ padding: 8 }}>
+                <div style={{ padding: 8, width: 250 }}>
                   <Input
                     placeholder={`${t('Search')} ${col.title}`}
                     value={selectedKeys[0] || ``}
@@ -137,38 +137,42 @@ const TableComponent = ({
                       handleSearchTextFilter(selectedKeys[0], col.dataIndex)
                     }
                     style={{ marginBottom: 8, display: 'block' }}
+                    className="!w-full"
                   />
-                  <Button
-                    type="primary"
-                    onClick={() => {
-                      handleSearchTextFilter(selectedKeys[0], col.dataIndex);
-                      confirm();
-                    }}
-                    icon={<SearchOutlined />}
-                    size="small"
-                    style={{ width: 90, marginRight: 8 }}
-                  >
-                    {t('Search')}
-                  </Button>
-                  <Button
-                    onClick={() => clearFilters && handleReset(clearFilters)}
-                    size="small"
-                    style={{ width: 90 }}
-                  >
-                    {t('Reset')}
-                  </Button>
+                  <div className="flex items-center gap-1">
+                    <Button
+                      type="primary"
+                      onClick={() => {
+                        handleSearchTextFilter(selectedKeys[0], col.dataIndex);
+                        confirm();
+                      }}
+                      icon={<SearchOutlined />}
+                      size="small"
+                      style={{ marginRight: 8 }}
+                      className="!w-1/2"
+                    >
+                      {t('Search')}
+                    </Button>
+                    <Button
+                      onClick={() => clearFilters && handleReset(clearFilters)}
+                      size="small"
+                      className="!w-1/2"
+                    >
+                      {t('Reset')}
+                    </Button>
+                  </div>
                 </div>
               );
             }
           : col.filterable
           ? () => (
-              <div style={{ padding: 8 }}>
+              <div style={{ padding: 8, width: 250 }}>
                 <Select
-                  style={{ width: '100%' }}
                   placeholder={`Filter ${col.title}`}
                   value={selectedFilters[col.dataIndex] || undefined}
                   onChange={(value) => handleSelectFilter(value, col.dataIndex)}
                   allowClear
+                  className="!w-full"
                 >
                   {col.filterOptions?.map((option) => (
                     <Select.Option key={option.value} value={option.value}>
