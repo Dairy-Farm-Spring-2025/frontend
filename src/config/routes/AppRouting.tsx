@@ -19,6 +19,7 @@ import TaskType from '@pages/TaskManagement/TaskType';
 import Equipment from '@pages/WarehouseManagement/components/Equipment';
 import { SiHappycow } from 'react-icons/si';
 import ListNotification from '@pages/NotificationManagement/components/List/ListNotification';
+import AuthCallback from '@pages/Login/components/AuthCallback';
 const NotificationManagement = lazy(
   () => import('@pages/NotificationManagement')
 );
@@ -207,6 +208,10 @@ const AppRouting = () => {
         {
           path: 'forget-password',
           element: SuspenseWrapper(<ForgetPassword />),
+        },
+        {
+          path: 'oauth2/callback',
+          element: SuspenseWrapper(<AuthCallback />),
         },
       ],
     },
