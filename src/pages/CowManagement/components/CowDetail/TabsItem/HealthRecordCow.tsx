@@ -7,14 +7,12 @@ import { CgSmileSad } from 'react-icons/cg';
 import { HiOutlineEmojiHappy } from 'react-icons/hi';
 import { RiEmotionNormalLine } from 'react-icons/ri';
 import FormComponent from '@components/Form/FormComponent';
-import TimelineComponent, {
-  TimelineItems,
-} from '@components/Timeline/TimelineComponent';
+import TimelineComponent, { TimelineItems } from '@components/Timeline/TimelineComponent';
 import Title from '@components/UI/Title';
 import useFetcher from '@hooks/useFetcher';
 import useToast from '@hooks/useToast';
 import { HealthResponse } from '@model/Cow/Cow';
-import { HealthRecord } from '@model/Cow/HealthRecord';
+import { HealthRecord, Injections } from '@model/Cow/HealthRecord';
 import { IllnessCow } from '@model/Cow/Illness';
 import { formatDateHour, formatToTitleCase } from '@utils/format';
 import HealthRecordForm from './components/SplitterSide/HealthRecordForm';
@@ -33,39 +31,51 @@ const HealthRecordCow = ({ cowId, data, mutate }: HealthRecordCowProps) => {
   const [form] = Form.useForm();
   const [formIllness] = Form.useForm();
   const toast = useToast();
-  const [type, setType] = useState<'HEALTH_RECORD' | 'ILLNESS' | null>();
+  const [type, setType] = useState<'HEALTH_RECORD' | 'ILLNESS' | 'INJECTIONS' | null>(null);
   const [illness, setIllness] = useState<IllnessCow>();
-  const { trigger: triggerUpdateHealthRecord, isLoading: loadingUpdateHealth } =
-    useFetcher('update/health-record', 'PUT');
-  const { trigger: triggerUpdateIllness, isLoading: isLoadingUpdateIllness } =
-    useFetcher('update/illness', 'PUT');
-  const { isLoading: isLoadingHealthRecord, trigger: triggerHealthRecord } =
-    useFetcher(HEALTH_RECORD_PATH.CREATE_HEALTH_RECORD, 'POST');
+  const { trigger: triggerUpdateHealthRecord, isLoading: loadingUpdateHealth } = useFetcher('update/health-record', 'PUT');
+  const { trigger: triggerUpdateIllness, isLoading: isLoadingUpdateIllness } = useFetcher('update/illness', 'PUT');
+  const { isLoading: isLoadingHealthRecord, trigger: triggerHealthRecord } = useFetcher(HEALTH_RECORD_PATH.CREATE_HEALTH_RECORD, 'POST');
+
   const handleOpenLeftSide = (
-    type: 'HEALTH_RECORD' | 'ILLNESS' | any,
-    data: HealthRecord & IllnessCow
+    type: 'HEALTH_RECORD' | 'ILLNESS' | 'INJECTIONS',
+    data: HealthRecord | IllnessCow | Injections
   ) => {
     setType(type);
     if (type === 'HEALTH_RECORD') {
+      const healthData = data as HealthRecord;
       form.setFieldsValue({
-        status: data.status,
-        period: data.period,
-        weight: data.weight,
-        size: data.size,
-        cowId: data?.cowEntity?.cowId,
-        healthId: data?.healthRecordId,
+        status: healthData.status,
+        period: healthData.period,
+        weight: healthData.weight,
+        size: healthData.size,
+        cowId: healthData?.cowEntity?.cowId,
+        healthId: healthData?.healthRecordId,
       });
     }
     if (type === 'ILLNESS') {
-      setIllness(data);
+      const illnessData = data as IllnessCow;
+      setIllness(illnessData);
       formIllness.setFieldsValue({
-        severity: data?.severity,
-        startDate: data?.startDate ? dayjs(data.startDate) : null,
-        endDate: data?.endDate ? dayjs(data.endDate) : null,
-        symptoms: data?.symptoms,
-        prognosis: data?.prognosis,
-        cowId: data?.cowEntity?.cowId,
-        illnessId: data?.illnessId,
+        severity: illnessData?.severity,
+        startDate: illnessData?.startDate ? dayjs(illnessData.startDate) : null,
+        endDate: illnessData?.endDate ? dayjs(illnessData.endDate) : null,
+        symptoms: illnessData?.symptoms,
+        prognosis: illnessData?.prognosis,
+        cowId: illnessData?.cowEntity?.cowId,
+        illnessId: illnessData?.illnessId,
+      });
+    }
+    if (type === 'INJECTIONS') {
+      const injectionData = data as Injections;
+      form.setFieldsValue({
+        vaccineName: injectionData.vaccineCycleDetail?.name,
+        date: injectionData.injectionDate ? dayjs(injectionData.injectionDate) : null,
+        administeredBy: injectionData.administeredBy?.name,
+        dosage: `${injectionData.vaccineCycleDetail?.dosage} ${injectionData.vaccineCycleDetail?.dosageUnit}`,
+        injectionSite: injectionData.vaccineCycleDetail?.injectionSite,
+        cowId: injectionData?.cowEntity?.cowId,
+        healthId: injectionData?.id,
       });
     }
   };
@@ -140,22 +150,33 @@ const HealthRecordCow = ({ cowId, data, mutate }: HealthRecordCowProps) => {
           {(element.type === 'HEALTH_RECORD' && (
             <>
               <Tooltip title="Status">
-                <p>{formatToTitleCase(element?.health?.status)}</p>
+                <p>{formatToTitleCase((element.health as HealthRecord)?.status)}</p>
               </Tooltip>
             </>
           )) ||
             (element.type === 'ILLNESS' && (
               <div className="flex gap-2">
                 <Tooltip title="Severity">
-                  <p>{formatToTitleCase(element?.health?.severity)}</p>
+                  <p>{formatToTitleCase((element.health as IllnessCow)?.severity)}</p>
                 </Tooltip>
                 <p>-</p>
                 <Tooltip title="Veterinarian">
                   <p>
-                    {element?.health?.veterinarian
-                      ? element?.health?.veterinarian?.name
+                    {(element.health as IllnessCow)?.veterinarian
+                      ? (element.health as IllnessCow)?.veterinarian?.name
                       : 'No veterinarian'}
                   </p>
+                </Tooltip>
+              </div>
+            )) ||
+            (element.type === 'INJECTIONS' && (
+              <div className="flex gap-2">
+                <Tooltip title="Vaccine">
+                  <p>{(element.health as Injections)?.vaccineCycleDetail?.name}</p>
+                </Tooltip>
+                <p>-</p>
+                <Tooltip title="Administered By">
+                  <p>{(element.health as Injections)?.administeredBy?.name}</p>
                 </Tooltip>
               </div>
             ))}
@@ -168,26 +189,31 @@ const HealthRecordCow = ({ cowId, data, mutate }: HealthRecordCowProps) => {
           <BsClipboard2 size={SIZE_ICON} color="blue" />
         )) ||
           (element.type === 'ILLNESS' &&
-            ((element?.health?.severity === 'mild' && (
+            (((element.health as IllnessCow)?.severity === 'mild' && (
               <Tooltip title={'Mild'}>
                 <HiOutlineEmojiHappy size={SIZE_ICON} color="green" />
               </Tooltip>
             )) ||
-              (element?.health?.severity === 'moderate' && (
+              ((element.health as IllnessCow)?.severity === 'moderate' && (
                 <Tooltip title={'Moderate'}>
                   <RiEmotionNormalLine size={SIZE_ICON} color="purple" />
                 </Tooltip>
               )) ||
-              (element?.health?.severity === 'severe' && (
+              ((element.health as IllnessCow)?.severity === 'severe' && (
                 <Tooltip title={'Severe'}>
                   <CgSmileSad size={SIZE_ICON} color="orange" />
                 </Tooltip>
               )) ||
-              (element?.health?.severity === 'critical' && (
+              ((element.health as IllnessCow)?.severity === 'critical' && (
                 <Tooltip title={'Critical'}>
                   <BsEmojiDizzy size={SIZE_ICON} color="red" />
                 </Tooltip>
-              ))))}
+              )))) ||
+          (element.type === 'INJECTIONS' && (
+            <Tooltip title="Injection">
+              <BsClipboard2 size={SIZE_ICON} color="teal" />
+            </Tooltip>
+          ))}
         <p>{formatDateHour(element.date)}</p>
       </div>
     ),
@@ -198,6 +224,7 @@ const HealthRecordCow = ({ cowId, data, mutate }: HealthRecordCowProps) => {
       <TimelineComponent className="ml-10 mt-10" items={items} reverse={true} />
     </Flex>
   );
+
   return (
     <div className="min-h-full">
       {items.length === 0 ? (
@@ -206,12 +233,7 @@ const HealthRecordCow = ({ cowId, data, mutate }: HealthRecordCowProps) => {
         </FormComponent>
       ) : (
         <Splitter className="flex w-full !min-h-[500px]">
-          <Splitter.Panel
-            className="w-fit"
-            defaultSize={'40%'}
-            min="40%"
-            max="40%"
-          >
+          <Splitter.Panel className="w-fit" defaultSize={'40%'} min="40%" max="40%">
             <div className="pt-5">
               <Title className="!text-2xl mb-5">Record Timeline</Title>
             </div>
@@ -220,25 +242,36 @@ const HealthRecordCow = ({ cowId, data, mutate }: HealthRecordCowProps) => {
           <Splitter.Panel defaultSize="60%" min="60%" max="60%">
             <div className="p-5">
               {type === 'HEALTH_RECORD' && (
-                <FormComponent
-                  form={form}
-                  onFinish={onFinishUpdateHealthRecord}
-                  className="w-2/3"
-                >
+                <FormComponent form={form} onFinish={onFinishUpdateHealthRecord} className="w-2/3">
                   <HealthRecordForm loading={loadingUpdateHealth} />
                 </FormComponent>
               )}
               {type === 'ILLNESS' && (
-                <FormComponent
-                  form={formIllness}
-                  onFinish={onFinishIllnessRecord}
-                  className="w-full"
-                >
-                  <IllnessRecordForm
-                    loading={isLoadingUpdateIllness}
-                    data={illness as IllnessCow}
-                  />
+                <FormComponent form={formIllness} onFinish={onFinishIllnessRecord} className="w-full">
+                  <IllnessRecordForm loading={isLoadingUpdateIllness} data={illness as IllnessCow} />
                 </FormComponent>
+              )}
+              {type === 'INJECTIONS' && (
+                <div className="w-2/3">
+                  <Title className="!text-xl mb-5">Injection Details</Title>
+                  <FormComponent form={form} onFinish={onFinishUpdateHealthRecord} className="w-full">
+                    <Form.Item label="Vaccine Name" name="vaccineName">
+                      <p>{form.getFieldValue('vaccineName')}</p>
+                    </Form.Item>
+                    <Form.Item label="Injection Date" name="date">
+                      <p>{form.getFieldValue('date')?.format('YYYY-MM-DD')}</p>
+                    </Form.Item>
+                    <Form.Item label="Administered By" name="administeredBy">
+                      <p>{form.getFieldValue('administeredBy')}</p>
+                    </Form.Item>
+                    <Form.Item label="Dosage" name="dosage">
+                      <p>{form.getFieldValue('dosage')}</p>
+                    </Form.Item>
+                    <Form.Item label="Injection Site" name="injectionSite">
+                      <p>{form.getFieldValue('injectionSite')}</p>
+                    </Form.Item>
+                  </FormComponent>
+                </div>
               )}
             </div>
           </Splitter.Panel>

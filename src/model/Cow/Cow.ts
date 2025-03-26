@@ -25,7 +25,7 @@ export type HealthResponse = {
   date: string;
   health: HealthRecord & IllnessCow;
   id: number;
-  type: 'HEALTH_RECORD' | 'ILLNESS';
+  type: 'HEALTH_RECORD' | 'ILLNESS' | 'INJECTIONS';
 };
 
 export type CowStatus =
