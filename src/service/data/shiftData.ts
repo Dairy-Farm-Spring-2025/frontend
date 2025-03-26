@@ -1,25 +1,27 @@
-export const shiftData = [
+import { t } from 'i18next';
+
+export const shiftData = () => [
   {
     value: 'shiftOne',
-    label: 'Shift 1 (0h - 6h)',
+    label: t('Shift 1 (0h - 6h)'),
     start: 0,
     end: 6,
   },
   {
     value: 'shiftTwo',
-    label: 'Shift 2 (6h - 12h)',
+    label: t('Shift 2 (6h - 12h)'),
     start: 6,
     end: 12,
   },
 ];
 
-export const SHIFT_TASK = [
+export const SHIFT_TASK = () => [
   {
     value: 'dayShift',
-    label: 'Day shift',
+    label: t('Day shift'),
   },
   {
     value: 'nightShift',
-    label: 'Night shift',
+    label: t('Night shift'),
   },
 ];

@@ -214,7 +214,7 @@ const TaskCreateModal = ({
               name="priority"
               label={<LabelForm>{t('Priority')}</LabelForm>}
             >
-              <SelectComponent options={PRIORITY_DATA} />
+              <SelectComponent options={PRIORITY_DATA()} />
             </FormItemComponent>
           </div>
           <div className="flex flex-col gap-2 w-1/2">
@@ -267,7 +267,7 @@ const TaskCreateModal = ({
               name="shift"
               label={<LabelForm>{t('Shift')}</LabelForm>}
             >
-              <SelectComponent options={SHIFT_TASK} />
+              <SelectComponent options={SHIFT_TASK()} />
             </FormItemComponent>
           </div>
         </div>

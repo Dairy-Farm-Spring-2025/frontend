@@ -1,7 +1,9 @@
-export const HEALTH_RECORD_STATUS = [
-  { label: 'Good', value: 'good' },
-  { label: 'Fair', value: 'fair' },
-  { label: 'Poor', value: 'poor' },
-  { label: 'Critical', value: 'critical' },
-  { label: 'Recovering', value: 'recovering' },
+import { t } from 'i18next';
+
+export const HEALTH_RECORD_STATUS = () => [
+  { label: t('Good'), value: 'good' },
+  { label: t('Fair'), value: 'fair' },
+  { label: t('Poor'), value: 'poor' },
+  { label: t('critical', { defaultValue: 'Critical' }), value: 'critical' },
+  { label: t('Recovering'), value: 'recovering' },
 ];

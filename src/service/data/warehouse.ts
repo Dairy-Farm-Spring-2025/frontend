@@ -1,19 +1,20 @@
-export const warehouseType = [
-    {
-        value: "milk",
-        label: 'Milk',
-    },
-    {
-        value: "equipment",
-        label: 'Equipment',
-    },
-    {
-        value: "food",
-        label: 'Food',
-    },
-    {
-        value: "vaccine",
-        label: 'Vaccine',
-    },
+import { t } from 'i18next';
 
+export const warehouseType = () => [
+  {
+    value: 'milk',
+    label: t('Milk'),
+  },
+  {
+    value: 'equipment',
+    label: t('Equipment'),
+  },
+  {
+    value: 'food',
+    label: t('Food'),
+  },
+  {
+    value: 'vaccine',
+    label: t('Vaccine'),
+  },
 ];

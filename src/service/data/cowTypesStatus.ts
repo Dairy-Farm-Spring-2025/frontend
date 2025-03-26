@@ -1,10 +1,14 @@
-export const cowTypesStatus = [
-  {
-    label: 'Exist',
-    value: 'exist',
-  },
-  {
-    label: 'Not Exist',
-    value: 'notExist',
-  },
-];
+import { t } from 'i18next';
+
+export const cowTypesStatus = () => {
+  return [
+    {
+      label: t('Exist'),
+      value: 'exist',
+    },
+    {
+      label: t('Not Exist'),
+      value: 'notExist',
+    },
+  ];
+};

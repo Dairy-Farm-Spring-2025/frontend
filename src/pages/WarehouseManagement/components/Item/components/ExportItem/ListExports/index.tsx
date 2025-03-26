@@ -142,7 +142,7 @@ const ListExports = () => {
           return (
             <SelectComponent
               className="w-full"
-              options={EXPORT_STATUS_OPTIONS}
+              options={EXPORT_STATUS_OPTIONS()}
               defaultValue={data}
               onChange={(value) => handleAction(record?.exportItemId, value)}
               loading={updateLoading}

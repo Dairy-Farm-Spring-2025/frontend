@@ -235,7 +235,7 @@ const FeedMealForm = ({
                   label={<LabelForm>{t('Cow Status')}</LabelForm>}
                 >
                   <SelectComponent
-                    options={cowStatus}
+                    options={cowStatus()}
                     open={false}
                     className="!cursor-default"
                   />

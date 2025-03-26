@@ -13,6 +13,7 @@ import useToast from '../../../../../../../../../hooks/useToast';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import { SupplierType } from '../../../../../../../../../model/Warehouse/supplier';
+import { formatStatusWithCamel } from '@utils/format';
 
 interface CreateItemBatchModalProps {
   modal: any;
@@ -38,10 +39,13 @@ const CreateItemBatchModal = ({ modal, mutate }: CreateItemBatchModalProps) => {
               <div>
                 <Tag color="blue">{element.name}</Tag> -{' '}
                 <Tag color="orange">
-                  {element.quantity} ({element.unit})
+                  {element.quantity} ({t(formatStatusWithCamel(element.unit))})
                 </Tag>{' '}
-                - <Tag color="cyan">{element.status}</Tag> -{' '}
-                <Tag color="purple">{element.categoryEntity.name}</Tag> -{' '}
+                -{' '}
+                <Tag color="cyan">
+                  {t(formatStatusWithCamel(element.status))}
+                </Tag>{' '}
+                - <Tag color="purple">{element.categoryEntity.name}</Tag> -{' '}
                 <Tag color="volcano">
                   {element.warehouseLocationEntity.name}
                 </Tag>

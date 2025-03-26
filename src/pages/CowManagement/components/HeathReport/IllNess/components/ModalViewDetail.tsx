@@ -1,5 +1,3 @@
-
-
 import { DatePicker, Form, Select, Row, Col, Divider, Card } from 'antd';
 import { useEffect, useState } from 'react';
 import ButtonComponent from '@components/Button/ButtonComponent';
@@ -85,7 +83,14 @@ const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
 
   if (isLoadingDetail) {
     return (
-      <ModalComponent title={t('Loading')} open={modal.open} onCancel={handleClose} loading={true} footer={null} width={800}>
+      <ModalComponent
+        title={t('Loading')}
+        open={modal.open}
+        onCancel={handleClose}
+        loading={true}
+        footer={null}
+        width={800}
+      >
         <div className="flex justify-center py-10">
           <span>{t('Loading...')}</span>
         </div>
@@ -95,8 +100,17 @@ const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
 
   if (fetchError) {
     return (
-      <ModalComponent title={t('Error')} open={modal.open} onCancel={handleClose} loading={false} footer={null} width={800}>
-        <div className="text-red-500 text-center py-10">{t('Failed to load health record details')}</div>
+      <ModalComponent
+        title={t('Error')}
+        open={modal.open}
+        onCancel={handleClose}
+        loading={false}
+        footer={null}
+        width={800}
+      >
+        <div className="text-red-500 text-center py-10">
+          {t('Failed to load health record details')}
+        </div>
       </ModalComponent>
     );
   }
@@ -134,7 +148,10 @@ const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
       ]}
       width={1000}
       className="rounded-lg"
-      styles={{ wrapper: { height: '100vh', top: 0, paddingBottom: 0 }, body: { height: 'calc(80vh - 60px)', overflowY: 'auto' } }}
+      styles={{
+        wrapper: { height: '100vh', top: 0, paddingBottom: 0 },
+        body: { height: 'calc(80vh - 60px)', overflowY: 'auto' },
+      }}
     >
       <FormComponent form={form} onFinish={handleFinish} layout="vertical">
         <div className="p-6 space-y-6">
@@ -143,7 +160,9 @@ const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
             <Row gutter={[16, 16]}>
               <Col span={12}>
                 <LabelForm>{t('Cow Name')}</LabelForm>
-                <div className="font-medium text-gray-700">{data?.cowEntity?.name || t('No data')}</div>
+                <div className="font-medium text-gray-700">
+                  {data?.cowEntity?.name || t('No data')}
+                </div>
               </Col>
               <Col span={12}>
                 <LabelForm>{t('Cow Status')}</LabelForm>
@@ -153,28 +172,42 @@ const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
               </Col>
               <Col span={12}>
                 <LabelForm>{t('Cow Origin')}</LabelForm>
-                <div className="font-medium text-gray-700">{formatAreaType(data?.cowEntity?.cowOrigin ?? t('No data'))}</div>
+                <div className="font-medium text-gray-700">
+                  {formatAreaType(data?.cowEntity?.cowOrigin ?? t('No data'))}
+                </div>
               </Col>
               <Col span={12}>
                 <LabelForm>{t('Gender')}</LabelForm>
-                <div className="font-medium text-gray-700">{formatAreaType(data?.cowEntity?.gender ?? t('No data'))}</div>
+                <div className="font-medium text-gray-700">
+                  {formatAreaType(data?.cowEntity?.gender ?? t('No data'))}
+                </div>
               </Col>
               <Col span={12}>
                 <LabelForm>{t('Cow Type')}</LabelForm>
-                <div className="font-medium text-gray-700">{formatAreaType(data?.cowEntity?.cowTypeEntity.name ?? t('No data'))}</div>
+                <div className="font-medium text-gray-700">
+                  {formatAreaType(
+                    data?.cowEntity?.cowTypeEntity.name ?? t('No data')
+                  )}
+                </div>
               </Col>
               <Col span={12}>
                 <LabelForm>{t('Max Weight')}</LabelForm>
-                <div className="font-medium text-gray-700">{(data?.cowEntity?.cowTypeEntity.maxWeight ?? t('No data'))}</div>
+                <div className="font-medium text-gray-700">
+                  {data?.cowEntity?.cowTypeEntity.maxWeight ?? t('No data')}
+                </div>
               </Col>
             </Row>
           </Card>
 
           <Card>
-
             <Title className="!text-2xl mb-6">{t('Illness Information')}</Title>
             <LabelForm>{t('Symptoms')}</LabelForm>
-            <div className="prose mb-6" dangerouslySetInnerHTML={{ __html: data?.symptoms || t('No data') }} />
+            <div
+              className="prose mb-6"
+              dangerouslySetInnerHTML={{
+                __html: data?.symptoms || t('No data'),
+              }}
+            />
             {/* <FormItemComponent
               name="symptoms"
               label={<LabelForm>{t('Symptoms')}</LabelForm>}
@@ -196,12 +229,11 @@ const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
                 <div className="prose">{data?.severity || t('No data')}</div>
               ) : (
                 <SelectComponent
-                  options={healthSeverity}
+                  options={healthSeverity()}
                   placeholder={t('Select severity level')}
                 />
               )}
             </FormItemComponent>
-
 
             <FormItemComponent
               name="prognosis"
@@ -209,28 +241,49 @@ const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
               rules={[{ required: edit, message: t('Please input prognosis') }]}
             >
               {!edit ? (
-                <div className="prose" dangerouslySetInnerHTML={{ __html: data?.prognosis || t('No data') }} />
+                <div
+                  className="prose"
+                  dangerouslySetInnerHTML={{
+                    __html: data?.prognosis || t('No data'),
+                  }}
+                />
               ) : (
                 <ReactQuillComponent />
               )}
             </FormItemComponent>
-
-
-
           </Card>
 
           <Card>
             <Title className="!text-2xl mb-6">{t('Date Range')}</Title>
             <Row gutter={[16, 16]}>
               <Col span={12}>
-                <FormItemComponent name="startDate" label={<LabelForm>{t('Start Date')}</LabelForm>} rules={[{ required: edit }]}>
-                  {!edit ? <span className="font-medium">{dayjs(data?.startDate).format('DD/MM/YYYY')}</span> : <DatePicker className="w-full" />}
+                <FormItemComponent
+                  name="startDate"
+                  label={<LabelForm>{t('Start Date')}</LabelForm>}
+                  rules={[{ required: edit }]}
+                >
+                  {!edit ? (
+                    <span className="font-medium">
+                      {dayjs(data?.startDate).format('DD/MM/YYYY')}
+                    </span>
+                  ) : (
+                    <DatePicker className="w-full" />
+                  )}
                 </FormItemComponent>
               </Col>
               <Col span={12}>
-                <FormItemComponent name="endDate" label={<LabelForm>{t('End Date')}</LabelForm>}
-                  rules={[{ required: edit }]}>
-                  {!edit ? <span className="font-medium">{dayjs(data?.endDate).format('DD/MM/YYYY')}</span> : <DatePicker className="w-full" />}
+                <FormItemComponent
+                  name="endDate"
+                  label={<LabelForm>{t('End Date')}</LabelForm>}
+                  rules={[{ required: edit }]}
+                >
+                  {!edit ? (
+                    <span className="font-medium">
+                      {dayjs(data?.endDate).format('DD/MM/YYYY')}
+                    </span>
+                  ) : (
+                    <DatePicker className="w-full" />
+                  )}
                 </FormItemComponent>
               </Col>
             </Row>

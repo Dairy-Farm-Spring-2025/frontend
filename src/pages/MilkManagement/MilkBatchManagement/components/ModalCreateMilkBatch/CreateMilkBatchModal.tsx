@@ -83,7 +83,7 @@ const CreateMilkBatchModal = ({ modal, mutate }: CreateMilkBatchModalProps) => {
       dataIndex: 'cow',
       key: 'cow',
       title: t('Cow Status'),
-      render: (data) => getLabelByValue(data.cowStatus, cowStatus),
+      render: (data) => getLabelByValue(data.cowStatus, cowStatus()),
     },
     {
       dataIndex: 'worker',
@@ -181,7 +181,7 @@ const CreateMilkBatchModal = ({ modal, mutate }: CreateMilkBatchModalProps) => {
           </label>
           <SelectComponent
             placeholder={selectedArea === '' && 'Select Area...'}
-            options={shiftData}
+            options={shiftData()}
             onChange={onChangeShift}
             value={selectedShift}
             allowClear
