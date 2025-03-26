@@ -351,6 +351,9 @@ const CreateVaccineCycleModal = ({
       open={modal.open}
       onCancel={handleCancel}
       width={1000}
+      styles={{
+        body: { height: '78vh', padding: 40, overflowY: 'auto' }, // Set a taller height for the modal body
+      }}
       footer={[]}
       loading={isLoading}
     >

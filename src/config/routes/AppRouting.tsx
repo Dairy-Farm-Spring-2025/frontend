@@ -19,6 +19,8 @@ import TaskType from '@pages/TaskManagement/TaskType';
 import Equipment from '@pages/WarehouseManagement/components/Equipment';
 import { SiHappycow } from 'react-icons/si';
 import ListNotification from '@pages/NotificationManagement/components/List/ListNotification';
+import ListVaccineInjection from '@pages/VaccineCycleManagement/components/ListVaccineInjection';
+
 const NotificationManagement = lazy(
   () => import('@pages/NotificationManagement')
 );
@@ -132,6 +134,9 @@ const ListVaccineCycle = lazy(
 );
 const DetailVaccineCycle = lazy(
   () => import('@pages/VaccineCycleManagement/components/DetailVaccineCycle')
+);
+const DetailVaccineInjection = lazy(
+  () => import('@pages/VaccineCycleManagement/components/ListVaccineInjection/components/DetailVaccineInjection')
 );
 const WarehouseManagement = lazy(() => import('@pages/WarehouseManagement'));
 const Category = lazy(
@@ -394,7 +399,9 @@ const AppRouting = () => {
           children: [
             { path: '', element: <Navigate to={'list'} /> },
             { path: 'list', element: SuspenseWrapper(<ListVaccineCycle />) },
-            { path: ':id', element: SuspenseWrapper(<DetailVaccineCycle />) },
+            { path: 'cycle/:id', element: SuspenseWrapper(<DetailVaccineCycle />) },
+            { path: 'vaccine-injection-list', element: SuspenseWrapper(<ListVaccineInjection />) },
+            { path: 'injection/:id', element: SuspenseWrapper(<DetailVaccineInjection />) },
           ],
         },
         {

@@ -59,7 +59,7 @@ const ListVaccineCycle = () => {
         <div className="flex gap-5">
           <ButtonComponent
             type="primary"
-            onClick={() => navigate(`../${data}`)}
+            onClick={() => navigate(`../cycle/${data}`)}
           >
             {t('View Detail')}
           </ButtonComponent>

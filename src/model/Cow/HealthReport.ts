@@ -30,33 +30,5 @@ export type Health = {
         dateOfBirth: Date,
         cowTypeEntity: CowType;
     }
-    illnessDetails: {
-        illnessDetailId: string,
-        date: Date,
-        description: string,
-        dosage: number,
-        injectionSite: string,
-        status: string,
-        vaccine: {
-            itemId: string,
-            name: string,
-            description: string,
-            status: string,
-            unit: string,
-            quantity: number,
-            categoryEntity: {
-                categoryId: string,
-                name: string,
-
-
-            },
-            warehouseLocationEntity: {
-                warehouseLocationId: string,
-                name: string,
-                description: string,
-                type: string
-            }
-        }
-
-    }
+    illnessDetails: IllnessDetail[];
 };

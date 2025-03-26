@@ -1,5 +1,3 @@
-
-
 import { DatePicker, Form, Select, Row, Col, Divider, Card } from 'antd';
 import { useEffect, useState } from 'react';
 import ButtonComponent from '@components/Button/ButtonComponent';
@@ -62,7 +60,7 @@ const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
       const response = await trigger({
         body: {
           ...values,
-          cowId: data?.cowEntity?.cowId, // Thêm cowId từ data vào payload
+          cowId: data?.cowEntity?.cowId, // Add cowId to the payload
           startDate: values.startDate?.toISOString(),
           endDate: values.endDate?.toISOString(),
         },
@@ -85,7 +83,14 @@ const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
 
   if (isLoadingDetail) {
     return (
-      <ModalComponent title={t('Loading')} open={modal.open} onCancel={handleClose} loading={true} footer={null} width={800}>
+      <ModalComponent
+        title={t('Loading')}
+        open={modal.open}
+        onCancel={handleClose}
+        loading={true}
+        footer={null}
+        width={800}
+      >
         <div className="flex justify-center py-10">
           <span>{t('Loading...')}</span>
         </div>
@@ -95,8 +100,17 @@ const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
 
   if (fetchError) {
     return (
-      <ModalComponent title={t('Error')} open={modal.open} onCancel={handleClose} loading={false} footer={null} width={800}>
-        <div className="text-red-500 text-center py-10">{t('Failed to load health record details')}</div>
+      <ModalComponent
+        title={t('Error')}
+        open={modal.open}
+        onCancel={handleClose}
+        loading={false}
+        footer={null}
+        width={800}
+      >
+        <div className="text-red-500 text-center py-10">
+          {t('Failed to load health record details')}
+        </div>
       </ModalComponent>
     );
   }
@@ -134,16 +148,22 @@ const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
       ]}
       width={1000}
       className="rounded-lg"
-      styles={{ wrapper: { height: '100vh', top: 0, paddingBottom: 0 }, body: { height: 'calc(80vh - 60px)', overflowY: 'auto' } }}
+      styles={{
+        wrapper: { height: '100vh', top: 0, paddingBottom: 0 },
+        body: { height: 'calc(80vh - 60px)', overflowY: 'auto' },
+      }}
     >
       <FormComponent form={form} onFinish={handleFinish} layout="vertical">
         <div className="p-6 space-y-6">
+          {/* Cow Information */}
           <Card>
             <Title className="!text-2xl mb-6">{t('Cow Information')}</Title>
             <Row gutter={[16, 16]}>
               <Col span={12}>
                 <LabelForm>{t('Cow Name')}</LabelForm>
-                <div className="font-medium text-gray-700">{data?.cowEntity?.name || t('No data')}</div>
+                <div className="font-medium text-gray-700">
+                  {data?.cowEntity?.name || t('No data')}
+                </div>
               </Col>
               <Col span={12}>
                 <LabelForm>{t('Cow Status')}</LabelForm>
@@ -153,39 +173,43 @@ const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
               </Col>
               <Col span={12}>
                 <LabelForm>{t('Cow Origin')}</LabelForm>
-                <div className="font-medium text-gray-700">{formatAreaType(data?.cowEntity?.cowOrigin ?? t('No data'))}</div>
+                <div className="font-medium text-gray-700">
+                  {formatAreaType(data?.cowEntity?.cowOrigin ?? t('No data'))}
+                </div>
               </Col>
               <Col span={12}>
                 <LabelForm>{t('Gender')}</LabelForm>
-                <div className="font-medium text-gray-700">{formatAreaType(data?.cowEntity?.gender ?? t('No data'))}</div>
+                <div className="font-medium text-gray-700">
+                  {formatAreaType(data?.cowEntity?.gender ?? t('No data'))}
+                </div>
               </Col>
               <Col span={12}>
                 <LabelForm>{t('Cow Type')}</LabelForm>
-                <div className="font-medium text-gray-700">{formatAreaType(data?.cowEntity?.cowTypeEntity.name ?? t('No data'))}</div>
+                <div className="font-medium text-gray-700">
+                  {formatAreaType(
+                    data?.cowEntity?.cowTypeEntity.name ?? t('No data')
+                  )}
+                </div>
               </Col>
               <Col span={12}>
                 <LabelForm>{t('Max Weight')}</LabelForm>
-                <div className="font-medium text-gray-700">{(data?.cowEntity?.cowTypeEntity.maxWeight ?? t('No data'))}</div>
+                <div className="font-medium text-gray-700">
+                  {data?.cowEntity?.cowTypeEntity.maxWeight ?? t('No data')}
+                </div>
               </Col>
             </Row>
           </Card>
 
+          {/* Illness Information (Including Illness Details) */}
           <Card>
-
             <Title className="!text-2xl mb-6">{t('Illness Information')}</Title>
             <LabelForm>{t('Symptoms')}</LabelForm>
-            <div className="prose mb-6" dangerouslySetInnerHTML={{ __html: data?.symptoms || t('No data') }} />
-            {/* <FormItemComponent
-              name="symptoms"
-              label={<LabelForm>{t('Symptoms')}</LabelForm>}
-              rules={[{ required: edit, message: t('Please input symptoms') }]}
-            >
-              {!edit ? (
-                <div className="prose" dangerouslySetInnerHTML={{ __html: data?.symptoms || t('No data') }} />
-              ) : (
-                <ReactQuillComponent />
-              )}
-            </FormItemComponent> */}
+            <div
+              className="prose mb-6"
+              dangerouslySetInnerHTML={{
+                __html: data?.symptoms || t('No data'),
+              }}
+            />
 
             <FormItemComponent
               name="severity"
@@ -202,35 +226,123 @@ const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
               )}
             </FormItemComponent>
 
-
             <FormItemComponent
               name="prognosis"
               label={<LabelForm>{t('Prognosis')}</LabelForm>}
               rules={[{ required: edit, message: t('Please input prognosis') }]}
             >
               {!edit ? (
-                <div className="prose" dangerouslySetInnerHTML={{ __html: data?.prognosis || t('No data') }} />
+                <div
+                  className="prose mb-6"
+                  dangerouslySetInnerHTML={{
+                    __html: data?.prognosis || t('No data'),
+                  }}
+                />
               ) : (
                 <ReactQuillComponent />
               )}
             </FormItemComponent>
 
-
-
+            {/* Illness Details Section */}
+            <Divider />
+            <Title className="!text-xl mb-4">
+              {t('Illness Details')}
+            </Title>
+            {data?.illnessDetails && data.illnessDetails.length > 0 ? (
+              data.illnessDetails.map((detail, index) => (
+                <div key={detail.illnessDetailId} className="mb-6">
+                  <Row gutter={[16, 16]}>
+                    <Col span={12}>
+                      <LabelForm>{t('Date')}</LabelForm>
+                      <div className="font-medium text-gray-700">
+                        {detail.date
+                          ? dayjs(detail.date).format('DD/MM/YYYY')
+                          : t('No data')}
+                      </div>
+                    </Col>
+                    <Col span={12}>
+                      <LabelForm>{t('Description')}</LabelForm>
+                      <div className="font-medium text-gray-700">
+                        {detail.description || t('No data')}
+                      </div>
+                    </Col>
+                    <Col span={12}>
+                      <LabelForm>{t('Dosage')}</LabelForm>
+                      <div className="font-medium text-gray-700">
+                        {detail.dosage ? `${detail.dosage}` : t('No data')}
+                      </div>
+                    </Col>
+                    <Col span={12}>
+                      <LabelForm>{t('Injection Site')}</LabelForm>
+                      <div className="font-medium text-gray-700">
+                        {formatAreaType(detail.injectionSite ?? t('No data'))}
+                      </div>
+                    </Col>
+                    <Col span={12}>
+                      <LabelForm>{t('Status')}</LabelForm>
+                      <div className="font-medium text-gray-700">
+                        {formatAreaType(detail.status ?? t('No data'))}
+                      </div>
+                    </Col>
+                    <Col span={12}>
+                      <LabelForm>{t('Vaccine Name')}</LabelForm>
+                      <div className="font-medium text-gray-700">
+                        {detail.vaccine?.name || t('No data')}
+                      </div>
+                    </Col>
+                    <Col span={12}>
+                      <LabelForm>{t('Veterinarian')}</LabelForm>
+                      <div className="font-medium text-gray-700">
+                        {detail.veterinarian?.name || t('No data')}
+                      </div>
+                    </Col>
+                  </Row>
+                  {index < data.illnessDetails.length - 1 && <Divider />}
+                </div>
+              ))
+            ) : (
+              <div className="text-gray-500 text-center">
+                {t('No illness details available')}
+              </div>
+            )}
           </Card>
 
+          {/* Date Range */}
           <Card>
             <Title className="!text-2xl mb-6">{t('Date Range')}</Title>
             <Row gutter={[16, 16]}>
               <Col span={12}>
-                <FormItemComponent name="startDate" label={<LabelForm>{t('Start Date')}</LabelForm>} rules={[{ required: edit }]}>
-                  {!edit ? <span className="font-medium">{dayjs(data?.startDate).format('DD/MM/YYYY')}</span> : <DatePicker className="w-full" />}
+                <FormItemComponent
+                  name="startDate"
+                  label={<LabelForm>{t('Start Date')}</LabelForm>}
+                  rules={[{ required: edit, message: t('Please select start date') }]}
+                >
+                  {!edit ? (
+                    <div className="font-medium text-gray-700">
+                      {data?.startDate
+                        ? dayjs(data.startDate).format('DD/MM/YYYY')
+                        : t('No data')}
+                    </div>
+                  ) : (
+                    <DatePicker className="w-full" />
+                  )}
                 </FormItemComponent>
               </Col>
               <Col span={12}>
-                <FormItemComponent name="endDate" label={<LabelForm>{t('End Date')}</LabelForm>}
-                  rules={[{ required: edit }]}>
-                  {!edit ? <span className="font-medium">{dayjs(data?.endDate).format('DD/MM/YYYY')}</span> : <DatePicker className="w-full" />}
+                <FormItemComponent
+                  name="endDate"
+                  label={<LabelForm>{t('End Date')}</LabelForm>}
+                  rules={[{ required: edit, message: t('Please select end date') }]}
+                >
+                  {!edit ? (
+                    <div className="font-medium text-gray-700">
+                      {data?.endDate
+                        ? dayjs(data.endDate).format('DD/MM/YYYY')
+                        : t('No data')}
+                    </div>
+                  ) : (
+                    <DatePicker className="w-full" />
+                  )}
                 </FormItemComponent>
               </Col>
             </Row>

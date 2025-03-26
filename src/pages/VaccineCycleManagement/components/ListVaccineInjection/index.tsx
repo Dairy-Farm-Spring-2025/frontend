@@ -9,21 +9,21 @@ import { VaccineCycle } from '../../../../model/Vaccine/VaccineCycle/vaccineCycl
 import { formatDateHour } from '../../../../utils/format';
 import ButtonComponent from '../../../../components/Button/ButtonComponent';
 import useModal from '../../../../hooks/useModal';
-
 import PopconfirmComponent from '../../../../components/Popconfirm/PopconfirmComponent';
 import useToast from '../../../../hooks/useToast';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { VaccineInjection } from '@model/Vaccine/VaccineCycle/VaccineInjection';
 
 const ListVaccineInjection = () => {
     const navigate = useNavigate();
     const {
-        data: vaccineCycle,
+        data: vaccineInjection,
         isLoading: isLoadingVaccine,
         mutate,
-    } = useFetcher<VaccineCycle[]>('vaccine-injections', 'GET');
+    } = useFetcher<VaccineInjection[]>('vaccine-injections', 'GET');
     const { isLoading: isLoadingDelete, trigger } = useFetcher(
-        'vaccinecycles/delete',
+        'vaccine-injections/delete',
         'DELETE'
     );
     const modal = useModal();
@@ -47,6 +47,12 @@ const ListVaccineInjection = () => {
             render: (data) => formatDateHour(data),
         },
         {
+            dataIndex: 'cowEntity',
+            key: 'cowEntity',
+            title: t('Cow'),
+            render: (cowEntity) => cowEntity?.name || 'N/A',
+        },
+        {
             dataIndex: 'status',
             key: 'status',
             title: t('Status'),
@@ -59,7 +65,7 @@ const ListVaccineInjection = () => {
                 <div className="flex gap-5">
                     <ButtonComponent
                         type="primary"
-                        onClick={() => navigate(`../${data}`)}
+                        onClick={() => navigate(`../injection/${data}`)}
                     >
                         {t('View Detail')}
                     </ButtonComponent>
@@ -78,16 +84,11 @@ const ListVaccineInjection = () => {
     return (
         <AnimationAppear>
             <WhiteBackground>
-                <ButtonComponent type="primary" onClick={() => modal.openModal()}>
-                    {t('Create Vaccine Cycle')}
-                </ButtonComponent>
-                <Divider />
                 <TableComponent
                     columns={columns}
                     loading={isLoadingVaccine}
-                    dataSource={vaccineCycle as VaccineCycle[]}
+                    dataSource={vaccineInjection as VaccineInjection[]}
                 />
-
             </WhiteBackground>
         </AnimationAppear>
     );
