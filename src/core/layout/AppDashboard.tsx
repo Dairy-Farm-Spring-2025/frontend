@@ -1,7 +1,6 @@
 import { BellOutlined, WalletOutlined } from '@ant-design/icons';
 import {
   Avatar,
-  Badge,
   ConfigProvider,
   Divider,
   Dropdown,
@@ -15,11 +14,14 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import ButtonComponent from '@components/Button/ButtonComponent';
 import AnimationAppear from '@components/UI/AnimationAppear';
+import { triggerAvatarRefresh } from '@core/store/slice/avatarSlice';
 import { logout } from '@core/store/slice/userSlice';
 import { RootState } from '@core/store/store';
 import useFetcher from '@hooks/useFetcher';
-import useNotification from '@hooks/useNotification';
 import useToast from '@hooks/useToast';
+import { UserProfileData } from '@model/User';
+import { USER_PATH } from '@service/api/User/userApi';
+import { requestFCMToken } from '@utils/firebase';
 import { getAvatar } from '@utils/getImage';
 import { useTranslation } from 'react-i18next';
 import {
@@ -30,7 +32,7 @@ import {
 import { BiCategory, BiTask, BiUser } from 'react-icons/bi';
 import { CiBoxList, CiExport } from 'react-icons/ci';
 import { FaWpforms } from 'react-icons/fa';
-import { IoIosLogOut, IoIosNotifications } from 'react-icons/io';
+import { IoIosLogOut } from 'react-icons/io';
 import { LiaChartAreaSolid, LiaProductHunt } from 'react-icons/lia';
 import { LuGitPullRequest, LuMilk } from 'react-icons/lu';
 import {
@@ -44,9 +46,8 @@ import { SiHappycow } from 'react-icons/si';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import LabelDashboard from './components/LabelDashboard';
+import NotificationDropDown from './components/NotificationDropDown';
 import './index.scss';
-import { UserProfileData } from '@model/User';
-import { triggerAvatarRefresh } from '@core/store/slice/avatarSlice';
 const { Header, Content, Sider } = Layout;
 type MenuItem = Required<MenuProps>['items'][number];
 const { useToken } = theme;
@@ -81,22 +82,25 @@ const AppDashboard: React.FC = React.memo(() => {
   const location = useLocation();
   const dispatch = useDispatch();
   const selectedKey = location.pathname.replace(/^\//, ''); // Lấy path và bỏ dấu '/'
-
   const [openKeys, setOpenKeys] = useState<string[]>([]);
   const { data, mutate } = useFetcher<UserProfileData>('users/profile', 'GET');
   const { roleName } = useSelector((state: RootState) => state.user);
-  const accessToken = useSelector((state: RootState) => state.user.accessToken);
-  const { messages } = useNotification(String(data?.id || ''), accessToken);
-
+  const user = useSelector((state: RootState) => state.user);
+  console.log(user);
+  const { trigger: triggerFCM } = useFetcher(USER_PATH.FCM_TOKEN_UPDATE, 'PUT');
   const shouldRefreshAvatar = useSelector(
     (state: RootState) => state.avatar.shouldRefreshAvatar
   );
+
   useEffect(() => {
-    console.log(messages);
-    if (messages.length > 0) {
-      console.log('New Notification: ', messages[0]);
-    }
-  }, [messages]);
+    const fetchToken = async () => {
+      const fcmToken = await requestFCMToken().then((element) => element);
+      console.log(fcmToken);
+      await triggerFCM({ body: { fcmTokenWeb: fcmToken } });
+    };
+    fetchToken();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (shouldRefreshAvatar === true) {
@@ -416,15 +420,9 @@ const AppDashboard: React.FC = React.memo(() => {
             className="!bg-white flex items-center gap-5 justify-end"
             style={{ padding: 0 }}
           >
+            {' '}
             <div className="flex items-center gap-5 pr-16">
-              {messages.length !== 0 ? messages[0]?.title : <p>'no'</p>}
-
-              <Badge count={99}>
-                <IoIosNotifications
-                  className="cursor-pointer text-orange-600"
-                  size={32}
-                />
-              </Badge>
+              <NotificationDropDown />
               <div>
                 <ConfigProvider
                   dropdown={{

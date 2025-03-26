@@ -50,4 +50,5 @@ export const USER_PATH = {
   CREATE_USER: 'users/create',
   VETERINARIANS: 'users/veterinarians',
   SIGN_IN: 'users/signin',
+  FCM_TOKEN_UPDATE: 'users/update/fcmToken',
 };

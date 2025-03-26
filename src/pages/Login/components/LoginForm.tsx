@@ -1,18 +1,18 @@
-import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import { GoogleOutlined, LockOutlined, UserOutlined } from '@ant-design/icons';
+import { USER_PATH } from '@service/api/User/userApi';
 import { Divider, Form, Input } from 'antd';
-import { useEffect } from 'react';
+import { t } from 'i18next';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import ButtonComponent from '../../../components/Button/ButtonComponent';
-import FormComponent from '../../../components/Form/FormComponent';
-import FormItemComponent from '../../../components/Form/Item/FormItemComponent';
-import useFetcher from '../../../hooks/useFetcher';
-import useToast from '../../../hooks/useToast';
-import UserRequest from '../../../model/Authentication/UserRequest';
-import UserResponse from '../../../model/Authentication/UserResponse';
-import { login } from '../../../core/store/slice/userSlice';
-import { t } from 'i18next';
-import { USER_PATH } from '@service/api/User/userApi';
+import ButtonComponent from '@components/Button/ButtonComponent';
+import FormComponent from '@components/Form/FormComponent';
+import FormItemComponent from '@components/Form/Item/FormItemComponent';
+import { login } from '@core/store/slice/userSlice';
+import useFetcher from '@hooks/useFetcher';
+import useToast from '@hooks/useToast';
+import UserRequest from '@model/Authentication/UserRequest';
+import UserResponse from '@model/Authentication/UserResponse';
+const GOOGLE_AUTH_URL = `https://api.dairyfarmfpt.website/oauth2/authorize/google`;
 const LoginForm = () => {
   const navigate = useNavigate();
   const { trigger, isLoading } = useFetcher<UserResponse>(
@@ -52,9 +52,9 @@ const LoginForm = () => {
       toast.showError(error.message);
     }
   };
-  useEffect(() => {
-    console.log(isLoading);
-  }, [isLoading]);
+  const handleGoogleLogin = () => {
+    window.location.href = GOOGLE_AUTH_URL;
+  };
   return (
     <div>
       <div className="text-center">
@@ -106,6 +106,14 @@ const LoginForm = () => {
             className="!w-full "
           >
             {t('Login')}
+          </ButtonComponent>
+          <ButtonComponent
+            type="default"
+            onClick={handleGoogleLogin}
+            className="!w-full flex items-center justify-center gap-2"
+          >
+            <GoogleOutlined className="text-red-500" />
+            {t('Login with Google')}
           </ButtonComponent>
         </FormComponent>
       </div>

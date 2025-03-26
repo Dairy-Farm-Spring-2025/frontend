@@ -5,6 +5,15 @@ import path from 'node:path';
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  server: {
+    watch: {
+      usePolling: true,
+    },
+  },
+  build: {
+    outDir: 'dist',
+  },
+  publicDir: 'public',
   resolve: {
     alias: {
       '@components': path.resolve(__dirname, 'src/components'),

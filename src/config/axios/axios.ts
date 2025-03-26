@@ -3,7 +3,7 @@ import { RootState, store } from '../../core/store/store';
 import toast from 'react-hot-toast';
 import { logout, updateNewAccessToken } from '../../core/store/slice/userSlice';
 
-const baseURL = 'http://34.124.196.11:8080/api/v1/';
+const baseURL = 'https://api.dairyfarmfpt.website/api/v1/';
 
 const api = axios.create({
   baseURL: baseURL,

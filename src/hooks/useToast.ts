@@ -26,7 +26,14 @@ const useToast = () => {
     });
   };
 
-  return { showSuccess, showError, showWarning };
+  const showNotification = (message: string) => {
+    toast(message, {
+      icon: '🔔',
+      duration: 4000, // Display time in ms
+    });
+  };
+
+  return { showSuccess, showError, showWarning, showNotification };
 };
 
 export default useToast;
