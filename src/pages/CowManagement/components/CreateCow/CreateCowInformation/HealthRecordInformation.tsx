@@ -31,7 +31,7 @@ const HealthRecordInformation = () => {
       <div className="flex flex-col gap-5 w-1/3">
         <Title className="!text-2xl">{t('Health Physical')}</Title>
         <div className="flex flex-col gap-8 ">
-          <FormItemComponent
+          {/* <FormItemComponent
             name="weight"
             label={<LabelForm>{t('Weight')}:</LabelForm>}
           >
@@ -39,7 +39,7 @@ const HealthRecordInformation = () => {
               <InputComponent.Number />
               <p>(kilogram)</p>
             </div>
-          </FormItemComponent>
+          </FormItemComponent> */}
           <FormItemComponent
             name="size"
             label={<LabelForm>{t('Size')}:</LabelForm>}
