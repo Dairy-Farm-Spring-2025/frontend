@@ -33,7 +33,7 @@ const DetailVaccineInjection = () => {
             <div className="p-6 space-y-8">
                 {/* Section 1: Vaccine Cycle Information */}
                 <section>
-                    <Title className="!text-xl text-gray-800 mb-4">Cycle Information</Title>
+                    <Title className="!text-xl text-gray-800 mb-4">Vaccine Cycle Information</Title>
                     <Row gutter={[24, 24]}>
                         <Col xs={24} sm={12} md={8}>
                             <TextTitle

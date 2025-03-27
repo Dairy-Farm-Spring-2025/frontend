@@ -197,6 +197,11 @@ const AppDashboard: React.FC = React.memo(() => {
             <PiPlus size={sizeIcon} />
           ),
           getItem(
+            t('Import cow'),
+            'dairy/cow-management/import-cow',
+            <PiPlus size={sizeIcon} />
+          ),
+          getItem(
             t('health_report'),
             'dairy/cow-management/health-report',
             <MdOutlineHealthAndSafety size={sizeIcon} />,

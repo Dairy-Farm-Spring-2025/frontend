@@ -86,7 +86,7 @@ const MilkBatchManagement = () => {
       title: t('Action'),
       render: (_, record) => (
         <div>
-          <ButtonComponent onClick={() => handleOpenEdit(record)}>
+          <ButtonComponent type='primary' onClick={() => handleOpenEdit(record)}>
             {t(' View Detail')}
           </ButtonComponent>
           <ButtonComponent

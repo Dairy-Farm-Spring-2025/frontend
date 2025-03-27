@@ -148,10 +148,7 @@ const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
       ]}
       width={1000}
       className="rounded-lg"
-      styles={{
-        wrapper: { height: '100vh', top: 0, paddingBottom: 0 },
-        body: { height: 'calc(80vh - 60px)', overflowY: 'auto' },
-      }}
+
     >
       <FormComponent form={form} onFinish={handleFinish} layout="vertical">
         <div className="p-6 space-y-6">

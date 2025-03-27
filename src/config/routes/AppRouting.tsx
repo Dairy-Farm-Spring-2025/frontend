@@ -24,6 +24,8 @@ import ListVaccineInjection from '@pages/VaccineCycleManagement/components/ListV
 
 
 import AuthCallback from '@pages/Login/components/AuthCallback';
+import ImportCow from '@pages/CowManagement/components/ImportCow/components/ImportCow';
+import ListCowImport from '@pages/CowManagement/components/ImportCow';
 
 const NotificationManagement = lazy(
   () => import('@pages/NotificationManagement')
@@ -278,6 +280,10 @@ const AppRouting = () => {
             {
               path: 'create-cow',
               element: SuspenseWrapper(<CreateCow />),
+            },
+            {
+              path: 'import-cow',
+              element: SuspenseWrapper(<ListCowImport />),
             },
             {
               path: 'health-report',

@@ -18,6 +18,7 @@ import HealthRecordCow from './TabsItem/HealthRecordCow';
 import HistoryMoveCow from './TabsItem/HistoryMoveCow';
 import { COW_PATH } from '@service/api/Cow/cowApi';
 import { DAILY_MILK_PATH } from '@service/api/DailyMilk/dailyMilkApi';
+import ImportCow from '../ImportCow/components/ImportCow';
 const CowDetail = () => {
   const { t } = useTranslation();
   const { id } = useParams();
@@ -88,6 +89,7 @@ const CowDetail = () => {
       ),
       icon: <RetweetOutlined />,
     },
+
   ];
   return (
     <AnimationAppear>
@@ -95,7 +97,6 @@ const CowDetail = () => {
         <div className="flex items-center justify-between my-4">
           <p className="text-4xl font-bold text-primary">{dataDetail?.name}</p>
         </div>
-
         <TabsComponent
           items={items}
           destroyInactiveTabPane
