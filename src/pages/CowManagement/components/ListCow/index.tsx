@@ -78,9 +78,9 @@ const ListCow = () => {
       dataIndex: 'cowOrigin',
       key: 'cowOrigin',
       title: t('Origin'),
-      render: (data) => getLabelByValue(data, cowOrigin),
+      render: (data) => getLabelByValue(data, cowOrigin()),
       filterable: true,
-      filterOptions: cowOriginFiltered,
+      filterOptions: cowOriginFiltered(),
     },
     {
       dataIndex: 'gender',
@@ -108,7 +108,7 @@ const ListCow = () => {
       dataIndex: 'cowStatus',
       key: 'cowStatus',
       title: t('Cow Status'),
-      render: (data) => getLabelByValue(data, cowStatus),
+      render: (data) => getLabelByValue(data, cowStatus()),
     },
     {
       dataIndex: 'inPen',

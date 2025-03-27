@@ -21,14 +21,17 @@ const HealthRecordForm = ({ loading }: HealthRecordFormProps) => {
           name="status"
           label={<LabelForm>Status:</LabelForm>}
         >
-          <SelectComponent disabled={loading} options={HEALTH_RECORD_STATUS} />
+          <SelectComponent
+            disabled={loading}
+            options={HEALTH_RECORD_STATUS()}
+          />
         </FormItemComponent>
         <FormItemComponent
           rules={[{ required: true }]}
           name="period"
           label={<LabelForm>Period:</LabelForm>}
         >
-          <SelectComponent disabled={loading} options={cowStatus} />
+          <SelectComponent disabled={loading} options={cowStatus()} />
         </FormItemComponent>
         <FormItemComponent
           rules={[{ required: true }]}

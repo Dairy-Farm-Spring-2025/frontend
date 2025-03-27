@@ -126,7 +126,7 @@ const ModalAddItem = ({ modal, mutate }: ModalAddItemProps) => {
               label={<LabelForm>{t('Unit')}</LabelForm>}
             >
               <SelectComponent
-                options={unitOptions}
+                options={unitOptions()}
                 onChange={handleChangeUnit}
               />
             </FormItemComponent>
@@ -151,7 +151,7 @@ const ModalAddItem = ({ modal, mutate }: ModalAddItemProps) => {
               rules={[{ required: true }]}
               label={<LabelForm>{t('Status')}</LabelForm>}
             >
-              <SelectComponent options={statusOptions} />
+              <SelectComponent options={statusOptions()} />
             </FormItemComponent>
           </div>
           <FormItemComponent

@@ -14,6 +14,7 @@ import WhiteBackground from '../../../../components/UI/WhiteBackground';
 import ModalAddWarehouse from './components/ModalAddWarehouse';
 import ModalDetailWarehouse from './components/ModalDetailWarehouse';
 import { STORAGE_PATH } from '@service/api/Storage/storageApi';
+import { formatStatusWithCamel } from '@utils/format';
 
 const Warehouse = () => {
   const { data, isLoading, mutate } = useFetcher<WarehouseType[]>(
@@ -59,7 +60,9 @@ const Warehouse = () => {
       dataIndex: 'type',
       key: 'type',
       title: t('Type'),
-      render: (data) => <p className="text-base font-bold">{data}</p>,
+      render: (data) => (
+        <p className="text-base font-bold">{t(formatStatusWithCamel(data))}</p>
+      ),
     },
     {
       dataIndex: 'warehouseLocationId',

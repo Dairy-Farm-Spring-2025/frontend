@@ -36,7 +36,7 @@ const CreateDailyMilkModal: React.FC<DailMilkModalProps> = React.memo(
     const getCurrentShift = useCallback(() => {
       const currentHour = new Date().getHours();
       const currentMinutes = new Date().getMinutes();
-      return shiftData.map((shift) => ({
+      return shiftData().map((shift) => ({
         ...shift,
         disabled: shift.end <= currentHour,
         title: `The shift is passed (${currentHour}:${currentMinutes})`,

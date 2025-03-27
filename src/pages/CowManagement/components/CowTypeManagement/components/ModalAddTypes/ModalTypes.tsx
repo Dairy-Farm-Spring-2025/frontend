@@ -88,7 +88,7 @@ const ModalTypes = ({ mutate, modal }: ModalTypesProps) => {
             label={<LabelForm>{t('Status')}:</LabelForm>}
             rules={[{ required: true }]}
           >
-            <Select options={cowTypesStatus} />
+            <Select options={cowTypesStatus()} />
           </FormItemComponent>
           <FormItemComponent
             rules={[{ required: true }]}

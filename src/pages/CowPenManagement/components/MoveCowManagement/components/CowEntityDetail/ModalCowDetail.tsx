@@ -28,7 +28,11 @@ interface ModalCowDetailProps {
   mutate: any;
 }
 
-const ModalCowDetail: React.FC<ModalCowDetailProps> = ({ modal, cowId, mutate }) => {
+const ModalCowDetail: React.FC<ModalCowDetailProps> = ({
+  modal,
+  cowId,
+  mutate,
+}) => {
   const { data } = useFetcher<any>(`cows/${cowId}`, 'GET');
   const { trigger } = useFetcher<any>(`cows/${cowId}`, 'PUT');
 
@@ -78,13 +82,13 @@ const ModalCowDetail: React.FC<ModalCowDetailProps> = ({ modal, cowId, mutate })
       footer={
         isEditing ? (
           <>
-            <Button onClick={handleSave} type='primary'>
+            <Button onClick={handleSave} type="primary">
               Save
             </Button>
             <Button onClick={() => setIsEditing(false)}>Cancel</Button>
           </>
         ) : (
-          <Button onClick={handleEdit} type='primary'>
+          <Button onClick={handleEdit} type="primary">
             Edit
           </Button>
         )
@@ -95,8 +99,10 @@ const ModalCowDetail: React.FC<ModalCowDetailProps> = ({ modal, cowId, mutate })
     >
       {cowDetails && (
         <Descriptions bordered column={1}>
-          <Descriptions.Item label='ID'>{cowDetails.cowEntity.cowId}</Descriptions.Item>
-          <Descriptions.Item label='Name'>
+          <Descriptions.Item label="ID">
+            {cowDetails.cowEntity.cowId}
+          </Descriptions.Item>
+          <Descriptions.Item label="Name">
             {isEditing ? (
               <Input
                 value={editedDetails?.cowEntity?.name || ''}
@@ -106,7 +112,7 @@ const ModalCowDetail: React.FC<ModalCowDetailProps> = ({ modal, cowId, mutate })
               cowDetails.cowEntity.name
             )}
           </Descriptions.Item>
-          <Descriptions.Item label='Status'>
+          <Descriptions.Item label="Status">
             {isEditing ? (
               <Select
                 value={editedDetails?.cowEntity?.cowStatus || ''}
@@ -114,10 +120,10 @@ const ModalCowDetail: React.FC<ModalCowDetailProps> = ({ modal, cowId, mutate })
                 options={cowStatuses}
               />
             ) : (
-              getLabelByValue(cowDetails.cowEntity.cowStatus, cowStatus)
+              getLabelByValue(cowDetails.cowEntity.cowStatus, cowStatus())
             )}
           </Descriptions.Item>
-          <Descriptions.Item label='Date of Birth'>
+          <Descriptions.Item label="Date of Birth">
             {isEditing ? (
               <DatePicker
                 value={editedDetails?.cowEntity?.dateOfBirth || ''}
@@ -127,7 +133,7 @@ const ModalCowDetail: React.FC<ModalCowDetailProps> = ({ modal, cowId, mutate })
               cowDetails.cowEntity.dateOfBirth
             )}
           </Descriptions.Item>
-          <Descriptions.Item label='Date of Enter'>
+          <Descriptions.Item label="Date of Enter">
             {isEditing ? (
               <DatePicker
                 value={editedDetails?.cowEntity?.dateOfEnter || ''}
@@ -137,7 +143,7 @@ const ModalCowDetail: React.FC<ModalCowDetailProps> = ({ modal, cowId, mutate })
               cowDetails.cowEntity.dateOfEnter
             )}
           </Descriptions.Item>
-          <Descriptions.Item label='Date of Out'>
+          <Descriptions.Item label="Date of Out">
             {isEditing ? (
               <DatePicker
                 value={editedDetails?.cowEntity?.dateOfOut || ''}
@@ -147,17 +153,19 @@ const ModalCowDetail: React.FC<ModalCowDetailProps> = ({ modal, cowId, mutate })
               cowDetails.cowEntity.dateOfOut
             )}
           </Descriptions.Item>
-          <Descriptions.Item label='Description'>
+          <Descriptions.Item label="Description">
             {isEditing ? (
               <Input
                 value={editedDetails?.cowEntity?.description || ''}
-                onChange={(e) => handleInputChange('description', e.target.value)}
+                onChange={(e) =>
+                  handleInputChange('description', e.target.value)
+                }
               />
             ) : (
               cowDetails.cowEntity.description
             )}
           </Descriptions.Item>
-          <Descriptions.Item label='Origin'>
+          <Descriptions.Item label="Origin">
             {isEditing ? (
               <Select
                 value={editedDetails?.cowEntity?.cowOrigin || ''}
@@ -165,10 +173,12 @@ const ModalCowDetail: React.FC<ModalCowDetailProps> = ({ modal, cowId, mutate })
                 options={cowOrigins}
               />
             ) : (
-              cowOrigins.find((origin) => origin.value === cowDetails.cowEntity.cowOrigin)?.label
+              cowOrigins.find(
+                (origin) => origin.value === cowDetails.cowEntity.cowOrigin
+              )?.label
             )}
           </Descriptions.Item>
-          <Descriptions.Item label='Gender'>
+          <Descriptions.Item label="Gender">
             {isEditing ? (
               <Select
                 value={editedDetails?.cowEntity?.gender || ''}
@@ -176,16 +186,18 @@ const ModalCowDetail: React.FC<ModalCowDetailProps> = ({ modal, cowId, mutate })
                 options={genders}
               />
             ) : (
-              genders.find((gender) => gender.value === cowDetails.cowEntity.gender)?.label
+              genders.find(
+                (gender) => gender.value === cowDetails.cowEntity.gender
+              )?.label
             )}
           </Descriptions.Item>
-          <Descriptions.Item label='Cow Type'>
+          <Descriptions.Item label="Cow Type">
             {cowDetails.cowEntity.cowTypeEntity.name}
           </Descriptions.Item>
-          <Descriptions.Item label='Created At'>
+          <Descriptions.Item label="Created At">
             {new Date(cowDetails.createdAt).toLocaleString()}
           </Descriptions.Item>
-          <Descriptions.Item label='Updated At'>
+          <Descriptions.Item label="Updated At">
             {new Date(cowDetails.updatedAt).toLocaleString()}
           </Descriptions.Item>
         </Descriptions>

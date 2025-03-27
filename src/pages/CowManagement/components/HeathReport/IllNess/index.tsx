@@ -86,7 +86,7 @@ const IllNess = () => {
               </p>
               <p>
                 <strong>{t('Origin')}:</strong>{' '}
-                {getLabelByValue(data.cowOrigin, cowOrigin)}
+                {getLabelByValue(data.cowOrigin, cowOrigin())}
               </p>
               <p>
                 <strong>{t('Description')}:</strong>{' '}

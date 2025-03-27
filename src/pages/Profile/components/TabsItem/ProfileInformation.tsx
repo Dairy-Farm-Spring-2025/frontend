@@ -40,7 +40,7 @@ const ProfileInformation = ({ profile, mutate }: ProfileInformationProps) => {
     {
       key: 'gender',
       label: t('gender'), // Translation for 'Gender'
-      children: profile?.gender,
+      children: t(profile?.gender),
       span: 3,
     },
     {

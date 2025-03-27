@@ -149,10 +149,10 @@ const CowGeneralInformation = ({
             >
               {!showEdit ? (
                 <TextBorder>
-                  <Text>{formatStatusWithCamel(dataDetail?.gender)}</Text>
+                  <Text>{t(formatStatusWithCamel(dataDetail?.gender))}</Text>
                 </TextBorder>
               ) : (
-                <SelectComponent options={genderData} className="w-full" />
+                <SelectComponent options={genderData()} className="w-full" />
               )}
             </FormItemComponent>
             <FormItemComponent
@@ -182,7 +182,7 @@ const CowGeneralInformation = ({
                   <Text>{formatStatusWithCamel(dataDetail?.cowStatus)}</Text>
                 </TextBorder>
               ) : (
-                <SelectComponent options={cowStatus} className="w-full" />
+                <SelectComponent options={cowStatus()} className="w-full" />
               )}
             </FormItemComponent>
             <FormItemComponent
@@ -193,10 +193,10 @@ const CowGeneralInformation = ({
             >
               {!showEdit ? (
                 <TextBorder>
-                  <Text>{formatStatusWithCamel(dataDetail?.cowOrigin)}</Text>
+                  <Text>{t(formatStatusWithCamel(dataDetail?.cowOrigin))}</Text>
                 </TextBorder>
               ) : (
-                <SelectComponent options={cowOrigin} className="w-full" />
+                <SelectComponent options={cowOrigin()} className="w-full" />
               )}
             </FormItemComponent>
           </div>

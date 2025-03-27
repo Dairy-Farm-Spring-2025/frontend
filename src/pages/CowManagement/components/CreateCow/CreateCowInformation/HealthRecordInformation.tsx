@@ -18,13 +18,13 @@ const HealthRecordInformation = () => {
             name="status"
             label={<LabelForm>{t('Status')}:</LabelForm>}
           >
-            <SelectComponent options={HEALTH_RECORD_STATUS} />
+            <SelectComponent options={HEALTH_RECORD_STATUS()} />
           </FormItemComponent>
           <FormItemComponent
             name="period"
             label={<LabelForm>{t('Period')}:</LabelForm>}
           >
-            <SelectComponent options={cowStatus} />
+            <SelectComponent options={cowStatus()} />
           </FormItemComponent>
         </div>
       </div>

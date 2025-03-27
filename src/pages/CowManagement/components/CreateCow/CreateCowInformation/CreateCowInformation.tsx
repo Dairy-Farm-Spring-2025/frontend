@@ -77,7 +77,7 @@ const CreateCowInformation = () => {
               label={<LabelForm>{t('Gender')}</LabelForm>}
             >
               <SelectComponent
-                options={genderData}
+                options={genderData()}
                 className="w-full"
                 placeholder="Select gender..."
               />
@@ -101,7 +101,7 @@ const CreateCowInformation = () => {
               label={<LabelForm>{t('Cow Status')}</LabelForm>}
             >
               <SelectComponent
-                options={cowStatus}
+                options={cowStatus()}
                 className="w-full"
                 placeholder="Select status..."
               />
@@ -113,7 +113,7 @@ const CreateCowInformation = () => {
               label={<LabelForm>{t('Origin')}</LabelForm>}
             >
               <SelectComponent
-                options={cowOrigin}
+                options={cowOrigin()}
                 placeholder="Enter origin..."
                 className="w-full"
               />

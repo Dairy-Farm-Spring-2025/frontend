@@ -106,7 +106,7 @@ const CreateFeedMeal = () => {
               label={<LabelForm>{t('Cow Status')}</LabelForm>}
             >
               <SelectComponent
-                options={COW_STATUS_DRY_MATTER}
+                options={COW_STATUS_DRY_MATTER()}
                 value={cowStatusSelected}
                 onChange={setCowStatusSelected}
               />
