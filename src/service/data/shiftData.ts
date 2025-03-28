@@ -25,3 +25,33 @@ export const SHIFT_TASK = () => [
     label: t('Night shift'),
   },
 ];
+
+export const SHIFT_FEED_MEAL = () => [
+  {
+    value: 'morningShift',
+    label: t('Morning Shift'),
+  },
+  {
+    value: 'noonShift',
+    label: t('Noon Shift'),
+  },
+  {
+    value: 'afternoonShift',
+    label: t('Afternoon Shift'),
+  },
+];
+
+export const SHIFT_FEED_MEAL_FILTER = () => [
+  {
+    text: t('Morning Shift'),
+    value: 'morningShift',
+  },
+  {
+    text: t('Noon Shift'),
+    value: 'noonShift',
+  },
+  {
+    text: t('Afternoon Shift'),
+    value: 'afternoonShift',
+  },
+];

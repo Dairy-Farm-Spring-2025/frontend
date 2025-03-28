@@ -16,9 +16,9 @@ const AuthCallback = () => {
   const userId = searchParams.get('userId');
   const userName = searchParams.get('userName');
   const roleName = searchParams.get('roleName');
+  const error = searchParams.get('error');
   useEffect(() => {
     const fetchData = async () => {
-      console.log(accessToken, refreshToken, userId, userName, roleName);
       if (accessToken && refreshToken && userId && userName && roleName) {
         const data = {
           accessToken: accessToken,
@@ -32,10 +32,17 @@ const AuthCallback = () => {
         navigate('/dairy');
       } else {
         toast.showError(t('Login failed'));
-        navigate('/login');
       }
     };
-    fetchData();
+    if (error === 'user_not_found') {
+      toast.showError(t('Your account is not exist in dairy farm'));
+      navigate('/login');
+    } else if (error === 'user_disabled') {
+      toast.showError(t('Your account is disabled in dairy farm'));
+      navigate('/login');
+    } else {
+      fetchData();
+    }
   }, [dispatch]);
 
   return (

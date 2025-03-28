@@ -1,18 +1,19 @@
 import { PlusOutlined } from '@ant-design/icons';
+import ButtonComponent from '@components/Button/ButtonComponent';
+import InputComponent from '@components/Input/InputComponent';
+import Title from '@components/UI/Title';
 import { Divider, Form } from 'antd';
 import { useTranslation } from 'react-i18next';
-import ButtonComponent from '@components/Button/ButtonComponent';
-import FormItemComponent from '@components/Form/Item/FormItemComponent';
-import InputComponent from '@components/Input/InputComponent';
-import SelectComponent from '@components/Select/SelectComponent';
-import Title from '@components/UI/Title';
+import FormItemQuantity from './components/FormItemQuantity';
 interface SilageFieldFormListProps {
   silageTotal: number;
   silage: any;
+  disabled?: boolean;
 }
 const SilageFieldFormList = ({
   silage,
   silageTotal,
+  disabled = false,
 }: SilageFieldFormListProps) => {
   const { t } = useTranslation();
   const form = Form.useFormInstance();
@@ -63,48 +64,20 @@ const SilageFieldFormList = ({
                   <p className="text-base font-semibold mb-2">
                     {t('Field Feed Meal Silage')} {index + 1}
                   </p>
-                  <FormItemComponent
-                    {...restField}
-                    name={[name, 'itemId'] as any}
-                    rules={[
-                      {
-                        required: true,
-                        message: t('Please select a hay type'),
-                      },
-                    ]}
-                  >
-                    <SelectComponent options={filteredOptions} search={true} />
-                  </FormItemComponent>
-                  <FormItemComponent
-                    {...restField}
-                    name={[name, 'quantity'] as any}
-                    rules={[
-                      {
-                        required: true,
-                        message: t('Please select a item type'),
-                      },
-                    ]}
-                  >
-                    <InputComponent.Number decimal={true} />
-                  </FormItemComponent>
-                  {index > 0 && (
-                    <div className="flex justify-start">
-                      <ButtonComponent
-                        danger
-                        onClick={() => {
-                          remove(name);
-                        }}
-                      >
-                        {t('Remove field')}
-                      </ButtonComponent>
-                    </div>
-                  )}
+                  <FormItemQuantity
+                    index={index}
+                    name={name}
+                    options={filteredOptions}
+                    remove={remove}
+                    restField={restField}
+                    disabledButton={disabled}
+                  />
                 </div>
                 <Divider className="!my-1" />
               </div>
             );
           })}
-          {fields.length !== silage?.length && (
+          {!disabled && fields.length !== silage?.length && (
             <Form.Item>
               <ButtonComponent
                 type="dashed"

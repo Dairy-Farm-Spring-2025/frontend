@@ -32,13 +32,15 @@ const FeedMealInformation = ({ data }: FeedMealInformationProps) => {
   return (
     <div className="p-2">
       <Title className="text-xl mb-5">{t('Feed meal information')}:</Title>
-      <div className="flex gap-5">
+      <div className="flex gap-5 w-full">
         <DescriptionComponent
           className="w-2/5 !h-fit"
           items={items}
           layout="horizontal"
         />
-        <QuillRender description={data?.description} />
+        <div className="!h-full w-3/5">
+          <QuillRender description={data?.description} />
+        </div>{' '}
       </div>
     </div>
   );
