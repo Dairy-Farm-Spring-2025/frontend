@@ -218,6 +218,7 @@
   "No shift": "Không ca làm",
   "Shift": "Ca làm",
   "Milking cow": "Bò đang vắt sữa",
+  "Milking Cow": "Bò đang vắt sữa",
   "Dry cow": "Bò khô sữa",
   "Pregnant cow": "Bò mang thai",
   "Open cow": "Bò chưa mang thai",
@@ -496,5 +497,10 @@
   "Weeks": "Tuần",
   "Months": "Tháng",
   "Years": "Năm",
-  "Food": "Thức ăn"
+  "Food": "Thức ăn",
+  "Shift Feed Meal": "Ca cho ăn",
+  "Morning Shift": "Ca sáng",
+  "Noon Shift": "Ca trưa",
+  "Afternoon Shift": "Ca chiều",
+  "review": "Xem trước"
 }

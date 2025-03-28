@@ -22,11 +22,14 @@ createRoot(document.getElementById('root')!).render(
         components: {
           Select: {
             optionSelectedBg: 'rgba(22, 101, 52, 0.1)', // ✅ Điều chỉnh nền mục đã chọn
+            colorTextDisabled: 'black',
           },
           Menu: {
             itemSelectedBg: 'rgba(22, 101, 52, 0.1)',
           },
-          Input: {},
+          Input: {
+            colorTextDisabled: 'black',
+          },
         },
       }}
     >

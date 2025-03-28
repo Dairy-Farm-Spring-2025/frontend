@@ -41,6 +41,47 @@ export const cowStatus = () => {
   ];
 };
 
+export const COW_STATUS_FILTER = () => {
+  return [
+    {
+      value: 'milkingCow',
+      text: i18n.t('Milking cow', { defaultValue: 'Milking cow' }),
+    },
+    {
+      value: 'dryCow',
+      text: i18n.t('Dry cow', { defaultValue: 'Dry cow' }),
+    },
+    {
+      value: 'pregnantCow',
+      text: i18n.t('Pregnant cow', { defaultValue: 'Pregnant cow' }),
+    },
+    {
+      value: 'openCow',
+      text: i18n.t('Open cow', { defaultValue: 'Open cow' }),
+    },
+    {
+      value: 'calvingCow',
+      text: i18n.t('Calving cow', { defaultValue: 'Calving cow' }),
+    },
+    {
+      value: 'sickCow',
+      text: i18n.t('Sick cow', { defaultValue: 'Sick cow' }),
+    },
+    {
+      value: 'breedingCow',
+      text: i18n.t('Breeding cow', { defaultValue: 'Breeding cow' }),
+    },
+    {
+      value: 'quarantinedCow',
+      text: i18n.t('Quarantined cow', { defaultValue: 'Quarantined cow' }),
+    },
+    {
+      value: 'culling',
+      text: i18n.t('Culling', { defaultValue: 'Culling' }),
+    },
+  ];
+};
+
 export const COW_STATUS_DRY_MATTER = () => {
   return [
     {

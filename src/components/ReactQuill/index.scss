@@ -1,6 +1,22 @@
 .react-quill-component {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  .ql-container {
+    flex: 1; // Allows the editor to expand
+    max-height: 300px;
+    overflow-y: auto; // Enables scrolling when necessary
+  }
+
   .ql-container.ql-snow {
     border-bottom-left-radius: 8px;
     border-bottom-right-radius: 8px;
+
+    .ql-editor {
+      height: 100%; // Allows the editor to fill the available space
+      max-height: 100%; // Ensures it doesn’t exceed the container height
+      overflow-y: auto; // Enables scrolling inside the editor
+    }
   }
 }
