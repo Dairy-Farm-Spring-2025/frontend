@@ -60,9 +60,8 @@ const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
       const response = await trigger({
         body: {
           ...values,
-          cowId: data?.cowEntity?.cowId, // Add cowId to the payload
-          startDate: values.startDate?.toISOString(),
-          endDate: values.endDate?.toISOString(),
+
+
         },
       });
       toast.showSuccess(response.message || t('Update successful'));
@@ -207,17 +206,7 @@ const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
                 __html: data?.symptoms || t('No data'),
               }}
             />
-            {/* <FormItemComponent
-              name="symptoms"
-              label={<LabelForm>{t('Symptoms')}</LabelForm>}
-              rules={[{ required: edit, message: t('Please input symptoms') }]}
-            >
-              {!edit ? (
-                <div className="prose" dangerouslySetInnerHTML={{ __html: data?.symptoms || t('No data') }} />
-              ) : (
-                <ReactQuillComponent />
-              )}
-            </FormItemComponent> */}
+
 
             <FormItemComponent
               name="severity"
@@ -317,42 +306,21 @@ const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
             <Title className="!text-2xl mb-6">{t('Date Range')}</Title>
             <Row gutter={[16, 16]}>
               <Col span={12}>
-                <FormItemComponent
-                  name="startDate"
-                  label={<LabelForm>{t('Start Date')}</LabelForm>}
-                  rules={[
-                    { required: edit, message: t('Please select start date') },
-                  ]}
-                >
-                  {!edit ? (
-                    <div className="font-medium text-gray-700">
-                      {data?.startDate
-                        ? dayjs(data.startDate).format('DD/MM/YYYY')
-                        : t('No data')}
-                    </div>
-                  ) : (
-                    <DatePicker className="w-full" />
-                  )}
-                </FormItemComponent>
+
+                <LabelForm>{t('Start Date')}</LabelForm>
+                <div
+                  className="prose mb-6"
+                />
+                {data?.startDate || t('N/A')}
+
               </Col>
               <Col span={12}>
-                <FormItemComponent
-                  name="endDate"
-                  label={<LabelForm>{t('End Date')}</LabelForm>}
-                  rules={[
-                    { required: edit, message: t('Please select end date') },
-                  ]}
-                >
-                  {!edit ? (
-                    <div className="font-medium text-gray-700">
-                      {data?.endDate
-                        ? dayjs(data.endDate).format('DD/MM/YYYY')
-                        : t('No data')}
-                    </div>
-                  ) : (
-                    <DatePicker className="w-full" />
-                  )}
-                </FormItemComponent>
+                <LabelForm>{t('End Date')}</LabelForm>
+                <div
+                  className="prose mb-6"
+                />
+                {data?.endDate || t('N/A')}
+
               </Col>
             </Row>
           </Card>

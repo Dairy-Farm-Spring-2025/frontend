@@ -163,7 +163,7 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
           </Button>,
         ]}
         className="rounded-lg"
-        styles={{ wrapper: { height: '100vh', top: 0, paddingBottom: 0 }, body: { height: 'calc(80vh - 60px)', overflowY: 'auto' } }}
+
       >
         <Card bordered={false} className="p-6">
           <Form form={form}>

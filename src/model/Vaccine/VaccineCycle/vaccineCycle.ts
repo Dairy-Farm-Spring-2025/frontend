@@ -78,6 +78,7 @@ export type VaccineInjection = {
   injectionDate: string;
   administeredBy: UserProfileData
   status: string;
+  description: string;
 
 }
 export type InjectionSite =
