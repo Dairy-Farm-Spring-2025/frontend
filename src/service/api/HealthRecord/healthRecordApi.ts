@@ -7,6 +7,7 @@ export const HEALTH_RECORD_PATH = {
   DELETE_ILLNESS: (id: string) => `illness/${id}`,
   ILLNESS: 'illness',
   CREATE_ILLNESS: 'illness/create',
+  CREATE_PLAN: 'illness-detail/create-plan',
   DETAIL_ILLNESS: (id: string) => `illness/${id}`,
   ILLNESS_DETAIL: (id: string) => `illness-detail/${id}`
 };
