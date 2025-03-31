@@ -11,6 +11,17 @@ export const statusOptions = () => [
   { value: 'reserved', label: t('Reserved', { defaultValue: 'Reserved' }) },
 ];
 
+export const STATUS_ITEM_FILTER = () => [
+  { value: 'available', text: t('Available', { defaultValue: 'Available' }) },
+  {
+    value: 'outOfStock',
+    text: t('Out of Stock', { defaultValue: 'Out of Stock' }),
+  },
+  { value: 'damaged', text: t('Damaged', { defaultValue: 'Damaged' }) },
+  { value: 'expired', text: t('Expired', { defaultValue: 'Expired' }) },
+  { value: 'reserved', text: t('Reserved', { defaultValue: 'Reserved' }) },
+];
+
 export const unitOptions = () => [
   {
     value: 'kilogram',

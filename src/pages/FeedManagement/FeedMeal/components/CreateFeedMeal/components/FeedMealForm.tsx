@@ -9,7 +9,6 @@ import Title from '@components/UI/Title';
 import useFetcher from '@hooks/useFetcher';
 import { Item } from '@model/Warehouse/items';
 import { cowStatus } from '@service/data/cowStatus';
-import { SHIFT_FEED_MEAL } from '@service/data/shiftData';
 import { Divider, Form, SelectProps, Splitter } from 'antd';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -167,7 +166,6 @@ const FeedMealForm = ({
           name: '',
           description: '',
           cowTypeId: cowTypeSelected,
-          shift: 'morningShift',
           cowStatus: cowStatusSelected,
           detailsHay: [
             {
@@ -231,13 +229,6 @@ const FeedMealForm = ({
                   className="!cursor-default"
                   disabled={true}
                 />
-              </FormItemComponent>
-              <FormItemComponent
-                rules={[{ required: true }]}
-                name="shift"
-                label={<LabelForm>{t('Shift Feed Meal')}</LabelForm>}
-              >
-                <SelectComponent options={SHIFT_FEED_MEAL()} />
               </FormItemComponent>
             </div>
             <div className="w-2/3 min-h-full">

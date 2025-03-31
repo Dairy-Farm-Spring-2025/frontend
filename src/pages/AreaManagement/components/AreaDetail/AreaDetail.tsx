@@ -1,31 +1,58 @@
+import ButtonComponent from '@components/Button/ButtonComponent';
+import FormComponent from '@components/Form/FormComponent';
+import FormItemComponent from '@components/Form/Item/FormItemComponent';
+import InputComponent from '@components/Input/InputComponent';
+import LabelForm from '@components/LabelForm/LabelForm';
+import ReactQuillComponent from '@components/ReactQuill/ReactQuillComponent';
+import SelectComponent from '@components/Select/SelectComponent';
+import TableComponent, { Column } from '@components/Table/TableComponent';
+import AnimationAppear from '@components/UI/AnimationAppear';
+import QuillRender from '@components/UI/QuillRender';
+import WhiteBackground from '@components/UI/WhiteBackground';
+import { useEditToggle } from '@hooks/useEditToggle';
 import useFetcher from '@hooks/useFetcher';
+import useModal from '@hooks/useModal';
 import { Area } from '@model/Area';
 import { Pen } from '@model/Pen';
-import { useParams } from 'react-router-dom';
-import AreaDimension from './components/AreaDimension';
-import AnimationAppear from '@components/UI/AnimationAppear';
-import WhiteBackground from '@components/UI/WhiteBackground';
-import TableComponent, { Column } from '@components/Table/TableComponent';
-import { formatDateHour, formatSTT } from '@utils/format';
+import { AREA_PATH } from '@service/api/Area/areaApi';
+import { PEN_PATH } from '@service/api/Pen/penApi';
+import { areaType } from '@service/data/areaType';
 import {
   penFilter,
   penStatus,
   penStatusFilter,
   penType,
 } from '@service/data/pen';
-import { Divider, Tag, Tooltip } from 'antd';
-import { useTranslation } from 'react-i18next';
-import ButtonComponent from '@components/Button/ButtonComponent';
-import useModal from '@hooks/useModal';
-import ModalCreatePen from '../ModalCreatePen';
-import { AREA_PATH } from '@service/api/Area/areaApi';
-import { PEN_PATH } from '@service/api/Pen/penApi';
+import { formatDateHour, formatSTT } from '@utils/format';
+import { Divider, Form, Skeleton, Tag, Tooltip } from 'antd';
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
+import ModalCreatePen from '../ModalCreatePen';
+import useToast from '@hooks/useToast';
+
+const validateInput = (_: any, value: string) => {
+  const regex = /^[A-Z]+-area-[0-9]+$/;
+
+  if (!value) {
+    return Promise.reject('Please input the value!');
+  }
+  if (!regex.test(value)) {
+    return Promise.reject(
+      'Input does not match the required format (A-Z)-area-(1-0), eg: ABC-area-123'
+    );
+  }
+  return Promise.resolve();
+};
 
 const AreaDetail = () => {
   const { id } = useParams();
   const modal = useModal();
-
+  const toast = useToast();
+  const [form] = Form.useForm();
+  const { edited, toggleEdit } = useEditToggle();
+  const { trigger: triggerEditArea, isLoading: isLoadingUpdateArea } =
+    useFetcher('edit-area', 'PUT');
   const {
     data: area,
     isLoading: isLoadingArea,
@@ -39,8 +66,37 @@ const AreaDetail = () => {
   const { t } = useTranslation();
 
   useEffect(() => {
-    console.log(pens);
-  }, []);
+    if (area && pens) {
+      form.setFieldsValue({
+        name: area.name,
+        length: area.length,
+        width: area.width,
+        penLength: area.penLength,
+        penWidth: area.penWidth,
+        areaType: area.areaType,
+        maxPen: area.maxPen,
+        numberInRow: area.numberInRow,
+        description: area.description,
+      });
+    }
+  }, [area, form, pens]);
+
+  const onSubmitEdit = async (values: any) => {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { maxPen, numberInRow, ...filteredValues } = values;
+      const payload = { ...filteredValues };
+      const response = await triggerEditArea({
+        url: AREA_PATH.AREA_EDIT(id as any),
+        body: payload,
+      });
+      toast.showSuccess(response.message);
+      toggleEdit();
+      mutate();
+    } catch (error: any) {
+      toast.showError(error.message);
+    }
+  };
 
   const columns: Column[] = [
     {
@@ -116,47 +172,127 @@ const AreaDetail = () => {
   ];
   if (isLoadingArea || isLoadingPens) return <p>Loading...</p>;
   if (!area) return <p>Area not found!</p>;
-
-  const numPensX = Math.floor(area.width / area.penWidth);
-  const numPensY = Math.floor(area.length / area.penLength);
-
-  const handleOpen = () => {
-    modal.openModal();
-  };
-
   return (
     <AnimationAppear>
       <WhiteBackground>
         <div className="p-4">
           <div className="flex flex-col">
             <div>
-              <h2 className="text-2xl font-bold">{area.name}</h2>
-
-              <p>
-                <strong>Kích thước:</strong> {area.width}m x {area.length}m
-              </p>
-              <p>
-                <strong>Pen Size:</strong> {area.penWidth}m x {area.penLength}m
-              </p>
-              <p>
-                <strong>Số Pen có thể chứa:</strong> {numPensX * numPensY}
-              </p>
+              <Skeleton loading={isLoadingUpdateArea}>
+                <FormComponent form={form} onFinish={onSubmitEdit}>
+                  <div className="!max-w-4/5 w-3/5 mx-auto">
+                    <div className="flex w-full justify-center gap-5">
+                      <div className="flex flex-col !w-1/2 ">
+                        <FormItemComponent
+                          name="name"
+                          label={<LabelForm>{t('Name')}</LabelForm>}
+                          rules={[
+                            { required: true },
+                            { validator: validateInput },
+                          ]}
+                        >
+                          <InputComponent
+                            className="!w-full"
+                            disabled={!edited}
+                          />
+                        </FormItemComponent>
+                        <FormItemComponent
+                          name="areaType"
+                          label={<LabelForm>{t('Area Type')}</LabelForm>}
+                          rules={[{ required: true }]}
+                        >
+                          <SelectComponent
+                            options={areaType()}
+                            disabled={!edited}
+                            className="!w-full"
+                          />
+                        </FormItemComponent>
+                        <FormItemComponent
+                          name="maxPen"
+                          rules={[{ required: true }]}
+                          label={<LabelForm>{t('Max pen')}:</LabelForm>}
+                        >
+                          <InputComponent.Number disabled={true} />
+                        </FormItemComponent>
+                        <FormItemComponent
+                          name="numberInRow"
+                          rules={[{ required: true }]}
+                          label={<LabelForm>{t('Number in row')}:</LabelForm>}
+                        >
+                          <InputComponent.Number disabled={true} />
+                        </FormItemComponent>
+                      </div>
+                      <div className="flex flex-col !w-1/2">
+                        <FormItemComponent
+                          name="length"
+                          label={<LabelForm>{t('Length')} (m)</LabelForm>}
+                          rules={[{ required: true }]}
+                        >
+                          <InputComponent.Number disabled={!edited} />
+                        </FormItemComponent>
+                        <FormItemComponent
+                          name="width"
+                          label={<LabelForm>{t('Width')} (m)</LabelForm>}
+                          rules={[{ required: true }]}
+                        >
+                          <InputComponent.Number disabled={!edited} />
+                        </FormItemComponent>
+                        <FormItemComponent
+                          name="penLength"
+                          label={<LabelForm>{t('Pen Length (m)')}</LabelForm>}
+                          rules={[{ required: true }]}
+                        >
+                          <InputComponent.Number disabled={!edited} />
+                        </FormItemComponent>
+                        <FormItemComponent
+                          name="penWidth"
+                          label={<LabelForm>{t('Pen Width (m)')}</LabelForm>}
+                          rules={[{ required: true }]}
+                        >
+                          <InputComponent.Number disabled={!edited} />
+                        </FormItemComponent>
+                      </div>
+                    </div>
+                    <div className="!w-full mx-auto">
+                      <FormItemComponent
+                        name="description"
+                        label={<LabelForm>{t('Description')}</LabelForm>}
+                        rules={[{ required: true }]}
+                      >
+                        {!edited ? (
+                          <QuillRender description={area.description} />
+                        ) : (
+                          <ReactQuillComponent />
+                        )}
+                      </FormItemComponent>
+                    </div>
+                  </div>
+                  <div className="w-full flex justify-end gap-5">
+                    <ButtonComponent
+                      type="primary"
+                      buttonType={!edited ? 'gold' : 'volcano'}
+                      onClick={toggleEdit}
+                    >
+                      {!edited ? t('Edit') : t('Cancel')}
+                    </ButtonComponent>
+                    {edited && (
+                      <ButtonComponent
+                        type="primary"
+                        buttonType="secondary"
+                        htmlType="submit"
+                      >
+                        {t('Edit')}
+                      </ButtonComponent>
+                    )}
+                  </div>
+                </FormComponent>
+              </Skeleton>
             </div>
-            <div className="h-full">
+            {/* <div className="h-full">
               <AreaDimension area={area} pens={pens as Pen[]} />
-            </div>{' '}
+            </div>{' '} */}
           </div>
           <Divider />
-
-          <ButtonComponent
-            className="mb-5"
-            onClick={handleOpen}
-            disabled={
-              pens && numPensX * numPensY <= pens?.length ? true : false
-            }
-          >
-            {t('Create New Pen')}
-          </ButtonComponent>
           <TableComponent
             columns={columns}
             dataSource={pens ? formatSTT(pens) : []}

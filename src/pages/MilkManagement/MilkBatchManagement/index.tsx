@@ -23,14 +23,21 @@ import CreateMilkBatchModal from './components/ModalCreateMilkBatch/CreateMilkBa
 import ModalMilkBatchDetail from './components/ModalMilkBatchDetail';
 import TagComponents from '@components/UI/TagComponents';
 import { getMilkBatchStatusColor } from '@utils/statusRender/milkBatchStatusRender';
+import { MILK_BATCH_PATH } from '@service/api/DailyMilk/milkBatchApi';
+import useToast from '@hooks/useToast';
+import PopconfirmComponent from '@components/Popconfirm/PopconfirmComponent';
 
 const MilkBatchManagement = () => {
   const modalBatch = useModal();
+  const toast = useToast();
   const { data, isLoading, mutate } = useFetcher<MilkBatch[]>(
-    'MilkBatch',
+    MILK_BATCH_PATH.GET_MILK_BATCH,
     'GET'
   );
-  console.log('check data: ', data);
+  const { isLoading: isLoadingDelete, trigger } = useFetcher(
+    'delete-milk-batch',
+    'DELETE'
+  );
   const modalViewDetail = useModal();
   const { t } = useTranslation();
   const [milkBatchId, setMilkBatchId] = React.useState<number>(0);
@@ -40,23 +47,23 @@ const MilkBatchManagement = () => {
     modalViewDetail.openModal();
   };
 
-  // const handleDelete = async (milkBatchId: number) => {
-  //   try {
-  //     await fetch(`MilkBatch/${milkBatchId}`, {
-  //       method: 'DELETE',
-  //     });
-  //     message.success('Milk batch deleted successfully!');
-  //     mutate(); // Refresh the data
-  //   } catch (error) {
-  //     message.error('Failed to delete milk batch.');
-  //     console.error(error);
-  //   }
-  // };
+  const handleDelete = async (milkBatchId: number) => {
+    try {
+      const response = await trigger({
+        url: MILK_BATCH_PATH.DELETE_MILK_BATCH(milkBatchId),
+      });
+      toast.showSuccess(response.message);
+      mutate(); // Refresh the data
+    } catch (error: any) {
+      toast.showError(error.message);
+    }
+  };
   const columns: Column[] = [
     {
       dataIndex: 'totalVolume',
       key: 'totalVolume',
       title: t('Total Volume'),
+      render: (data) => `${data} (l)`,
     },
     {
       dataIndex: 'date',
@@ -76,7 +83,7 @@ const MilkBatchManagement = () => {
       title: t('Status'),
       render: (data) => (
         <TagComponents color={getMilkBatchStatusColor(data)}>
-          {formatAreaType(data)}
+          {t(formatAreaType(data))}
         </TagComponents>
       ),
     },
@@ -86,16 +93,26 @@ const MilkBatchManagement = () => {
       title: t('Action'),
       render: (_, record) => (
         <div>
-          <ButtonComponent type='primary' onClick={() => handleOpenEdit(record)}>
-            {t(' View Detail')}
-          </ButtonComponent>
           <ButtonComponent
-            danger
-            onClick={() => console.log(record.milkBatchId)}
-            style={{ marginLeft: 8 }}
+            type="primary"
+            onClick={() => handleOpenEdit(record)}
           >
-            {t('Delete')}
+            {t('View Detail')}
           </ButtonComponent>
+          <PopconfirmComponent
+            title={undefined}
+            onConfirm={() => handleDelete(record.milkBatchId)}
+          >
+            <ButtonComponent
+              danger
+              type="primary"
+              onClick={() => console.log(record.milkBatchId)}
+              style={{ marginLeft: 8 }}
+              loading={isLoadingDelete}
+            >
+              {t('Delete')}
+            </ButtonComponent>
+          </PopconfirmComponent>
         </div>
       ),
     },

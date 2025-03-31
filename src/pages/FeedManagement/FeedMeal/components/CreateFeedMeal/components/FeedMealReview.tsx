@@ -11,7 +11,6 @@ import useToast from '@hooks/useToast';
 import { Item } from '@model/Warehouse/items';
 import { FEED_PATH } from '@service/api/Feed/feedApi';
 import { cowStatus } from '@service/data/cowStatus';
-import { SHIFT_FEED_MEAL } from '@service/data/shiftData';
 import { Divider, Form, SelectProps, Spin, Splitter } from 'antd';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -138,7 +137,6 @@ const FeedMealReview = ({ dry, cowType, dataReview }: FeedMealReviewProps) => {
       name: values.name,
       description: values.description,
       cowTypeId: values.cowTypeId,
-      shift: values.shift,
       cowStatus: values.cowStatus,
       details: [
         ...transformDetails(values.detailsHay),
@@ -167,7 +165,6 @@ const FeedMealReview = ({ dry, cowType, dataReview }: FeedMealReviewProps) => {
           name: dataReview?.name,
           description: dataReview.description,
           cowTypeId: dataReview.cowTypeId,
-          shift: dataReview.shift,
           cowStatus: dataReview.cowStatus,
           detailsHay: dataReview.detailsHay,
           detailsRefined: dataReview.detailsRefined,
@@ -215,13 +212,6 @@ const FeedMealReview = ({ dry, cowType, dataReview }: FeedMealReviewProps) => {
                     className="!cursor-default"
                     disabled={true}
                   />
-                </FormItemComponent>
-                <FormItemComponent
-                  rules={[{ required: true }]}
-                  name="shift"
-                  label={<LabelForm>{t('Shift Feed Meal')}</LabelForm>}
-                >
-                  <SelectComponent options={SHIFT_FEED_MEAL()} disabled />
                 </FormItemComponent>
               </div>
               <div className="w-2/3 min-h-full">

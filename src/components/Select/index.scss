@@ -3,4 +3,13 @@
   )
   .ant-select-selector {
   box-shadow: none !important;
+  text-align: left !important;
+}
+
+.select-component .ant-select-selection-item {
+  text-align: left !important;
+}
+
+.select-component .ant-select-item {
+  text-align: left !important;
 }

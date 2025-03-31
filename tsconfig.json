@@ -15,7 +15,8 @@
       "@hooks/*": ["src/hooks/*"],
       "@model/*": ["src/model/*"],
       "@service/*": ["src/service/*"],
-      "@config/*": ["src/config/*"]
+      "@config/*": ["src/config/*"],
+      "@common/*": ["src/common/*"]
     }
   }
 }
