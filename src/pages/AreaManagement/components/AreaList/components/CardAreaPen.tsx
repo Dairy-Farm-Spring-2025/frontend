@@ -1,108 +1,87 @@
+import { ArrowRightOutlined } from '@ant-design/icons';
 import CardComponent from '@components/Card/CardComponent';
-import TableComponent, { Column } from '@components/Table/TableComponent';
 import TextTitle from '@components/UI/TextTitle';
 import Title from '@components/UI/Title';
-import { formatDateHour, formatSTT } from '@utils/format';
-import { Button, Divider, Tooltip } from 'antd';
+import { formatDateHour } from '@utils/format';
+import { Button, Tooltip } from 'antd';
 import { t } from 'i18next';
 import { LiaChartAreaSolid } from 'react-icons/lia';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRightOutlined } from '@ant-design/icons';
 import { DataGroupAreaPen } from '../AreaList';
-import {
-  penFilter,
-  penStatus,
-  penStatusFilter,
-  penType,
-} from '@service/data/pen';
-import TagComponents from '@components/UI/TagComponents';
 
 interface CardAreaPenProps {
   element: DataGroupAreaPen;
   handleEdit: any;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const CardAreaPen = ({ element, handleEdit }: CardAreaPenProps) => {
   const navigate = useNavigate();
 
-  const columns: Column[] = [
-    {
-      dataIndex: 'createdAt',
-      key: 'createdAt',
-      title: t('Created Date'),
-      render: (data) => formatDateHour(data),
-      filteredDate: true,
-    },
-    {
-      dataIndex: 'name',
-      key: 'name',
-      title: t('Pen Name'),
-      render: (element: string, data) => (
-        <p
-          onClick={() => handleEdit(data.penId)}
-          className="text-blue-600 underline underline-offset-1 cursor-pointer"
-        >
-          {element}
-        </p>
-      ),
-      searchable: true,
-    },
-    {
-      dataIndex: 'penType',
-      key: 'penType',
-      title: t('Pen Type'),
-      render: (typeValue: string) => {
-        const type = penType.find((type) => type.value === typeValue);
-
-        return type ? (
-          <TagComponents color="blue">{type.label}</TagComponents>
-        ) : null;
-      },
-      filterable: true,
-      filterOptions: penFilter,
-    },
-    {
-      dataIndex: 'length',
-      key: 'length',
-      title: t('Dimensions'),
-      render: (_: any, data) => (
-        <Tooltip
-          className="tooltip-content"
-          placement="top"
-          title={
-            <div className="dimensions flex flex-col">
-              <p>
-                <strong>{t('Length')}: </strong> {data.area.penLength} m
-              </p>{' '}
-              <p>
-                <strong> {t('Width')}: </strong>
-                {data.area.penWidth} m{' '}
-              </p>
-            </div>
-          }
-        >
-          <span>
-            {data.area.penLength} x {data.area.penWidth} m
-          </span>
-        </Tooltip>
-      ),
-    },
-    {
-      dataIndex: 'penStatus',
-      key: 'penStatus',
-      title: t('Status'),
-      render: (statusValue: string) => {
-        // Find the label for the given statusValue
-        const status = penStatus.find((status) => status.value === statusValue);
-        // Return the Tag with the status label
-        return status ? (
-          <TagComponents color="green">{status.label}</TagComponents>
-        ) : null;
-      },
-      filterable: true,
-      filterOptions: penStatusFilter,
-    },
-  ];
+  // const columns: Column[] = [
+  //   {
+  //     dataIndex: 'createdAt',
+  //     key: 'createdAt',
+  //     title: t('Created Date'),
+  //     render: (data) => formatDateHour(data),
+  //     filteredDate: true,
+  //   },
+  //   {
+  //     dataIndex: 'name',
+  //     key: 'name',
+  //     title: t('Pen Name'),
+  //     render: (element: string, data) => (
+  //       <p
+  //         onClick={() => handleEdit(data.penId)}
+  //         className="text-blue-600 underline underline-offset-1 cursor-pointer"
+  //       >
+  //         {element}
+  //       </p>
+  //     ),
+  //     searchable: true,
+  //   },
+  //   {
+  //     dataIndex: 'length',
+  //     key: 'length',
+  //     title: t('Dimensions'),
+  //     render: (_: any, data) => (
+  //       <Tooltip
+  //         className="tooltip-content"
+  //         placement="top"
+  //         title={
+  //           <div className="dimensions flex flex-col">
+  //             <p>
+  //               <strong>{t('Length')}: </strong> {data.area.penLength} m
+  //             </p>{' '}
+  //             <p>
+  //               <strong> {t('Width')}: </strong>
+  //               {data.area.penWidth} m{' '}
+  //             </p>
+  //           </div>
+  //         }
+  //       >
+  //         <span>
+  //           {data.area.penLength} x {data.area.penWidth} m
+  //         </span>
+  //       </Tooltip>
+  //     ),
+  //   },
+  //   {
+  //     dataIndex: 'penStatus',
+  //     key: 'penStatus',
+  //     title: t('Status'),
+  //     render: (statusValue: string) => {
+  //       // Find the label for the given statusValue
+  //       const status = penStatus.find((status) => status.value === statusValue);
+  //       // Return the Tag with the status label
+  //       return status ? (
+  //         <TagComponents color="green">{status.label}</TagComponents>
+  //       ) : null;
+  //     },
+  //     filterable: true,
+  //     filterOptions: penStatusFilter,
+  //   },
+  // ];
   return (
     <CardComponent key={element.area?.areaId} className="!h-full">
       <div className="space-y-4">
@@ -190,13 +169,13 @@ const CardAreaPen = ({ element, handleEdit }: CardAreaPenProps) => {
             />
           </div>
         </div>
-        <Divider />
+        {/* <Divider />
         <TableComponent
           className="!shadow-none"
           columns={columns}
           dataSource={element?.pens ? formatSTT(element?.pens) : []}
           pagination={{ pageSize: 5 }}
-        />
+        /> */}
       </div>
     </CardComponent>
   );

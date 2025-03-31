@@ -502,5 +502,13 @@
   "Morning Shift": "Ca sáng",
   "Noon Shift": "Ca trưa",
   "Afternoon Shift": "Ca chiều",
-  "review": "Xem trước"
+  "review": "Kiểm tra thông tin",
+  "Sick Cow": "Bò bị bệnh",
+  "In use": "Đang sử dụng",
+  "No use": "Không sử dụng",
+  "Feed meal status": "Trạng thái bữa ăn",
+  "Inventory": "Tồn kho",
+  "Out of stock": "Hết hàng",
+  "In pen": "Trong chuồng",
+  "Not in pen": "Không trong chuồng"
 }

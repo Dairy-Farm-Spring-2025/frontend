@@ -4,9 +4,8 @@ import FormItemComponent from '@components/Form/Item/FormItemComponent';
 import InputComponent from '@components/Input/InputComponent';
 import LabelForm from '@components/LabelForm/LabelForm';
 import ModalComponent from '@components/Modal/ModalComponent';
+import CardSelectArea from '@components/Select/components/CardSelectArea';
 import SelectComponent from '@components/Select/SelectComponent';
-import TagComponents from '@components/UI/TagComponents';
-import TextTitle from '@components/UI/TextTitle';
 import useFetcher from '@hooks/useFetcher';
 import { ModalActionProps } from '@hooks/useModal';
 import useToast from '@hooks/useToast';
@@ -16,13 +15,11 @@ import { TaskType } from '@model/Task/task-type';
 import { UserProfileData } from '@model/User';
 import { PRIORITY_DATA } from '@service/data/priority';
 import { SHIFT_TASK } from '@service/data/shiftData';
-import { formatStatusWithCamel } from '@utils/format';
 import { getAvatar } from '@utils/getImage';
-import { Avatar, Divider, Form } from 'antd';
+import { Avatar, Form } from 'antd';
 import dayjs from 'dayjs';
 import { t } from 'i18next';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
-import { LiaChartAreaSolid } from 'react-icons/lia';
 
 interface TaskCreateModalProps {
   modal: ModalActionProps;
@@ -284,42 +281,7 @@ const TaskCreateModal = ({
               search
               optionRender={(option) => {
                 const area: Area = option?.data?.desc;
-                return (
-                  <div className="py-5">
-                    <div className="flex gap-3 items-center">
-                      <LiaChartAreaSolid size={20} />
-                      <p className="font-bold text-base">{area.name}</p>
-                      <TagComponents color="blue" className="!text-sm">
-                        {formatStatusWithCamel(area.areaType)}
-                      </TagComponents>
-                    </div>
-                    <Divider className="my-1" />
-                    <div className="grid grid-cols-3">
-                      <TextTitle
-                        title={t('Pen size')}
-                        description={`${area.penLength}(m) x ${area.penWidth}(m)`}
-                      />
-                      <TextTitle
-                        title={t('Dimension')}
-                        description={`${area.length}(m) x ${area.width}(m)`}
-                      />
-                    </div>
-                    <div className="grid grid-cols-3 mt-2 ">
-                      <TextTitle
-                        title={t('Occupied')}
-                        description={`${area.occupiedPens} pen`}
-                      />
-                      <TextTitle
-                        title={t('Empty')}
-                        description={`${area.emptyPens} pen`}
-                      />
-                      <TextTitle
-                        title={t('Damaged')}
-                        description={`${area.damagedPens} pen`}
-                      />
-                    </div>
-                  </div>
-                );
+                return <CardSelectArea area={area} />;
               }}
             />
           </FormItemComponent>

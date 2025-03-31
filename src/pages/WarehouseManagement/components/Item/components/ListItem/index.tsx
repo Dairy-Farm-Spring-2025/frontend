@@ -1,7 +1,7 @@
 import TagComponents from '@components/UI/TagComponents';
 import { RootState } from '@core/store/store';
 import { ITEMS_PATH } from '@service/api/Storage/itemApi';
-import { UNIT_FILTER } from '@service/data/item';
+import { STATUS_ITEM_FILTER, UNIT_FILTER } from '@service/data/item';
 import { formatStatusWithCamel } from '@utils/format';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -80,6 +80,7 @@ const ListItemManagement = () => {
       width: 200,
       filterable: true,
       filterOptions: UNIT_FILTER(),
+      render: (data) => t(data),
     },
     {
       title: t('Category'),
@@ -98,9 +99,11 @@ const ListItemManagement = () => {
       width: 150,
       render: (data) => (
         <TagComponents color={getItemStatusColor(data)}>
-          {formatStatusWithCamel(data)}
+          {t(formatStatusWithCamel(data))}
         </TagComponents>
       ),
+      filterable: true,
+      filterOptions: STATUS_ITEM_FILTER(),
     },
     {
       key: 'warehouseLocationEntity',

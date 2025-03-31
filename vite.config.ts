@@ -25,6 +25,7 @@ export default defineConfig({
       '@model': path.resolve(__dirname, 'src/model'),
       '@config': path.resolve(__dirname, 'src/config'),
       '@service': path.resolve(__dirname, 'src/service'),
+      '@common': path.resolve(__dirname, 'src/common'),
     },
   },
 });

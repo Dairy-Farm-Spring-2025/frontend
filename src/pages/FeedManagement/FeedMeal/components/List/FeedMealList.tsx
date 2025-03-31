@@ -9,8 +9,8 @@ import { CowType } from '@model/Cow/CowType';
 import { FeedType } from '@model/Feed/Feed';
 import { COW_TYPE_PATH } from '@service/api/CowType/cowType';
 import { FEED_PATH } from '@service/api/Feed/feedApi';
-import { COW_STATUS_FILTER } from '@service/data/cowStatus';
-import { SHIFT_FEED_MEAL_FILTER } from '@service/data/shiftData';
+import { COW_STATUS_FEED_MEALS } from '@service/data/cowStatus';
+import { FEED_MEAL_STATUS_FILTER } from '@service/data/feedmealStatus';
 import { formatStatusWithCamel } from '@utils/format';
 import { Spin } from 'antd';
 import { useEffect, useState } from 'react';
@@ -82,15 +82,15 @@ const FeedMealList = () => {
       key: 'cowStatus',
       render: (data) => t(formatStatusWithCamel(data ? data : t('No status'))),
       filterable: true,
-      filterOptions: COW_STATUS_FILTER(),
+      filterOptions: COW_STATUS_FEED_MEALS(),
     },
     {
-      title: t('Shift Feed Meal'),
-      dataIndex: 'shift',
-      key: 'shift',
-      render: (data) => t(formatStatusWithCamel(data ? data : t('No shift'))),
+      title: t('Feed meal status'),
+      dataIndex: 'status',
+      key: 'status',
+      render: (data) => t(formatStatusWithCamel(data ? data : t('No status'))),
       filterable: true,
-      filterOptions: SHIFT_FEED_MEAL_FILTER(),
+      filterOptions: FEED_MEAL_STATUS_FILTER(),
     },
     {
       dataIndex: 'feedMealId',

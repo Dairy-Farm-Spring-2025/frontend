@@ -15,7 +15,7 @@ export type FeedMeals = {
   description: string;
   cowTypeEntity: CowType;
   cowStatus: CowStatus;
-  shift: 'morningShift';
+  status: FeedMealsStatus;
   feedMealDetails: FeedMealDetails[];
 };
 
@@ -24,3 +24,5 @@ export type FeedMealDetails = {
   quantity: number;
   itemEntity: Item;
 };
+
+export type FeedMealsStatus = 'inUse' | 'noUser';
