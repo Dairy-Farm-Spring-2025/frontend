@@ -4,5 +4,6 @@ export const FEED_PATH = {
   DETAIL_FEED_MEALS: (id: string) => `feedmeals/${id}`,
   FEED_MEAL_DRY_MATTER: 'feedmeals/drymatter',
   CREATE_FEED_MEALS: 'feedmeals',
-  ADD_DETAIL: (feedMealId: string) => `feedmeals/addDetail/${feedMealId}`
+  ADD_DETAIL: (feedMealId: string) => `feedmeals/addDetail/${feedMealId}`,
+  DELETE_DETAIL: (feedMealId: string) => `feedmeals/detail/${feedMealId}`
 };

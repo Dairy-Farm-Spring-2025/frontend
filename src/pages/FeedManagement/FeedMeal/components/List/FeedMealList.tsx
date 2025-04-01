@@ -39,9 +39,8 @@ const FeedMealList = () => {
     if (dataCowTypes) {
       setCowTypes(
         dataCowTypes.map((element) => ({
-          text: `${formatStatusWithCamel(element.name)} - ${
-            element.maxWeight
-          } (kg)`,
+          text: `${formatStatusWithCamel(element.name)} - ${element.maxWeight
+            } (kg)`,
           value: element.name,
         }))
       );

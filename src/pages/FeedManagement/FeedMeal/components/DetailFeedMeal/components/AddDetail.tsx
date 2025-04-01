@@ -1,4 +1,3 @@
-// AddDetail.tsx
 import { Modal, Form, InputNumber, Select, Button } from 'antd';
 import { useTranslation } from 'react-i18next';
 import useFetcher from '@hooks/useFetcher';
@@ -11,7 +10,7 @@ import ModalComponent from '@components/Modal/ModalComponent';
 
 interface AddDetailProps {
     feedMealId: number;
-    category: string;
+    category: string; // This prop is now optional since we'll select the category in the modal
     items: Item[];
     isLoadingItems: boolean;
     mutate: () => void;
@@ -30,6 +29,7 @@ const AddDetail = ({
     const toast = useToast();
     const [form] = Form.useForm();
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [selectedCategory, setSelectedCategory] = useState<string>(category || '');
 
     // Validate feedMealId before making the API call
     if (!feedMealId || isNaN(feedMealId)) {
@@ -42,17 +42,24 @@ const AddDetail = ({
         'POST'
     );
 
+    // Define category options
+    const categoryOptions = [
+        { label: 'Cỏ Khô', value: 'Cỏ Khô' },
+        { label: 'Thức ăn tinh', value: 'Thức ăn tinh' },
+        { label: 'Thức ăn ủ chua', value: 'Thức ăn ủ chua' },
+        { label: 'Khoáng chất', value: 'Khoáng chất' },
+    ];
+
+    // Filter items based on the selected category
     const itemOptions = items?.map((item: Item) => ({
         label: item.name,
         value: item.itemId,
+        category: item.categoryEntity?.name,
     })) || [];
 
-    const filterItemsByCategory = (category: string) => {
-        return itemOptions.filter((item: any) => {
-            const itemData = items?.find((i: Item) => i.itemId === item.value);
-            return itemData?.categoryEntity?.name === category;
-        });
-    };
+    const filteredItemOptions = selectedCategory
+        ? itemOptions.filter((item: any) => item.category === selectedCategory)
+        : itemOptions;
 
     const handleAddClick = () => {
         setIsModalVisible(true);
@@ -71,6 +78,7 @@ const AddDetail = ({
             toast.showSuccess(t('Detail added successfully'));
             form.resetFields();
             setIsModalVisible(false);
+            setSelectedCategory(''); // Reset category selection
             mutate();
         } catch (error: any) {
             toast.showError(error.message || t('Failed to add detail'));
@@ -80,6 +88,7 @@ const AddDetail = ({
     const handleModalCancel = () => {
         form.resetFields();
         setIsModalVisible(false);
+        setSelectedCategory(''); // Reset category selection
     };
 
     return (
@@ -87,9 +96,9 @@ const AddDetail = ({
             <ButtonComponent
                 type="primary"
                 onClick={handleAddClick}
-                className="mt-2 w-full"
+                className="mt-2"
             >
-                {t('Add more')}
+                {t('Add')}
             </ButtonComponent>
 
             <ModalComponent
@@ -103,16 +112,33 @@ const AddDetail = ({
             >
                 <Form form={form} layout="vertical">
                     <Form.Item
+                        name="category"
+                        label={t('Category')}
+                        rules={[{ required: true, message: t('Please select a category') }]}
+                    >
+                        <Select
+                            placeholder={t('Select a category')}
+                            options={categoryOptions}
+                            onChange={(value) => {
+                                setSelectedCategory(value);
+                                form.setFieldsValue({ itemId: undefined }); // Reset item selection when category changes
+                            }}
+                            showSearch
+                            optionFilterProp="label"
+                        />
+                    </Form.Item>
+                    <Form.Item
                         name="itemId"
                         label={t('Item')}
                         rules={[{ required: true, message: t('Please select an item') }]}
                     >
                         <Select
                             placeholder={t('Select an item')}
-                            options={filterItemsByCategory(category)}
+                            options={filteredItemOptions}
                             loading={isLoadingItems}
                             showSearch
                             optionFilterProp="label"
+                            disabled={!selectedCategory} // Disable until a category is selected
                         />
                     </Form.Item>
                     <Form.Item
