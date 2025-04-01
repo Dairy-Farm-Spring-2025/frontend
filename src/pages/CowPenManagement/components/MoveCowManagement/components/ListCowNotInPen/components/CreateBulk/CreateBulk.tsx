@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next';
 import SelectComponent from '@components/Select/SelectComponent';
 import { Area } from '@model/Area';
 import Title from '@components/UI/Title';
+import { formatStatusWithCamel } from '@utils/format';
 
 interface CreateBulkModalProps {
   modal: any;
@@ -114,6 +115,7 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
       title: t('Status'),
       dataIndex: 'cowStatus',
       key: 'cowStatus',
+      render: (cowStatus: string) => formatStatusWithCamel(cowStatus)
     },
   ];
 
@@ -141,6 +143,7 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
       title: t('Status'),
       dataIndex: 'penStatus',
       key: 'penStatus',
+      render: (penStatus: string) => formatStatusWithCamel(penStatus)
     },
   ];
 
@@ -165,7 +168,7 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
         className="rounded-lg"
 
       >
-        <Card bordered={false} className="p-6">
+        <Card bordered={false}>
           <Form form={form}>
             {/* Section 1: Area Selection */}
             <div className="mb-6">
@@ -244,19 +247,9 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
                 className="mb-4"
                 disabled={!selectedArea || dataPenInArea.length === 0} // Disable nếu chưa chọn Area hoặc không có pen trống
               >
-                {t('Select All Cows')} (Max {dataPenInArea?.length || 0})
+                {t('Select All Cows')} ({t('Max')} {dataPenInArea?.length || 0})
               </Button>
-              {/* <Button onClick={handleSelectAllCows} type='primary' style={{ margin: '10px 0' }}>
-            {t("Select All Cows")} (Max {dataPenInArea?.length || 0})
-          </Button> */}
-              {/* {selectedCows.length !== selectedPens.length && (
-                <p style={{ color: 'red', marginTop: '16px' }}>
-                  {t("The number of selected cows must match the number of selected pens.")}
-                </p>
-              )}
-              {selectedCows.length > 0 && (
-                <p style={{ color: 'green' }}>Selected Cows: {selectedCows.length}</p>
-              )} */}
+
             </div>
           </Form>
         </Card>

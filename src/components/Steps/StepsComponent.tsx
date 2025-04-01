@@ -1,6 +1,7 @@
 import { StepProps, Steps } from 'antd';
 import { useState } from 'react';
 import ButtonComponent from '../Button/ButtonComponent';
+import { useTranslation } from 'react-i18next';
 
 export interface StepItem {
   title: string;
@@ -27,7 +28,7 @@ const StepsComponent = ({
   const prev = () => {
     setCurrent(current - 1);
   };
-
+  const { t } = useTranslation();
   const items = steps.map((item) => ({
     key: item.title,
     title: item.title,
@@ -75,7 +76,7 @@ const StepsComponent = ({
             onClick={() => prev()}
             disabled={loading} // Disable while loading
           >
-            Previous
+            {t('Previous')}
           </ButtonComponent>
         )}
         {current < steps.length - 1 && (
@@ -84,7 +85,7 @@ const StepsComponent = ({
             onClick={() => next()}
             loading={loading}
           >
-            Next
+            {t('Next')}
           </ButtonComponent>
         )}
         {current === steps.length - 1 && (
