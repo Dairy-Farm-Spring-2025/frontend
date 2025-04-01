@@ -4,14 +4,26 @@ import DescriptionComponent from '@components/Description/DescriptionComponent';
 import ListComponent from '@components/List/ListComponent';
 import Title from '@components/UI/Title';
 import { FeedMealDetails } from '@model/Feed/Feed';
+import useFetcher from '@hooks/useFetcher';
+import { Item } from '@model/Warehouse/items';
+import AddDetail from './AddDetail';
 
 interface FeedMealDetailsInformationProps {
   detailData: FeedMealDetails[];
+  feedMealId: number; // Add feedMealId prop
+  mutate: () => void; // Add mutate prop
 }
+
 const FeedMealDetailsInformation = ({
   detailData,
+  feedMealId,
+  mutate,
 }: FeedMealDetailsInformationProps) => {
   const { t } = useTranslation();
+
+  // Fetch items for the dropdown in AddDetail
+  const { data: items, isLoading: isLoadingItems } = useFetcher<Item[]>('items', 'GET');
+
   const filteredHay = detailData?.filter(
     (element) => element?.itemEntity?.categoryEntity?.name === 'Cỏ Khô'
   );
@@ -24,18 +36,24 @@ const FeedMealDetailsInformation = ({
   const filteredMineral = detailData?.filter(
     (element) => element?.itemEntity?.categoryEntity?.name === 'Khoáng chất'
   );
+
   const calculateTotalQuantity = (array: any[]) => {
     const total = array?.reduce(
       (total, item) => total + (item?.quantity || 0),
       0
     );
-    return total ? total?.toFixed(2) : 0;
+    return total ? total.toFixed(2) : 0;
   };
-  console.log(filteredHay);
+
+  const handleAddClick = () => {
+    // Optional: Add any logic needed when "Add more" is clicked
+  };
+
   return (
     <div className="p-2">
       <Title className="text-xl mb-5">{t('Feed meal details')}:</Title>
       <div className="grid grid-cols-2 gap-5">
+        {/* Hay */}
         <ListComponent
           header={<Title className="font-black text-xl">{t('hay')}</Title>}
           dataSource={filteredHay}
@@ -57,14 +75,25 @@ const FeedMealDetailsInformation = ({
             </List.Item>
           )}
           footer={
-            <p className="text-base">
-              {t('Total')}:{' '}
-              <span className="font-bold text-orange-600">
-                {calculateTotalQuantity(filteredHay)} (kilogram)
-              </span>
-            </p>
+            <div>
+              <p className="text-base">
+                {t('Total')}:{' '}
+                <span className="font-bold text-orange-600">
+                  {calculateTotalQuantity(filteredHay)} (kilogram)
+                </span>
+              </p>
+              <AddDetail
+                feedMealId={feedMealId}
+                category="Cỏ Khô"
+                items={items || []}
+                isLoadingItems={isLoadingItems}
+                mutate={mutate}
+                onAddClick={handleAddClick}
+              />
+            </div>
           }
         />
+        {/* Refined */}
         <ListComponent
           header={<Title className="font-black text-xl">{t('refined')}</Title>}
           dataSource={filteredRefined}
@@ -85,14 +114,25 @@ const FeedMealDetailsInformation = ({
             </List.Item>
           )}
           footer={
-            <p className="text-base">
-              {t('Total')}:{' '}
-              <span className="font-bold text-orange-600">
-                {calculateTotalQuantity(filteredRefined)} (kilogram)
-              </span>
-            </p>
+            <div>
+              <p className="text-base">
+                {t('Total')}:{' '}
+                <span className="font-bold text-orange-600">
+                  {calculateTotalQuantity(filteredRefined)} (kilogram)
+                </span>
+              </p>
+              <AddDetail
+                feedMealId={feedMealId}
+                category="Thức ăn tinh"
+                items={items || []}
+                isLoadingItems={isLoadingItems}
+                mutate={mutate}
+                onAddClick={handleAddClick}
+              />
+            </div>
           }
         />
+        {/* Silage */}
         <ListComponent
           header={<Title className="font-black text-xl">{t('silage')}</Title>}
           dataSource={filteredSilage}
@@ -113,14 +153,25 @@ const FeedMealDetailsInformation = ({
             </List.Item>
           )}
           footer={
-            <p className="text-base">
-              {t('Total')}:{' '}
-              <span className="font-bold text-orange-600">
-                {calculateTotalQuantity(filteredSilage)} (kilogram)
-              </span>
-            </p>
+            <div>
+              <p className="text-base">
+                {t('Total')}:{' '}
+                <span className="font-bold text-orange-600">
+                  {calculateTotalQuantity(filteredSilage)} (kilogram)
+                </span>
+              </p>
+              <AddDetail
+                feedMealId={feedMealId}
+                category="Thức ăn ủ chua"
+                items={items || []}
+                isLoadingItems={isLoadingItems}
+                mutate={mutate}
+                onAddClick={handleAddClick}
+              />
+            </div>
           }
         />
+        {/* Minerals */}
         <ListComponent
           header={<Title className="font-black text-xl">{t('minerals')}</Title>}
           dataSource={filteredMineral}
@@ -141,12 +192,22 @@ const FeedMealDetailsInformation = ({
             </List.Item>
           )}
           footer={
-            <p className="text-base">
-              {t('Total')}:{' '}
-              <span className="font-bold text-orange-600">
-                {calculateTotalQuantity(filteredMineral)} (kilogram)
-              </span>
-            </p>
+            <div>
+              <p className="text-base">
+                {t('Total')}:{' '}
+                <span className="font-bold text-orange-600">
+                  {calculateTotalQuantity(filteredMineral)} (kilogram)
+                </span>
+              </p>
+              <AddDetail
+                feedMealId={feedMealId}
+                category="Khoáng chất"
+                items={items || []}
+                isLoadingItems={isLoadingItems}
+                mutate={mutate}
+                onAddClick={handleAddClick}
+              />
+            </div>
           }
         />
       </div>
@@ -155,7 +216,7 @@ const FeedMealDetailsInformation = ({
         <span className="font-bold text-orange-600">
           {calculateTotalQuantity(detailData)} (kilogram)
         </span>
-      </p>{' '}
+      </p>
     </div>
   );
 };
