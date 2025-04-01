@@ -1,4 +1,3 @@
-import { useTranslation } from 'react-i18next';
 import ButtonComponent from '@components/Button/ButtonComponent';
 import PopconfirmComponent from '@components/Popconfirm/PopconfirmComponent';
 import TableComponent, { Column } from '@components/Table/TableComponent';
@@ -6,24 +5,49 @@ import AnimationAppear from '@components/UI/AnimationAppear';
 import WhiteBackground from '@components/UI/WhiteBackground';
 import useFetcher from '@hooks/useFetcher';
 import useToast from '@hooks/useToast';
+import { CowType } from '@model/Cow/CowType';
 import { FeedType } from '@model/Feed/Feed';
+import { COW_TYPE_PATH } from '@service/api/CowType/cowType';
+import { FEED_PATH } from '@service/api/Feed/feedApi';
+import { COW_STATUS_FEED_MEALS } from '@service/data/cowStatus';
+import { FEED_MEAL_STATUS_FILTER } from '@service/data/feedmealStatus';
 import { formatStatusWithCamel } from '@utils/format';
 import { Spin } from 'antd';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { FEED_PATH } from '@service/api/Feed/feedApi';
 
 const FeedMealList = () => {
   const { data, isLoading, mutate } = useFetcher<FeedType[]>(
     FEED_PATH.FEED_MEALS,
     'GET'
   );
+  const [optionCowTypes, setCowTypes] = useState<any[]>([]);
   const toast = useToast();
   const navigate = useNavigate();
   const { trigger, isLoading: loadingDelete } = useFetcher(
     'feedmeals',
     'DELETE'
   );
+  const { data: dataCowTypes } = useFetcher<CowType[]>(
+    COW_TYPE_PATH.COW_TYPES,
+    'GET'
+  );
   const { t } = useTranslation();
+
+  useEffect(() => {
+    if (dataCowTypes) {
+      setCowTypes(
+        dataCowTypes.map((element) => ({
+          text: `${formatStatusWithCamel(element.name)} - ${
+            element.maxWeight
+          } (kg)`,
+          value: element.name,
+        }))
+      );
+    }
+  }, [dataCowTypes]);
+
   const onConfirm = async (id: string) => {
     try {
       const response = await trigger({ url: FEED_PATH.DELETE_FEED_MEALS(id) });
@@ -39,25 +63,34 @@ const FeedMealList = () => {
       dataIndex: 'name',
       key: 'name',
       title: t('Name'),
+      searchable: true,
       // render: (data) => <p className="text-base font-bold">{data}</p>,
     },
     {
       dataIndex: 'cowTypeEntity',
       key: 'cowTypeEntity',
       title: t('Cow Type'),
-      render: (data) => data.name,
+      render: (data) => `${data.name} - ${data.maxWeight}(kg)`,
+      filterable: true,
+      filterOptions: optionCowTypes,
+      objectKeyFilter: 'name',
+      sorter: (a: CowType, b: CowType) => a.maxWeight - b.maxWeight,
     },
     {
       title: t('Cow Status'),
       dataIndex: 'cowStatus',
       key: 'cowStatus',
-      render: (data) => formatStatusWithCamel(data ? data : t('No status')),
+      render: (data) => t(formatStatusWithCamel(data ? data : t('No status'))),
+      filterable: true,
+      filterOptions: COW_STATUS_FEED_MEALS(),
     },
     {
-      title: t('Shift'),
-      dataIndex: 'shift',
-      key: 'shift',
-      render: (data) => formatStatusWithCamel(data ? data : t('No shift')),
+      title: t('Feed meal status'),
+      dataIndex: 'status',
+      key: 'status',
+      render: (data) => t(formatStatusWithCamel(data ? data : t('No status'))),
+      filterable: true,
+      filterOptions: FEED_MEAL_STATUS_FILTER(),
     },
     {
       dataIndex: 'feedMealId',
@@ -65,7 +98,10 @@ const FeedMealList = () => {
       title: t('Action'),
       render: (data) => (
         <div className="flex gap-5">
-          <ButtonComponent onClick={() => navigate(`../${data}`)}>
+          <ButtonComponent
+            type="primary"
+            onClick={() => navigate(`../${data}`)}
+          >
             {t('View Detail')}
           </ButtonComponent>
           <PopconfirmComponent

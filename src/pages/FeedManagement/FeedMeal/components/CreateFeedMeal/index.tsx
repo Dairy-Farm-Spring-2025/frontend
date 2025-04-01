@@ -18,10 +18,12 @@ import { COW_STATUS_DRY_MATTER } from '@service/data/cowStatus';
 import FeedMealForm from './components/FeedMealForm';
 import { COW_TYPE_PATH } from '@service/api/CowType/cowType';
 import { FEED_PATH } from '@service/api/Feed/feedApi';
+import FeedMealReview from './components/FeedMealReview';
 
 const CreateFeedMeal = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [form] = Form.useForm();
+  const [formFeedMeal] = Form.useForm();
   const formValues = Form.useWatch([], form);
   const { t } = useTranslation();
   const toast = useToast();
@@ -29,6 +31,7 @@ const CreateFeedMeal = () => {
   const [checkDryMatter, setCheckDryMatter] = useState<boolean>(false);
   const [cowTypesSelected, setCowTypesSelected] = useState(0);
   const [cowStatusSelected, setCowStatusSelected] = useState('');
+  const [dataReview, setDataReview] = useState([]);
   const [dry, setDry] = useState<number>(0);
   const { data: cowType, isLoading: isLoadingCowType } = useFetcher<CowType[]>(
     COW_TYPE_PATH.COW_TYPES,
@@ -70,15 +73,25 @@ const CreateFeedMeal = () => {
     setDry(0);
   };
 
+  const handleBackFromReview = () => {
+    setCurrentStep((prev) => prev - 1);
+  };
+
   const onFinishDryMatter = async (values: any) => {
     try {
       const response = await triggerDryMatter({ body: values });
+      formFeedMeal.resetFields();
       setDry(response.data.dryMatter);
       setCheckDryMatter(true);
       setCurrentStep((prev) => prev + 1);
     } catch (error: any) {
       toast.showError(error.message);
     }
+  };
+
+  const onReview = async (values: any) => {
+    setDataReview(values);
+    setCurrentStep((prev) => prev + 1);
   };
 
   const step: StepItem[] = [
@@ -153,6 +166,8 @@ const CreateFeedMeal = () => {
               {checkDryMatter && (
                 <div>
                   <FeedMealForm
+                    form={formFeedMeal}
+                    onReview={onReview as any}
                     cowStatusSelected={cowStatusSelected}
                     cowTypeSelected={cowTypesSelected}
                     cowType={cowTypes as any[]}
@@ -164,6 +179,31 @@ const CreateFeedMeal = () => {
           ) : (
             <div></div>
           )}
+        </div>
+      ),
+    },
+    {
+      title: t('review', { defaultValue: 'Review' }),
+      content: (
+        <div className="flex flex-col gap-5">
+          <ButtonComponent
+            className="!shadow-md"
+            icon={<IoMdArrowRoundBack size={20} />}
+            onClick={handleBackFromReview}
+          >
+            Back
+          </ButtonComponent>
+          <div className="flex gap-2">
+            <p className="font-semibold text-lg">{t('Dry matter')}:</p>
+            <TagComponents color="green-inverse" className="text-lg">
+              <span className="font-bold">{dry}</span> (kilogram)
+            </TagComponents>
+          </div>
+          <FeedMealReview
+            cowType={cowTypes as any[]}
+            dataReview={dataReview}
+            dry={dry}
+          />
         </div>
       ),
     },

@@ -8,25 +8,35 @@ import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import App from './App.tsx';
 import './config/i18n';
-import { persistor, store } from './core/store/store.ts';
+import { persistor, store } from '@core/store/store.ts';
 import './index.scss';
+import { PRIMARY_COLORS } from '@common/colors.js';
 
 createRoot(document.getElementById('root')!).render(
   <>
     <ConfigProvider
       theme={{
         token: {
-          colorPrimary: 'rgb(22 101 52 / var(--tw-bg-opacity, 1))',
+          colorPrimary: PRIMARY_COLORS,
           fontFamily: 'Nunito',
         },
         components: {
           Select: {
             optionSelectedBg: 'rgba(22, 101, 52, 0.1)', // ✅ Điều chỉnh nền mục đã chọn
+            colorTextDisabled: 'black',
           },
           Menu: {
             itemSelectedBg: 'rgba(22, 101, 52, 0.1)',
           },
-          Input: {},
+          Input: {
+            colorTextDisabled: 'black',
+          },
+          InputNumber: {
+            colorTextDisabled: 'black',
+          },
+          Table: {
+            rowSelectedBg: 'rgba(22, 101, 52, 0.1)',
+          },
         },
       }}
     >

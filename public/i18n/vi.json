@@ -219,6 +219,7 @@
   "No shift": "Không ca làm",
   "Shift": "Ca làm",
   "Milking cow": "Bò đang vắt sữa",
+  "Milking Cow": "Bò đang vắt sữa",
   "Dry cow": "Bò khô sữa",
   "Pregnant cow": "Bò mang thai",
   "Open cow": "Bò chưa mang thai",
@@ -510,5 +511,18 @@
   "Treatment Plan": "Kế hoạch điều trị",
   "Review Information": "Xem lại thông tin",
   "Treatment": "Điều trị",
-  "Cow Origin": "Nguồn gốc"
+  "Cow Origin": "Nguồn gốc",
+  "Shift Feed Meal": "Ca cho ăn",
+  "Morning Shift": "Ca sáng",
+  "Noon Shift": "Ca trưa",
+  "Afternoon Shift": "Ca chiều",
+  "review": "Kiểm tra thông tin",
+  "Sick Cow": "Bò bị bệnh",
+  "In use": "Đang sử dụng",
+  "No use": "Không sử dụng",
+  "Feed meal status": "Trạng thái bữa ăn",
+  "Inventory": "Tồn kho",
+  "Out of stock": "Hết hàng",
+  "In pen": "Trong chuồng",
+  "Not in pen": "Không trong chuồng"
 }

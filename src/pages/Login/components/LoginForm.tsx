@@ -1,9 +1,4 @@
-import { GoogleOutlined, LockOutlined, UserOutlined } from '@ant-design/icons';
-import { USER_PATH } from '@service/api/User/userApi';
-import { Divider, Form, Input } from 'antd';
-import { t } from 'i18next';
-import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import ButtonComponent from '@components/Button/ButtonComponent';
 import FormComponent from '@components/Form/FormComponent';
 import FormItemComponent from '@components/Form/Item/FormItemComponent';
@@ -12,6 +7,11 @@ import useFetcher from '@hooks/useFetcher';
 import useToast from '@hooks/useToast';
 import UserRequest from '@model/Authentication/UserRequest';
 import UserResponse from '@model/Authentication/UserResponse';
+import { USER_PATH } from '@service/api/User/userApi';
+import { Divider, Form, Image, Input } from 'antd';
+import { t } from 'i18next';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 const GOOGLE_AUTH_URL = `https://api.dairyfarmfpt.website/oauth2/authorize/google`;
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -66,7 +66,7 @@ const LoginForm = () => {
           onFinish={handleFinish}
           form={form}
           labelCol={{ span: 24 }}
-          className="flex flex-col gap-4"
+          className="flex flex-col gap-2"
         >
           <FormItemComponent
             label={<span className="text-base font-semibold">Email</span>}
@@ -93,12 +93,12 @@ const LoginForm = () => {
               className="py-3 px-5 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
             />
           </FormItemComponent>
-          <ButtonComponent
+          <p
             onClick={handleForgetPassword}
-            className="text-blue-500 hover:text-blue-700 forgot-password-btn"
+            className="text-blue-500 hover:text-blue-700 cursor-pointer forgot-password-btn"
           >
             {t('Forgot Password?')}
-          </ButtonComponent>
+          </p>
           <ButtonComponent
             loading={isLoading}
             htmlType="submit"
@@ -107,13 +107,20 @@ const LoginForm = () => {
           >
             {t('Login')}
           </ButtonComponent>
+          <Divider className="!border-gray-400">{t('or sign in with')}</Divider>
           <ButtonComponent
-            type="default"
+            type="primary"
             onClick={handleGoogleLogin}
-            className="!w-full flex items-center justify-center gap-2"
+            className="!w-full !h-full flex items-center justify-center gap-2"
+            buttonType="geekblue"
           >
-            <GoogleOutlined className="text-red-500" />
-            {t('Login with Google')}
+            <Image
+              width={25}
+              height={25}
+              preview={false}
+              src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/768px-Google_%22G%22_logo.svg.png"
+            />
+            <p> {t('Login with Google')}</p>
           </ButtonComponent>
         </FormComponent>
       </div>
