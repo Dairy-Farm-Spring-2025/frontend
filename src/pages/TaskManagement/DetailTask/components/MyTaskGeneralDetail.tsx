@@ -21,7 +21,7 @@ const MyTaskGeneralDetail = ({
 }: MyTaskGeneralDetailProps) => {
   return (
     <div className="flex flex-col gap-4">
-      <Title>{dataTask?.taskTypeId.name}</Title>
+      <Title>{dataTask?.taskTypeId?.name}</Title>
       <DescriptionComponent
         bordered={false}
         className="!shadow-none"

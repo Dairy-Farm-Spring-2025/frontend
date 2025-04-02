@@ -8,15 +8,18 @@ import CardSelectArea from '@components/Select/components/CardSelectArea';
 import SelectComponent from '@components/Select/SelectComponent';
 import useFetcher from '@hooks/useFetcher';
 import { ModalActionProps } from '@hooks/useModal';
+import useRequiredForm from '@hooks/useRequiredForm';
 import useToast from '@hooks/useToast';
 import { Area } from '@model/Area';
+import { IllnessCow } from '@model/Cow/Illness';
 import { TaskPayload } from '@model/Task/Task';
 import { TaskType } from '@model/Task/task-type';
 import { UserProfileData } from '@model/User';
 import { PRIORITY_DATA } from '@service/data/priority';
 import { SHIFT_TASK } from '@service/data/shiftData';
+import { formatDateHour, formatStatusWithCamel } from '@utils/format';
 import { getAvatar } from '@utils/getImage';
-import { Avatar, Form } from 'antd';
+import { Avatar, Divider, Form } from 'antd';
 import dayjs from 'dayjs';
 import { t } from 'i18next';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
@@ -25,55 +28,43 @@ interface TaskCreateModalProps {
   modal: ModalActionProps;
   mutate?: any;
   setRefetch: any;
+  dataVeterinarians: UserProfileData[];
+  dataWorker: UserProfileData[];
+  optionsDataTaskTypes: any[];
+  optionsAreas: any[];
+  optionsIllness: any[];
 }
 
 const TaskCreateModal = ({
   modal,
   mutate,
   setRefetch,
+  dataVeterinarians,
+  dataWorker,
+  optionsDataTaskTypes,
+  optionsAreas,
+  optionsIllness,
 }: TaskCreateModalProps) => {
-  const { data: dataTaskTypes } = useFetcher<TaskType[]>('task_types', 'GET');
-  const { data: dataAreas } = useFetcher<Area[]>('areas', 'GET');
   const { trigger, isLoading } = useFetcher('tasks/create', 'POST');
   const toast = useToast();
-  const { data: dataWorker } = useFetcher<UserProfileData[]>(
-    'users/workers',
-    'GET'
-  );
-  const { data: dataVeterinarians } = useFetcher<UserProfileData[]>(
-    'users/veterinarians',
-    'GET'
-  );
   const [selectedRole, setSelectedRole] = useState<
     'Veterinarians' | 'Worker' | undefined
   >(undefined);
   const [form] = Form.useForm();
-  const formValues = Form.useWatch([], form);
   const fromDate = Form.useWatch('fromDate', form); // Watch the fromDate field
-  const [disabledButton, setDisabledButton] = useState(true);
   const [isToDateDisabled, setIsToDateDisabled] = useState(true); // State to control To Date DatePicker
-
-  useEffect(() => {
-    if (modal.open) {
-      form.resetFields(); // Reset form khi modal mở
-      setDisabledButton(true); // Disable nút ngay từ đầu
-    }
-  }, [form, modal.open]);
-
-  useEffect(() => {
-    const isButtonDisabled =
-      !formValues || Object.values(formValues).some((value) => !value);
-    setDisabledButton(isButtonDisabled);
-  }, [formValues]);
-
-  useEffect(() => {
-    if (fromDate) {
-      setIsToDateDisabled(false); // Enable To Date if fromDate is selected
-    } else {
-      setIsToDateDisabled(true); // Disable To Date if fromDate is not selected
-      form.setFieldsValue({ toDate: undefined }); // Reset toDate when fromDate is cleared
-    }
-  }, [fromDate, form]);
+  const requiredFields = [
+    'taskTypeId',
+    'assigneeIds',
+    'fromDate',
+    'toDate',
+    'priority',
+    'shift',
+    'areaId',
+    'description',
+    ...(selectedRole === 'Veterinarians' ? ['illnessId'] : []), // Add illnessId if role is Veterinarian
+  ];
+  const disabledButton = useRequiredForm(form, requiredFields);
 
   const assignees = useMemo(() => {
     const data = selectedRole === 'Worker' ? dataWorker : dataVeterinarians;
@@ -85,27 +76,20 @@ const TaskCreateModal = ({
     }));
   }, [selectedRole, dataWorker, dataVeterinarians]);
 
-  const optionsDataTaskTypes = useMemo(
-    () =>
-      (dataTaskTypes || []).map((element) => ({
-        label: element?.name,
-        value: element.taskTypeId,
-        desc: element,
-        searchLabel: element?.name,
-      })),
-    [dataTaskTypes]
-  );
+  useEffect(() => {
+    if (modal.open) {
+      form.resetFields(); // Reset form khi modal mở
+    }
+  }, [form, modal.open]);
 
-  const optionsAreas = useMemo(
-    () =>
-      (dataAreas || []).map((element) => ({
-        label: element.name,
-        value: element.areaId,
-        desc: element,
-        searchLabel: element.name,
-      })),
-    [dataAreas]
-  );
+  useEffect(() => {
+    if (fromDate) {
+      setIsToDateDisabled(false); // Enable To Date if fromDate is selected
+    } else {
+      setIsToDateDisabled(true); // Disable To Date if fromDate is not selected
+      form.setFieldsValue({ toDate: undefined }); // Reset toDate when fromDate is cleared
+    }
+  }, [fromDate, form]);
 
   const disabledFromDate = (current: dayjs.Dayjs) => {
     return current && current.isBefore(dayjs().startOf('day'));
@@ -140,6 +124,7 @@ const TaskCreateModal = ({
           priority: values.priority,
           shift: values.shift,
           taskTypeId: values.taskTypeId,
+          illnessId: values.illnessId,
         };
         const response = await trigger({ body: payload });
         toast.showSuccess(response.message);
@@ -159,84 +144,36 @@ const TaskCreateModal = ({
       title={t('Add Task')}
       onCancel={handleCancel}
       disabledButtonOk={disabledButton}
-      width={700}
+      width={800}
       onOk={() => form.submit()}
       loading={isLoading}
     >
       <FormComponent form={form} onFinish={onFinish}>
-        <div className="flex gap-14 justify-center">
-          <div className="flex flex-col gap-2 w-1/2">
-            <FormItemComponent
-              name="fromDate"
-              label={<LabelForm>{t('From Date')}</LabelForm>}
-              rules={[{ required: true }]}
-            >
-              <DatePickerComponent disabledDate={disabledFromDate} />
-            </FormItemComponent>
-            <FormItemComponent
-              label={<LabelForm>{t('To Date')}</LabelForm>}
-              name="toDate"
-              rules={[
-                { required: true },
-                ({ getFieldValue }) => ({
-                  validator(_, value) {
-                    const fromDate = getFieldValue('fromDate');
-                    if (!value || !fromDate) {
-                      return Promise.resolve();
-                    }
-                    if (dayjs(value).isBefore(dayjs(fromDate))) {
-                      return Promise.reject(
-                        new Error('To Date must be after From Date!')
-                      );
-                    }
-                    if (dayjs(value).diff(dayjs(fromDate), 'day') > 7) {
-                      return Promise.reject(
-                        new Error(
-                          'To Date must be within 7 days from From Date!'
-                        )
-                      );
-                    }
-                    return Promise.resolve();
-                  },
-                }),
-              ]}
-            >
-              <DatePickerComponent
-                disabled={isToDateDisabled} // Control the disabled state
-                disabledDate={disabledToDate}
-              />
-            </FormItemComponent>
-            <FormItemComponent
-              rules={[{ required: true }]}
-              name="priority"
-              label={<LabelForm>{t('Priority')}</LabelForm>}
-            >
-              <SelectComponent options={PRIORITY_DATA()} />
-            </FormItemComponent>
-          </div>
-          <div className="flex flex-col gap-2 w-1/2">
-            <FormItemComponent
-              name="taskTypeId"
-              label={<LabelForm>{t('Task Type')}</LabelForm>}
-              rules={[{ required: true }]}
-            >
-              <SelectComponent
-                options={optionsDataTaskTypes}
-                onChange={(_, option: any) => {
-                  setSelectedRole(option?.desc?.roleId?.name);
-                }}
-                optionRender={(option) => {
-                  const taskType: TaskType = option?.data?.desc;
-                  return (
-                    <div>
-                      <p>
-                        {taskType?.name} - {taskType?.roleId?.name}
-                      </p>
-                    </div>
-                  );
-                }}
-              />
-            </FormItemComponent>
+        <FormItemComponent
+          name="taskTypeId"
+          label={<LabelForm>{t('Task Type')}</LabelForm>}
+          rules={[{ required: true }]}
+        >
+          <SelectComponent
+            options={optionsDataTaskTypes}
+            onChange={(_, option: any) => {
+              form.resetFields(['assigneeIds']);
+              setSelectedRole(option?.desc?.roleId?.name);
+            }}
+            optionRender={(option) => {
+              const taskType: TaskType = option?.data?.desc;
+              return (
+                <div>
+                  <p>
+                    {taskType?.name} - {taskType?.roleId?.name}
+                  </p>
+                </div>
+              );
+            }}
+          />
+        </FormItemComponent>
+        {selectedRole && (
+          <>
             <FormItemComponent
               rules={[{ required: true }]}
               name="assigneeIds"
@@ -246,11 +183,12 @@ const TaskCreateModal = ({
                 disabled={selectedRole === undefined}
                 mode="multiple"
                 options={assignees}
+                menuItemSelectedIcon={false}
                 optionRender={(option) => {
                   const user: UserProfileData = option?.data?.desc;
                   return (
                     <div className="flex gap-2 items-center">
-                      <Avatar src={getAvatar(user?.profilePhoto)} />
+                      <Avatar size={20} src={getAvatar(user?.profilePhoto)} />
                       <p>
                         {user?.name} ({user?.employeeNumber})
                       </p>
@@ -259,41 +197,128 @@ const TaskCreateModal = ({
                 }}
               />
             </FormItemComponent>
-            <FormItemComponent
-              rules={[{ required: true }]}
-              name="shift"
-              label={<LabelForm>{t('Shift')}</LabelForm>}
-            >
-              <SelectComponent options={SHIFT_TASK()} />
-            </FormItemComponent>
-          </div>
-        </div>
-        <div className="flex flex-col items-center">
-          <FormItemComponent
-            name="areaId"
-            label={<LabelForm>{t('Area')}</LabelForm>}
-            rules={[{ required: true }]}
-            className="w-full"
-          >
-            <SelectComponent
-              options={optionsAreas}
-              listHeight={400}
-              search
-              optionRender={(option) => {
-                const area: Area = option?.data?.desc;
-                return <CardSelectArea area={area} />;
-              }}
-            />
-          </FormItemComponent>
-          <FormItemComponent
-            name="description"
-            label={<LabelForm>{t('Description')}</LabelForm>}
-            className="w-full"
-            rules={[{ required: true }]}
-          >
-            <InputComponent.TextArea />
-          </FormItemComponent>
-        </div>
+            <div className="flex gap-14 justify-center">
+              <div className="flex flex-col gap-2 w-1/2">
+                <FormItemComponent
+                  name="fromDate"
+                  label={<LabelForm>{t('From Date')}</LabelForm>}
+                  rules={[{ required: true }]}
+                >
+                  <DatePickerComponent disabledDate={disabledFromDate} />
+                </FormItemComponent>
+                <FormItemComponent
+                  label={<LabelForm>{t('To Date')}</LabelForm>}
+                  name="toDate"
+                  rules={[
+                    { required: true },
+                    ({ getFieldValue }) => ({
+                      validator(_, value) {
+                        const fromDate = getFieldValue('fromDate');
+                        if (!value || !fromDate) {
+                          return Promise.resolve();
+                        }
+                        if (dayjs(value).isBefore(dayjs(fromDate))) {
+                          return Promise.reject(
+                            new Error('To Date must be after From Date!')
+                          );
+                        }
+                        if (dayjs(value).diff(dayjs(fromDate), 'day') > 7) {
+                          return Promise.reject(
+                            new Error(
+                              'To Date must be within 7 days from From Date!'
+                            )
+                          );
+                        }
+                        return Promise.resolve();
+                      },
+                    }),
+                  ]}
+                >
+                  <DatePickerComponent
+                    disabled={isToDateDisabled} // Control the disabled state
+                    disabledDate={disabledToDate}
+                  />
+                </FormItemComponent>
+                <FormItemComponent
+                  rules={[{ required: true }]}
+                  name="priority"
+                  label={<LabelForm>{t('Priority')}</LabelForm>}
+                >
+                  <SelectComponent options={PRIORITY_DATA()} />
+                </FormItemComponent>
+              </div>
+              <div className="flex flex-col gap-2 w-1/2">
+                {selectedRole === 'Veterinarians' && (
+                  <FormItemComponent
+                    rules={[{ required: true }]}
+                    name="illnessId"
+                    label={<LabelForm>{t('Illness')}</LabelForm>}
+                  >
+                    <SelectComponent
+                      options={optionsIllness}
+                      search
+                      optionRender={(data) => {
+                        const illness: IllnessCow = data.data.desc;
+                        return (
+                          <div>
+                            <div>
+                              <p>
+                                <strong>{t('Cow')}</strong>:{' '}
+                                {illness.cowEntity.name}
+                              </p>
+                              <p>
+                                <strong>{t('Severity')}</strong>:{' '}
+                                {t(formatStatusWithCamel(illness.severity))}
+                              </p>
+                              <p>
+                                <strong>{t('Start date')}</strong>:{' '}
+                                {formatDateHour(illness.startDate)}
+                              </p>
+                            </div>
+                            <Divider className="!my-1" />
+                          </div>
+                        );
+                      }}
+                    />
+                  </FormItemComponent>
+                )}
+                <FormItemComponent
+                  rules={[{ required: true }]}
+                  name="shift"
+                  label={<LabelForm>{t('Shift')}</LabelForm>}
+                >
+                  <SelectComponent options={SHIFT_TASK()} />
+                </FormItemComponent>
+              </div>
+            </div>
+            <div className="flex flex-col items-center">
+              <FormItemComponent
+                name="areaId"
+                label={<LabelForm>{t('Area')}</LabelForm>}
+                rules={[{ required: true }]}
+                className="w-full"
+              >
+                <SelectComponent
+                  options={optionsAreas}
+                  listHeight={400}
+                  search
+                  optionRender={(option) => {
+                    const area: Area = option?.data?.desc;
+                    return <CardSelectArea area={area} />;
+                  }}
+                />
+              </FormItemComponent>
+              <FormItemComponent
+                name="description"
+                label={<LabelForm>{t('Description')}</LabelForm>}
+                className="w-full"
+                rules={[{ required: true }]}
+              >
+                <InputComponent.TextArea />
+              </FormItemComponent>
+            </div>
+          </>
+        )}
       </FormComponent>
     </ModalComponent>
   );

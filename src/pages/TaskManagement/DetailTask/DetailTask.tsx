@@ -28,8 +28,6 @@ const DetailTask = () => {
     'GET'
   );
 
-  console.log(dataTaskReport);
-
   return (
     <AnimationAppear>
       <WhiteBackground>

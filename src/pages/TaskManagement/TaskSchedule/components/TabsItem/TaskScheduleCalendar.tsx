@@ -5,38 +5,33 @@ import {
 } from '@ant-design/icons';
 import ButtonComponent from '@components/Button/ButtonComponent';
 import SelectComponent from '@components/Select/SelectComponent';
-import TagComponents from '@components/UI/TagComponents';
 import Title from '@components/UI/Title';
 import useFetcher from '@hooks/useFetcher';
 import useModal, { ModalActionProps } from '@hooks/useModal';
+import { Area } from '@model/Area';
+import { IllnessCow } from '@model/Cow/Illness';
 import { TaskDateRange } from '@model/Task/Task';
 import { TaskType } from '@model/Task/task-type';
+import { UserProfileData } from '@model/User';
 import ShiftTitle from '@pages/TaskManagement/components/ShiftTitle';
 import StatusTask from '@pages/TaskManagement/components/StatusTask';
 import WeekSelectorDropdown from '@pages/TaskManagement/components/WeekSelectorDropdown';
+import { HEALTH_RECORD_PATH } from '@service/api/HealthRecord/healthRecordApi';
 import { TASK_PATH } from '@service/api/Task/taskApi';
-import { Popover, Select, Table } from 'antd';
+import { Select, Table } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import { t } from 'i18next';
 import React, { useEffect, useMemo, useState } from 'react';
-import PopoverTaskContent from '../components/PopoverTaskContent';
-import ReportTaskManagerModal from '../components/ReportTaskManagerModal';
+import PopoverTask from '../components/PopoverTask';
 import TaskCreateModal from '../components/TaskCreateModal';
+import UpdateTaskModal from '../components/UpdateTaskModal';
 import './index.scss';
 
 const { Option } = Select;
 
 const shifts = ['dayShift', 'nightShift'];
 
-const statusColors: Record<any, string> = {
-  pending: '#FEF9C3',
-  inProgress: '#DBEAFE',
-  completed: '#D1FAE5',
-  reviewed: '#E9D5FF',
-  processing: '#DBEAFE',
-  closed: '#D1FAE5',
-};
 const stringToDarkColor = (str: string) => {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
@@ -55,9 +50,9 @@ const TaskScheduleCalendar: React.FC = () => {
   >();
   const [open, setOpen] = useState<Record<any, boolean>>({});
   const [openViewMore, setOpenViewMore] = useState<Record<any, boolean>>({});
-  const modalReportTask = useModal<ModalActionProps>();
+  const [date, setDate] = useState();
+  const modalUpdateTask = useModal<ModalActionProps>();
   const [id, setId] = useState<number>(0);
-  const [date, setDate] = useState<string>('');
   const [currentWeekStart, setCurrentWeekStart] = useState(
     selectedYear === dayjs().year()
       ? dayjs().startOf('week')
@@ -73,6 +68,19 @@ const TaskScheduleCalendar: React.FC = () => {
   }>(TASK_PATH.TASK_MANAGER_DATE_RANGE, 'POST');
   const { data: dataTaskTypes } = useFetcher<TaskType[]>(
     TASK_PATH.TASKS_TYPE,
+    'GET'
+  );
+  const { data: dataAreas } = useFetcher<Area[]>('areas', 'GET');
+  const { data: dataWorker } = useFetcher<UserProfileData[]>(
+    'users/workers',
+    'GET'
+  );
+  const { data: dataVeterinarians } = useFetcher<UserProfileData[]>(
+    'users/veterinarians',
+    'GET'
+  );
+  const { data: dataIllness } = useFetcher<IllnessCow[]>(
+    HEALTH_RECORD_PATH.ILLNESS,
     'GET'
   );
   const modal = useModal();
@@ -119,11 +127,9 @@ const TaskScheduleCalendar: React.FC = () => {
     setOpen((prev) => ({ ...prev, [index]: newOpen }));
   };
 
-  const handleOpenReportModal = (id: number, date: string) => {
-    modalReportTask.openModal();
+  const handleOpenReportModal = (id: number) => {
+    modalUpdateTask.openModal();
     setId(id);
-    const formatDate = dayjs(date).format('YYYY-MM-DD');
-    setDate(formatDate);
   };
 
   const handleYearChange = (year: number) => {
@@ -165,7 +171,6 @@ const TaskScheduleCalendar: React.FC = () => {
           const day = dayjs(date);
           const dayKey = day.format('dddd');
           // Check if the date falls within the current week
-          const isTaskExpired = day.isAfter(dayjs(), 'day'); // Check if the task date is in the past
           if (weekDays.some((d) => d.isSame(day, 'day'))) {
             const tasksForShift = tasks.filter(
               (task: TaskDateRange) => task.shift === shift
@@ -183,58 +188,25 @@ const TaskScheduleCalendar: React.FC = () => {
                 const uniqueTag = `${task.taskId}-${date}`;
                 const tagColor = stringToDarkColor(uniqueTag); // Generate color based on uniqueTag
                 const content = (
-                  <Popover
-                    open={!!open[uniqueTag]}
-                    onOpenChange={(newOpen) =>
+                  <PopoverTask
+                    day={dayjs(day).format('YYYY-MM-DD')}
+                    setDate={setDate}
+                    handleOpenPopover={(newOpen: any) =>
                       handleOpenPopover(uniqueTag, newOpen)
                     }
-                    key={uniqueTag}
-                    trigger={'click'}
-                    className="cursor-pointer"
-                    placement="topLeft"
-                    color="white"
-                    content={
-                      <PopoverTaskContent
-                        day={dayjs(day).format('YYYY-MM-DD')}
-                        disabledReportButton={isTaskExpired}
-                        setOpenViewMore={setOpenViewMore}
-                        setOpen={setOpen}
-                        setRefetch={setRefetch}
-                        mutate={mutate}
-                        task={task}
-                        openReportTask={() =>
-                          handleOpenReportModal(task.taskId, day as any)
-                        }
-                      />
+                    handleOpenReportModal={() =>
+                      handleOpenReportModal(task.taskId)
                     }
-                  >
-                    <div
-                      className={'border-2 rounded-lg border-none'}
-                      style={{
-                        position: 'relative', // Always relative, no spanning
-                        width: 'auto', // Fixed width, no stretching
-                        backgroundColor: task.reportTask
-                          ? statusColors[task.reportTask.status]
-                          : '#DEDEDE',
-                        padding: '0px 8px',
-                        fontWeight: 'bold',
-                        zIndex: 1 + taskIndex, // Stack tasks vertically
-                        fontSize: 12,
-                      }}
-                    >
-                      <div className="overflow-y-auto text-clip max-w-full">
-                        <p className="truncate">{task?.taskTypeId?.name}</p>
-                      </div>
-                      <TagComponents
-                        className="text-xs !font-bold overflow-y-auto text-clip max-w-full !py-[2px] rounded-lg !px-2"
-                        style={{ backgroundColor: tagColor }}
-                      >
-                        <p className="truncate text-white">
-                          🧑‍🦱 {task?.assigneeName}
-                        </p>
-                      </TagComponents>
-                    </div>
-                  </Popover>
+                    mutate={mutate}
+                    open={!!open[uniqueTag]}
+                    setOpen={setOpen}
+                    setOpenViewMore={setOpenViewMore}
+                    setRefetch={setRefetch}
+                    tagColor={tagColor}
+                    task={task}
+                    taskIndex={taskIndex}
+                    uniqueTag={uniqueTag}
+                  />
                 );
                 dayContents[dayKey].push(content);
               });
@@ -264,58 +236,25 @@ const TaskScheduleCalendar: React.FC = () => {
                     const uniqueTag = `${task.taskId}-${date}`;
                     const tagColor = stringToDarkColor(uniqueTag);
                     dayContents[dayKey].push(
-                      <Popover
-                        open={!!open[uniqueTag]}
-                        onOpenChange={(newOpen) =>
+                      <PopoverTask
+                        day={dayjs(day).format('YYYY-MM-DD')}
+                        setDate={setDate}
+                        handleOpenPopover={(newOpen: any) =>
                           handleOpenPopover(uniqueTag, newOpen)
                         }
-                        key={uniqueTag}
-                        trigger={'click'}
-                        className="cursor-pointer"
-                        placement="topLeft"
-                        color="white"
-                        content={
-                          <PopoverTaskContent
-                            day={dayjs(day).format('YYYY-MM-DD')}
-                            disabledReportButton={isTaskExpired}
-                            setOpenViewMore={setOpenViewMore}
-                            setOpen={setOpen}
-                            setRefetch={setRefetch}
-                            mutate={mutate}
-                            task={task}
-                            openReportTask={() =>
-                              handleOpenReportModal(task.taskId, day as any)
-                            }
-                          />
+                        handleOpenReportModal={() =>
+                          handleOpenReportModal(task.taskId)
                         }
-                      >
-                        <div
-                          className="border-2 rounded-lg border-primary"
-                          style={{
-                            position: 'relative', // Always relative, no spanning
-                            width: 'auto', // Fixed width, no stretching
-                            backgroundColor: task.reportTask
-                              ? statusColors[task.reportTask.status]
-                              : '#DEDEDE',
-                            padding: '0px 8px',
-                            fontWeight: 'bold',
-                            zIndex: 1 + taskIndex, // Stack tasks vertically
-                            fontSize: 12,
-                          }}
-                        >
-                          <div className="overflow-y-auto text-clip max-w-full">
-                            <p className="truncate">{task?.taskTypeId?.name}</p>
-                          </div>
-                          <TagComponents
-                            className="text-xs !font-bold overflow-y-auto text-clip max-w-full !py-[2px] rounded-lg !px-2"
-                            style={{ backgroundColor: tagColor }}
-                          >
-                            <p className="truncate text-white">
-                              🧑‍🦱 {task.assigneeName}
-                            </p>
-                          </TagComponents>
-                        </div>
-                      </Popover>
+                        mutate={mutate}
+                        open={!!open[uniqueTag]}
+                        setOpen={setOpen}
+                        setOpenViewMore={setOpenViewMore}
+                        setRefetch={setRefetch}
+                        tagColor={tagColor}
+                        task={task}
+                        taskIndex={taskIndex}
+                        uniqueTag={uniqueTag}
+                      />
                     );
                   }
                 );
@@ -333,9 +272,11 @@ const TaskScheduleCalendar: React.FC = () => {
         row[dayKey] = (
           <div
             style={{
+              maxHeight: 500, // Set maximum height
+              overflowY: 'auto', // Enable vertical scrolling
               minHeight: 40 + (dayContents[dayKey].length - 1) * 65,
             }}
-            className="h-full"
+            className="h-full custom-scrollbar"
           >
             {dayContents[dayKey].map((taskContent, index) => (
               <div
@@ -388,9 +329,44 @@ const TaskScheduleCalendar: React.FC = () => {
     })),
   ];
 
+  const optionsDataTaskTypes = useMemo(
+    () =>
+      (dataTaskTypes || []).map((element) => ({
+        label: element?.name,
+        value: element.taskTypeId,
+        desc: element,
+        searchLabel: element?.name,
+      })),
+    [dataTaskTypes]
+  );
+
+  const optionsAreas = useMemo(
+    () =>
+      (dataAreas || []).map((element) => ({
+        label: element.name,
+        value: element.areaId,
+        desc: element,
+        searchLabel: element.name,
+      })),
+    [dataAreas]
+  );
+
+  const optionsIllness = useMemo(
+    () =>
+      (dataIllness || [])
+        .filter((element) => element.illnessStatus === 'pending')
+        .map((element) => ({
+          searchLabel: `${element?.cowEntity.name}`,
+          label: element?.cowEntity ? element?.cowEntity?.name : 'N/A',
+          value: element?.illnessId,
+          desc: element,
+        })),
+    [dataIllness]
+  );
+
   return (
-    <div className="flex flex-col gap-5">
-      <div className="flex gap-5">
+    <div className="flex flex-col gap-2">
+      <div className="flex gap-5 items-center">
         <div className="flex gap-2 items-center">
           <p className="text-base font-bold">{t('Select task type')}:</p>
           <SelectComponent
@@ -410,6 +386,7 @@ const TaskScheduleCalendar: React.FC = () => {
         >
           {t('Add Task')}
         </ButtonComponent>
+        <StatusTask />
       </div>
       <div className="flex gap-5">
         <Select
@@ -436,18 +413,17 @@ const TaskScheduleCalendar: React.FC = () => {
           {t('Today')}
         </ButtonComponent>
       </div>
-      <StatusTask />
       <div
         style={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          marginBottom: 16,
         }}
       >
         <ButtonComponent
           shape="round"
           icon={<LeftOutlined />}
+          className="!shadow-none"
           onClick={() =>
             setCurrentWeekStart(currentWeekStart.subtract(1, 'week'))
           }
@@ -461,29 +437,37 @@ const TaskScheduleCalendar: React.FC = () => {
         <ButtonComponent
           shape="round"
           icon={<RightOutlined />}
+          className="!shadow-none"
           onClick={() => setCurrentWeekStart(currentWeekStart.add(1, 'week'))}
         />
       </div>
       <Table
-        className="shadow-xl schedule-table"
+        className="schedule-table"
         bordered
         loading={isLoading}
         columns={columns}
         dataSource={tableData}
         pagination={false}
         rowKey="key"
+        scroll={{ x: 'max-content', y: 550 }} // Enable scrolling
       />
-
       <TaskCreateModal
+        dataVeterinarians={dataVeterinarians as UserProfileData[]}
+        dataWorker={dataWorker as UserProfileData[]}
+        optionsAreas={optionsAreas}
+        optionsDataTaskTypes={optionsDataTaskTypes}
+        optionsIllness={optionsIllness}
         setRefetch={setRefetch}
         modal={modal as any}
         mutate={mutate}
       />
-      <ReportTaskManagerModal
-        day={date}
-        modal={modalReportTask}
+      <UpdateTaskModal
+        day={date as any}
+        modal={modalUpdateTask}
         mutate={mutate}
         taskId={id}
+        optionsArea={optionsAreas}
+        setRefetch={setRefetch}
       />
     </div>
   );

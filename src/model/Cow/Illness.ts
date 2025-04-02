@@ -13,6 +13,7 @@ export type IllnessCow = {
   userEntity: UserProfileData;
   veterinarian: UserProfileData;
   illnessDetails: IllnessDetail[];
+  illnessStatus: 'pending' | 'processing' | 'complete' | 'cancel' | 'fail';
 };
 
-export type Severity = 'mild' | 'moderate' | 'severe' | 'critical';
+export type Severity = 'mild' | 'moderate' | 'severe' | 'critical' | 'none';

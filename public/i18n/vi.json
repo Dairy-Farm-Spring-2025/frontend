@@ -510,5 +510,9 @@
   "Inventory": "Tồn kho",
   "Out of stock": "Hết hàng",
   "In pen": "Trong chuồng",
-  "Not in pen": "Không trong chuồng"
+  "Not in pen": "Không trong chuồng",
+  "Off date request": "Yêu cầu xin nghỉ",
+  "From": "Từ",
+  "To": "Đến",
+  "Edit task": "Chỉnh sửa công việc"
 }
