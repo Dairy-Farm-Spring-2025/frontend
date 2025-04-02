@@ -17,6 +17,7 @@ export type FeedMeals = {
   cowStatus: CowStatus;
   status: FeedMealsStatus;
   feedMealDetails: FeedMealDetails[];
+  shift: string;
 };
 
 export type FeedMealDetails = {

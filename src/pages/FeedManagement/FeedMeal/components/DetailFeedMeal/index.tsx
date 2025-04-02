@@ -11,7 +11,7 @@ import { FEED_PATH } from '@service/api/Feed/feedApi';
 
 const DetailFeedMeal = () => {
   const { id } = useParams();
-  const { data: detailFeedMeal, isLoading: isLoading } = useFetcher<FeedMeals>(
+  const { data: detailFeedMeal, isLoading: isLoading, mutate } = useFetcher<FeedMeals>(
     FEED_PATH.DETAIL_FEED_MEALS(id ? id : ''),
     'GET'
   );
@@ -29,6 +29,8 @@ const DetailFeedMeal = () => {
             <FeedMealInformation data={detailFeedMeal as FeedMeals} />
             <FeedMealDetailsInformation
               detailData={detailFeedMeal?.feedMealDetails as FeedMealDetails[]}
+              feedMealId={Number(id)} // Pass feedMealId
+              mutate={mutate} // Pass mutate function
             />
           </div>
         )}

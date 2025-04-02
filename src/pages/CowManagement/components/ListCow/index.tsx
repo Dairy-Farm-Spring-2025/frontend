@@ -182,8 +182,7 @@ const ListCow = () => {
               loading={isLoading}
               columns={columns}
               dataSource={data ? formatSTT(data) : []}
-              // rowSelection={rowSelection} // Thêm tính năng chọn hàng
-              // rowKey="cowId" // Định danh duy nhất cho từng dòng
+
             />
           </>
         )}
