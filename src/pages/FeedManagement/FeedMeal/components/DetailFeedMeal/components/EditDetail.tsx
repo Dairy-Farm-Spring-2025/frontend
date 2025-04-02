@@ -20,7 +20,7 @@ const EditDetail = ({ visible, detail, onCancel, onSuccess }: EditDetailProps) =
     useEffect(() => {
         if (detail) {
             form.setFieldsValue({
-                quantity: detail.quantity,
+                quantity: detail.quantity ?? 0, // Default to 0 if quantity is undefined or null
             });
         }
     }, [detail, form]);
@@ -34,9 +34,16 @@ const EditDetail = ({ visible, detail, onCancel, onSuccess }: EditDetailProps) =
                 return;
             }
 
+            // Ensure quantity is a number and not null/undefined
+            const quantity = Number(values.quantity);
+            if (isNaN(quantity) || quantity < 0) {
+                message.error(t('Quantity must be a valid non-negative number'));
+                return;
+            }
+
             // Call the API to update the feed meal detail
             const response = await api.put(`/feedmeals/detail/${detail.feedMealDetailId}`, {
-                quantity: values.quantity,
+                quantity: quantity,
             });
 
             if (response.status === 200) {
@@ -46,7 +53,7 @@ const EditDetail = ({ visible, detail, onCancel, onSuccess }: EditDetailProps) =
             } else {
                 message.error(t('Failed to update'));
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error updating feed meal detail:', error);
             message.error(t('Error occurred while updating'));
         }
@@ -63,16 +70,21 @@ const EditDetail = ({ visible, detail, onCancel, onSuccess }: EditDetailProps) =
         >
             {detail ? (
                 <Form form={form} layout="vertical">
-                    <Form.Item
-                        label={t('Item')}
-                        style={{ marginBottom: 16 }}
-                    >
+                    <Form.Item label={t('Item')} style={{ marginBottom: 16 }}>
                         <span>{detail.itemEntity?.name}</span>
                     </Form.Item>
                     <Form.Item
                         label={t('Quantity (kilogram)')}
                         name="quantity"
-                        rules={[{ required: true, message: t('Please input the quantity!') }]}
+                        rules={[
+                            { required: true, message: t('Please input the quantity!') },
+                            {
+                                validator: (_, value) =>
+                                    value >= 0
+                                        ? Promise.resolve()
+                                        : Promise.reject(t('Quantity must be non-negative')),
+                            },
+                        ]}
                     >
                         <InputNumber min={0} step={0.1} style={{ width: '100%' }} />
                     </Form.Item>

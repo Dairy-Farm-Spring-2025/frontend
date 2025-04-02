@@ -19,6 +19,7 @@ export type Cow = {
   inPen: boolean;
   healthInfoResponses: HealthResponse[];
   penResponse: any;
+  key: any;
 };
 
 export type HealthResponse = {
