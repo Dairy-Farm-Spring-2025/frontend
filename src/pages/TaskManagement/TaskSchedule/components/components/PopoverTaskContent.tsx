@@ -1,4 +1,4 @@
-import { AppstoreFilled, DeleteOutlined, EyeFilled } from '@ant-design/icons';
+import { AppstoreFilled, DeleteOutlined, EditFilled } from '@ant-design/icons';
 import ButtonComponent from '@components/Button/ButtonComponent';
 import PopconfirmComponent from '@components/Popconfirm/PopconfirmComponent';
 import TagComponents from '@components/UI/TagComponents';
@@ -23,8 +23,9 @@ interface PopoverTaskContent {
   openReportTask: () => void;
   setOpen: any;
   setOpenViewMore: any;
-  disabledReportButton: boolean;
+  disabledUpdateButton: boolean;
   day: string;
+  setDate: any;
 }
 
 const PopoverTaskContent = ({
@@ -33,23 +34,27 @@ const PopoverTaskContent = ({
   setRefetch,
   setOpen,
   openReportTask,
-  disabledReportButton,
   day,
+  disabledUpdateButton,
+  setDate,
 }: PopoverTaskContent) => {
   const toast = useToast();
   const navigate = useNavigate();
   const isDeleteDisabled = dayjs().isAfter(dayjs(task.fromDate), 'day');
+  const isEditDisabled =
+    dayjs().isAfter(dayjs(day), 'day') || dayjs().isSame(dayjs(day), 'day');
   const { trigger: triggerDelete, isLoading: loadingDelete } = useFetcher(
     `tasks/delete`,
     'DELETE'
   );
-  const handleOpenReportTask = () => {
+  const handleOpenEdit = () => {
     setOpen((prev: any) => {
       const newState = { ...prev };
       Object.keys(newState).forEach((key) => (newState[key] = false));
       return newState;
     });
     openReportTask();
+    setDate(day);
   };
   const handleDeleteTasks = useCallback(
     async (id: number) => {
@@ -83,11 +88,15 @@ const PopoverTaskContent = ({
             className="w-3 h-3 rounded-full"
             style={{
               backgroundColor: task?.reportTask
-                ? statusColors[task.status]
+                ? statusColors[task?.reportTask?.status]
                 : '#DEDEDE',
             }}
           ></span>
-          {t(formatStatusWithCamel(task?.status))}
+          {t(
+            formatStatusWithCamel(
+              task?.reportTask ? task?.reportTask?.status : t('Not start')
+            )
+          )}
         </p>
       </div>
       <TagComponents className="text-sm" color="blue">
@@ -105,33 +114,37 @@ const PopoverTaskContent = ({
       </TagComponents>
       <Divider className="my-1" />
       <div className="flex gap-2">
-        <PopconfirmComponent
-          title={undefined}
-          onConfirm={() => handleDeleteTasks(task?.taskId)}
-        >
+        <Tooltip title={t('Delete')}>
+          <PopconfirmComponent
+            title={undefined}
+            onConfirm={() => handleDeleteTasks(task?.taskId)}
+          >
+            <ButtonComponent
+              disabled={isDeleteDisabled}
+              loading={loadingDelete}
+              danger
+              type="primary"
+              shape="circle"
+              icon={<DeleteOutlined />}
+            />
+          </PopconfirmComponent>
+        </Tooltip>
+        <Tooltip title={t('View detail')}>
           <ButtonComponent
-            disabled={isDeleteDisabled}
-            loading={loadingDelete}
-            danger
-            type="primary"
             shape="circle"
-            icon={<DeleteOutlined />}
+            type="primary"
+            icon={<AppstoreFilled />}
+            onClick={() => navigate(`../${task.taskId}/${day}`)}
           />
-        </PopconfirmComponent>
-        <ButtonComponent
-          shape="circle"
-          type="primary"
-          icon={<AppstoreFilled />}
-          onClick={() => navigate(`../${task.taskId}/${day}`)}
-        />
-        <Tooltip title={t('View report')}>
+        </Tooltip>
+        <Tooltip title={t('Edit task')}>
           <ButtonComponent
-            icon={<EyeFilled />}
+            icon={<EditFilled />}
             shape="circle"
             type="primary"
             buttonType="secondary"
-            onClick={handleOpenReportTask}
-            disabled={disabledReportButton}
+            onClick={handleOpenEdit}
+            disabled={disabledUpdateButton || isEditDisabled}
           />
         </Tooltip>
       </div>

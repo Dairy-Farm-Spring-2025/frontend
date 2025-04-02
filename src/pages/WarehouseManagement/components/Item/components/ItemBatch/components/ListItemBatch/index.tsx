@@ -1,8 +1,10 @@
-import { formatDate } from '@fullcalendar/core/index.js';
+import { formatDateHour } from '@utils/format';
 import { Divider } from 'antd';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import ButtonComponent from '../../../../../../../../components/Button/ButtonComponent';
 import PopconfirmComponent from '../../../../../../../../components/Popconfirm/PopconfirmComponent';
+import SelectComponent from '../../../../../../../../components/Select/SelectComponent';
 import TableComponent, {
   Column,
 } from '../../../../../../../../components/Table/TableComponent';
@@ -13,11 +15,9 @@ import useModal from '../../../../../../../../hooks/useModal';
 import useToast from '../../../../../../../../hooks/useToast';
 import { ItemBatch } from '../../../../../../../../model/Warehouse/itemBatch';
 import { Item } from '../../../../../../../../model/Warehouse/items';
-import CreateItemBatchModal from './components/CreateItemBatchModal';
-import SelectComponent from '../../../../../../../../components/Select/SelectComponent';
-import { ITEM_BATCH_OPTIONS } from '../../../../../../../../service/data/item';
-import { useTranslation } from 'react-i18next';
 import { SupplierType } from '../../../../../../../../model/Warehouse/supplier';
+import { ITEM_BATCH_OPTIONS } from '../../../../../../../../service/data/item';
+import CreateItemBatchModal from './components/CreateItemBatchModal';
 
 const ListItemBatch = () => {
   const navigate = useNavigate();
@@ -61,6 +61,12 @@ const ListItemBatch = () => {
 
   const column: Column[] = [
     {
+      dataIndex: 'itemEntity',
+      key: 'itemEntity',
+      title: t('Item'),
+      render: (data: Item) => data?.name,
+    },
+    {
       dataIndex: 'quantity',
       key: 'quantity',
       title: t('Quantity'),
@@ -69,13 +75,13 @@ const ListItemBatch = () => {
       dataIndex: 'importDate',
       key: 'importDate',
       title: t('Import Date'),
-      render: (data) => formatDate(data),
+      render: (data) => formatDateHour(data),
     },
     {
       dataIndex: 'expiryDate',
       key: 'expiryDate',
       title: t('Expired Date'),
-      render: (data) => (data ? formatDate(data) : 'Not Yet'),
+      render: (data) => (data ? formatDateHour(data) : 'Not Yet'),
     },
     {
       dataIndex: 'status',
@@ -90,12 +96,6 @@ const ListItemBatch = () => {
           loading={updateLoading}
         />
       ),
-    },
-    {
-      dataIndex: 'itemEntity',
-      key: 'itemEntity',
-      title: t('Item'),
-      render: (data: Item) => data?.name,
     },
     {
       dataIndex: 'supplierEntity',

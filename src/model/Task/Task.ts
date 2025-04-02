@@ -14,6 +14,7 @@ export interface TaskPayload {
   priority: Priority;
   taskTypeId: number;
   shift: ShiftTask;
+  illnessId: number;
 }
 
 export interface Task {

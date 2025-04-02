@@ -3,7 +3,7 @@ import { t } from 'i18next';
 
 const StatusTask = () => {
   return (
-    <div className="flex gap-10 mb-5">
+    <div className="flex gap-10 items-center">
       <div className="flex gap-2 items-center">
         <div className="w-4 h-4 border-[1px] border-yellow-400 rounded-xl bg-[#FEF9C3]"></div>
         <Text>{t('Pending')}</Text>
