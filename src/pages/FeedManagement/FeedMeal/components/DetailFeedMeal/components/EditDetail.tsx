@@ -41,10 +41,8 @@ const EditDetail = ({ visible, detail, onCancel, onSuccess }: EditDetailProps) =
                 return;
             }
 
-            // Call the API to update the feed meal detail
-            const response = await api.put(`/feedmeals/detail/${detail.feedMealDetailId}`, {
-                quantity: quantity,
-            });
+            // Call the API to update the feed meal detail with quantity as a query parameter
+            const response = await api.put(`/feedmeals/detail/${detail.feedMealDetailId}?quantity=${quantity}`);
 
             if (response.status === 200) {
                 message.success(t('Updated successfully'));
