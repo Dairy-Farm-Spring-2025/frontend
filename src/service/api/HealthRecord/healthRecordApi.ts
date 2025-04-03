@@ -9,5 +9,6 @@ export const HEALTH_RECORD_PATH = {
   CREATE_ILLNESS: 'illness/create',
   CREATE_PLAN: 'illness-detail/create-plan',
   DETAIL_ILLNESS: (id: string) => `illness/${id}`,
-  ILLNESS_DETAIL: (id: string) => `illness-detail/${id}`
+  ILLNESS_DETAIL: (id: string) => `illness-detail/${id}`,
+  CREATE_BULK: 'health-record/create-bulk'
 };

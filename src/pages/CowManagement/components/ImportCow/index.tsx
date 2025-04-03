@@ -21,6 +21,8 @@ import { COW_TYPE_PATH } from '@service/api/CowType/cowType';
 import DatePickerComponent from '@components/DatePicker/DatePickerComponent';
 import SelectComponent from '@components/Select/SelectComponent';
 import dayjs from 'dayjs';
+import FormItemComponent from '@components/Form/Item/FormItemComponent';
+import CreateBulkHealthRecord from './components/createBulkHealthRecord';
 
 
 const ListCowImport = () => {
@@ -33,6 +35,9 @@ const ListCowImport = () => {
         COW_TYPE_PATH.COW_TYPES,
         'GET'
     );
+    const [importedCowIds, setImportedCowIds] = useState<number[]>([]);
+    const [importSuccess, setImportSuccess] = useState(false);
+    const [isHealthRecordModalVisible, setIsHealthRecordModalVisible] = useState(false); // State for modal visibility
     const columns: Column[] = [
         {
             dataIndex: 'dateOfBirth',
@@ -43,9 +48,11 @@ const ListCowImport = () => {
             editable: true,
             render: (data, record) =>
                 editingKey === record.key ? (
+
                     <DatePickerComponent
                         value={data ? dayjs(data) : null} // Ensure the value passed is a dayjs object
                         onChange={(date) => handleChange(record.key, 'dateOfBirth', date)} />
+
                 ) : (
                     formatDateHour(data) || '-'
                 ),
@@ -244,8 +251,8 @@ const ListCowImport = () => {
         try {
             const formattedData = reviewData.map((cow: Cow) => ({
                 cowStatus: cow.cowStatus || "",
-                dateOfBirth: cow.dateOfBirth ? cow.dateOfBirth.split(' ')[0] : "",
-                dateOfEnter: cow.dateOfEnter ? cow.dateOfEnter.split(' ')[0] : "",
+                dateOfBirth: cow.dateOfBirth ? cow.dateOfBirth.split(" ")[0] : "",
+                dateOfEnter: cow.dateOfEnter ? cow.dateOfEnter.split(" ")[0] : "",
                 cowOrigin: cow.cowOrigin || "",
                 gender: cow.gender || "",
                 cowTypeId: cow.cowType?.cowTypeId || "",
@@ -253,15 +260,28 @@ const ListCowImport = () => {
             }));
 
             const response = await importTrigger({ body: JSON.stringify(formattedData) });
-            console.log("Import response:", response);
-            message.success("Dữ liệu đã được lưu vào hệ thống!");
-            setReviewData([]);
-            setReviewErrors([]);
+
+            console.log("API Response:", response); // Log phản hồi API để debug
+
+            if (response?.data?.successes?.length > 0) {
+                message.success(`Đã nhập thành công ${response.data.successes.length} con bò!`);
+                setImportedCowIds(response.data.successes.map((cow: { cowId: number }) => cow.cowId));
+                setImportSuccess(true);
+            } else {
+                message.error("Import thất bại! Không có dữ liệu nào được nhập.");
+            }
+
+            if (response?.data?.errors?.length > 0) {
+                console.warn("Danh sách lỗi import:", response.data.errors);
+                message.warning(`Có ${response.data.errors.length} lỗi xảy ra. Kiểm tra console để biết thêm chi tiết.`);
+            }
         } catch (error: any) {
             console.error("Lỗi khi import:", error);
             message.error(`Lỗi khi import: ${error.message || "Có lỗi xảy ra!"}`);
         }
     };
+
+
 
     return (
         <AnimationAppear duration={0.5}>
@@ -287,6 +307,20 @@ const ListCowImport = () => {
                     columns={columns}
                     dataSource={reviewData ? formatSTT(reviewData) : []}
                     onDataChange={handleDataChange}
+                />
+                {importSuccess && (
+                    <ButtonComponent
+                        onClick={() => setIsHealthRecordModalVisible(true)} // Open the modal
+                        style={{ backgroundColor: 'green', color: 'white' }}
+                    >
+                        {t('Create Health Records')}
+                    </ButtonComponent>
+                )}
+                <CreateBulkHealthRecord
+                    visible={isHealthRecordModalVisible}
+                    onCancel={() => setIsHealthRecordModalVisible(false)}
+                    importedCowIds={importedCowIds}
+                    onSuccess={() => setImportSuccess(false)} // Hide the button after success
                 />
             </WhiteBackground>
         </AnimationAppear>
