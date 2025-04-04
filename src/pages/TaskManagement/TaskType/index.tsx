@@ -1,31 +1,30 @@
+import ButtonComponent from '@components/Button/ButtonComponent';
+import useModal from '@hooks/useModal';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import useFetcher from '../../../hooks/useFetcher';
 import TableComponent, {
   Column,
 } from '../../../components/Table/TableComponent';
-import TextLink from '../../../components/UI/TextLink';
 import WhiteBackground from '../../../components/UI/WhiteBackground';
+import useFetcher from '../../../hooks/useFetcher';
 import ModalDetailTaskType from './components/ViewDetailTaskType';
-import { useState } from 'react';
-import useModal from '@hooks/useModal';
-import ButtonComponent from '@components/Button/ButtonComponent';
 
+import PopconfirmComponent from '@components/Popconfirm/PopconfirmComponent';
+import useToast from '@hooks/useToast';
+import { TASK_TYPE_PATH } from '@service/api/Task/taskType';
 import { Divider } from 'antd';
 import CreateTaskType from './components/CreateTaskType';
-import PopconfirmComponent from '@components/Popconfirm/PopconfirmComponent';
-import { TASK_TYPE_PATH } from '@service/api/Task/taskType';
-import useToast from '@hooks/useToast';
+import TagComponents from '@components/UI/TagComponents';
+import { getColorByRole } from '@utils/statusRender/roleRender';
 
 const TaskType = () => {
   const { data, isLoading, mutate } = useFetcher<any>('task_types', 'GET');
-  console.log('check data: ', data);
   const { trigger, isLoading: loadingDelete } = useFetcher(
     'task_types',
     'DELETE'
   );
   const { t } = useTranslation();
   const [id, setId] = useState('');
-  const modal = useModal();
   const modalDetail = useModal();
   const modalCreate = useModal();
   const handleOpenModalDetail = (id: string) => {
@@ -54,7 +53,11 @@ const TaskType = () => {
       dataIndex: 'roleId',
       key: 'roleId',
       title: t('Role'),
-      render: (data) => data?.name,
+      render: (data) => (
+        <TagComponents color={getColorByRole(data?.name)}>
+          {t(data?.name)}
+        </TagComponents>
+      ),
     },
     {
       dataIndex: 'taskTypeId',
@@ -69,7 +72,7 @@ const TaskType = () => {
             {t('View Detail')}
           </ButtonComponent>
           <PopconfirmComponent
-            title={t('Delete?')}
+            title={undefined}
             onConfirm={() => onConfirm(data)}
           >
             <ButtonComponent type="primary" danger>
@@ -88,7 +91,7 @@ const TaskType = () => {
       <TableComponent
         columns={columns}
         dataSource={data || []}
-        loading={isLoading}
+        loading={isLoading || loadingDelete}
       />
 
       {id !== '' && (

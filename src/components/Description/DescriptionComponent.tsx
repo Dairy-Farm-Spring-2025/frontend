@@ -1,4 +1,4 @@
-import { Descriptions, DescriptionsProps } from 'antd';
+import { ConfigProvider, Descriptions, DescriptionsProps } from 'antd';
 import './index.scss';
 export interface DescriptionPropsItem extends DescriptionsProps {
   key: string;
@@ -19,17 +19,35 @@ const DescriptionComponent = ({
   ...props
 }: DescriptionComponentProps) => {
   return (
-    <Descriptions
-      className={`description-component !bg-white !rounded-lg !shadow-md ${className}`}
-      title={title}
-      items={items}
-      layout={layout}
-      labelStyle={{
-        fontWeight: 'bold',
+    <ConfigProvider
+      theme={{
+        components: {
+          Descriptions: {
+            labelBg: '#eeeeee',
+            borderRadiusLG: 8,
+            borderRadiusOuter: 8,
+            borderRadiusSM: 8,
+            borderRadius: 8,
+            borderRadiusXS: 8,
+          },
+        },
       }}
-      bordered
-      {...props}
-    />
+      descriptions={{
+        className: 'description-component',
+      }}
+    >
+      <Descriptions
+        className={`!bg-white !shadow-md !border-black !rounded-[8px] ${className}`}
+        title={title}
+        items={items}
+        layout={layout}
+        labelStyle={{
+          fontWeight: 'bold',
+        }}
+        bordered
+        {...props}
+      />
+    </ConfigProvider>
   );
 };
 

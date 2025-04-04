@@ -17,7 +17,7 @@ const CardSelectArea = ({ area }: CardSelectAreaProps) => {
         <LiaChartAreaSolid size={20} />
         <p className="font-bold text-base">{area?.name}</p>
         <TagComponents color="blue" className="!text-sm">
-          {formatStatusWithCamel(area?.areaType)}
+          {t(formatStatusWithCamel(area?.areaType))}
         </TagComponents>
       </div>
       <Divider className="my-1" />
@@ -34,12 +34,15 @@ const CardSelectArea = ({ area }: CardSelectAreaProps) => {
       <div className="grid grid-cols-3 mt-2 ">
         <TextTitle
           title={t('Occupied')}
-          description={`${area?.occupiedPens} pen`}
+          description={`${area?.occupiedPens} ${t('pen')}`}
         />
-        <TextTitle title={t('Empty')} description={`${area?.emptyPens} pen`} />
+        <TextTitle
+          title={t('Empty')}
+          description={`${area?.emptyPens} ${t('pen')}`}
+        />
         <TextTitle
           title={t('Damaged')}
-          description={`${area?.damagedPens} pen`}
+          description={`${area?.damagedPens} ${t('pen')}`}
         />
       </div>
     </div>

@@ -1,5 +1,3 @@
-import { Divider, Tag, Tooltip } from 'antd';
-import { useEffect, useState } from 'react';
 import ButtonComponent from '@components/Button/ButtonComponent';
 import PopconfirmComponent from '@components/Popconfirm/PopconfirmComponent';
 import TableComponent, { Column } from '@components/Table/TableComponent';
@@ -10,14 +8,22 @@ import useModal from '@hooks/useModal';
 import useToast from '@hooks/useToast';
 import { Health } from '@model/Cow/HealthReport';
 import { cowOrigin } from '@service/data/cowOrigin';
-import { formatAreaType, formatDateHour, formatSTT } from '@utils/format';
+import {
+  formatAreaType,
+  formatDateHour,
+  formatStatusWithCamel,
+  formatSTT,
+} from '@utils/format';
 import { getLabelByValue } from '@utils/getLabel';
+import { Divider, Tooltip } from 'antd';
+import { useEffect, useState } from 'react';
 
-import { useTranslation } from 'react-i18next';
+import TagComponents from '@components/UI/TagComponents';
 import useFetch from '@hooks/useFetcher';
+import { HEALTH_RECORD_PATH } from '@service/api/HealthRecord/healthRecordApi';
+import { useTranslation } from 'react-i18next';
 import ModalCreateIllNess from './components/ModalCreateIllNess';
 import ModalViewDetail from './components/ModalViewDetail';
-import { HEALTH_RECORD_PATH } from '@service/api/HealthRecord/healthRecordApi';
 const IllNess = () => {
   const [healthReport, setHealthReport] = useState<Health[]>([]);
   const { data, error, isLoading, mutate } = useFetch<Health[]>(
@@ -100,12 +106,6 @@ const IllNess = () => {
       ),
     },
     {
-      dataIndex: 'createdAt',
-      key: 'createdAt',
-      title: t('Created At'),
-      render: (data) => formatDateHour(data),
-    },
-    {
       dataIndex: 'startDate',
       key: 'startDate',
       title: t('Start Date'),
@@ -115,7 +115,7 @@ const IllNess = () => {
       dataIndex: 'endDate',
       key: 'endDate',
       title: t('End Date'),
-      render: (data) => (data ? formatDateHour(data) : 'Not Out'),
+      render: (data) => (data ? formatDateHour(data) : '-'),
     },
 
     {
@@ -157,11 +157,11 @@ const IllNess = () => {
       key: 'illnessStatus',
       title: t('Status'),
       render: (status: string) => (
-        <Tag
+        <TagComponents
           color={statusColor[status as keyof typeof statusColor] || 'default'}
         >
-          {t(status)}
-        </Tag>
+          {t(formatStatusWithCamel(status))}
+        </TagComponents>
       ),
     },
     {

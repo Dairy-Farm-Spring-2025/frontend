@@ -15,14 +15,13 @@ export const cowStatus = () => {
       label: i18n.t('Pregnant cow', { defaultValue: 'Pregnant cow' }),
     },
 
-
     {
       value: 'sickCow',
       label: i18n.t('Sick cow', { defaultValue: 'Sick cow' }),
     },
     {
       value: 'seriousSickCow',
-      label: i18n.t('Serious Sick cow', { defaultValue: 'Serious Sick cow' }),
+      label: i18n.t('Serious Sick Cow', { defaultValue: 'Serious Sick Cow' }),
     },
 
     {

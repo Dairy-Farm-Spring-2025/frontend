@@ -115,10 +115,10 @@ const FeedMealForm = ({
       const totalOfHay = (dry * 0.35) / 0.85;
       const roundTotalOfHay = parseFloat(totalOfHay.toFixed(2));
       setHayTotal(roundTotalOfHay);
-      const totalOfRefined = (dry * 0.25) / 0.35;
+      const totalOfRefined = (dry * 0.25) / 0.9;
       const roundTotalOfRefined = parseFloat(totalOfRefined.toFixed(2));
       setRefinedTotal(roundTotalOfRefined);
-      const totalOfSilage = (dry * 0.3) / 0.9;
+      const totalOfSilage = (dry * 0.3) / 0.35;
       const roundTotalOfSilage = parseFloat(totalOfSilage.toFixed(2));
       setSilageTotal(roundTotalOfSilage);
       const totalOfMinerals = (dry * 0.1) / 0.75;
@@ -126,34 +126,6 @@ const FeedMealForm = ({
       setMineralsTotal(roundTotalOfMinerals);
     }
   }, [dry]);
-
-  // const handleFinish = async (values: any) => {
-  //   const transformDetails = (array: any[]) =>
-  //     array.map((item: { itemId: string; quantity: number }) => ({
-  //       itemId: item.itemId,
-  //       quantity: item.quantity,
-  //     }));
-  //   const payload = {
-  //     name: values.name,
-  //     description: values.description,
-  //     cowTypeId: values.cowTypeId,
-  //     shift: values.shift,
-  //     cowStatus: values.cowStatus,
-  //     details: [
-  //       ...transformDetails(values.detailsHay),
-  //       ...transformDetails(values.detailsRefined),
-  //       ...transformDetails(values.detailsSilage),
-  //       ...transformDetails(values.detailsMineral),
-  //     ],
-  //   };
-  //   try {
-  //     const response = await triggerFeedMeal({ body: payload });
-  //     toast.showSuccess(response.message);
-  //     navigate('../list');
-  //   } catch (error: any) {
-  //     toast.showError(error.message);
-  //   }
-  // };
 
   return (
     <div>

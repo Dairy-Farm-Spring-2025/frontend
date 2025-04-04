@@ -76,11 +76,7 @@ const CreateCowInformation = () => {
               className="w-full"
               label={<LabelForm>{t('Gender')}</LabelForm>}
             >
-              <SelectComponent
-                options={genderData()}
-                className="w-full"
-                placeholder="Select gender..."
-              />
+              <SelectComponent options={genderData()} className="w-full" />
             </FormItemComponent>
             <FormItemComponent
               name="cowTypeId"
@@ -88,11 +84,7 @@ const CreateCowInformation = () => {
               className="w-full"
               label={<LabelForm>{t('Cow Type')}</LabelForm>}
             >
-              <SelectComponent
-                options={optionsCowType}
-                className="w-full"
-                placeholder="Select cow type..."
-              />
+              <SelectComponent options={optionsCowType} className="w-full" />
             </FormItemComponent>
             <FormItemComponent
               rules={[{ required: true }]}
@@ -100,11 +92,7 @@ const CreateCowInformation = () => {
               name="cowStatus"
               label={<LabelForm>{t('Cow Status')}</LabelForm>}
             >
-              <SelectComponent
-                options={cowStatus()}
-                className="w-full"
-                placeholder="Select status..."
-              />
+              <SelectComponent options={cowStatus()} className="w-full" />
             </FormItemComponent>
             <FormItemComponent
               name="cowOrigin"
@@ -112,11 +100,7 @@ const CreateCowInformation = () => {
               className="w-full"
               label={<LabelForm>{t('Origin')}</LabelForm>}
             >
-              <SelectComponent
-                options={cowOrigin()}
-                placeholder="Enter origin..."
-                className="w-full"
-              />
+              <SelectComponent options={cowOrigin()} className="w-full" />
             </FormItemComponent>
           </div>
         </div>

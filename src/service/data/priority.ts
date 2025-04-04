@@ -2,19 +2,19 @@ import { t } from 'i18next';
 
 export const PRIORITY_DATA = () => [
   {
-    label: t('Low'),
+    label: `🟢 ${t('Low')}`,
     value: 'low',
   },
   {
-    label: t('Medium'),
+    label: `🟡 ${t('Medium')}`,
     value: 'medium',
   },
   {
-    label: t('High'),
+    label: `🔴 ${t('High')}`,
     value: 'high',
   },
   {
-    label: t('Critical'),
+    label: `🚨 ${t('Critical')}`,
     value: 'critical',
   },
 ];

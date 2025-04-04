@@ -115,10 +115,10 @@ const FeedMealReview = ({ dry, cowType, dataReview }: FeedMealReviewProps) => {
       const totalOfHay = (dry * 0.35) / 0.85;
       const roundTotalOfHay = parseFloat(totalOfHay.toFixed(2));
       setHayTotal(roundTotalOfHay);
-      const totalOfRefined = (dry * 0.25) / 0.35;
+      const totalOfRefined = (dry * 0.25) / 0.9;
       const roundTotalOfRefined = parseFloat(totalOfRefined.toFixed(2));
       setRefinedTotal(roundTotalOfRefined);
-      const totalOfSilage = (dry * 0.3) / 0.9;
+      const totalOfSilage = (dry * 0.3) / 0.35;
       const roundTotalOfSilage = parseFloat(totalOfSilage.toFixed(2));
       setSilageTotal(roundTotalOfSilage);
       const totalOfMinerals = (dry * 0.1) / 0.75;

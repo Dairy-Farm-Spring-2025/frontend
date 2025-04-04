@@ -16,7 +16,6 @@ const ApplicationType = () => {
     APPLICATION_TYPE_PATH.APPLICATION_TYPE,
     'GET'
   );
-  console.log('check data: ', data);
   const { t } = useTranslation();
   const columns: Column[] = [
     {
@@ -27,20 +26,15 @@ const ApplicationType = () => {
     },
   ];
 
-
   const handleOpenModalAdd = () => {
     modal.openModal();
   };
   return (
     <WhiteBackground>
-      <ButtonComponent
-
-        type="primary"
-        onClick={handleOpenModalAdd}
-      >
+      <ButtonComponent type="primary" onClick={handleOpenModalAdd}>
         {t('Create Application Type')}
       </ButtonComponent>
-      <Divider className='my-4'></Divider>
+      <Divider className="my-4"></Divider>
       <TableComponent
         columns={columns}
         dataSource={data || []}

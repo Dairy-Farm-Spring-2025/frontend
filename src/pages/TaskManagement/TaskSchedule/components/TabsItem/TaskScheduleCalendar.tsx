@@ -27,6 +27,8 @@ import PopoverTask from '../components/PopoverTask';
 import TaskCreateModal from '../components/TaskCreateModal';
 import UpdateTaskModal from '../components/UpdateTaskModal';
 import './index.scss';
+import TagComponents from '@components/UI/TagComponents';
+import { getColorByRole } from '@utils/statusRender/roleRender';
 
 const { Option } = Select;
 
@@ -96,7 +98,12 @@ const TaskScheduleCalendar: React.FC = () => {
             desc: (
               <div>
                 <p>
-                  {element?.name} - {element?.roleId?.name}
+                  {element?.name} -{' '}
+                  <TagComponents
+                    color={getColorByRole(element?.roleId?.name as any)}
+                  >
+                    {t(element?.roleId?.name)}
+                  </TagComponents>
                 </p>
               </div>
             ),
@@ -371,7 +378,7 @@ const TaskScheduleCalendar: React.FC = () => {
           <p className="text-base font-bold">{t('Select task type')}:</p>
           <SelectComponent
             search={true}
-            className="!w-[240px]"
+            className="!w-[400px]"
             options={optionsTaskType}
             optionRender={(option) => option.data.desc}
             value={selectedTaskType}

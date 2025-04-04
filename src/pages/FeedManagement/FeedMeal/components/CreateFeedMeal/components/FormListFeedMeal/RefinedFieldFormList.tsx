@@ -18,6 +18,8 @@ const RefinedFieldFormList = ({
   const { t } = useTranslation();
   const form = Form.useFormInstance();
   const detailsRefined = Form.useWatch('detailsRefined', form) || [];
+  const minValidate = refinedTotal * 0.9;
+  const maxValidate = refinedTotal * 1.1;
   const handleValidation = async () => {
     const details = form.getFieldValue('detailsRefined') || [];
     const totalQuantity = details.reduce(
@@ -25,14 +27,12 @@ const RefinedFieldFormList = ({
         sum + (Number(item?.quantity) || 0),
       0
     );
-    const min = refinedTotal * 0.8;
-    const max = refinedTotal;
-    if (totalQuantity < min || totalQuantity > max) {
+    if (totalQuantity < minValidate || totalQuantity > maxValidate) {
       return Promise.reject(
         new Error(
           t('total_quantity_range', {
-            min: min.toFixed(2),
-            max: max.toFixed(2),
+            min: minValidate.toFixed(2),
+            max: maxValidate.toFixed(2),
           })
         )
       );
@@ -43,7 +43,7 @@ const RefinedFieldFormList = ({
     <Form.List name={'detailsRefined'}>
       {(fields, { add, remove }) => (
         <>
-          <Title className="text-xl no-underline">{t('refined')}</Title>
+          <Title className="text-xl no-underline">{t('refined')} (25%)</Title>
           {fields.map(({ key, name, ...restField }, index) => {
             const currentSelected = detailsRefined[index]?.itemId;
             // Build an array of selected values from the other fields
@@ -108,15 +108,12 @@ const RefinedFieldFormList = ({
                 (acc: any, field: any) => acc + Number(field?.quantity || 0),
                 0
               );
-              if (
-                totalQuantity < refinedTotal * 0.8 ||
-                totalQuantity > refinedTotal
-              ) {
+              if (totalQuantity < minValidate || totalQuantity > maxValidate) {
                 return (
                   <div style={{ color: 'red' }}>
                     {t('total_quantity_range', {
-                      min: (refinedTotal * 0.8).toFixed(2),
-                      max: refinedTotal.toFixed(2),
+                      min: minValidate.toFixed(2),
+                      max: maxValidate.toFixed(2),
                     })}
                   </div>
                 );
@@ -124,8 +121,8 @@ const RefinedFieldFormList = ({
               return (
                 <div style={{ color: 'green' }}>
                   {t('total_quantity_range', {
-                    min: (refinedTotal * 0.8).toFixed(2),
-                    max: refinedTotal.toFixed(2),
+                    min: minValidate.toFixed(2),
+                    max: maxValidate.toFixed(2),
                   })}
                 </div>
               );

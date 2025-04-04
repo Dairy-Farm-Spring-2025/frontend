@@ -127,7 +127,9 @@ const UpdateTaskModal = ({
 
   return (
     <ModalComponent
-      title={t('Edit task')}
+      title={t('Edit task {{taskName}}', {
+        taskName: dataTaskDetail?.taskTypeId?.name,
+      })}
       open={modal.open}
       onCancel={handleCloseModal}
       loading={isLoadingTask}

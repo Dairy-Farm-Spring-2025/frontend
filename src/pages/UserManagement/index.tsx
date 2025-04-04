@@ -53,7 +53,7 @@ const ListUser = () => {
       render: (_, record) => (
         <SelectComponent
           value={record.roleId?.id?.toString()} // Lấy giá trị id thay vì object
-          options={role}
+          options={role()}
           style={{ width: 130 }}
           onChange={(value) => handleChangeRole(record.id, value)}
         />

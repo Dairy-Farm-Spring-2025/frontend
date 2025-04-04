@@ -1,5 +1,7 @@
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
-import { Card, Form, Space, Tag } from 'antd'; // 🆕 Thêm Input
+import FormItemComponent from '@components/Form/Item/FormItemComponent';
+import { APPLICATION_PATH } from '@service/api/Application/applicationApi';
+import { Form, Space, Tag } from 'antd'; // 🆕 Thêm Input
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ButtonComponent from '../../../../components/Button/ButtonComponent';
@@ -13,7 +15,7 @@ import useFetcher from '../../../../hooks/useFetcher';
 import useToast from '../../../../hooks/useToast';
 import { Application } from '../../../../model/ApplicationType/application';
 import { formatDateHour } from '../../../../utils/format';
-import { APPLICATION_PATH } from '@service/api/Application/applicationApi';
+import LabelForm from '@components/LabelForm/LabelForm';
 
 interface ModalDetailApplicationProps {
   modal: any;
@@ -71,13 +73,13 @@ const ModalDetailApplication = ({
     }
 
     try {
-      await approvalRequest({
+      const response = await approvalRequest({
         body: {
           approvalStatus: 'approve',
           commentApprove: comment,
         },
       });
-      toast.showSuccess(t('Approve success'));
+      toast.showSuccess(response.message || t('Approve success'));
 
       mutateEdit();
       handleClose();
@@ -88,13 +90,13 @@ const ModalDetailApplication = ({
 
   const handleReject = async () => {
     try {
-      await approvalRequest({
+      const response = await approvalRequest({
         body: {
           approvalStatus: 'reject',
           commentApprove: comment,
         },
       });
-      toast.showSuccess(t('Reject success'));
+      toast.showSuccess(response.message || t('Reject success'));
 
       mutateEdit();
       handleClose();
@@ -155,14 +157,18 @@ const ModalDetailApplication = ({
       key: 'requestBy',
       label: t('Requested By'),
       children: data?.requestBy?.name || 'N/A',
-      span: 1,
+      span: 3,
     },
-    {
-      key: 'approveBy',
-      label: t('Approved By'),
-      children: data?.approveBy?.name || '',
-      span: 1,
-    },
+    ...(data?.approveBy
+      ? [
+          {
+            key: 'approveBy',
+            label: t('Approved By'),
+            children: data?.approveBy?.name || '',
+            span: 3,
+          },
+        ]
+      : []),
     {
       key: 'status',
       label: t('Status'),
@@ -177,7 +183,9 @@ const ModalDetailApplication = ({
 
   return (
     <ModalComponent
-      title={t('Application Details')}
+      title={t('Application details of {{userName}}', {
+        userName: data?.requestBy?.name,
+      })}
       open={modal.open}
       onCancel={handleClose}
       loading={isLoadingDetail}
@@ -189,7 +197,6 @@ const ModalDetailApplication = ({
             danger
             onClick={handleReject}
             icon={<CloseOutlined />}
-            size="large"
             disabled={data?.status === 'complete' || data?.status === 'cancel'}
           >
             {t('Cancel')}
@@ -200,7 +207,6 @@ const ModalDetailApplication = ({
             loading={isLoading}
             onClick={handleApprove}
             icon={<CheckOutlined />}
-            size="large"
             disabled={data?.status === 'complete' || data?.status === 'cancel'}
           >
             {t('Approve')}
@@ -208,18 +214,19 @@ const ModalDetailApplication = ({
         </Space>
       }
     >
-      <Card>
-        <FormComponent form={form}>
-          <DescriptionComponent items={items} column={2} />
+      <FormComponent form={form}>
+        <div className="flex flex-col gap-5">
+          <DescriptionComponent items={items} column={2} layout="horizontal" />
 
-          <Form.Item label={t('Comment')} name="commentApprove">
-            <ReactQuillComponent
-              placeholder={t('Enter your comment here...')}
-              value={comment}
-            />
-          </Form.Item>
-        </FormComponent>
-      </Card>
+          <FormItemComponent
+            label={<LabelForm>{t('Comment')}</LabelForm>}
+            name="commentApprove"
+            rules={[{ required: true }]}
+          >
+            <ReactQuillComponent value={comment} />
+          </FormItemComponent>
+        </div>
+      </FormComponent>
     </ModalComponent>
   );
 };

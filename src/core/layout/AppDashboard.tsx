@@ -339,24 +339,24 @@ const AppDashboard: React.FC = React.memo(() => {
           roleName !== 'Manager'
             ? null
             : getItem(
-              t('Task'),
-              'dairy/task-management/list',
-              <CiBoxList size={sizeIcon} />
-            ),
+                t('Task'),
+                'dairy/task-management/list',
+                <CiBoxList size={sizeIcon} />
+              ),
           roleName === 'Veterinarians'
             ? getItem(
-              t('My task'),
-              'dairy/task-management/my-task',
-              <CiBoxList size={sizeIcon} />
-            )
+                t('My task'),
+                'dairy/task-management/my-task',
+                <CiBoxList size={sizeIcon} />
+              )
             : null,
           roleName !== 'Manager'
             ? null
             : getItem(
-              t('Task type'),
-              'dairy/task-management/task-type',
-              <BiCategory size={sizeIcon} />
-            ),
+                t('Task type'),
+                'dairy/task-management/task-type',
+                <BiCategory size={sizeIcon} />
+              ),
         ]),
 
         getItem(
@@ -367,7 +367,7 @@ const AppDashboard: React.FC = React.memo(() => {
             getItem(
               t('Application'),
               'dairy/application-management/application',
-              <BiCategory size={sizeIcon} />
+              <CiBoxList size={sizeIcon} />
             ),
             getItem(
               t('Application Type'),
