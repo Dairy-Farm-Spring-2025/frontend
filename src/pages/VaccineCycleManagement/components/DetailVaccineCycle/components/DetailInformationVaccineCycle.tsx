@@ -1,158 +1,95 @@
-import { Divider, Row, Col } from 'antd';
+import DescriptionComponent from '@components/Description/DescriptionComponent';
+import { t } from 'i18next';
 import CardComponent from '../../../../../components/Card/CardComponent';
-import TagComponents from '../../../../../components/UI/TagComponents';
-import TextTitle from '../../../../../components/UI/TextTitle';
 import { VaccineCycleDetails } from '../../../../../model/Vaccine/VaccineCycle/vaccineCycle';
-import { formatInjectionSite } from '../../../../../utils/format';
-import QuillRender from '../../../../../components/UI/QuillRender';
-import Title from '@components/UI/Title';
+import {
+  formatInjectionSite,
+  formatStatusWithCamel,
+} from '../../../../../utils/format';
 
 interface DetailInformationVaccineCycleProps {
   data: VaccineCycleDetails;
 }
 
-const DetailInformationVaccineCycle = ({ data }: DetailInformationVaccineCycleProps) => {
+const DetailInformationVaccineCycle = ({
+  data,
+}: DetailInformationVaccineCycleProps) => {
   return (
-    <CardComponent title={<Title className="!text-2xl">{data?.name || 'Vaccine Cycle'}</Title>}>
-      <div className="space-y-8">
-        {/* Section 1: Vaccine Cycle Information */}
-        <div>
-          <Row gutter={[16, 16]}>
-            <Col span={8}>
-              <TextTitle
-                title={<span className="font-semibold text-gray-600">Vaccine Ingredients</span>}
-                description={
-                  <p className="text-gray-600">{data?.vaccineIngredients || 'N/A'}</p>
-                }
-              />
-            </Col>
-            <Col span={8}>
-              <TextTitle
-                title={<span className="font-semibold text-gray-600">Vaccine Type</span>}
-                description={<span className="text-gray-600">{data?.vaccineType || 'N/A'}</span>}
-              />
-            </Col>
-            <Col span={8}>
-              <TextTitle
-                title={<span className="font-semibold text-gray-600">Periodic</span>}
-                description={
-                  <div className="flex items-center gap-2">
-                    <span className="text-gray-600">{data?.numberPeriodic || 'N/A'}</span>
-                    <span className="text-gray-600">({data?.unitPeriodic || 'N/A'})</span>
-                  </div>
-                }
-              />
-            </Col>
-          </Row>
-        </div>
-        <div>
-          <Row gutter={[16, 16]}>
-            <Col span={8}>
-              <TextTitle
-                title={<span className="font-semibold text-gray-600">Dosage</span>}
-                description={
-                  <p className="text-gray-600">
-                    {data?.dosage || 'N/A'} <span className="text-gray-600">({data?.dosageUnit || 'N/A'})</span>
-                  </p>
-                }
-              />
-            </Col>
-            <Col span={8}>
-              <TextTitle
-                title={<span className="font-semibold text-gray-600">Injection Site</span>}
-                description={
-                  <span className="text-gray-600">{formatInjectionSite(data?.injectionSite) || 'N/A'}</span>
-                }
-              />
-            </Col>
-            <Col span={8}>
-              <TextTitle
-                title={<span className="font-semibold text-gray-600">First Injection Month</span>}
-                description={<span className="text-gray-600">{data?.firstInjectionMonth || 'N/A'}</span>}
-              />
-            </Col>
-          </Row>
-        </div>
-        <div className="mb-4">
-          <TextTitle
-            title={<span className="font-semibold text-gray-600">Description</span>}
-            description={
-              <QuillRender
-                description={data?.description || 'No Description'}
-                className="prose max-w-full p-4 bg-gray-50 rounded-lg"
-              />
-            }
-          />
-        </div>
-        {/* Section 2: Item Details */}
-        <div>
-          <Title className="!text-xl mb-4">Item Details</Title>
-          <Row gutter={[16, 16]} className="mb-4">
-            <Col span={24}>
-              <TextTitle
-                title={<span className="font-semibold text-gray-600">Item Name</span>}
-                description={
-                  <div className="flex items-center gap-4">
-                    <span className="text-gray-700">{data?.itemEntity?.name || 'N/A'}</span>
-                    <TagComponents color={data?.itemEntity?.status === 'available' ? 'green' : 'red'}>
-                      {data?.itemEntity?.status || 'N/A'}
-                    </TagComponents>
-                    <TagComponents color="blue" className="flex items-center gap-2">
-                      <span>{data?.itemEntity?.quantity || '0'}</span>
-                      <span className="text-gray-500">({data?.itemEntity?.unit || 'N/A'})</span>
-                    </TagComponents>
-                  </div>
-                }
-              />
-            </Col>
-            <Col span={24}>
-              <TextTitle
-                title={<span className="font-semibold text-gray-600">Description</span>}
-                description={
-                  <span className="text-gray-600">{data?.itemEntity?.description || 'No Description'}</span>
-                }
-              />
-            </Col>
-          </Row>
-        </div>
-
-        {/* Section 3: Storage Information */}
-        <div>
-          <Title className="!text-xl mb-4">Storage Information</Title>
-          <Row gutter={[16, 16]}>
-            <Col span={12}>
-              <CardComponent
-                title={<span className="font-semibold text-gray-600">Category</span>}
-                className="h-fit shadow-sm border border-gray-200"
-              >
-                <div className="space-y-2">
-                  <p className="text-gray-600">
-                    <span className="font-medium">Name:</span> {data?.itemEntity?.categoryEntity?.name || 'N/A'}
-                  </p>
-                  {/* Nếu có thêm các field khác trong categoryEntity, bạn có thể thêm ở đây */}
+    <CardComponent className="!text-base !text-left">
+      {/* Section 1: Vaccine Cycle Information */}
+      <div className="flex flex-col gap-4">
+        <DescriptionComponent
+          className="!shadow-none"
+          items={[
+            {
+              label: t('Vaccine Ingredients'),
+              children: (
+                <p className="text-gray-600">
+                  {data?.vaccineIngredients || 'N/A'}
+                </p>
+              ),
+            },
+            {
+              label: t('Vaccine Type'),
+              children: (
+                <span className="text-gray-600">
+                  {t(formatStatusWithCamel(data?.vaccineType)) || 'N/A'}
+                </span>
+              ),
+            },
+            {
+              label: t('Number Periodic'),
+              children: (
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-600">
+                    {data?.numberPeriodic || 'N/A'}
+                  </span>
+                  <span className="text-gray-600">
+                    ({t(formatStatusWithCamel(data?.unitPeriodic)) || 'N/A'})
+                  </span>
                 </div>
-              </CardComponent>
-            </Col>
-            <Col span={12}>
-              <CardComponent
-                title={<span className="font-semibold text-gray-600">Warehouse</span>}
-                className="h-fit shadow-sm border border-gray-200"
-              >
-                <div className="space-y-2">
-                  <p className="text-gray-600">
-                    <span className="font-medium">Name:</span> {data?.itemEntity?.warehouseLocationEntity?.name || 'N/A'}
-                  </p>
-                  <p className="text-gray-600">
-                    <span className="font-medium">Type:</span> {data?.itemEntity?.warehouseLocationEntity?.type || 'N/A'}
-                  </p>
-                  <p className="text-gray-600">
-                    <span className="font-medium">Description:</span> {data?.itemEntity?.warehouseLocationEntity?.description || 'N/A'}
-                  </p>
+              ),
+            },
+            {
+              label: t('Dosage'),
+              children: (
+                <p className="text-gray-600">
+                  {data?.dosage || 'N/A'}{' '}
+                  <span className="text-gray-600">
+                    ({data?.dosageUnit || 'N/A'})
+                  </span>
+                </p>
+              ),
+            },
+            {
+              label: t('Injection Site'),
+              children: (
+                <span className="text-gray-600">
+                  {t(formatInjectionSite(data?.injectionSite)) || 'N/A'}
+                </span>
+              ),
+            },
+            {
+              label: t('First Injection Month'),
+              children: (
+                <span className="text-gray-600">
+                  {data?.firstInjectionMonth || 'N/A'}
+                </span>
+              ),
+            },
+            {
+              label: t('Item'),
+              children: (
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-700">
+                    {data?.itemEntity?.name || 'N/A'}
+                  </span>
                 </div>
-              </CardComponent>
-            </Col>
-          </Row>
-        </div>
+              ),
+              span: 3,
+            },
+          ]}
+        />
       </div>
     </CardComponent>
   );

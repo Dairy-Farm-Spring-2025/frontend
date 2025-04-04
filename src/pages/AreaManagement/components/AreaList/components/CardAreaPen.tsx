@@ -126,16 +126,14 @@ const CardAreaPen = ({ element, handleEdit }: CardAreaPenProps) => {
             <TextTitle
               title={t('Max pen')}
               description={
-                <p>{element?.area?.maxPen ? element?.area?.maxPen : 'N/A'}</p>
+                <p>{element?.area?.maxPen ? element?.area?.maxPen : 0}</p>
               }
             />
             <TextTitle
               title={t('Number in row')}
               description={
                 <p>
-                  {element?.area?.numberInRow
-                    ? element?.area?.numberInRow
-                    : 'N/A'}
+                  {element?.area?.numberInRow ? element?.area?.numberInRow : 0}
                 </p>
               }
             />
@@ -145,25 +143,21 @@ const CardAreaPen = ({ element, handleEdit }: CardAreaPenProps) => {
                 <p>
                   {element?.area?.occupiedPens
                     ? element?.area?.occupiedPens
-                    : 'N/A'}
+                    : 0}
                 </p>
               }
             />
             <TextTitle
               title={t('Empty pens')}
               description={
-                <p>
-                  {element?.area?.emptyPens ? element?.area?.emptyPens : 'N/A'}
-                </p>
+                <p>{element?.area?.emptyPens ? element?.area?.emptyPens : 0}</p>
               }
             />
             <TextTitle
               title={t('Damaged pens')}
               description={
                 <p>
-                  {element?.area?.damagedPens
-                    ? element?.area?.damagedPens
-                    : 'N/A'}
+                  {element?.area?.damagedPens ? element?.area?.damagedPens : 0}
                 </p>
               }
             />

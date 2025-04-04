@@ -1,5 +1,5 @@
 import { Cow } from '@model/Cow/Cow';
-import { StatusItem, Unit } from '../../Warehouse/items';
+import { Item, Unit } from '../../Warehouse/items';
 import { CowType } from '@model/Cow/CowType';
 import { UserProfileData } from '@model/User';
 
@@ -28,31 +28,14 @@ export type VaccineCycleDetails = {
   name: string;
   description: string;
   dosageUnit: Unit;
-  dosage: 0;
+  dosage: number;
   injectionSite: InjectionSite;
   vaccineIngredients: string;
   vaccineType: string;
   numberPeriodic: number;
-  unitPeriodic: string;
+  unitPeriodic: 'days' | 'months' | 'weeks' | 'years';
   firstInjectionMonth: number;
-  itemEntity: {
-    itemId: 0;
-    name: string;
-    description: string;
-    status: StatusItem;
-    unit: Unit;
-    quantity: number;
-    categoryEntity: {
-      categoryId: number;
-      name: string;
-    };
-    warehouseLocationEntity: {
-      warehouseLocationId: number;
-      name: string;
-      description: string;
-      type: string;
-    };
-  };
+  itemEntity: Item;
   vaccineCycleEntity: string;
 };
 
@@ -60,27 +43,19 @@ export type VaccineCycle = {
   vaccineCycleId: number;
   name: string;
   description: string;
-  cowTypeEntity: {
-    cowTypeId: number;
-    name: string;
-    description: string;
-    status: 'exist' | 'notExist';
-  };
+  cowTypeEntity: CowType;
   vaccineCycleDetails: VaccineCycleDetails[];
 };
 export type VaccineInjection = {
   id: string;
   cowEntity: Cow;
-  cowTypeEntity: {
-    cowTypeEntity: CowType
-  };
+  cowTypeEntity: CowType;
   vaccineCycleDetail: VaccineCycleDetails;
   injectionDate: string;
-  administeredBy: UserProfileData
+  administeredBy: UserProfileData;
   status: string;
   description: string;
-
-}
+};
 export type InjectionSite =
   | 'leftArm'
   | 'rightArm'
