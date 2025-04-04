@@ -12,7 +12,7 @@ import { Health } from '@model/Cow/HealthReport';
 import { HEALTH_RECORD_PATH } from '@service/api/HealthRecord/healthRecordApi';
 import { healthSeverity } from '@service/data/health';
 import { formatAreaType } from '@utils/format';
-import { Card, Col, DatePicker, Divider, Form, Row } from 'antd';
+import { Card, Col, Divider, Form, Row } from 'antd';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -60,8 +60,6 @@ const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
       const response = await trigger({
         body: {
           ...values,
-
-
         },
       });
       toast.showSuccess(response.message || t('Update successful'));
@@ -147,7 +145,6 @@ const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
       ]}
       width={1000}
       className="rounded-lg"
-
     >
       <FormComponent form={form} onFinish={handleFinish} layout="vertical">
         <div className="p-6 space-y-6">
@@ -206,7 +203,6 @@ const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
                 __html: data?.symptoms || t('No data'),
               }}
             />
-
 
             <FormItemComponent
               name="severity"
@@ -306,21 +302,14 @@ const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
             <Title className="!text-2xl mb-6">{t('Date Range')}</Title>
             <Row gutter={[16, 16]}>
               <Col span={12}>
-
                 <LabelForm>{t('Start Date')}</LabelForm>
-                <div
-                  className="prose mb-6"
-                />
+                <div className="prose mb-6" />
                 {data?.startDate || t('N/A')}
-
               </Col>
               <Col span={12}>
                 <LabelForm>{t('End Date')}</LabelForm>
-                <div
-                  className="prose mb-6"
-                />
+                <div className="prose mb-6" />
                 {data?.endDate || t('N/A')}
-
               </Col>
             </Row>
           </Card>

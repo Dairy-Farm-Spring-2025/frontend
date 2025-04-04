@@ -6,6 +6,7 @@ import LabelForm from '@components/LabelForm/LabelForm';
 import ModalComponent from '@components/Modal/ModalComponent';
 import CardSelectArea from '@components/Select/components/CardSelectArea';
 import SelectComponent from '@components/Select/SelectComponent';
+import TagComponents from '@components/UI/TagComponents';
 import useFetcher from '@hooks/useFetcher';
 import { ModalActionProps } from '@hooks/useModal';
 import useRequiredForm from '@hooks/useRequiredForm';
@@ -19,6 +20,7 @@ import { PRIORITY_DATA } from '@service/data/priority';
 import { SHIFT_TASK } from '@service/data/shiftData';
 import { formatDateHour, formatStatusWithCamel } from '@utils/format';
 import { getAvatar } from '@utils/getImage';
+import { getColorByRole } from '@utils/statusRender/roleRender';
 import { Avatar, Divider, Form } from 'antd';
 import dayjs from 'dayjs';
 import { t } from 'i18next';
@@ -165,7 +167,12 @@ const TaskCreateModal = ({
               return (
                 <div>
                   <p>
-                    {taskType?.name} - {taskType?.roleId?.name}
+                    {taskType?.name} -{' '}
+                    <TagComponents
+                      color={getColorByRole(taskType?.roleId?.name as any)}
+                    >
+                      {t(taskType?.roleId?.name)}
+                    </TagComponents>
                   </p>
                 </div>
               );

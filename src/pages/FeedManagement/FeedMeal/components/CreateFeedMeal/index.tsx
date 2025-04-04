@@ -1,7 +1,3 @@
-import { Form, SelectProps, Spin, Steps } from 'antd';
-import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { IoMdArrowRoundBack } from 'react-icons/io';
 import ButtonComponent from '@components/Button/ButtonComponent';
 import FormComponent from '@components/Form/FormComponent';
 import FormItemComponent from '@components/Form/Item/FormItemComponent';
@@ -14,10 +10,14 @@ import WhiteBackground from '@components/UI/WhiteBackground';
 import useFetcher from '@hooks/useFetcher';
 import useToast from '@hooks/useToast';
 import { CowType } from '@model/Cow/CowType';
-import { COW_STATUS_DRY_MATTER } from '@service/data/cowStatus';
-import FeedMealForm from './components/FeedMealForm';
 import { COW_TYPE_PATH } from '@service/api/CowType/cowType';
 import { FEED_PATH } from '@service/api/Feed/feedApi';
+import { COW_STATUS_DRY_MATTER } from '@service/data/cowStatus';
+import { Form, SelectProps, Spin, Steps } from 'antd';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { IoMdArrowRoundBack } from 'react-icons/io';
+import FeedMealForm from './components/FeedMealForm';
 import FeedMealReview from './components/FeedMealReview';
 
 const CreateFeedMeal = () => {
@@ -96,7 +96,8 @@ const CreateFeedMeal = () => {
 
   const step: StepItem[] = [
     {
-      title: t('Calculate dry matter'),
+      title: `🧮 ${t('Calculate dry matter')}`,
+      description: t('Calculate dry matter base on cow type and cow status'),
       content: (
         <FormComponent form={form} onFinish={onFinishDryMatter}>
           <div className="grid grid-cols-3 gap-10 w-2/3">
@@ -138,7 +139,8 @@ const CreateFeedMeal = () => {
       ),
     },
     {
-      title: t('Enter the feed meal details'),
+      title: `🍽️ ${t('Enter the feed meal details')}`,
+      description: t('Enter feed meal information base on dry matter result'),
       content: (
         <div className="flex flex-col gap-2">
           {loadingDryMatter ? (
@@ -150,18 +152,22 @@ const CreateFeedMeal = () => {
             </div>
           ) : dry > 0 ? (
             <div className="flex flex-col gap-5">
-              <ButtonComponent
-                className="!shadow-md"
-                icon={<IoMdArrowRoundBack size={20} />}
-                onClick={handleBack}
-              >
-                Back
-              </ButtonComponent>
-              <div className="flex gap-2">
-                <p className="font-semibold text-lg">{t('Dry matter')}:</p>
-                <TagComponents color="green-inverse" className="text-lg">
-                  <span className="font-bold">{dry}</span> (kilogram)
-                </TagComponents>
+              <div className="flex items-center gap-5">
+                <ButtonComponent
+                  className="!shadow-md"
+                  icon={<IoMdArrowRoundBack size={20} />}
+                  onClick={handleBack}
+                  type="default"
+                  buttonType="volcano"
+                >
+                  {t('Back')}
+                </ButtonComponent>
+                <div className="flex gap-2">
+                  <p className="font-semibold text-lg">{t('Dry matter')}:</p>
+                  <TagComponents color="green-inverse" className="text-xl">
+                    <span className="font-bold">{dry}</span> ({t('kilogram')})
+                  </TagComponents>
+                </div>
               </div>
               {checkDryMatter && (
                 <div>
@@ -183,21 +189,26 @@ const CreateFeedMeal = () => {
       ),
     },
     {
-      title: t('review', { defaultValue: 'Review' }),
+      title: `📄 ${t('review', { defaultValue: 'Review' })}`,
+      description: t('Review information that is entered before creating new'),
       content: (
         <div className="flex flex-col gap-5">
-          <ButtonComponent
-            className="!shadow-md"
-            icon={<IoMdArrowRoundBack size={20} />}
-            onClick={handleBackFromReview}
-          >
-            Back
-          </ButtonComponent>
-          <div className="flex gap-2">
-            <p className="font-semibold text-lg">{t('Dry matter')}:</p>
-            <TagComponents color="green-inverse" className="text-lg">
-              <span className="font-bold">{dry}</span> (kilogram)
-            </TagComponents>
+          <div className="flex items-center gap-10">
+            <ButtonComponent
+              className="!shadow-md"
+              icon={<IoMdArrowRoundBack size={20} />}
+              onClick={handleBackFromReview}
+              type="default"
+              buttonType="volcano"
+            >
+              {t('Back')}
+            </ButtonComponent>
+            <div className="flex gap-2">
+              <p className="font-semibold text-lg">{t('Dry matter')}:</p>
+              <TagComponents color="green-inverse" className="text-lg">
+                <span className="font-bold">{dry}</span> (kilogram)
+              </TagComponents>
+            </div>
           </div>
           <FeedMealReview
             cowType={cowTypes as any[]}
@@ -212,10 +223,10 @@ const CreateFeedMeal = () => {
   return (
     <AnimationAppear>
       <WhiteBackground>
-        <Steps current={currentStep}>
-          {step.map((element, index) => (
+        <Steps current={currentStep} items={step}>
+          {/* {step.map((element, index) => (
             <Steps.Step key={index} title={element.title} />
-          ))}
+          ))} */}
         </Steps>
         <div className="mt-10">{step[currentStep].content}</div>
       </WhiteBackground>

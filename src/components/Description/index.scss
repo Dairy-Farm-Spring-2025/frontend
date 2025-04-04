@@ -1,2 +1,25 @@
-.ant-descriptions {
+:where(
+    .css-dev-only-do-not-override-1570g81
+  ).ant-descriptions.ant-descriptions-bordered
+  > .ant-descriptions-view {
+  border: 1px solid #d4d4d4;
+  overflow: hidden;
+}
+
+:where(
+    .css-dev-only-do-not-override-1570g81
+  ).ant-descriptions.ant-descriptions-bordered
+  > .ant-descriptions-view
+  .ant-descriptions-row {
+  border-bottom: 1px solid #d4d4d4;
+}
+:where(
+    .css-dev-only-do-not-override-1570g81
+  ).ant-descriptions.ant-descriptions-bordered
+  > .ant-descriptions-view
+  .ant-descriptions-row
+  > .ant-descriptions-item-label {
+  /* color: rgba(0, 0, 0, 0.65); */
+  background-color: #eeeeee;
+  border-right: 1px solid #d4d4d4;
 }

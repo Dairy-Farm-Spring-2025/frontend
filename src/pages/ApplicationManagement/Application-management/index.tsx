@@ -1,5 +1,6 @@
+import TagComponents from '@components/UI/TagComponents';
+import { Application } from '@model/ApplicationType/application';
 import { APPLICATION_PATH } from '@service/api/Application/applicationApi';
-import { Tag } from 'antd';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ButtonComponent from '../../../components/Button/ButtonComponent';
@@ -9,11 +10,11 @@ import TableComponent, {
 import WhiteBackground from '../../../components/UI/WhiteBackground';
 import useFetcher from '../../../hooks/useFetcher';
 import useModal from '../../../hooks/useModal';
-import { formatAreaType } from '../../../utils/format';
+import { formatDateHour, formatStatusWithCamel } from '../../../utils/format';
 import ModalDetailApplication from './components/ModalDetailApplication';
 
-const Application = () => {
-  const { data, isLoading, mutate } = useFetcher<any>(
+const ApplicationListing = () => {
+  const { data, isLoading, mutate } = useFetcher<Application[]>(
     APPLICATION_PATH.APPLICATION,
     'GET'
   );
@@ -43,30 +44,45 @@ const Application = () => {
       dataIndex: 'title',
       key: 'title',
       title: t('Title'),
-      render: (data) => formatAreaType(data),
+      render: (data) => (
+        <p
+          className="text-blue-600 cursor-pointer underline underline-offset-2 text-base font-bold"
+          onClick={() => handleOpenModalDetail(data)}
+        >
+          {data}
+        </p>
+      ),
+      width: '20%',
+    },
+    {
+      dataIndex: 'content',
+      key: 'content',
+      title: t('Content'),
+      render: (data) => data,
+      width: '20%',
     },
     {
       dataIndex: 'fromDate',
       key: 'fromDate',
       title: t('From Date'),
-      // render: (element: string) => <TextLink to={""}>{element}</TextLink>,
+      render: (data) => formatDateHour(data),
     },
     {
       dataIndex: 'toDate',
       key: 'toDate',
       title: t('To Date'),
-      // render: (element: string) => <TextLink to={""}>{element}</TextLink>,
+      render: (data) => formatDateHour(data),
     },
     {
       dataIndex: 'status',
       key: 'status',
       title: t('Status'),
       render: (status: string) => (
-        <Tag
+        <TagComponents
           color={statusColor[status as keyof typeof statusColor] || 'default'}
         >
-          {t(status)}
-        </Tag>
+          {t(formatStatusWithCamel(status))}
+        </TagComponents>
       ),
     },
     {
@@ -81,14 +97,6 @@ const Application = () => {
           >
             {t('View Detail')}
           </ButtonComponent>
-          {/* <PopconfirmComponent
-                        title={'Delete?'}
-                        onConfirm={() => onConfirm(data)}
-                    >
-                        <ButtonComponent type="primary" danger>
-                            {t("Delete")}
-                        </ButtonComponent>
-                    </PopconfirmComponent> */}
         </div>
       ),
     },
@@ -101,11 +109,9 @@ const Application = () => {
         dataSource={data || []}
         loading={isLoading}
       />
-      {id !== '' && (
-        <ModalDetailApplication id={id} modal={modalDetail} mutate={mutate} />
-      )}
+      <ModalDetailApplication id={id} modal={modalDetail} mutate={mutate} />
     </WhiteBackground>
   );
 };
 
-export default Application;
+export default ApplicationListing;

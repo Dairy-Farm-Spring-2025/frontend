@@ -40,20 +40,16 @@ const ListWorker = () => {
       width: '25%',
     },
     {
-      dataIndex: 'roleId',
-      key: 'roleId',
-      title: t('Role'),
-      render: (role: any) => role?.name,
-    },
-    {
       dataIndex: 'status',
       key: 'status',
       title: t('Status'),
       width: '10%',
       align: 'center',
       render: (data) => (
-        <TagComponents color="geekblue">
-          {formatStatusWithCamel(data)}
+        <TagComponents
+          color={data === 'active' ? 'green-inverse' : 'red-inverse'}
+        >
+          {t(formatStatusWithCamel(data))}
         </TagComponents>
       ),
     },

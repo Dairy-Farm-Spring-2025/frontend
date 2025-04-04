@@ -11,7 +11,6 @@ import {
 } from 'react-router-dom';
 
 import ApplicationManagement from '@pages/ApplicationManagement';
-import Application from '@pages/ApplicationManagement/Application-management';
 import ApplicationType from '@pages/ApplicationManagement/ApplicationType';
 import ErrorPageNotification from '@pages/Error';
 import TaskManagement from '@pages/TaskManagement';
@@ -22,10 +21,10 @@ import ListNotification from '@pages/NotificationManagement/components/List/List
 
 import ListVaccineInjection from '@pages/VaccineCycleManagement/components/ListVaccineInjection';
 
-
 import AuthCallback from '@pages/Login/components/AuthCallback';
 import ImportCow from '@pages/CowManagement/components/ImportCow/components/ImportCow';
 import ListCowImport from '@pages/CowManagement/components/ImportCow';
+import ApplicationListing from '@pages/ApplicationManagement/Application-management';
 
 const NotificationManagement = lazy(
   () => import('@pages/NotificationManagement')
@@ -142,7 +141,10 @@ const DetailVaccineCycle = lazy(
   () => import('@pages/VaccineCycleManagement/components/DetailVaccineCycle')
 );
 const DetailVaccineInjection = lazy(
-  () => import('@pages/VaccineCycleManagement/components/ListVaccineInjection/components/DetailVaccineInjection')
+  () =>
+    import(
+      '@pages/VaccineCycleManagement/components/ListVaccineInjection/components/DetailVaccineInjection'
+    )
 );
 const WarehouseManagement = lazy(() => import('@pages/WarehouseManagement'));
 const Category = lazy(
@@ -413,9 +415,18 @@ const AppRouting = () => {
           children: [
             { path: '', element: <Navigate to={'list'} /> },
             { path: 'list', element: SuspenseWrapper(<ListVaccineCycle />) },
-            { path: 'cycle/:id', element: SuspenseWrapper(<DetailVaccineCycle />) },
-            { path: 'vaccine-injection-list', element: SuspenseWrapper(<ListVaccineInjection />) },
-            { path: 'injection/:id', element: SuspenseWrapper(<DetailVaccineInjection />) },
+            {
+              path: 'cycle/:id',
+              element: SuspenseWrapper(<DetailVaccineCycle />),
+            },
+            {
+              path: 'vaccine-injection-list',
+              element: SuspenseWrapper(<ListVaccineInjection />),
+            },
+            {
+              path: 'injection/:id',
+              element: SuspenseWrapper(<DetailVaccineInjection />),
+            },
           ],
         },
         {
@@ -511,7 +522,7 @@ const AppRouting = () => {
 
             {
               path: 'application',
-              element: SuspenseWrapper(<Application />),
+              element: SuspenseWrapper(<ApplicationListing />),
             },
             {
               path: 'application-type',

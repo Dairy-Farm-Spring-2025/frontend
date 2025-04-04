@@ -20,6 +20,8 @@ const HayFieldFormList = ({
   const { t } = useTranslation();
   const form = Form.useFormInstance();
   const detailsHay = Form.useWatch('detailsHay', form) || [];
+  const minValidate = hayTotal * 0.9;
+  const maxValidate = hayTotal * 1.1;
   const handleValidation = async () => {
     const details = form.getFieldValue('detailsHay') || [];
     const totalQuantity = details.reduce(
@@ -27,14 +29,12 @@ const HayFieldFormList = ({
         sum + (Number(item?.quantity) || 0),
       0
     );
-    const min = hayTotal * 0.8;
-    const max = hayTotal;
-    if (totalQuantity < min || totalQuantity > max) {
+    if (totalQuantity < minValidate || totalQuantity > maxValidate) {
       return Promise.reject(
         new Error(
           t('total_quantity_range', {
-            min: min.toFixed(2),
-            max: max.toFixed(2),
+            min: minValidate.toFixed(2),
+            max: maxValidate.toFixed(2),
           })
         )
       );
@@ -45,7 +45,7 @@ const HayFieldFormList = ({
     <Form.List name={'detailsHay'}>
       {(fields, { add, remove }) => (
         <>
-          <Title className="text-xl no-underline">{t('hay')}</Title>
+          <Title className="text-xl no-underline">{t('hay')} (35%)</Title>
           {fields.map(({ key, name, ...restField }, index) => {
             const currentSelected = detailsHay[index]?.itemId;
             const selectedOthers = detailsHay
@@ -107,12 +107,12 @@ const HayFieldFormList = ({
                 (acc: any, field: any) => acc + Number(field?.quantity || 0),
                 0
               );
-              if (totalQuantity < hayTotal * 0.8 || totalQuantity > hayTotal) {
+              if (totalQuantity < minValidate || totalQuantity > maxValidate) {
                 return (
                   <div style={{ color: 'red' }}>
                     {t('total_quantity_range', {
-                      min: (hayTotal * 0.8).toFixed(2),
-                      max: hayTotal.toFixed(2),
+                      min: minValidate.toFixed(2),
+                      max: maxValidate.toFixed(2),
                     })}
                   </div>
                 );
@@ -120,8 +120,8 @@ const HayFieldFormList = ({
               return (
                 <div style={{ color: 'green' }}>
                   {t('total_quantity_range', {
-                    min: (hayTotal * 0.8).toFixed(2),
-                    max: hayTotal.toFixed(2),
+                    min: minValidate.toFixed(2),
+                    max: maxValidate.toFixed(2),
                   })}
                 </div>
               );

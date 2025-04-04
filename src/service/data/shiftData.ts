@@ -18,11 +18,11 @@ export const shiftData = () => [
 export const SHIFT_TASK = () => [
   {
     value: 'dayShift',
-    label: t('Day shift'),
+    label: `${t('Day shift')} 🌞`,
   },
   {
     value: 'nightShift',
-    label: t('Night shift'),
+    label: `${t('Night shift')} 🌙`,
   },
 ];
 

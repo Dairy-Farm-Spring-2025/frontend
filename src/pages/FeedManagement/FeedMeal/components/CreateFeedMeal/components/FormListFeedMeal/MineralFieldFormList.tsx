@@ -18,6 +18,8 @@ const MineralFieldFormList = ({
   const { t } = useTranslation();
   const form = Form.useFormInstance();
   const detailsMineral = Form.useWatch('detailsMineral', form) || [];
+  const minValidate = mineralTotal * 0.9;
+  const maxValidate = mineralTotal * 1.1;
   const handleValidation = async () => {
     const details = form.getFieldValue('detailsMineral') || [];
     const totalQuantity = details.reduce(
@@ -25,14 +27,12 @@ const MineralFieldFormList = ({
         sum + (Number(item?.quantity) || 0),
       0
     );
-    const min = mineralTotal * 0.8;
-    const max = mineralTotal;
-    if (totalQuantity < min || totalQuantity > max) {
+    if (totalQuantity < minValidate || totalQuantity > maxValidate) {
       return Promise.reject(
         new Error(
           t('total_quantity_range', {
-            min: min.toFixed(2),
-            max: max.toFixed(2),
+            min: minValidate.toFixed(2),
+            max: maxValidate.toFixed(2),
           })
         )
       );
@@ -43,7 +43,7 @@ const MineralFieldFormList = ({
     <Form.List name={'detailsMineral'}>
       {(fields, { add, remove }) => (
         <>
-          <Title className="text-xl no-underline">{t('minerals')}</Title>
+          <Title className="text-xl no-underline">{t('minerals')} (10%)</Title>
           {fields.map(({ key, name, ...restField }, index) => {
             const currentSelected = detailsMineral[index]?.itemId;
             // Build an array of selected values from the other fields
@@ -108,15 +108,12 @@ const MineralFieldFormList = ({
                 (acc: any, field: any) => acc + Number(field?.quantity || 0),
                 0
               );
-              if (
-                totalQuantity < mineralTotal * 0.8 ||
-                totalQuantity > mineralTotal
-              ) {
+              if (totalQuantity < minValidate || totalQuantity > maxValidate) {
                 return (
                   <div style={{ color: 'red' }}>
                     {t('total_quantity_range', {
-                      min: (mineralTotal * 0.8).toFixed(2),
-                      max: mineralTotal.toFixed(2),
+                      min: minValidate.toFixed(2),
+                      max: maxValidate.toFixed(2),
                     })}
                   </div>
                 );
@@ -124,8 +121,8 @@ const MineralFieldFormList = ({
               return (
                 <div style={{ color: 'green' }}>
                   {t('total_quantity_range', {
-                    min: (mineralTotal * 0.8).toFixed(2),
-                    max: mineralTotal.toFixed(2),
+                    min: minValidate.toFixed(2),
+                    max: maxValidate.toFixed(2),
                   })}
                 </div>
               );

@@ -72,7 +72,7 @@ const ModalCreateUser = ({ mutate, modal }: ModalCreateUserProps) => {
             name="roleId"
             label={<LabelForm>{t('role')}:</LabelForm>}
           >
-            <Select options={role} />
+            <Select options={role()} />
           </FormItemComponent>
         </FormComponent>
       </ModalComponent>
