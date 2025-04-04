@@ -549,5 +549,14 @@
   "Occupied": "Đang sử dụng",
   "Empty": "Trống",
   "pen": "Chuồng",
-  "Treatment plan": "Kế hoạch điều trị"
+  "Treatment plan": "Kế hoạch điều trị",
+  "Vaccine Type": "Loại Vắc-xin",
+  "Number Periodic": "Số lần tiêm",
+  "Unit Periodic": "Đơn vị ngày tiêm",
+  "First Injection Month": "Tháng tiêm đầu tiên",
+  "Vaccine Ingredients": "Thành phần vắc-xin",
+  "Vaccine cycle detail": "Chi tiết chu kỳ vắc-xin",
+  "For cow type": "Dành cho loại bò",
+  "Vaccine cycle informations list of {{name}}": "Danh sách các thông tin chu kỳ tiêm vắc-xin của {{name}}",
+  "The first injection month must be greater than the previous one": "Tháng tiêm đầu tiên này phải lớn hơn tháng tiêm đầu tiên trước đó"
 }

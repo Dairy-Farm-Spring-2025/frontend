@@ -1,18 +1,15 @@
+import { CategoryType } from './category';
+import { WarehouseType } from './warehouse';
+
 export type Item = {
   itemId: number;
   name: string;
   status: StatusItem;
   unit: Unit;
   quantity: number;
-  categoryEntity: {
-    categoryId: number;
-    name: string;
-  };
-  warehouseLocationEntity: {
-    warehouseLocationId: number;
-    name: string;
-    description: string;
-  };
+  categoryEntity: CategoryType;
+  warehouseLocationEntity: WarehouseType;
+  description: string;
 };
 
 export type ItemRequestBody = {

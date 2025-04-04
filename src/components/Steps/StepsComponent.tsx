@@ -11,6 +11,7 @@ export interface StepItem {
   icon?: React.ReactNode;
   onNext?: () => Promise<void> | void;
   onDone?: () => Promise<void> | void;
+  onPrevious?: () => Promise<void> | void;
 }
 
 interface StepsComponentProps extends StepProps {
@@ -26,7 +27,11 @@ const StepsComponent = ({
 }: StepsComponentProps) => {
   const [loading, setLoading] = useState(false); // Loading state for buttons
   const prev = () => {
+    const currentStep = steps[current];
     setCurrent(current - 1);
+    if (currentStep.onPrevious) {
+      currentStep.onPrevious();
+    }
   };
   const { t } = useTranslation();
   const items = steps.map((item) => ({
