@@ -21,8 +21,8 @@ import { COW_TYPE_PATH } from '@service/api/CowType/cowType';
 import DatePickerComponent from '@components/DatePicker/DatePickerComponent';
 import SelectComponent from '@components/Select/SelectComponent';
 import dayjs from 'dayjs';
-import FormItemComponent from '@components/Form/Item/FormItemComponent';
-import CreateBulkHealthRecord from './components/createBulkHealthRecord';
+
+
 
 
 const ListCowImport = () => {
@@ -37,7 +37,7 @@ const ListCowImport = () => {
     );
     const [importedCowIds, setImportedCowIds] = useState<number[]>([]);
     const [importSuccess, setImportSuccess] = useState(false);
-    const [isHealthRecordModalVisible, setIsHealthRecordModalVisible] = useState(false); // State for modal visibility
+
     const columns: Column[] = [
         {
             dataIndex: 'dateOfBirth',
@@ -307,20 +307,6 @@ const ListCowImport = () => {
                     columns={columns}
                     dataSource={reviewData ? formatSTT(reviewData) : []}
                     onDataChange={handleDataChange}
-                />
-                {importSuccess && (
-                    <ButtonComponent
-                        onClick={() => setIsHealthRecordModalVisible(true)} // Open the modal
-                        style={{ backgroundColor: 'green', color: 'white' }}
-                    >
-                        {t('Create Health Records')}
-                    </ButtonComponent>
-                )}
-                <CreateBulkHealthRecord
-                    visible={isHealthRecordModalVisible}
-                    onCancel={() => setIsHealthRecordModalVisible(false)}
-                    importedCowIds={importedCowIds}
-                    onSuccess={() => setImportSuccess(false)} // Hide the button after success
                 />
             </WhiteBackground>
         </AnimationAppear>

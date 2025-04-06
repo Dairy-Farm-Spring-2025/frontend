@@ -23,6 +23,7 @@ import { IllnessCow } from '@model/Cow/Illness';
 import { formatDateHour, formatToTitleCase } from '@utils/format';
 import HealthRecordForm from './components/SplitterSide/HealthRecordForm';
 import IllnessRecordForm from './components/SplitterSide/IllnessRecordForm';
+import InjectionForm from './components/SplitterSide/InjectionForm';
 import { HEALTH_RECORD_PATH } from '@service/api/HealthRecord/healthRecordApi';
 import { useEditToggle } from '@hooks/useEditToggle';
 
@@ -46,6 +47,7 @@ const HealthRecordCow = ({ cowId, data, mutate }: HealthRecordCowProps) => {
   const [day, setDay] = useState('');
   const [dataHealthResponse, setDataHealthResponse] = useState<any>();
   const [illness, setIllness] = useState<IllnessCow>();
+
   const { trigger: triggerUpdateHealthRecord, isLoading: loadingUpdateHealth } =
     useFetcher('update/health-record', 'PUT');
   const { trigger: triggerUpdateIllness, isLoading: isLoadingUpdateIllness } =
@@ -53,11 +55,77 @@ const HealthRecordCow = ({ cowId, data, mutate }: HealthRecordCowProps) => {
   const { isLoading: isLoadingHealthRecord, trigger: triggerHealthRecord } =
     useFetcher(HEALTH_RECORD_PATH.CREATE_HEALTH_RECORD, 'POST');
 
+  // Define handleOpenLeftSide outside useMemo for reusability
+  const handleOpenLeftSide = (
+    type: 'HEALTH_RECORD' | 'ILLNESS' | 'INJECTIONS',
+    data: HealthRecord | IllnessCow | Injections,
+    day: string
+  ) => {
+    setType(type);
+    setDay(day);
+    setDataHealthResponse(data);
+
+    if (type === 'HEALTH_RECORD') {
+      const healthData = data as HealthRecord;
+      form.setFieldsValue({
+        status: healthData.status,
+        period: healthData.period,
+        weight: healthData.weight,
+        size: healthData.size,
+        cowId: healthData?.cowEntity?.cowId || Number(cowId),
+        healthId: healthData?.healthRecordId,
+        bodyTemperature: healthData?.bodyTemperature,
+        heartRate: healthData?.heartRate,
+        respiratoryRate: healthData?.respiratoryRate,
+        ruminateActivity: healthData?.ruminateActivity,
+        description: healthData?.description,
+        chestCircumference: healthData?.chestCircumference,
+        bodyLength: healthData?.bodyLength,
+      });
+    }
+    if (type === 'ILLNESS') {
+      const illnessData = data as IllnessCow;
+      setIllness(illnessData);
+      formIllness.setFieldsValue({
+        severity: illnessData?.severity,
+        startDate: illnessData?.startDate ? dayjs(illnessData.startDate) : null,
+        endDate: illnessData?.endDate ? dayjs(illnessData.endDate) : null,
+        symptoms: illnessData?.symptoms,
+        prognosis: illnessData?.prognosis,
+        cowId: illnessData?.cowEntity?.cowId,
+        illnessId: illnessData?.illnessId,
+      });
+    }
+    if (type === 'INJECTIONS') {
+      const injectionData = data as Injections;
+      form.setFieldsValue({
+        vaccineName: injectionData.vaccineCycleDetail?.name,
+        date: injectionData.injectionDate
+          ? dayjs(injectionData.injectionDate)
+          : null,
+        administeredBy: injectionData.administeredBy?.name,
+        dosage: `${injectionData.vaccineCycleDetail?.dosage} ${injectionData.vaccineCycleDetail?.dosageUnit}`,
+        injectionSite: injectionData.vaccineCycleDetail?.injectionSite,
+        cowId: injectionData?.cowEntity?.cowId,
+        healthId: injectionData?.id,
+      });
+    }
+  };
+
+  // Type guard for Injections
+  function isInjection(data: any): data is Injections {
+    return (
+      data &&
+      typeof data === 'object' &&
+      'vaccineCycleDetail' in data &&
+      'injectionDate' in data
+    );
+  }
+
   const onFinishUpdateHealthRecord = async (values: any) => {
     const payload: HealthRecordPayload = {
       status: values.status,
       period: values.period,
-      // weight: values.weight,
       size: values.size,
       cowId: values.cowId,
       bodyLength: values.bodyLength,
@@ -111,7 +179,6 @@ const HealthRecordCow = ({ cowId, data, mutate }: HealthRecordCowProps) => {
       const payload = {
         status: values.status,
         period: values.period,
-        //  weight: values.weight,
         size: values.size,
         cowId: Number(cowId),
         bodyLength: values.bodyLength,
@@ -133,62 +200,6 @@ const HealthRecordCow = ({ cowId, data, mutate }: HealthRecordCowProps) => {
   };
 
   const items: TimelineItems[] = useMemo(() => {
-    const handleOpenLeftSide = (
-      type: 'HEALTH_RECORD' | 'ILLNESS' | 'INJECTIONS',
-      data: HealthRecord | IllnessCow | Injections,
-      day: string
-    ) => {
-      setType(type);
-      setDay(day);
-      setDataHealthResponse(data);
-      if (type === 'HEALTH_RECORD') {
-        const healthData = data as HealthRecord;
-        form.setFieldsValue({
-          status: healthData.status,
-          period: healthData.period,
-          weight: healthData.weight,
-          size: healthData.size,
-          cowId: Number(cowId),
-          healthId: healthData?.healthRecordId,
-          bodyTemperature: healthData?.bodyTemperature,
-          heartRate: healthData?.heartRate,
-          respiratoryRate: healthData?.respiratoryRate,
-          ruminateActivity: healthData?.ruminateActivity,
-          description: healthData?.description,
-          chestCircumference: healthData?.chestCircumference,
-          bodyLength: healthData?.bodyLength,
-        });
-      }
-      if (type === 'ILLNESS') {
-        const illnessData = data as IllnessCow;
-        setIllness(illnessData);
-        formIllness.setFieldsValue({
-          severity: illnessData?.severity,
-          startDate: illnessData?.startDate
-            ? dayjs(illnessData.startDate)
-            : null,
-          endDate: illnessData?.endDate ? dayjs(illnessData.endDate) : null,
-          symptoms: illnessData?.symptoms,
-          prognosis: illnessData?.prognosis,
-          cowId: illnessData?.cowEntity?.cowId,
-          illnessId: illnessData?.illnessId,
-        });
-      }
-      if (type === 'INJECTIONS') {
-        const injectionData = data as Injections;
-        form.setFieldsValue({
-          vaccineName: injectionData.vaccineCycleDetail?.name,
-          date: injectionData.injectionDate
-            ? dayjs(injectionData.injectionDate)
-            : null,
-          administeredBy: injectionData.administeredBy?.name,
-          dosage: `${injectionData.vaccineCycleDetail?.dosage} ${injectionData.vaccineCycleDetail?.dosageUnit}`,
-          injectionSite: injectionData.vaccineCycleDetail?.injectionSite,
-          cowId: injectionData?.cowEntity?.cowId,
-          healthId: injectionData?.id,
-        });
-      }
-    };
     return data.map((element) => ({
       children: (
         <div
@@ -349,28 +360,7 @@ const HealthRecordCow = ({ cowId, data, mutate }: HealthRecordCowProps) => {
               )}
               {type === 'INJECTIONS' && (
                 <div className="w-2/3">
-                  <Title className="!text-xl mb-5">Injection Details</Title>
-                  <FormComponent
-                    form={form}
-                    onFinish={onFinishUpdateHealthRecord}
-                    className="w-full"
-                  >
-                    <Form.Item label="Vaccine Name" name="vaccineName">
-                      <p>{form.getFieldValue('vaccineName')}</p>
-                    </Form.Item>
-                    <Form.Item label="Injection Date" name="date">
-                      <p>{form.getFieldValue('date')?.format('YYYY-MM-DD')}</p>
-                    </Form.Item>
-                    <Form.Item label="Administered By" name="administeredBy">
-                      <p>{form.getFieldValue('administeredBy')}</p>
-                    </Form.Item>
-                    <Form.Item label="Dosage" name="dosage">
-                      <p>{form.getFieldValue('dosage')}</p>
-                    </Form.Item>
-                    <Form.Item label="Injection Site" name="injectionSite">
-                      <p>{form.getFieldValue('injectionSite')}</p>
-                    </Form.Item>
-                  </FormComponent>
+                  <InjectionForm form={form} onBack={() => setType(null)} />
                 </div>
               )}
             </div>

@@ -30,6 +30,7 @@ export type HealthRecord = {
   cowEntity: Cow;
   chestCircumference: number;
   bodyLength: number;
+
 };
 
 export type Injections = {
