@@ -1,29 +1,29 @@
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { Divider, Form } from 'antd';
 import { useEffect, useState } from 'react';
-import ButtonComponent from '../../../../../components/Button/ButtonComponent';
-import FormComponent from '../../../../../components/Form/FormComponent';
-import FormItemComponent from '../../../../../components/Form/Item/FormItemComponent';
-import InputComponent from '../../../../../components/Input/InputComponent';
-import LabelForm from '../../../../../components/LabelForm/LabelForm';
-import ModalComponent from '../../../../../components/Modal/ModalComponent';
-import SelectComponent from '../../../../../components/Select/SelectComponent';
-import StepsComponent, {
-  StepItem,
-} from '../../../../../components/Steps/StepsComponent';
-import useFetcher from '../../../../../hooks/useFetcher';
-import { CowType } from '../../../../../model/Cow/CowType';
-import { unitOptions } from '../../../../../service/data/item';
+import ButtonComponent from '@components/Button/ButtonComponent';
+import FormComponent from '@components/Form/FormComponent';
+import FormItemComponent from '@components/Form/Item/FormItemComponent';
+import InputComponent from '@components/Input/InputComponent';
+import LabelForm from '@components/LabelForm/LabelForm';
+import ModalComponent from '@components/Modal/ModalComponent';
+import SelectComponent from '@components/Select/SelectComponent';
+import StepsComponent, { StepItem } from '@components/Steps/StepsComponent';
+import useFetcher from '@hooks/useFetcher';
+import { CowType } from '@model/Cow/CowType';
+import { unitOptions } from '@service/data/item';
 import {
   injectionSiteOptions,
   unitPeriodic,
   vaccineType,
-} from '../../../../../service/data/vaccine';
-import { Item } from '../../../../../model/Warehouse/items';
-import { VaccineCyclePayload } from '../../../../../model/Vaccine/VaccineCycle/vaccineCycle';
-import useToast from '../../../../../hooks/useToast';
-import ReactQuillComponent from '../../../../../components/ReactQuill/ReactQuillComponent';
+} from '@service/data/vaccine';
+import { Item } from '@model/Warehouse/items';
+import { VaccineCyclePayload } from '@model/Vaccine/VaccineCycle/vaccineCycle';
+import useToast from '@hooks/useToast';
+import ReactQuillComponent from '@components/ReactQuill/ReactQuillComponent';
 import { useTranslation } from 'react-i18next';
+import Title from '@components/UI/Title';
+import { VACCINE_CYCLE_PATH } from '@service/api/VaccineCycle/vaccineCycleApi';
 
 interface CreateVaccineCycleModalProps {
   modal: any;
@@ -42,7 +42,10 @@ const CreateVaccineCycleModal = ({
   const [apiBody, setApiBody] = useState<any>(null);
   const { data } = useFetcher<CowType[]>('cow-types', 'GET');
   const { data: itemData } = useFetcher<Item[]>('items', 'GET');
-  const { trigger, isLoading } = useFetcher('vaccinecycles/create', 'POST');
+  const { trigger, isLoading } = useFetcher(
+    VACCINE_CYCLE_PATH.CREATE_VACCINE_CYCLE,
+    'POST'
+  );
   const toast = useToast();
   const { t } = useTranslation();
   useEffect(() => {
@@ -55,11 +58,17 @@ const CreateVaccineCycleModal = ({
         }))
       );
       setOptionsItem(
-        itemData.map((element: Item) => ({
-          label: element.name,
-          value: element.itemId,
-          searchLabel: element.name,
-        }))
+        itemData
+          .filter(
+            (element) =>
+              element.categoryEntity.name === 'Vắc-xin' ||
+              element.categoryEntity.name === 'Vaccine'
+          )
+          .map((element: Item) => ({
+            label: element.name,
+            value: element.itemId,
+            searchLabel: element.name,
+          }))
       );
     }
   }, [data, itemData, modal.open]);
@@ -101,7 +110,6 @@ const CreateVaccineCycleModal = ({
       } catch (error: any) {
         toast.showError(error.message);
       }
-      console.log(payload);
     } catch (error) {
       throw error; // Prevent advancing to the next step
     }
@@ -109,7 +117,7 @@ const CreateVaccineCycleModal = ({
 
   const steps: StepItem[] = [
     {
-      title: t('General Information'),
+      title: t('General information'),
       content: (
         <FormComponent form={generalForm}>
           <FormItemComponent
@@ -168,8 +176,11 @@ const CreateVaccineCycleModal = ({
               <>
                 {fields.map(({ key, name, ...restField }, index) => (
                   <div key={key}>
-                    <div className="flex items-center w-full gap-4">
-                      <div className="w-[90%] grid grid-cols-4 gap-4">
+                    <Title className="mb-1">
+                      {t('Vaccine cycle detail')} {index + 1}
+                    </Title>
+                    <div className="flex items-center w-full gap-2">
+                      <div className="w-[90%] grid grid-cols-2 gap-x-4">
                         <Form.Item
                           {...restField}
                           name={[name, 'name']}
@@ -177,144 +188,187 @@ const CreateVaccineCycleModal = ({
                           rules={[
                             {
                               required: true,
-                              message: 'This field is required!',
+                              message: t('This field is required!'),
                             },
                           ]}
-                          className="col-span-2"
+                          className="!col-span-2"
                         >
                           <InputComponent />
                         </Form.Item>
-                        <Form.Item
-                          {...restField}
-                          label={<LabelForm>{t('Item')}</LabelForm>}
-                          name={[name, 'itemId']}
-                          rules={[
-                            {
-                              required: true,
-                              message: 'This field is required!',
-                            },
-                          ]}
-                          className="col-span-2"
-                        >
-                          <SelectComponent options={optionsItem} />
-                        </Form.Item>
-                        <Form.Item
-                          {...restField}
-                          label={
-                            <LabelForm>{t('Vaccine Ingredients')}</LabelForm>
-                          }
-                          name={[name, 'vaccineIngredients']}
-                          rules={[
-                            {
-                              required: true,
-                              message: 'This field is required!',
-                            },
-                          ]}
-                        >
-                          <InputComponent />
-                        </Form.Item>
-                        <Form.Item
-                          {...restField}
-                          label={<LabelForm>{t('Vaccine Type')}</LabelForm>}
-                          name={[name, 'vaccineType']}
-                          rules={[
-                            {
-                              required: true,
-                              message: 'This field is required!',
-                            },
-                          ]}
-                        >
-                          <SelectComponent options={vaccineType()} />
-                        </Form.Item>
-                        <Form.Item
-                          {...restField}
-                          label={<LabelForm>{t('Number Periodic ')}</LabelForm>}
-                          name={[name, 'numberPeriodic']}
-                          rules={[
-                            {
-                              required: true,
-                              message: 'This field is required!',
-                            },
-                          ]}
-                        >
-                          <InputComponent.Number />
-                        </Form.Item>
-                        <Form.Item
-                          {...restField}
-                          label={<LabelForm>{t('Unit Periodic ')}</LabelForm>}
-                          name={[name, 'unitPeriodic']}
-                          rules={[
-                            {
-                              required: true,
-                              message: 'This field is required!',
-                            },
-                          ]}
-                        >
-                          <SelectComponent options={unitPeriodic()} />
-                        </Form.Item>
-                        <Form.Item
-                          {...restField}
-                          label={<LabelForm>{t('Dosage')}</LabelForm>}
-                          name={[name, 'dosage']}
-                          rules={[
-                            {
-                              required: true,
-                              message: 'This field is required!',
-                            },
-                          ]}
-                        >
-                          <InputComponent.Number />
-                        </Form.Item>
-                        <Form.Item
-                          {...restField}
-                          label={<LabelForm>{t('Dosage Unit')}</LabelForm>}
-                          name={[name, 'dosageUnit']}
-                          rules={[
-                            {
-                              required: true,
-                              message: 'This field is required!',
-                            },
-                          ]}
-                        >
-                          <SelectComponent options={unitOptions()} />
-                        </Form.Item>
-                        <Form.Item
-                          {...restField}
-                          label={<LabelForm>{t('Injection Site')}</LabelForm>}
-                          name={[name, 'injectionSite']}
-                          rules={[
-                            {
-                              required: true,
-                              message: 'This field is required!',
-                            },
-                          ]}
-                        >
-                          <SelectComponent options={injectionSiteOptions()} />
-                        </Form.Item>
-                        <Form.Item
-                          {...restField}
-                          label={
-                            <LabelForm>{t('First Injection Month')}</LabelForm>
-                          }
-                          name={[name, 'firstInjectionMonth']}
-                          rules={[
-                            {
-                              required: true,
-                              message: 'This field is required!',
-                            },
-                          ]}
-                        >
-                          <InputComponent.Number />
-                        </Form.Item>
+                        <div>
+                          <Form.Item
+                            {...restField}
+                            label={<LabelForm>{t('Item')}</LabelForm>}
+                            name={[name, 'itemId']}
+                            rules={[
+                              {
+                                required: true,
+                                message: t('This field is required!'),
+                              },
+                            ]}
+                          >
+                            <SelectComponent options={optionsItem} />
+                          </Form.Item>
+                          <Form.Item
+                            {...restField}
+                            label={<LabelForm>{t('Vaccine Type')}</LabelForm>}
+                            name={[name, 'vaccineType']}
+                            rules={[
+                              {
+                                required: true,
+                                message: t('This field is required!'),
+                              },
+                            ]}
+                          >
+                            <SelectComponent options={vaccineType()} />
+                          </Form.Item>
+                          <Form.Item
+                            {...restField}
+                            label={
+                              <LabelForm>{t('Vaccine Ingredients')}</LabelForm>
+                            }
+                            name={[name, 'vaccineIngredients']}
+                            rules={[
+                              {
+                                required: true,
+                                message: t('This field is required!'),
+                              },
+                            ]}
+                          >
+                            <InputComponent />
+                          </Form.Item>
+                          <Form.Item
+                            {...restField}
+                            label={<LabelForm>{t('Injection Site')}</LabelForm>}
+                            name={[name, 'injectionSite']}
+                            rules={[
+                              {
+                                required: true,
+                                message: t('This field is required!'),
+                              },
+                            ]}
+                          >
+                            <SelectComponent options={injectionSiteOptions()} />
+                          </Form.Item>
+                        </div>
+                        <div>
+                          <div className="flex gap-2">
+                            <Form.Item
+                              {...restField}
+                              label={<LabelForm>{t('Dosage')}</LabelForm>}
+                              name={[name, 'dosage']}
+                              rules={[
+                                {
+                                  required: true,
+                                  message: t('This field is required!'),
+                                },
+                              ]}
+                              className="!w-2/5"
+                            >
+                              <InputComponent.Number />
+                            </Form.Item>
+                            <Form.Item
+                              {...restField}
+                              label={<LabelForm>{t('Dosage Unit')}</LabelForm>}
+                              name={[name, 'dosageUnit']}
+                              rules={[
+                                {
+                                  required: true,
+                                  message: t('This field is required!'),
+                                },
+                              ]}
+                              className="!w-3/5"
+                            >
+                              <SelectComponent options={unitOptions()} />
+                            </Form.Item>
+                          </div>
+                          <div className="flex gap-2">
+                            <Form.Item
+                              {...restField}
+                              label={
+                                <LabelForm>{t('Number Periodic')}</LabelForm>
+                              }
+                              name={[name, 'numberPeriodic']}
+                              rules={[
+                                {
+                                  required: true,
+                                  message: t('This field is required!'),
+                                },
+                              ]}
+                              className="w-2/5"
+                            >
+                              <InputComponent.Number />
+                            </Form.Item>
+                            <Form.Item
+                              {...restField}
+                              label={
+                                <LabelForm>{t('Unit Periodic')}</LabelForm>
+                              }
+                              name={[name, 'unitPeriodic']}
+                              rules={[
+                                {
+                                  required: true,
+                                  message: t('This field is required!'),
+                                },
+                              ]}
+                              className="w-3/5"
+                            >
+                              <SelectComponent options={unitPeriodic()} />
+                            </Form.Item>
+                          </div>
+                          <Form.Item
+                            {...restField}
+                            label={
+                              <LabelForm>
+                                {t('First Injection Month')}
+                              </LabelForm>
+                            }
+                            name={[name, 'firstInjectionMonth']}
+                            rules={[
+                              {
+                                required: true,
+                                message: t('This field is required!'),
+                              },
+                              ({ getFieldValue }) => ({
+                                validator(_, value) {
+                                  if (index === 0) {
+                                    return Promise.resolve();
+                                  }
+                                  const previousValue = getFieldValue([
+                                    'details',
+                                    index - 1,
+                                    'firstInjectionMonth',
+                                  ]);
+                                  if (
+                                    value &&
+                                    previousValue &&
+                                    value <= previousValue
+                                  ) {
+                                    return Promise.reject(
+                                      new Error(
+                                        t(
+                                          'The first injection month must be greater than the previous one'
+                                        )
+                                      )
+                                    );
+                                  }
+                                  return Promise.resolve();
+                                },
+                              }),
+                            ]}
+                          >
+                            <InputComponent.Number />
+                          </Form.Item>
+                        </div>
                         <Form.Item
                           {...restField}
                           label={<LabelForm>{t('Description')}</LabelForm>}
-                          className="col-span-4"
+                          className="col-span-2 "
                           name={[name, 'description']}
                           rules={[
                             {
                               required: true,
-                              message: 'This field is required!',
+                              message: t('This field is required!'),
                             },
                           ]}
                         >
@@ -326,17 +380,18 @@ const CreateVaccineCycleModal = ({
                         {index > 0 && (
                           <MinusCircleOutlined
                             onClick={() => remove(name)}
-                            className="!text-2xl"
+                            className="!text-3xl text-red-500"
                           />
                         )}
                       </div>
                     </div>
-                    <Divider />
+                    <Divider className="!border-gray-400" />
                   </div>
                 ))}
                 <Form.Item>
                   <ButtonComponent
-                    type="dashed"
+                    type="primary"
+                    buttonType="secondary"
                     onClick={() => add()}
                     block
                     icon={<PlusOutlined />}
@@ -355,11 +410,10 @@ const CreateVaccineCycleModal = ({
 
   return (
     <ModalComponent
-      title="Create Vaccine Cycle"
+      title={t('Create Vaccine Cycle')}
       open={modal.open}
       onCancel={handleCancel}
       width={1000}
-
       footer={[]}
       loading={isLoading}
     >

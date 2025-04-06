@@ -1,5 +1,5 @@
 import { CowType } from './CowType';
-import { HealthRecord } from './HealthRecord';
+import { HealthRecord, Injections } from './HealthRecord';
 import { IllnessCow } from './Illness';
 
 export type Cow = {
@@ -24,7 +24,7 @@ export type Cow = {
 
 export type HealthResponse = {
   date: string;
-  health: HealthRecord & IllnessCow;
+  health: HealthRecord & IllnessCow & Injections;
   id: number;
   type: 'HEALTH_RECORD' | 'ILLNESS' | 'INJECTIONS';
 };

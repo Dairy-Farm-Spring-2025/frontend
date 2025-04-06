@@ -416,7 +416,7 @@ const AppRouting = () => {
             { path: '', element: <Navigate to={'list'} /> },
             { path: 'list', element: SuspenseWrapper(<ListVaccineCycle />) },
             {
-              path: 'cycle/:id',
+              path: ':id',
               element: SuspenseWrapper(<DetailVaccineCycle />),
             },
             {
