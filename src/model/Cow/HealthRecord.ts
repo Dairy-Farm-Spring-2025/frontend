@@ -17,6 +17,7 @@ export type HealthRecord = {
   size: number;
   period: CowStatus;
   healthRecordId: number;
+  cowEntity: Cow;
 };
 
 export type Injections = {

@@ -17,6 +17,7 @@ import { IllnessCow } from '@model/Cow/Illness';
 import { formatDateHour, formatToTitleCase } from '@utils/format';
 import HealthRecordForm from './components/SplitterSide/HealthRecordForm';
 import IllnessRecordForm from './components/SplitterSide/IllnessRecordForm';
+import InjectionForm from './components/SplitterSide/InjectionForm'; // Import InjectionForm
 import { HEALTH_RECORD_PATH } from '@service/api/HealthRecord/healthRecordApi';
 
 interface HealthRecordCowProps {
@@ -79,7 +80,14 @@ const HealthRecordCow = ({ cowId, data, mutate }: HealthRecordCowProps) => {
       });
     }
   };
-
+  function isInjection(data: any): data is Injections {
+    return (
+      data &&
+      typeof data === 'object' &&
+      'vaccineCycleDetail' in data &&
+      'injectionDate' in data
+    );
+  }
   const onFinishUpdateHealthRecord = async (values: any) => {
     const payload = {
       status: values.status,
@@ -144,7 +152,15 @@ const HealthRecordCow = ({ cowId, data, mutate }: HealthRecordCowProps) => {
     children: (
       <div
         className="ml-10 w-3/4 cursor-pointer hover:!opacity-55 duration-200"
-        onClick={() => handleOpenLeftSide(element?.type, element?.health)}
+        onClick={() => {
+          if (element.type === 'HEALTH_RECORD' && 'status' in element.health) {
+            handleOpenLeftSide('HEALTH_RECORD', element.health as HealthRecord);
+          } else if (element.type === 'ILLNESS' && 'severity' in element.health) {
+            handleOpenLeftSide('ILLNESS', element.health as IllnessCow);
+          } else if (element.type === 'INJECTIONS' && isInjection(element.health)) {
+            handleOpenLeftSide('INJECTIONS', element.health);
+          }
+        }}
       >
         <CardComponent title={formatToTitleCase(element?.type)}>
           {(element.type === 'HEALTH_RECORD' && (
@@ -253,24 +269,7 @@ const HealthRecordCow = ({ cowId, data, mutate }: HealthRecordCowProps) => {
               )}
               {type === 'INJECTIONS' && (
                 <div className="w-2/3">
-                  <Title className="!text-xl mb-5">Injection Details</Title>
-                  <FormComponent form={form} onFinish={onFinishUpdateHealthRecord} className="w-full">
-                    <Form.Item label="Vaccine Name" name="vaccineName">
-                      <p>{form.getFieldValue('vaccineName')}</p>
-                    </Form.Item>
-                    <Form.Item label="Injection Date" name="date">
-                      <p>{form.getFieldValue('date')?.format('YYYY-MM-DD')}</p>
-                    </Form.Item>
-                    <Form.Item label="Administered By" name="administeredBy">
-                      <p>{form.getFieldValue('administeredBy')}</p>
-                    </Form.Item>
-                    <Form.Item label="Dosage" name="dosage">
-                      <p>{form.getFieldValue('dosage')}</p>
-                    </Form.Item>
-                    <Form.Item label="Injection Site" name="injectionSite">
-                      <p>{form.getFieldValue('injectionSite')}</p>
-                    </Form.Item>
-                  </FormComponent>
+                  <InjectionForm form={form} onBack={() => setType(null)} />
                 </div>
               )}
             </div>
