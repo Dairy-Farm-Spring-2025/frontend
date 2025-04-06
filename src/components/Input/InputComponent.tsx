@@ -58,6 +58,7 @@ const Number = ({ className, decimal = false, ...props }: NumberProps) => {
         className || ''
       }`}
       min={0}
+      controls={false}
       placeholder={`${t('Enter')}...`}
       {...props}
     />
