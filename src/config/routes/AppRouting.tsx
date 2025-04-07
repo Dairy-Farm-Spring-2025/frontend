@@ -13,18 +13,17 @@ import {
 import ApplicationManagement from '@pages/ApplicationManagement';
 import ApplicationType from '@pages/ApplicationManagement/ApplicationType';
 import ErrorPageNotification from '@pages/Error';
+import ListNotification from '@pages/NotificationManagement/components/List/ListNotification';
 import TaskManagement from '@pages/TaskManagement';
 import TaskType from '@pages/TaskManagement/TaskType';
 import Equipment from '@pages/WarehouseManagement/components/Equipment';
 import { SiHappycow } from 'react-icons/si';
-import ListNotification from '@pages/NotificationManagement/components/List/ListNotification';
 
 import ListVaccineInjection from '@pages/VaccineCycleManagement/components/ListVaccineInjection';
 
-import AuthCallback from '@pages/Login/components/AuthCallback';
-import ImportCow from '@pages/CowManagement/components/ImportCow/components/ImportCow';
-import ListCowImport from '@pages/CowManagement/components/ImportCow';
 import ApplicationListing from '@pages/ApplicationManagement/Application-management';
+import ListCowImport from '@pages/CowManagement/components/ImportCow';
+import AuthCallback from '@pages/Login/components/AuthCallback';
 
 const NotificationManagement = lazy(
   () => import('@pages/NotificationManagement')

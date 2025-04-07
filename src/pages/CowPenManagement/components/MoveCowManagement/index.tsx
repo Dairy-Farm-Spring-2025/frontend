@@ -40,27 +40,27 @@ export const MoveCowManagement: React.FC = () => {
   const columns: Column[] = [
     {
       title: t('Cow Name'),
-      dataIndex: ['cowEntity', 'name'],
+      dataIndex: ['cowEntity', 'name'] as any,
       key: 'cowName',
       sorter: (a, b) => a.cowEntity.name.localeCompare(b.cowEntity.name),
       searchable: true,
     },
     {
       title: t('In Pen Name'),
-      dataIndex: ['penEntity', 'name'],
+      dataIndex: ['penEntity', 'name'] as any,
       key: 'penName',
       searchable: true,
     },
     {
       title: t('Pen Type'),
-      dataIndex: ['penEntity', 'penType'],
+      dataIndex: ['penEntity', 'penType'] as any,
       key: 'penType',
       render: (data) => getLabelByValue(data, penType),
       searchable: true,
     },
     {
       title: t('Cow Status'),
-      dataIndex: ['cowEntity', 'cowStatus'],
+      dataIndex: ['cowEntity', 'cowStatus'] as any,
       key: 'cowStatus',
       render: (status: string) => (
         <Tag color={status === 'healthy' ? 'green' : 'red'}>
@@ -71,7 +71,7 @@ export const MoveCowManagement: React.FC = () => {
     },
     {
       title: t('Pen Status'),
-      dataIndex: ['penEntity', 'penStatus'],
+      dataIndex: ['penEntity', 'penStatus'] as any,
       key: 'penStatus',
       render: (status: string) => (
         <Tag color={status === 'occupied' ? 'red' : 'green'}>

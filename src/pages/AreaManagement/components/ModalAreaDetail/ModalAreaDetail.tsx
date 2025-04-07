@@ -1,15 +1,13 @@
+import { Button, Descriptions, Input, Select } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
-import { Descriptions, Input, Button, Select } from 'antd';
+import { useTranslation } from 'react-i18next';
+import ModalComponent from '../../../../components/Modal/ModalComponent';
 import useFetcher from '../../../../hooks/useFetcher';
 import { Area } from '../../../../model/Area/Area';
-import ModalComponent from '../../../../components/Modal/ModalComponent';
 import { AreaType } from '../../../../model/Area/AreaType';
-import { useTranslation } from 'react-i18next';
-
 
 const areaTypes: { label: string; value: AreaType }[] = [
-
   { label: 'Cow Housing', value: 'cowHousing' },
   { label: 'Milking Parlor', value: 'milkingParlor' },
   { label: 'Warehouse', value: 'warehouse' },
@@ -21,10 +19,14 @@ interface ModalAreaDetailProps {
   mutate: any;
 }
 
-const ModalAreaDetail: React.FC<ModalAreaDetailProps> = ({ modal, areaId, mutate }) => {
+const ModalAreaDetail: React.FC<ModalAreaDetailProps> = ({
+  modal,
+  areaId,
+  mutate,
+}) => {
   const { t } = useTranslation();
   const { data } = useFetcher<any>(`areas/${areaId}`, 'GET');
-  console.log("check data by areaId: ", data)
+  console.log('check data by areaId: ', data);
   const { trigger } = useFetcher<any>(
     `areas/${areaId}`,
     'PUT' // Or 'PATCH', depending on your API's convention
@@ -32,7 +34,9 @@ const ModalAreaDetail: React.FC<ModalAreaDetailProps> = ({ modal, areaId, mutate
 
   const [areaDetails, setAreaDetails] = useState<Area | null>(data);
   const [isEditing, setIsEditing] = useState(false); // Toggle edit mode
-  const [editedDetails, setEditedDetails] = useState<Partial<Area> | null>(null);
+  const [editedDetails, setEditedDetails] = useState<Partial<Area> | null>(
+    null
+  );
 
   useEffect(() => {
     if (data) {
@@ -56,10 +60,14 @@ const ModalAreaDetail: React.FC<ModalAreaDetailProps> = ({ modal, areaId, mutate
     try {
       // Validation: Ensure penWidth and penLength are positive numbers greater than zero
       if (
-        (editedDetails?.penWidth !== undefined && editedDetails?.penWidth <= 0) ||
-        (editedDetails?.penLength !== undefined && editedDetails?.penLength <= 0)
+        (editedDetails?.penWidth !== undefined &&
+          editedDetails?.penWidth <= 0) ||
+        (editedDetails?.penLength !== undefined &&
+          editedDetails?.penLength <= 0)
       ) {
-        toast.error('Pen width and pen length must be positive numbers greater than zero.');
+        toast.error(
+          'Pen width and pen length must be positive numbers greater than zero.'
+        );
         return; // Stop saving if validation fails
       }
 
@@ -82,7 +90,9 @@ const ModalAreaDetail: React.FC<ModalAreaDetailProps> = ({ modal, areaId, mutate
         editedDetails?.penLength !== undefined &&
         editedDetails.penWidth > editedDetails.penLength
       ) {
-        toast.error('Width of the pen must be smaller than or equal to the length of the pen.');
+        toast.error(
+          'Width of the pen must be smaller than or equal to the length of the pen.'
+        );
         return; // Stop saving if validation fails
       }
 
@@ -91,7 +101,6 @@ const ModalAreaDetail: React.FC<ModalAreaDetailProps> = ({ modal, areaId, mutate
 
       // Use mutate to update SWR cache and trigger a revalidation
       const updatedArea = await trigger({
-        params: areaId,
         body: editedDetails,
       });
 
@@ -118,14 +127,14 @@ const ModalAreaDetail: React.FC<ModalAreaDetailProps> = ({ modal, areaId, mutate
         footer={
           isEditing ? (
             <>
-              <Button onClick={handleSave} type='primary'>
-                {t("Save")}
+              <Button onClick={handleSave} type="primary">
+                {t('Save')}
               </Button>
               <Button onClick={() => setIsEditing(false)}>Cancel</Button>
             </>
           ) : (
-            <Button onClick={handleEdit} type='primary'>
-              {t("Edit")}
+            <Button onClick={handleEdit} type="primary">
+              {t('Edit')}
             </Button>
           )
         }
@@ -135,7 +144,9 @@ const ModalAreaDetail: React.FC<ModalAreaDetailProps> = ({ modal, areaId, mutate
       >
         {areaDetails && (
           <Descriptions bordered column={1}>
-            <Descriptions.Item label='ID'>{areaDetails.areaId}</Descriptions.Item>
+            <Descriptions.Item label="ID">
+              {areaDetails.areaId}
+            </Descriptions.Item>
             <Descriptions.Item label={t('Name')}>
               {isEditing ? (
                 <Input
@@ -150,7 +161,9 @@ const ModalAreaDetail: React.FC<ModalAreaDetailProps> = ({ modal, areaId, mutate
               {isEditing ? (
                 <Input
                   value={editedDetails?.description || ''}
-                  onChange={(e) => handleInputChange('description', e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange('description', e.target.value)
+                  }
                 />
               ) : (
                 areaDetails.description
@@ -159,9 +172,11 @@ const ModalAreaDetail: React.FC<ModalAreaDetailProps> = ({ modal, areaId, mutate
             <Descriptions.Item label={t('Length (m)')}>
               {isEditing ? (
                 <Input
-                  type='number'
+                  type="number"
                   value={editedDetails?.length || 0}
-                  onChange={(e) => handleInputChange('length', Number(e.target.value))}
+                  onChange={(e) =>
+                    handleInputChange('length', Number(e.target.value))
+                  }
                 />
               ) : (
                 `${areaDetails.length} m`
@@ -170,9 +185,11 @@ const ModalAreaDetail: React.FC<ModalAreaDetailProps> = ({ modal, areaId, mutate
             <Descriptions.Item label={t('Width (m)')}>
               {isEditing ? (
                 <Input
-                  type='number'
+                  type="number"
                   value={editedDetails?.width || 0}
-                  onChange={(e) => handleInputChange('width', Number(e.target.value))}
+                  onChange={(e) =>
+                    handleInputChange('width', Number(e.target.value))
+                  }
                 />
               ) : (
                 `${areaDetails.width} m`
@@ -181,9 +198,11 @@ const ModalAreaDetail: React.FC<ModalAreaDetailProps> = ({ modal, areaId, mutate
             <Descriptions.Item label={t('Pen Length')}>
               {isEditing ? (
                 <Input
-                  type='number'
+                  type="number"
                   value={editedDetails?.penLength || 0}
-                  onChange={(e) => handleInputChange('penLength', Number(e.target.value))}
+                  onChange={(e) =>
+                    handleInputChange('penLength', Number(e.target.value))
+                  }
                 />
               ) : (
                 `${areaDetails.penLength} m`
@@ -192,9 +211,11 @@ const ModalAreaDetail: React.FC<ModalAreaDetailProps> = ({ modal, areaId, mutate
             <Descriptions.Item label={t('Pen Width')}>
               {isEditing ? (
                 <Input
-                  type='number'
+                  type="number"
                   value={editedDetails?.penWidth || 0}
-                  onChange={(e) => handleInputChange('penWidth', Number(e.target.value))}
+                  onChange={(e) =>
+                    handleInputChange('penWidth', Number(e.target.value))
+                  }
                 />
               ) : (
                 `${areaDetails.penWidth} m`
@@ -208,7 +229,8 @@ const ModalAreaDetail: React.FC<ModalAreaDetailProps> = ({ modal, areaId, mutate
                   options={areaTypes}
                 />
               ) : (
-                areaTypes.find((type) => type.value === areaDetails.areaType)?.label
+                areaTypes.find((type) => type.value === areaDetails.areaType)
+                  ?.label
               )}
             </Descriptions.Item>
             <Descriptions.Item label={t('Created At')}>

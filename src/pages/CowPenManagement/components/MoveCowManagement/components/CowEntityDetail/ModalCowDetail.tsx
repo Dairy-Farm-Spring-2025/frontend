@@ -1,9 +1,9 @@
+import { Button, DatePicker, Descriptions, Input, Select } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { Descriptions, Input, Button, Select, DatePicker } from 'antd';
-import useFetcher from '../../../../../../hooks/useFetcher';
 import ModalComponent from '../../../../../../components/Modal/ModalComponent';
-import { getLabelByValue } from '../../../../../../utils/getLabel';
+import useFetcher from '../../../../../../hooks/useFetcher';
 import { cowStatus } from '../../../../../../service/data/cowStatus';
+import { getLabelByValue } from '../../../../../../utils/getLabel';
 
 const cowStatuses = [
   { label: 'Milking Cow', value: 'milkingCow' },
@@ -38,7 +38,7 @@ const ModalCowDetail: React.FC<ModalCowDetailProps> = ({
 
   const [cowDetails, setCowDetails] = useState<any>(data);
   const [isEditing, setIsEditing] = useState(false);
-  const [editedDetails, setEditedDetails] = useState<Partial<any>>(null);
+  const [editedDetails, setEditedDetails] = useState<Partial<any>>();
 
   useEffect(() => {
     if (data) {
@@ -61,7 +61,6 @@ const ModalCowDetail: React.FC<ModalCowDetailProps> = ({
     try {
       setCowDetails((prev: any) => ({ ...prev, ...editedDetails }));
       const updatedCow = await trigger({
-        params: cowId,
         body: editedDetails,
       });
       setCowDetails(updatedCow.data);

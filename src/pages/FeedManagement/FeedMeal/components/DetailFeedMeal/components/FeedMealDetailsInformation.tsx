@@ -1,15 +1,15 @@
-import { message, Popconfirm, Button, Divider } from 'antd';
-import { useTranslation } from 'react-i18next';
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import TableComponent, { Column } from '@components/Table/TableComponent';
 import Title from '@components/UI/Title';
-import { FeedMealDetails } from '@model/Feed/Feed';
+import api from '@config/axios/axios';
 import useFetcher from '@hooks/useFetcher';
+import { FeedMealDetails } from '@model/Feed/Feed';
 import { Item } from '@model/Warehouse/items';
+import { Button, Divider, message, Popconfirm } from 'antd';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import AddDetail from './AddDetail';
 import EditDetail from './EditDetail';
-import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import api from '@config/axios/axios';
-import { useState } from 'react';
-import TableComponent, { Column } from '@components/Table/TableComponent';
 
 interface FeedMealDetailsInformationProps {
   detailData: FeedMealDetails[];
@@ -22,14 +22,18 @@ const FeedMealDetailsInformation = ({
   detailData,
   feedMealId,
   mutate,
-  feedMealData,
 }: FeedMealDetailsInformationProps) => {
   const { t } = useTranslation();
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedDetail, setSelectedDetail] = useState<FeedMealDetails | null>(null);
+  const [selectedDetail, setSelectedDetail] = useState<FeedMealDetails | null>(
+    null
+  );
 
   // Fetch items for the AddDetail component
-  const { data: items, isLoading: isLoadingItems } = useFetcher<Item[]>('items', 'GET');
+  const { data: items, isLoading: isLoadingItems } = useFetcher<Item[]>(
+    'items',
+    'GET'
+  );
 
   // Calculate total quantity for all items
   const calculateTotalQuantity = (array: any[]) => {
@@ -133,11 +137,7 @@ const FeedMealDetailsInformation = ({
             cancelText={t('No')}
             placement="topRight"
           >
-            <Button
-              icon={<DeleteOutlined />}
-              danger
-              size="small"
-            />
+            <Button icon={<DeleteOutlined />} danger size="small" />
           </Popconfirm>
         </div>
       ),

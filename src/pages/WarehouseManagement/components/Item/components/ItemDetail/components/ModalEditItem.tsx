@@ -15,11 +15,11 @@ import {
   Item,
   ItemRequestBody,
 } from '../../../../../../../model/Warehouse/items';
-import { Warehouse } from '../../../../../../../model/Warehouse/warehouse';
 import {
   statusOptions,
   unitOptions,
 } from '../../../../../../../service/data/item';
+import { WarehouseType } from '@model/Warehouse/warehouse';
 
 interface ModalEditItemProps {
   modal: any;
@@ -36,8 +36,8 @@ const ModalEditItem = ({ modal, data, mutate }: ModalEditItemProps) => {
     data?.warehouseLocationEntity?.warehouseLocationId
   );
   const toast = useToast();
-  const { isLoading, trigger } = useFetcher<Warehouse>('');
-  const [warehouse, setWarehouse] = useState<Warehouse>();
+  const { isLoading, trigger } = useFetcher<WarehouseType>('');
+  const [warehouse, setWarehouse] = useState<WarehouseType>();
   const { isLoading: isLoadingEdit, trigger: triggerEdit } = useFetcher<any>(
     `items/${data?.itemId}`,
     'PUT'

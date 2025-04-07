@@ -1,21 +1,20 @@
-import { useState } from 'react';
 import { formatDate } from '@fullcalendar/core/index.js';
-import { Divider, Dropdown, Menu, Pagination, Tag, Tooltip } from 'antd';
+import { Divider, Tag } from 'antd';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import useToast from '../../../../../../../hooks/useToast';
-import useFetcher from '../../../../../../../hooks/useFetcher';
-import useModal from '../../../../../../../hooks/useModal';
+import ButtonComponent from '../../../../../../../components/Button/ButtonComponent';
+import SelectComponent from '../../../../../../../components/Select/SelectComponent';
 import TableComponent, {
   Column,
 } from '../../../../../../../components/Table/TableComponent';
-import SelectComponent from '../../../../../../../components/Select/SelectComponent';
-import ButtonComponent from '../../../../../../../components/Button/ButtonComponent';
+import useFetcher from '../../../../../../../hooks/useFetcher';
+import useToast from '../../../../../../../hooks/useToast';
 // import PopconfirmComponent from '../../../../../../../components/Popconfirm/PopconfirmComponent';
+import { Key } from 'antd/es/table/interface';
+import { useTranslation } from 'react-i18next';
 import AnimationAppear from '../../../../../../../components/UI/AnimationAppear';
 import WhiteBackground from '../../../../../../../components/UI/WhiteBackground';
 import { EXPORT_STATUS_OPTIONS } from '../../../../../../../service/data/exportStatus';
-import { Key } from 'antd/es/table/interface';
-import { useTranslation } from 'react-i18next';
 
 const ListExports = () => {
   const navigate = useNavigate();
@@ -29,7 +28,6 @@ const ListExports = () => {
     'export_items/update',
     'PUT'
   );
-  const modal = useModal();
   const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
   const { t } = useTranslation();
   // const isBulkActionDisabled =
@@ -201,7 +199,7 @@ const ListExports = () => {
         <Divider className="!my-4" />
         <TableComponent
           columns={column}
-          dataSource={data}
+          dataSource={data || []}
           loading={isLoading}
           rowSelection={{
             selectedRowKeys,
