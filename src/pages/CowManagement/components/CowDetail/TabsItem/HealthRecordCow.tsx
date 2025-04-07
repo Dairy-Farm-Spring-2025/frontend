@@ -23,6 +23,7 @@ import { IllnessCow } from '@model/Cow/Illness';
 import { formatDateHour, formatToTitleCase } from '@utils/format';
 import HealthRecordForm from './components/SplitterSide/HealthRecordForm';
 import IllnessRecordForm from './components/SplitterSide/IllnessRecordForm';
+import InjectionForm from './components/SplitterSide/InjectionForm';
 import { HEALTH_RECORD_PATH } from '@service/api/HealthRecord/healthRecordApi';
 import { useEditToggle } from '@hooks/useEditToggle';
 
@@ -46,6 +47,7 @@ const HealthRecordCow = ({ cowId, data, mutate }: HealthRecordCowProps) => {
   const [day, setDay] = useState('');
   const [dataHealthResponse, setDataHealthResponse] = useState<any>();
   const [illness, setIllness] = useState<IllnessCow>();
+
   const { trigger: triggerUpdateHealthRecord, isLoading: loadingUpdateHealth } =
     useFetcher('update/health-record', 'PUT');
   const { trigger: triggerUpdateIllness, isLoading: isLoadingUpdateIllness } =
@@ -57,7 +59,6 @@ const HealthRecordCow = ({ cowId, data, mutate }: HealthRecordCowProps) => {
     const payload: HealthRecordPayload = {
       status: values.status,
       period: values.period,
-      // weight: values.weight,
       size: values.size,
       cowId: values.cowId,
       bodyLength: values.bodyLength,
@@ -111,7 +112,6 @@ const HealthRecordCow = ({ cowId, data, mutate }: HealthRecordCowProps) => {
       const payload = {
         status: values.status,
         period: values.period,
-        //  weight: values.weight,
         size: values.size,
         cowId: Number(cowId),
         bodyLength: values.bodyLength,
@@ -349,28 +349,7 @@ const HealthRecordCow = ({ cowId, data, mutate }: HealthRecordCowProps) => {
               )}
               {type === 'INJECTIONS' && (
                 <div className="w-2/3">
-                  <Title className="!text-xl mb-5">Injection Details</Title>
-                  <FormComponent
-                    form={form}
-                    onFinish={onFinishUpdateHealthRecord}
-                    className="w-full"
-                  >
-                    <Form.Item label="Vaccine Name" name="vaccineName">
-                      <p>{form.getFieldValue('vaccineName')}</p>
-                    </Form.Item>
-                    <Form.Item label="Injection Date" name="date">
-                      <p>{form.getFieldValue('date')?.format('YYYY-MM-DD')}</p>
-                    </Form.Item>
-                    <Form.Item label="Administered By" name="administeredBy">
-                      <p>{form.getFieldValue('administeredBy')}</p>
-                    </Form.Item>
-                    <Form.Item label="Dosage" name="dosage">
-                      <p>{form.getFieldValue('dosage')}</p>
-                    </Form.Item>
-                    <Form.Item label="Injection Site" name="injectionSite">
-                      <p>{form.getFieldValue('injectionSite')}</p>
-                    </Form.Item>
-                  </FormComponent>
+                  <InjectionForm form={form} onBack={() => setType(null)} />
                 </div>
               )}
             </div>
