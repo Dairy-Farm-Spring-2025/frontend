@@ -171,7 +171,6 @@ const IllNess = lazy(
 
 const AppRouting = () => {
   const user = useSelector((state: RootState) => state.user);
-  console.log(user);
   const SuspenseWrapper = (Component: JSX.Element) => (
     <Suspense
       fallback={

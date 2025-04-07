@@ -11,9 +11,12 @@ import ModalComponent from '../../../../../components/Modal/ModalComponent';
 import useFetcher from '../../../../../hooks/useFetcher';
 import useToast from '../../../../../hooks/useToast';
 
+import SelectComponent from '@components/Select/SelectComponent';
+import { STORAGE_PATH } from '@service/api/Storage/storageApi';
+import { warehouseType } from '@service/data/warehouse';
+import { formatStatusWithCamel } from '@utils/format';
 import { useTranslation } from 'react-i18next';
 import { WarehouseType } from '../../../../../model/Warehouse/warehouse';
-import { STORAGE_PATH } from '@service/api/Storage/storageApi';
 
 interface ModalDetailWarehouseProps {
   modal: any;
@@ -42,16 +45,17 @@ const ModalDetailWarehouse = ({
   useEffect(() => {
     if (data) {
       form.setFieldsValue({
-        name: data.name,
-        description: data.description,
+        name: data?.name,
+        description: data?.description,
+        type: data?.type,
       });
     }
   }, [data, form]);
 
   const handleFinish = async (values: any) => {
     try {
-      await trigger({ body: values });
-      toast.showSuccess('Update success');
+      const response = await trigger({ body: values });
+      toast.showSuccess(response.message || t('Update success'));
       mutate();
       mutateEdit();
       setEdit(false);
@@ -61,6 +65,7 @@ const ModalDetailWarehouse = ({
   };
 
   const handleClose = () => {
+    setEdit(false);
     modal.closeModal();
     form.resetFields();
   };
@@ -78,6 +83,22 @@ const ModalDetailWarehouse = ({
       ) : (
         <FormItemComponent name="name" rules={[{ required: true }]}>
           <InputComponent />
+        </FormItemComponent>
+      ),
+      span: 3,
+    },
+    {
+      key: 'type',
+      label: t('Type'),
+      children: !edit ? (
+        data ? (
+          t(formatStatusWithCamel(data.type))
+        ) : (
+          'N/A'
+        )
+      ) : (
+        <FormItemComponent name="type" rules={[{ required: true }]}>
+          <SelectComponent options={warehouseType()} />
         </FormItemComponent>
       ),
       span: 3,
@@ -128,7 +149,7 @@ const ModalDetailWarehouse = ({
       ]}
     >
       <FormComponent form={form} onFinish={handleFinish}>
-        <DescriptionComponent items={items} />
+        <DescriptionComponent layout="horizontal" items={items} />
       </FormComponent>
     </ModalComponent>
   );

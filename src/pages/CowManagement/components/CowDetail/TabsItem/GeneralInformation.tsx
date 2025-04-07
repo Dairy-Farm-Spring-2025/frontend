@@ -84,6 +84,7 @@ const CowGeneralInformation = ({
       const response = await trigger({ body: data });
       toast.showSuccess(response.message);
       mutateDetail();
+      setShowEdit(false);
     } catch (error: any) {
       toast.showError(error.message);
     }

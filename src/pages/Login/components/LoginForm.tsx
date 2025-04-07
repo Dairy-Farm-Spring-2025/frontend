@@ -3,6 +3,7 @@ import ButtonComponent from '@components/Button/ButtonComponent';
 import FormComponent from '@components/Form/FormComponent';
 import FormItemComponent from '@components/Form/Item/FormItemComponent';
 import { login } from '@core/store/slice/userSlice';
+import { RootState } from '@core/store/store';
 import useFetcher from '@hooks/useFetcher';
 import useToast from '@hooks/useToast';
 import UserRequest from '@model/Authentication/UserRequest';
@@ -10,6 +11,8 @@ import UserResponse from '@model/Authentication/UserResponse';
 import { USER_PATH } from '@service/api/User/userApi';
 import { Divider, Form, Image, Input } from 'antd';
 import { t } from 'i18next';
+import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 const GOOGLE_AUTH_URL = `https://api.dairyfarmfpt.website/oauth2/authorize/google`;
@@ -19,6 +22,7 @@ const LoginForm = () => {
     USER_PATH.SIGN_IN,
     'POST'
   );
+  const user = useSelector((state: RootState) => state.user); // Lấy userId từ Redux
   const dispatch = useDispatch();
   const toast = useToast();
   const [form] = Form.useForm();
@@ -41,8 +45,7 @@ const LoginForm = () => {
         ) {
           toast.showError(t('You do not permission to access'));
         } else {
-          dispatch(login(response.data));
-          navigate('/dairy');
+          await dispatch(login(response.data));
           toast.showSuccess(response.message);
         }
       } else {
@@ -55,6 +58,11 @@ const LoginForm = () => {
   const handleGoogleLogin = () => {
     window.location.href = GOOGLE_AUTH_URL;
   };
+  useEffect(() => {
+    if (user && user.userId !== 0) {
+      navigate('/dairy');
+    }
+  }, [user, navigate]);
   return (
     <div>
       <div className="text-center">

@@ -575,5 +575,9 @@
   "Edit health record": "Cập nhật ghi nhận sức khỏe",
   "From date": "Từ ngày",
   "To date": "Tới ngày",
-  "Application of {{userName}}": "Đơn của {{userName}}"
+  "Application of {{userName}}": "Đơn của {{userName}}",
+  "Must be number and have 10 digits": "Phải là số và có 10 ký tự",
+  "Province": "Tỉnh/Thành",
+  "District": "Quận/Huyện",
+  "Ward": "Phường/Xã"
 }

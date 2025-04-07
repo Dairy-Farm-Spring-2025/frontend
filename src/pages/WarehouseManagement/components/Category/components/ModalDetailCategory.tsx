@@ -58,6 +58,7 @@ const ModalDetailCategory = ({
   };
 
   const handleClose = () => {
+    setEdit(false);
     modal.closeModal();
     form.resetFields();
   };
