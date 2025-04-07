@@ -1,11 +1,13 @@
-# Stage 1: Build ứng dụng React
-FROM node:20-alpine as build
+# build env
+FROM node:18.17.1-alpine as build
 WORKDIR /app
 COPY package*.json ./
-RUN npm install
-COPY . .
-RUN npm run build  # Build ứng dụng React, tạo thư mục dist
+RUN npm ci
+COPY . ./
+RUN npm run build
 
-# Stage 2: Serve với Nginx
+# production env
 FROM nginx:stable-alpine
-COPY --from=build /app/dist /usr/share/nginx/html  # Sửa từ /app/build thành /app/dist
+COPY --from=build /app/build /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
