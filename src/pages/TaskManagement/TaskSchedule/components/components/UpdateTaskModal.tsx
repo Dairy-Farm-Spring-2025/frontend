@@ -1,4 +1,5 @@
 import DatePickerComponent from '@components/DatePicker/DatePickerComponent';
+import DescriptionComponent from '@components/Description/DescriptionComponent';
 import FormComponent from '@components/Form/FormComponent';
 import FormItemComponent from '@components/Form/Item/FormItemComponent';
 import InputComponent from '@components/Input/InputComponent';
@@ -6,14 +7,18 @@ import LabelForm from '@components/LabelForm/LabelForm';
 import ModalComponent from '@components/Modal/ModalComponent';
 import CardSelectArea from '@components/Select/components/CardSelectArea';
 import SelectComponent from '@components/Select/SelectComponent';
+import TagComponents from '@components/UI/TagComponents';
 import Title from '@components/UI/Title';
 import useFetcher from '@hooks/useFetcher';
 import { ModalActionProps } from '@hooks/useModal';
 import useToast from '@hooks/useToast';
+import { Application } from '@model/ApplicationType/application';
 import { Area } from '@model/Area';
 import { Task } from '@model/Task/Task';
+import { APPLICATION_PATH } from '@service/api/Application/applicationApi';
 import { TASK_PATH } from '@service/api/Task/taskApi';
 import { PRIORITY_DATA } from '@service/data/priority';
+import { formatDateHour, formatStatusWithCamel } from '@utils/format';
 import { Divider, Form, Skeleton } from 'antd';
 import dayjs from 'dayjs';
 import { t } from 'i18next';
@@ -27,6 +32,13 @@ interface UpdateTaskModalProps {
   optionsArea: any[];
   day: string;
 }
+
+const statusColor = {
+  processing: 'orange',
+  complete: 'green',
+  cancel: 'pink',
+  reject: 'red',
+};
 
 const UpdateTaskModal = ({
   modal,
@@ -46,6 +58,18 @@ const UpdateTaskModal = ({
   const { trigger: triggerUpdate, isLoading } = useFetcher(
     'update-task',
     'PUT'
+  );
+  const {
+    data: dataApplication,
+    trigger: triggerApplication,
+    isLoading: isLoadingApplication,
+  } = useFetcher<Application>(
+    APPLICATION_PATH.APPLICATION_FIND_APPLICATION({
+      userId: dataTaskDetail ? dataTaskDetail?.assignee?.id : 0,
+      fromDate: day,
+      toDate: dataTaskDetail ? dataTaskDetail?.toDate : '',
+    }),
+    'GET'
   );
 
   const disabledOffDateStart = (current: dayjs.Dayjs) => {
@@ -78,10 +102,20 @@ const UpdateTaskModal = ({
     const fetchData = async () => {
       await trigger({ url: TASK_PATH.TASK_DETAIL(taskId) });
     };
+    const fetchDataApplication = async () => {
+      await triggerApplication({
+        url: APPLICATION_PATH.APPLICATION_FIND_APPLICATION({
+          userId: dataTaskDetail ? dataTaskDetail?.assignee?.id : 0,
+          fromDate: day,
+          toDate: dataTaskDetail ? dataTaskDetail?.toDate : '',
+        }),
+      });
+    };
     if (modal.open) {
       fetchData();
+      fetchDataApplication();
     }
-  }, [modal.open, taskId]);
+  }, [day, modal.open, taskId]);
 
   useEffect(() => {
     if (modal.open && dataTaskDetail) {
@@ -127,17 +161,24 @@ const UpdateTaskModal = ({
 
   return (
     <ModalComponent
-      title={t('Edit task {{taskName}}', {
+      title={`${t('Edit task {{taskName}}', {
         taskName: dataTaskDetail?.taskTypeId?.name,
-      })}
+      })} - ${formatDateHour(day)}`}
       open={modal.open}
       onCancel={handleCloseModal}
-      loading={isLoadingTask}
+      loading={isLoadingTask || isLoadingApplication}
       width={700}
       onOk={form.submit}
     >
       <Skeleton loading={isLoading}>
-        <FormComponent form={form} onFinish={onFinishUpdate}>
+        <p className="text-base my-2">
+          <strong>{t('Assignee')}</strong>: {dataTaskDetail?.assignee?.name}
+        </p>
+        <FormComponent
+          form={form}
+          onFinish={onFinishUpdate}
+          className="flex flex-col gap-3"
+        >
           <FormItemComponent
             name="areaId"
             label={<LabelForm>{t('Area')}</LabelForm>}
@@ -167,37 +208,101 @@ const UpdateTaskModal = ({
           >
             <InputComponent.TextArea />
           </FormItemComponent>
-          <Divider />
-          <div className="flex flex-col gap-2">
-            <Title>{t('Off date request')}</Title>
-            <div className="flex gap-5">
-              <FormItemComponent
-                name="offDateStart"
-                label={<LabelForm>{t('From')}</LabelForm>}
-                className="!w-full"
-              >
-                <DatePickerComponent
-                  disabledDate={disabledOffDateStart}
-                  defaultPickerValue={day ? dayjs(day) : undefined} // Chuyển đổi string thành dayjs
-                  onChange={(date) => {
-                    form.resetFields(['offDateEnd']);
-                    setFromDate(date);
-                  }}
+          {dataApplication !== undefined && (
+            <>
+              <Divider />
+              <div className="flex flex-col gap-2">
+                <Title>{t('Off date request')}</Title>
+                <div className="flex gap-5">
+                  <FormItemComponent
+                    name="offDateStart"
+                    label={<LabelForm>{t('From')}</LabelForm>}
+                    className="!w-full"
+                  >
+                    <DatePickerComponent
+                      disabledDate={disabledOffDateStart}
+                      disabled={dataApplication?.status !== 'complete' && true}
+                      defaultPickerValue={day ? dayjs(day) : undefined}
+                      onChange={(date) => {
+                        form.resetFields(['offDateEnd']);
+                        setFromDate(date);
+                      }}
+                    />
+                  </FormItemComponent>
+                  <FormItemComponent
+                    name="offDateEnd"
+                    label={<LabelForm>{t('To')}</LabelForm>}
+                    className="!w-full"
+                  >
+                    <DatePickerComponent
+                      disabledDate={disabledOffDateEnd}
+                      defaultPickerValue={day ? dayjs(day) : undefined}
+                      disabled={!fromDate}
+                    />
+                  </FormItemComponent>
+                </div>
+                <Title className="!my-4">
+                  {t('Application of {{userName}}', {
+                    userName: dataTaskDetail?.assignee?.name,
+                  })}
+                </Title>
+                <DescriptionComponent
+                  layout={'horizontal'}
+                  items={[
+                    {
+                      label: t('Title'),
+                      children: dataApplication?.title,
+                      span: 3,
+                    },
+                    {
+                      label: t('Status'),
+                      children: (
+                        <TagComponents
+                          color={
+                            statusColor[
+                              dataApplication?.status as keyof typeof statusColor
+                            ] || 'default'
+                          }
+                        >
+                          {t(
+                            formatStatusWithCamel(
+                              dataApplication?.status as any
+                            )
+                          )}
+                        </TagComponents>
+                      ),
+                      span: 3,
+                    },
+                    {
+                      label: t('Content'),
+                      children: (
+                        <div className="p-2 rounded-md border-[1px] border-solid">
+                          {dataApplication?.content ? (
+                            dataApplication.content
+                              .split('\n')
+                              .map((line, index) => <p key={index}>{line}</p>)
+                          ) : (
+                            <p>{t('No content')}</p>
+                          )}
+                        </div>
+                      ),
+                      span: 3,
+                    },
+                    {
+                      label: t('From date'),
+                      children: formatDateHour(dataApplication?.fromDate),
+                      span: 2,
+                    },
+                    {
+                      label: t('To date'),
+                      children: formatDateHour(dataApplication?.toDate),
+                      span: 2,
+                    },
+                  ]}
                 />
-              </FormItemComponent>
-              <FormItemComponent
-                name="offDateEnd"
-                label={<LabelForm>{t('To')}</LabelForm>}
-                className="!w-full"
-              >
-                <DatePickerComponent
-                  disabledDate={disabledOffDateEnd}
-                  defaultPickerValue={day ? dayjs(day) : undefined}
-                  disabled={!fromDate}
-                />
-              </FormItemComponent>
-            </div>
-          </div>
+              </div>
+            </>
+          )}
         </FormComponent>
       </Skeleton>
     </ModalComponent>
