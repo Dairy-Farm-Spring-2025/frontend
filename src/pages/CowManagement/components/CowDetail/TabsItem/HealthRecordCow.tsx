@@ -189,7 +189,7 @@ const HealthRecordCow = ({ cowId, data, mutate }: HealthRecordCowProps) => {
         });
       }
     };
-    return data.map((element) => ({
+    return (data || []).map((element) => ({
       children: (
         <div
           className="ml-10 w-3/4 cursor-pointer hover:!opacity-55 duration-200"
