@@ -99,16 +99,16 @@ const ListCowImport = () => {
             filterable: true,
             filterOptions: cowOriginFiltered(),
             editable: true,
-            render: (data, record) =>
-                editingKey === record.key ? (
-                    <SelectComponent
-                        value={data}
-                        options={cowOrigin()}
-                        onChange={(value) => handleChange(record.key, 'cowOrigin', value)}
-                    />
-                ) : (
-                    getLabelByValue(data, cowOrigin()) || '-'
-                ),
+            // render: (data, record) =>
+            //     editingKey === record.key ? (
+            //         <SelectComponent
+            //             value={data}
+            //             options={cowOrigin()}
+            //             onChange={(value) => handleChange(record.key, 'cowOrigin', value)}
+            //         />
+            //     ) : (
+            //         getLabelByValue(data, cowOrigin()) || '-'
+            //     ),
         },
         {
             dataIndex: 'gender',
