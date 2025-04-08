@@ -116,20 +116,24 @@ const MyTaskGeneralDetail = ({
         description={<QuillRender description={dataTask?.description} />}
       />
       <div className="flex gap-5">
-        <ButtonComponent
-          onClick={() => setType('illness')}
-          type="primary"
-          buttonType="warning"
-        >
-          {t('View illness')}
-        </ButtonComponent>
-        <ButtonComponent
-          onClick={() => setType('vaccine-injection')}
-          type="primary"
-          buttonType="secondary"
-        >
-          {t('View vaccine injection')}
-        </ButtonComponent>
+        {dataTask.illness && (
+          <ButtonComponent
+            onClick={() => setType('illness')}
+            type="primary"
+            buttonType="warning"
+          >
+            {t('View illness')}
+          </ButtonComponent>
+        )}
+        {dataTask.vaccineInjection && (
+          <ButtonComponent
+            onClick={() => setType('vaccine-injection')}
+            type="primary"
+            buttonType="secondary"
+          >
+            {t('View vaccine injection')}
+          </ButtonComponent>
+        )}
         <ButtonComponent onClick={() => setType('report')} type="primary">
           {t('View report')}
         </ButtonComponent>

@@ -27,9 +27,14 @@ const AuthCallback = () => {
           roleName: roleName,
           userId: userId,
         };
-        dispatch(login(data));
-        toast.showSuccess(t('Login success'));
-        navigate('/dairy');
+        if (roleName !== 'Manager' && roleName !== 'Admin') {
+          toast.showError(t('You do not permission to access'));
+          navigate('/login');
+        } else {
+          dispatch(login(data));
+          toast.showSuccess(t('Login success'));
+          navigate('/dairy');
+        }
       } else {
         toast.showError(t('Login failed'));
       }

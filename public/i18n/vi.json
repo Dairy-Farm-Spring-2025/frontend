@@ -579,5 +579,6 @@
   "Must be number and have 10 digits": "Phải là số và có 10 ký tự",
   "Province": "Tỉnh/Thành",
   "District": "Quận/Huyện",
-  "Ward": "Phường/Xã"
+  "Ward": "Phường/Xã",
+  "Vaccine Cycle Detail": "Chi tiết chu kỳ vắc-xin"
 }
