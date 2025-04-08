@@ -3,4 +3,5 @@ export const VACCINE_CYCLE_PATH = {
   DELETE_VACCINE_CYCLE: (id: number) => `vaccinecycles/${id}`,
   CREATE_VACCINE_CYCLE: 'vaccinecycles/create',
   GET_VACCINE_CYCLE: (id: number) => `vaccinecycles/${id}`,
+  UPDATE_VACCINE_CYCLE: (id: number) => `vaccinecycles/${id}`,
 };
