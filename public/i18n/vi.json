@@ -227,6 +227,12 @@
   "Sick cow": "Bò bị bệnh",
   "Serious Sick Cow": "Bò bị bệnh nặng",
   "Breeding cow": "Bò đang phối giống",
+  "Quarantined Cow": "Bò cách ly",
+  "Dry Cow": "Bò khô sữa",
+  "Pregnant Cow": "Bò mang thai",
+  "Open Cow": "Bò chưa mang thai",
+  "Calving Cow": "Bò sắp đẻ",
+  "Breeding Cow": "Bò đang phối giống",
   "Quarantined cow": "Bò cách ly",
   "Culling": "Bò loại thải",
   "European": "Châu âu",
@@ -580,5 +586,7 @@
   "Province": "Tỉnh/Thành",
   "District": "Quận/Huyện",
   "Ward": "Phường/Xã",
-  "Vaccine Cycle Detail": "Chi tiết chu kỳ vắc-xin"
+  "Vaccine Cycle Detail": "Chi tiết chu kỳ vắc-xin",
+  "Select date to view report": "Chọn ngày để xem báo cáo",
+  "Record Timeline": "Lịch trình báo cáo"
 }

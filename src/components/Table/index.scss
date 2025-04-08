@@ -15,3 +15,12 @@
     border: 1px solid colors.$primary-color;
   }
 }
+
+.ant-table-measure-row td {
+  padding: 0 !important;
+  height: 0 !important;
+}
+.ant-table-measure-row {
+  padding: 0 !important;
+  height: 0 !important;
+}

@@ -20,7 +20,7 @@ const FormItemComponent = ({
       label={label}
       name={name}
       {...props}
-      className={`form-item ${className} !mb-0`}
+      className={`form-item ${className}`}
     >
       {children}
     </Form.Item>

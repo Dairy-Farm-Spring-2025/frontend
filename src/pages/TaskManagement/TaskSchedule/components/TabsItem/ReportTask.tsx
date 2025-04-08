@@ -53,7 +53,7 @@ const ReportTask = () => {
           className="!text-sm"
           color={getReportTaskStatusColor(data)}
         >
-          {formatStatusWithCamel(data)}
+          {t(formatStatusWithCamel(data))}
         </TagComponents>
       ),
     },
