@@ -4,7 +4,7 @@ import useFetcher from '@hooks/useFetcher';
 import { COW_PATH } from '@service/api/Cow/cowApi';
 
 interface ImportCowProps {
-    onReviewData: (data: any[], errors: any[]) => void; // Callback để truyền dữ liệu review
+    onReviewData: (data: any[], errors: any[]) => void; // Callback to pass review data
 }
 
 const ImportCow = ({ onReviewData }: ImportCowProps) => {
@@ -12,21 +12,92 @@ const ImportCow = ({ onReviewData }: ImportCowProps) => {
 
     const handleUpload = async (file: File) => {
         const formData = new FormData();
-        formData.append("file", file);
+        formData.append('file', file);
 
         try {
             const response = await trigger({ body: formData });
-            // Kiểm tra xem response.data có tồn tại và có thuộc tính successes/errors không
-            const data = response.data || response; // Nếu API trả về trực tiếp dữ liệu, bỏ qua .data
-            const successes = data?.successes || []; // Mặc định là mảng rỗng nếu không có
-            const errors = data?.errors || []; // Mặc định là mảng rỗng nếu không có
+            const data = response.data || response;
 
-            onReviewData(successes, errors); // Truyền dữ liệu review lên component cha
-            message.success("Dữ liệu đã được review thành công!");
+            // Extract cow and health record responses
+            const cowResponse = data?.cowResponseCowPenBulkResponse || {};
+            const healthResponse = data?.healthRecordEntityCowPenBulkResponse || {};
+
+            // Get successes and errors
+            const cowSuccesses = cowResponse.successes || [];
+            const healthSuccesses = healthResponse.successes || [];
+            const cowErrors = cowResponse.errors || [];
+            const healthErrors = healthResponse.errors || [];
+
+            // Combine successes with health records
+            const combinedSuccesses = cowSuccesses.map((cow: any) => {
+                const healthRecord = healthSuccesses.find(
+                    (health: any) => health.cowName === cow.name
+                );
+                if (!healthRecord) {
+                    console.warn(`No health record found for cow: ${cow.name}`);
+                }
+                return {
+                    name: cow.name,
+                    cowStatus: cow.cowStatus, // Sử dụng cowStatus từ cowResponse
+                    dateOfBirth: cow.dateOfBirth,
+                    dateOfEnter: cow.dateOfEnter,
+                    cowOrigin: cow.cowOrigin,
+                    gender: cow.gender,
+                    cowTypeName: cow.cowTypeName,
+                    description: cow.description,
+                    healthRecord: healthRecord
+                        ? {
+                            status: healthRecord.healthRecordStatus || healthRecord.status,
+                            size: healthRecord.size,
+                            period: healthRecord.period,
+                            bodyTemperature: healthRecord.bodyTemperature,
+                            heartRate: healthRecord.heartRate,
+                            respiratoryRate: healthRecord.respiratoryRate,
+                            ruminateActivity: healthRecord.ruminateActivity,
+                            chestCircumference: healthRecord.chestCircumference,
+                            bodyLength: healthRecord.bodyLength,
+                            description: healthRecord.description,
+                        }
+                        : null,
+                };
+            });
+
+            // Combine errors with source identification
+            const combinedErrors = [
+                ...cowErrors.map((err: any) => ({ source: 'cow', ...err })),
+                ...healthErrors.map((err: any) => ({ source: 'health', ...err })),
+            ];
+
+            // Pass data to parent component
+            onReviewData(combinedSuccesses, combinedErrors);
+
+            // Provide feedback based on results
+            if (combinedErrors.length > 0) {
+                message.warning(
+                    `Đã review thành công ${combinedSuccesses.length} con bò, nhưng có ${combinedErrors.length} lỗi. Vui lòng kiểm tra chi tiết.`
+                );
+            } else {
+                message.success(
+                    `Dữ liệu đã được review thành công! Đã xử lý ${combinedSuccesses.length} con bò.`
+                );
+            }
+
+            // Log unmatched health records (if any)
+            const unmatchedHealthRecords = healthSuccesses.filter(
+                (health: any) => !cowSuccesses.some((cow: any) => cow.name === health.cowName)
+            );
+            if (unmatchedHealthRecords.length > 0) {
+                console.warn('Unmatched health records:', unmatchedHealthRecords);
+                message.warning(
+                    `${unmatchedHealthRecords.length} hồ sơ sức khỏe không khớp với bất kỳ con bò nào.`
+                );
+            }
         } catch (error: any) {
-            console.error("Lỗi khi review:", error);
-            message.error(`Lỗi khi review: ${error.message || "Có lỗi xảy ra!"}`);
-            onReviewData([], [error.message]); // Nếu lỗi, truyền mảng rỗng cho successes và lỗi vào errors
+            console.error('Lỗi khi review:', error);
+            const errorMessage =
+                error.response?.data?.message || error.message || 'Có lỗi xảy ra!';
+            message.error(`Lỗi khi review: ${errorMessage}`);
+            onReviewData([], [errorMessage]);
         }
     };
 
@@ -34,12 +105,17 @@ const ImportCow = ({ onReviewData }: ImportCowProps) => {
         <Upload
             beforeUpload={async (file) => {
                 await handleUpload(file);
-                return false; // Ngăn upload mặc định của Ant Design
+                return false; // Prevent default upload behavior of Ant Design
             }}
             showUploadList={false}
         >
-            <Button icon={<UploadOutlined />} loading={isLoading} disabled={isLoading} type="primary">
-                {isLoading ? "Đang xử lý..." : "Import Cow"}
+            <Button
+                icon={<UploadOutlined />}
+                loading={isLoading}
+                disabled={isLoading}
+                type="primary"
+            >
+                {isLoading ? 'Đang xử lý...' : 'Import Cow'}
             </Button>
         </Upload>
     );
