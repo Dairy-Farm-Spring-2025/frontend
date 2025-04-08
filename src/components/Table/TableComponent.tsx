@@ -225,6 +225,7 @@ const TableComponent = ({
     render: (_, __, index) => getRowIndex(index),
     width: 60,
     align: 'center',
+    fixed: 'left',
   };
 
   const enhancedColumns = useMemo(() => {
@@ -372,58 +373,56 @@ const TableComponent = ({
   ]);
 
   return (
-    <div className="table !w-full !max-w-full overflow-auto">
-      <ConfigProvider
-        theme={{
-          components: {
-            Table: {
-              headerBg: PRIMARY_COLORS,
-              headerColor: '#FFF',
-              headerSortHoverBg: PRIMARY_COLORS,
-              headerFilterHoverBg: PRIMARY_COLORS,
-              headerSortActiveBg: PRIMARY_COLORS,
-              colorIcon: 'red', // Default icon color
-              colorIconHover: '#FFF', // Icon color on hover
-              colorInfoActive: '#FFF', // Icon color when active (clicked)
-              rowSelectedBg: 'rgba(22, 101, 52, 0.1)',
-              rowSelectedHoverBg: 'rgba(22, 101, 52, 0.1)',
-            },
+    <ConfigProvider
+      theme={{
+        components: {
+          Table: {
+            headerBg: PRIMARY_COLORS,
+            headerColor: '#FFF',
+            headerSortHoverBg: PRIMARY_COLORS,
+            headerFilterHoverBg: PRIMARY_COLORS,
+            headerSortActiveBg: PRIMARY_COLORS,
+            colorIcon: 'red', // Default icon color
+            colorIconHover: '#FFF', // Icon color on hover
+            colorInfoActive: '#FFF', // Icon color when active (clicked)
+            rowSelectedBg: 'rgba(22, 101, 52, 0.1)',
+            rowSelectedHoverBg: 'rgba(22, 101, 52, 0.1)',
+          },
+        },
+      }}
+      table={{ className: '!overflow-auto !w-full' }}
+    >
+      <Table
+        bordered
+        columns={enhancedColumns}
+        onChange={handleTableChange} // Captures pagination updates
+        dataSource={
+          filteredData
+            ? filteredData.map((element, index) => ({
+                ...element,
+                key: element.key || index, // Đảm bảo có key
+              }))
+            : []
+        }
+        pagination={{ position: ['bottomCenter'] }}
+        className="custom-table"
+        title={() => (
+          <p className="text-blue-600 text-base ">
+            {t('Total result')}: {filteredData?.length} (
+            {t(`result${filteredData?.length > 1 ? 's' : ''}`)})
+          </p>
+        )}
+        locale={{
+          emptyText: <EmptyComponent />,
+        }}
+        components={{
+          body: {
+            cell: EditableCell, // Sử dụng EditableCell cho các ô
           },
         }}
-        table={{ className: '!overflow-auto !w-full' }}
-      >
-        <Table
-          bordered
-          columns={enhancedColumns}
-          onChange={handleTableChange} // Captures pagination updates
-          dataSource={
-            filteredData
-              ? filteredData.map((element, index) => ({
-                  ...element,
-                  key: element.key || index, // Đảm bảo có key
-                }))
-              : []
-          }
-          pagination={{ position: ['bottomCenter'] }}
-          className="custom-table"
-          title={() => (
-            <p className="text-blue-600 text-base ">
-              {t('Total result')}: {filteredData?.length} (
-              {t(`result${filteredData?.length > 1 ? 's' : ''}`)})
-            </p>
-          )}
-          locale={{
-            emptyText: <EmptyComponent />,
-          }}
-          components={{
-            body: {
-              cell: EditableCell, // Sử dụng EditableCell cho các ô
-            },
-          }}
-          {...props}
-        />
-      </ConfigProvider>
-    </div>
+        {...props}
+      />
+    </ConfigProvider>
   );
 };
 
