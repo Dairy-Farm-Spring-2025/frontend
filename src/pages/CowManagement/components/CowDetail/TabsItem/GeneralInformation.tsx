@@ -180,7 +180,7 @@ const CowGeneralInformation = ({
             >
               {!showEdit ? (
                 <TextBorder>
-                  <Text>{formatStatusWithCamel(dataDetail?.cowStatus)}</Text>
+                  <Text>{t(formatStatusWithCamel(dataDetail?.cowStatus))}</Text>
                 </TextBorder>
               ) : (
                 <SelectComponent options={cowStatus()} className="w-full" />

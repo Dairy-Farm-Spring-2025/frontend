@@ -26,6 +26,7 @@ import IllnessRecordForm from './components/SplitterSide/IllnessRecordForm';
 import InjectionForm from './components/SplitterSide/InjectionForm';
 import { HEALTH_RECORD_PATH } from '@service/api/HealthRecord/healthRecordApi';
 import { useEditToggle } from '@hooks/useEditToggle';
+import { t } from 'i18next';
 
 interface HealthRecordCowProps {
   data: HealthResponse[];
@@ -197,53 +198,69 @@ const HealthRecordCow = ({ cowId, data, mutate }: HealthRecordCowProps) => {
             handleOpenLeftSide(element?.type, element?.health, element?.date)
           }
         >
-          <CardComponent title={formatToTitleCase(element?.type)}>
-            {(element.type === 'HEALTH_RECORD' && (
-              <>
-                <Tooltip title="Status">
+          <Tooltip title={t('View detail')}>
+            <CardComponent title={t(formatToTitleCase(element?.type))}>
+              {(element.type === 'HEALTH_RECORD' && (
+                <div className="flex flex-col gap-2">
                   <p>
-                    {formatToTitleCase(
-                      (element.health as HealthRecord)?.status
-                    )}
-                  </p>
-                </Tooltip>
-              </>
-            )) ||
-              (element.type === 'ILLNESS' && (
-                <div className="flex gap-2">
-                  <Tooltip title="Severity">
-                    <p>
-                      {formatToTitleCase(
-                        (element.health as IllnessCow)?.severity
+                    <strong>🐄 {t('Status')}:</strong>{' '}
+                    <span>
+                      {t(
+                        formatToTitleCase(
+                          (element.health as HealthRecord)?.status
+                        )
                       )}
-                    </p>
-                  </Tooltip>
-                  <p>-</p>
-                  <Tooltip title="Veterinarian">
-                    <p>
-                      {(element.health as IllnessCow)?.veterinarian
-                        ? (element.health as IllnessCow)?.veterinarian?.name
-                        : 'No veterinarian'}
-                    </p>
-                  </Tooltip>
+                    </span>
+                  </p>
+                  <p>
+                    <strong>📐 {t('Size')}:</strong>{' '}
+                    <span>{element.health.size} (m)</span>
+                  </p>
+                  <p>
+                    <strong>⚖️ {t('Weight')}:</strong>{' '}
+                    <span>{element.health.weight} (kg)</span>
+                  </p>
                 </div>
               )) ||
-              (element.type === 'INJECTIONS' && (
-                <div className="flex gap-2">
-                  <Tooltip title="Vaccine">
-                    <p>
-                      {(element.health as Injections)?.vaccineCycleDetail?.name}
-                    </p>
-                  </Tooltip>
-                  <p>-</p>
-                  <Tooltip title="Administered By">
-                    <p>
-                      {(element.health as Injections)?.administeredBy?.name}
-                    </p>
-                  </Tooltip>
-                </div>
-              ))}
-          </CardComponent>
+                (element.type === 'ILLNESS' && (
+                  <div className="flex gap-2">
+                    <Tooltip title="Severity">
+                      <p>
+                        {formatToTitleCase(
+                          (element.health as IllnessCow)?.severity
+                        )}
+                      </p>
+                    </Tooltip>
+                    <p>-</p>
+                    <Tooltip title="Veterinarian">
+                      <p>
+                        {(element.health as IllnessCow)?.veterinarian
+                          ? (element.health as IllnessCow)?.veterinarian?.name
+                          : 'No veterinarian'}
+                      </p>
+                    </Tooltip>
+                  </div>
+                )) ||
+                (element.type === 'INJECTIONS' && (
+                  <div className="flex gap-2">
+                    <Tooltip title="Vaccine">
+                      <p>
+                        {
+                          (element.health as Injections)?.vaccineCycleDetail
+                            ?.name
+                        }
+                      </p>
+                    </Tooltip>
+                    <p>-</p>
+                    <Tooltip title="Administered By">
+                      <p>
+                        {(element.health as Injections)?.administeredBy?.name}
+                      </p>
+                    </Tooltip>
+                  </div>
+                ))}
+            </CardComponent>
+          </Tooltip>
         </div>
       ),
       dot: (
@@ -313,7 +330,7 @@ const HealthRecordCow = ({ cowId, data, mutate }: HealthRecordCowProps) => {
             max="40%"
           >
             <div className="pt-5">
-              <Title className="!text-2xl mb-5">Record Timeline</Title>
+              <Title className="!text-2xl mb-5">{t('Record Timeline')}</Title>
             </div>
             <DescLeft />
           </Splitter.Panel>

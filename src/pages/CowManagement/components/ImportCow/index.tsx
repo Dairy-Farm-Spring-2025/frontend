@@ -1,9 +1,9 @@
 import {
-  EditOutlined,
-  SaveOutlined,
   CloseOutlined,
   DeleteOutlined,
   DownloadOutlined,
+  EditOutlined,
+  SaveOutlined,
 } from '@ant-design/icons';
 import TableComponent, { Column } from '@components/Table/TableComponent';
 import AnimationAppear from '@components/UI/AnimationAppear';
@@ -15,20 +15,20 @@ import { cowOrigin, cowOriginFiltered } from '@service/data/cowOrigin';
 import { cowStatus } from '@service/data/cowStatus';
 import { formatDateHour, formatSTT } from '@utils/format';
 
-import { Button, Divider, message, InputNumber } from 'antd';
+import ButtonComponent from '@components/Button/ButtonComponent';
+import DatePickerComponent from '@components/DatePicker/DatePickerComponent';
+import InputComponent from '@components/Input/InputComponent';
+import SelectComponent from '@components/Select/SelectComponent';
+import { CowType } from '@model/Cow/CowType';
+import CreateBulkModal from '@pages/CowPenManagement/components/MoveCowManagement/components/ListCowNotInPen/components/CreateBulk/CreateBulk';
+import { COW_TYPE_PATH } from '@service/api/CowType/cowType';
+import { HEALTH_RECORD_STATUS } from '@service/data/healthRecordStatus';
+import { Divider, InputNumber, message } from 'antd';
+import dayjs from 'dayjs';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IoMdFemale, IoMdMale } from 'react-icons/io';
 import ImportCow from './components/ImportCow';
-import ButtonComponent from '@components/Button/ButtonComponent';
-import InputComponent from '@components/Input/InputComponent';
-import { CowType } from '@model/Cow/CowType';
-import { COW_TYPE_PATH } from '@service/api/CowType/cowType';
-import DatePickerComponent from '@components/DatePicker/DatePickerComponent';
-import SelectComponent from '@components/Select/SelectComponent';
-import dayjs from 'dayjs';
-import { HEALTH_RECORD_STATUS } from '@service/data/healthRecordStatus';
-import CreateBulkModal from '@pages/CowPenManagement/components/MoveCowManagement/components/ListCowNotInPen/components/CreateBulk/CreateBulk';
 
 const ListCowImport = () => {
   const { t } = useTranslation();
@@ -643,7 +643,7 @@ const ListCowImport = () => {
         {importSuccess && (
           <CreateBulkModal
             modal={modalControl}
-            availableCows={availableCows}
+            availableCows={availableCows as any}
             mutateCows={mutateCows}
           />
         )}

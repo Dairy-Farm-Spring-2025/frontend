@@ -300,7 +300,7 @@ const TableComponent = ({
                           );
                           confirm();
                         }}
-                        icon={<SearchOutlined />}
+                        icon={<SearchOutlined aria-hidden={false} />}
                         size="small"
                         style={{ marginRight: 8 }}
                         className="!w-1/2"
@@ -357,6 +357,7 @@ const TableComponent = ({
           col.searchable || col.searchText
             ? (filtered: boolean) => (
                 <SearchOutlined
+                  aria-hidden="false"
                   style={{ color: filtered ? '#1890ff' : undefined }}
                 />
               )
@@ -371,7 +372,12 @@ const TableComponent = ({
     handleSelectFilter,
     handleDateFilter,
   ]);
-
+  useEffect(() => {
+    const body = document.querySelector('.ant-table-body');
+    if (body && body.getAttribute('aria-hidden') === 'true') {
+      body.removeAttribute('aria-hidden');
+    }
+  }, []);
   return (
     <ConfigProvider
       theme={{

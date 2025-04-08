@@ -94,7 +94,10 @@ const TaskCreateModal = ({
   }, [fromDate, form]);
 
   const disabledFromDate = (current: dayjs.Dayjs) => {
-    return current && current.isBefore(dayjs().startOf('day'));
+    return (
+      (current && current.isBefore(dayjs().startOf('day'))) ||
+      current.isSame(dayjs().startOf('day'))
+    );
   };
 
   const disabledToDate = (current: dayjs.Dayjs) => {
