@@ -1,4 +1,4 @@
-import { message, Popconfirm, Button, Divider } from 'antd';
+import { message, Popconfirm, Button, Divider, Table } from 'antd';
 import { useTranslation } from 'react-i18next';
 import Title from '@components/UI/Title';
 import { FeedMealDetails } from '@model/Feed/Feed';
@@ -8,7 +8,7 @@ import AddDetail from './AddDetail';
 import EditDetail from './EditDetail';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import api from '@config/axios/axios';
-import { useState } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import TableComponent, { Column } from '@components/Table/TableComponent';
 
 interface FeedMealDetailsInformationProps {
@@ -19,7 +19,7 @@ interface FeedMealDetailsInformationProps {
 }
 
 const FeedMealDetailsInformation = ({
-  detailData,
+  detailData = [],
   feedMealId,
   mutate,
   feedMealData,
@@ -28,155 +28,128 @@ const FeedMealDetailsInformation = ({
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedDetail, setSelectedDetail] = useState<FeedMealDetails | null>(null);
 
-  // Fetch items for the AddDetail component
-  const { data: items, isLoading: isLoadingItems } = useFetcher<Item[]>('items', 'GET');
+  const { data: items = [], isLoading: isLoadingItems } = useFetcher<Item[]>('items', 'GET');
 
-  // Calculate total quantity for all items
-  const calculateTotalQuantity = (array: any[]) => {
-    const total = array?.reduce(
-      (total, item) => total + (item?.quantity || 0),
-      0
-    );
-    return total ? total.toFixed(2) : 0;
-  };
-
-  // Function to handle delete API call
-  const handleDelete = async (feedMealDetailId: number) => {
-    try {
-      const response = await api.delete(`feedmeals/detail/${feedMealDetailId}`);
-      if (response.status === 200) {
-        message.success(t('Deleted successfully'));
-        mutate();
-      } else {
-        message.error(t('Failed to delete'));
+  // Nhóm dữ liệu theo category
+  const groupedData = useMemo(() => {
+    const categoryMap: { [key: string]: FeedMealDetails[] } = {};
+    detailData.forEach((detail) => {
+      const categoryName = detail.itemEntity?.categoryEntity?.name || 'Uncategorized';
+      if (!categoryMap[categoryName]) {
+        categoryMap[categoryName] = [];
       }
-    } catch (error) {
-      console.error('Error deleting feed meal detail:', error);
-      message.error(t('Error occurred while deleting'));
-    }
-  };
+      categoryMap[categoryName].push(detail);
+    });
+    return categoryMap;
+  }, [detailData]);
 
-  // Function to open the edit modal
-  const openEditModal = (detail: FeedMealDetails) => {
-    setSelectedDetail(detail);
-    setIsModalVisible(true);
-  };
+  const calculateTotalQuantity = useCallback((array: FeedMealDetails[]) => {
+    const total = array.reduce((sum, item) => sum + (item.quantity || 0), 0);
+    return total.toFixed(2);
+  }, []);
 
-  // Function to close the edit modal
-  const handleCancel = () => {
-    setIsModalVisible(false);
-    setSelectedDetail(null);
-  };
 
-  // Function to handle successful edit
-  const handleEditSuccess = () => {
-    mutate(); // Refresh the data after a successful edit
-  };
 
-  // Function to handle the "Add" button click (no navigation, just a placeholder for AddDetail)
-  const handleAddClick = () => {
-    // This will be handled by AddDetail's internal logic
-  };
+  const toggleModal = useCallback((detail?: FeedMealDetails) => {
+    setIsModalVisible((prev) => !prev);
+    setSelectedDetail(detail || null);
+  }, []);
 
-  // Define columns for the TableComponent
+
+
+  // Cột cho mỗi bảng con (chỉ có Name và Quantity)
   const columns: Column[] = [
     {
       title: t('Name'),
       dataIndex: 'itemEntity',
       key: 'itemEntity',
       render: (itemEntity) => itemEntity?.name || 'N/A',
-      searchable: true, // Enable search for item name
-    },
-    {
-      title: t('Cow Type'),
-      dataIndex: 'itemEntity',
-      key: 'category',
-      render: (itemEntity) => itemEntity?.categoryEntity?.name || 'N/A',
-      filterable: true,
-      objectKeyFilter: 'categoryEntity.name', // Specify the nested path for filtering
-      filterOptions: [
-        { text: 'Cỏ Khô', value: 'Cỏ Khô' },
-        { text: 'Thức ăn tinh', value: 'Thức ăn tinh' },
-        { text: 'Thức ăn ủ chua', value: 'Thức ăn ủ chua' },
-        { text: 'Khoáng chất', value: 'Khoáng chất' },
-      ],
     },
     {
       title: t('Quantity'),
       dataIndex: 'quantity',
       key: 'quantity',
-      render: (quantity) => quantity || '0',
+      render: (quantity) => `${(quantity || 0).toFixed(2)} (${t('kilogram')})`,
       align: 'right',
     },
-    {
-      title: t('Unit'),
-      dataIndex: 'itemEntity',
-      key: 'unit',
-      render: (itemEntity) => itemEntity?.unit || 'N/A',
-    },
-    {
-      title: t('Actions'),
-      dataIndex: 'actions',
-      key: 'actions',
-      render: (_, record: FeedMealDetails) => (
-        <div className="flex gap-2">
-          <Button
-            icon={<EditOutlined />}
-            onClick={() => openEditModal(record)}
-            size="small"
-            type="primary"
-          />
-          <Popconfirm
-            title={t('Are you sure you want to delete this item?')}
-            onConfirm={() => handleDelete(record.feedMealDetailId)}
-            okText={t('Yes')}
-            cancelText={t('No')}
-            placement="topRight"
-          >
-            <Button
-              icon={<DeleteOutlined />}
-              danger
-              size="small"
-            />
-          </Popconfirm>
-        </div>
-      ),
-    },
+
   ];
 
+  // Lấy danh sách category và giới hạn tối đa 4 category
+  const categories = Object.keys(groupedData).slice(0, 4);
+
   return (
-    <div className="p-2">
-      <div className="flex justify-between items-center mb-5">
-        <Title className="text-xl">{t('Feed meal details')}:</Title>
+    <div className="p-4 bg-gray-50 rounded-lg shadow-sm">
+      {/* Tiêu đề và nút thêm */}
+      <div className="flex justify-between items-center mb-6">
+        <Title className="text-xl font-semibold text-gray-800">
+          {t('Feed meal details')}:
+        </Title>
         <AddDetail
           feedMealId={feedMealId}
           category=""
-          items={items || []}
+          items={items}
           isLoadingItems={isLoadingItems}
           mutate={mutate}
-          onAddClick={handleAddClick}
         />
       </div>
-      <Divider className="my-6" />
-      <TableComponent
-        columns={columns}
-        dataSource={detailData}
-        pagination={{ pageSize: 5 }}
-      />
-      <p className="text-xl mt-5">
+      <Divider className="my-6 border-gray-200" />
+
+      {/* Bố cục 4 bảng con với CSS Grid */}
+      <div className="grid grid-cols-2 gap-6 mb-6">
+        {categories.map((categoryName) => {
+          const items = groupedData[categoryName];
+          const total = calculateTotalQuantity(items);
+
+          return (
+            <div key={categoryName} className="bg-white rounded-lg shadow-sm p-4">
+              {/* Tiêu đề category và tổng số lượng */}
+              <div className="flex justify-between items-center mb-3">
+                <Title className="text-lg font-medium text-gray-700">
+                  {categoryName}
+                </Title>
+                <span className="text-base font-semibold text-orange-600">
+                  {t('Total')}: {total} ({t('kilogram')})
+                </span>
+              </div>
+
+              {/* Bảng con */}
+              <Table
+                columns={columns}
+                dataSource={items.map((item, index) => ({
+                  ...item,
+                  key: item.feedMealDetailId || index,
+                }))}
+                pagination={false}
+                className="rounded-md overflow-hidden"
+              />
+
+
+            </div>
+          );
+        })}
+
+        {/* Nếu không đủ 4 category, hiển thị placeholder */}
+        {categories.length < 4 &&
+          Array.from({ length: 4 - categories.length }).map((_, index) => (
+            <div
+              key={`placeholder-${index}`}
+              className="bg-white rounded-lg shadow-sm p-4 flex items-center justify-center text-gray-500"
+            >
+              {t('No data')}
+            </div>
+          ))}
+      </div>
+
+      {/* Tổng số lượng toàn bộ */}
+      <p className="text-xl font-medium text-gray-800">
         {t('Total feed meal details quantity')}:{' '}
         <span className="font-bold text-orange-600">
-          {calculateTotalQuantity(detailData)} (kilogram)
+          {calculateTotalQuantity(detailData)} ({t('kilogram')})
         </span>
       </p>
 
-      {/* Edit Modal Component */}
-      <EditDetail
-        visible={isModalVisible}
-        detail={selectedDetail}
-        onCancel={handleCancel}
-        onSuccess={handleEditSuccess}
-      />
+
     </div>
   );
 };
