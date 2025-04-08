@@ -2,12 +2,13 @@ import { Upload, Button, message } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import useFetcher from '@hooks/useFetcher';
 import { COW_PATH } from '@service/api/Cow/cowApi';
+import ButtonComponent from '@components/Button/ButtonComponent';
 
-interface ImportCowProps {
+interface ReviewImportCowProps {
     onReviewData: (data: any[], errors: any[]) => void; // Callback to pass review data
 }
 
-const ImportCow = ({ onReviewData }: ImportCowProps) => {
+const ReviewImportCow = ({ onReviewData }: ReviewImportCowProps) => {
     const { trigger, isLoading } = useFetcher(COW_PATH.REVIEW_IMPORT_COW, 'POST', 'multipart/form-data');
 
     const handleUpload = async (file: File) => {
@@ -96,7 +97,6 @@ const ImportCow = ({ onReviewData }: ImportCowProps) => {
             console.error('Lỗi khi review:', error);
             const errorMessage =
                 error.response?.data?.message || error.message || 'Có lỗi xảy ra!';
-            message.error(`Lỗi khi review: ${errorMessage}`);
             onReviewData([], [errorMessage]);
         }
     };
@@ -109,16 +109,16 @@ const ImportCow = ({ onReviewData }: ImportCowProps) => {
             }}
             showUploadList={false}
         >
-            <Button
+            <ButtonComponent
                 icon={<UploadOutlined />}
                 loading={isLoading}
                 disabled={isLoading}
                 type="primary"
             >
-                {isLoading ? 'Đang xử lý...' : 'Import Cow'}
-            </Button>
+                {isLoading ? 'Đang xử lý...' : 'Nhập bò'}
+            </ButtonComponent>
         </Upload>
     );
 };
 
-export default ImportCow;
+export default ReviewImportCow;
