@@ -86,6 +86,23 @@ const CreateVaccineCycleModal = ({
     }
   };
 
+  const handleItemChange = (itemId: number, fieldIndex: number) => {
+    if (!itemData) return;
+
+    // Tìm item tương ứng với itemId
+    const selectedItem = itemData.find((item) => item.itemId === itemId);
+    if (selectedItem && selectedItem.unit) {
+      // Cập nhật dosageUnit cho field hiện tại dựa trên index
+      detailForm.setFieldsValue({
+        details: {
+          [fieldIndex]: {
+            dosageUnit: selectedItem.unit,
+          },
+        },
+      });
+    }
+  };
+
   const handleCancel = () => {
     generalForm.resetFields();
     detailForm.resetFields();
@@ -207,7 +224,12 @@ const CreateVaccineCycleModal = ({
                               },
                             ]}
                           >
-                            <SelectComponent options={optionsItem} />
+                            <SelectComponent
+                              options={optionsItem}
+                              onChange={(value) =>
+                                handleItemChange(value, index)
+                              }
+                            />
                           </Form.Item>
                           <Form.Item
                             {...restField}
@@ -279,7 +301,10 @@ const CreateVaccineCycleModal = ({
                               ]}
                               className="!w-3/5"
                             >
-                              <SelectComponent options={unitOptions()} />
+                              <SelectComponent
+                                options={unitOptions()}
+                                open={false}
+                              />
                             </Form.Item>
                           </div>
                           <div className="flex gap-2">
