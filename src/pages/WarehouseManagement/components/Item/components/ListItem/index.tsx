@@ -67,13 +67,6 @@ const ListItemManagement = () => {
       width: 300,
     },
     {
-      title: t('Quantity'),
-      dataIndex: 'quantity',
-      key: 'quantity',
-      width: 120,
-      sorter: (a: any, b: any) => a.quantity - b.quantity,
-    },
-    {
       title: t('Unit'),
       dataIndex: 'unit',
       key: 'unit',

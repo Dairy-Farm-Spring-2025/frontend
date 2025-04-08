@@ -42,10 +42,11 @@ const DetailInformationVaccineCycle = ({
               children: (
                 <div className="flex items-center gap-2">
                   <span className="text-gray-600">
-                    {data?.numberPeriodic || 'N/A'}
+                    {data?.numberPeriodic || 'N/A'} {t('times')}
                   </span>
+                  /
                   <span className="text-gray-600">
-                    ({t(formatStatusWithCamel(data?.unitPeriodic)) || 'N/A'})
+                    {t(formatStatusWithCamel(data?.unitPeriodic)) || 'N/A'}
                   </span>
                 </div>
               ),
