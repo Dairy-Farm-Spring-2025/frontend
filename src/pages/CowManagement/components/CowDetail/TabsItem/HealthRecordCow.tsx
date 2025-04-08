@@ -55,73 +55,6 @@ const HealthRecordCow = ({ cowId, data, mutate }: HealthRecordCowProps) => {
   const { isLoading: isLoadingHealthRecord, trigger: triggerHealthRecord } =
     useFetcher(HEALTH_RECORD_PATH.CREATE_HEALTH_RECORD, 'POST');
 
-  // Define handleOpenLeftSide outside useMemo for reusability
-  const handleOpenLeftSide = (
-    type: 'HEALTH_RECORD' | 'ILLNESS' | 'INJECTIONS',
-    data: HealthRecord | IllnessCow | Injections,
-    day: string
-  ) => {
-    setType(type);
-    setDay(day);
-    setDataHealthResponse(data);
-
-    if (type === 'HEALTH_RECORD') {
-      const healthData = data as HealthRecord;
-      form.setFieldsValue({
-        status: healthData.status,
-        period: healthData.period,
-        weight: healthData.weight,
-        size: healthData.size,
-        cowId: healthData?.cowEntity?.cowId || Number(cowId),
-        healthId: healthData?.healthRecordId,
-        bodyTemperature: healthData?.bodyTemperature,
-        heartRate: healthData?.heartRate,
-        respiratoryRate: healthData?.respiratoryRate,
-        ruminateActivity: healthData?.ruminateActivity,
-        description: healthData?.description,
-        chestCircumference: healthData?.chestCircumference,
-        bodyLength: healthData?.bodyLength,
-      });
-    }
-    if (type === 'ILLNESS') {
-      const illnessData = data as IllnessCow;
-      setIllness(illnessData);
-      formIllness.setFieldsValue({
-        severity: illnessData?.severity,
-        startDate: illnessData?.startDate ? dayjs(illnessData.startDate) : null,
-        endDate: illnessData?.endDate ? dayjs(illnessData.endDate) : null,
-        symptoms: illnessData?.symptoms,
-        prognosis: illnessData?.prognosis,
-        cowId: illnessData?.cowEntity?.cowId,
-        illnessId: illnessData?.illnessId,
-      });
-    }
-    if (type === 'INJECTIONS') {
-      const injectionData = data as Injections;
-      form.setFieldsValue({
-        vaccineName: injectionData.vaccineCycleDetail?.name,
-        date: injectionData.injectionDate
-          ? dayjs(injectionData.injectionDate)
-          : null,
-        administeredBy: injectionData.administeredBy?.name,
-        dosage: `${injectionData.vaccineCycleDetail?.dosage} ${injectionData.vaccineCycleDetail?.dosageUnit}`,
-        injectionSite: injectionData.vaccineCycleDetail?.injectionSite,
-        cowId: injectionData?.cowEntity?.cowId,
-        healthId: injectionData?.id,
-      });
-    }
-  };
-
-  // Type guard for Injections
-  function isInjection(data: any): data is Injections {
-    return (
-      data &&
-      typeof data === 'object' &&
-      'vaccineCycleDetail' in data &&
-      'injectionDate' in data
-    );
-  }
-
   const onFinishUpdateHealthRecord = async (values: any) => {
     const payload: HealthRecordPayload = {
       status: values.status,
@@ -200,7 +133,63 @@ const HealthRecordCow = ({ cowId, data, mutate }: HealthRecordCowProps) => {
   };
 
   const items: TimelineItems[] = useMemo(() => {
-    return data.map((element) => ({
+    const handleOpenLeftSide = (
+      type: 'HEALTH_RECORD' | 'ILLNESS' | 'INJECTIONS',
+      data: HealthRecord | IllnessCow | Injections,
+      day: string
+    ) => {
+      setType(type);
+      setDay(day);
+      setDataHealthResponse(data);
+      if (type === 'HEALTH_RECORD') {
+        const healthData = data as HealthRecord;
+        form.setFieldsValue({
+          status: healthData.status,
+          period: healthData.period,
+          weight: healthData.weight,
+          size: healthData.size,
+          cowId: Number(cowId),
+          healthId: healthData?.healthRecordId,
+          bodyTemperature: healthData?.bodyTemperature,
+          heartRate: healthData?.heartRate,
+          respiratoryRate: healthData?.respiratoryRate,
+          ruminateActivity: healthData?.ruminateActivity,
+          description: healthData?.description,
+          chestCircumference: healthData?.chestCircumference,
+          bodyLength: healthData?.bodyLength,
+        });
+      }
+      if (type === 'ILLNESS') {
+        const illnessData = data as IllnessCow;
+        setIllness(illnessData);
+        formIllness.setFieldsValue({
+          severity: illnessData?.severity,
+          startDate: illnessData?.startDate
+            ? dayjs(illnessData.startDate)
+            : null,
+          endDate: illnessData?.endDate ? dayjs(illnessData.endDate) : null,
+          symptoms: illnessData?.symptoms,
+          prognosis: illnessData?.prognosis,
+          cowId: illnessData?.cowEntity?.cowId,
+          illnessId: illnessData?.illnessId,
+        });
+      }
+      if (type === 'INJECTIONS') {
+        const injectionData = data as Injections;
+        form.setFieldsValue({
+          vaccineName: injectionData.vaccineCycleDetail?.name,
+          date: injectionData.injectionDate
+            ? dayjs(injectionData.injectionDate)
+            : null,
+          administeredBy: injectionData.administeredBy?.name,
+          dosage: `${injectionData.vaccineCycleDetail?.dosage} ${injectionData.vaccineCycleDetail?.dosageUnit}`,
+          injectionSite: injectionData.vaccineCycleDetail?.injectionSite,
+          cowId: injectionData?.cowEntity?.cowId,
+          healthId: injectionData?.id,
+        });
+      }
+    };
+    return (data || []).map((element) => ({
       children: (
         <div
           className="ml-10 w-3/4 cursor-pointer hover:!opacity-55 duration-200"

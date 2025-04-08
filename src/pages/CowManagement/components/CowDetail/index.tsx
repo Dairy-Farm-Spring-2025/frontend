@@ -4,21 +4,20 @@ import {
   ProfileOutlined,
   RetweetOutlined,
 } from '@ant-design/icons';
-import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 import TabsComponent, { TabsItemProps } from '@components/Tabs/TabsComponent';
 import AnimationAppear from '@components/UI/AnimationAppear';
 import WhiteBackground from '@components/UI/WhiteBackground';
 import useFetcher from '@hooks/useFetcher';
 import { Cow, HealthResponse } from '@model/Cow/Cow';
 import { DailyMilkModel } from '@model/DailyMilk/DailyMilk';
+import { COW_PATH } from '@service/api/Cow/cowApi';
+import { DAILY_MILK_PATH } from '@service/api/DailyMilk/dailyMilkApi';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import DailyMilk from './TabsItem/DailyMilk';
 import CowGeneralInformation from './TabsItem/GeneralInformation';
 import HealthRecordCow from './TabsItem/HealthRecordCow';
 import HistoryMoveCow from './TabsItem/HistoryMoveCow';
-import { COW_PATH } from '@service/api/Cow/cowApi';
-import { DAILY_MILK_PATH } from '@service/api/DailyMilk/dailyMilkApi';
-import ImportCow from '../ImportCow/components/ImportCow';
 const CowDetail = () => {
   const { t } = useTranslation();
   const { id } = useParams();
@@ -89,7 +88,6 @@ const CowDetail = () => {
       ),
       icon: <RetweetOutlined />,
     },
-
   ];
   return (
     <AnimationAppear>

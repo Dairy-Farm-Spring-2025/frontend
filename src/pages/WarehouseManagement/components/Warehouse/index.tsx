@@ -54,15 +54,18 @@ const Warehouse = () => {
       dataIndex: 'name',
       key: 'name',
       title: t('Name'),
-      render: (data) => <p className="text-base font-bold">{data}</p>,
+      render: (data) => data,
     },
     {
       dataIndex: 'type',
       key: 'type',
       title: t('Type'),
-      render: (data) => (
-        <p className="text-base font-bold">{t(formatStatusWithCamel(data))}</p>
-      ),
+      render: (data) => t(formatStatusWithCamel(data)),
+    },
+    {
+      dataIndex: 'description',
+      key: 'description',
+      title: t('escription'),
     },
     {
       dataIndex: 'warehouseLocationId',

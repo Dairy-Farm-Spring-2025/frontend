@@ -59,7 +59,7 @@ const HealthRecordForm = ({
     COW_PATH.COW_DETAIL(cowId ? cowId : ''),
     'GET'
   );
-  const disabledUpdate = dayjs(day).isSame(new Date());
+  const disabledUpdate = !dayjs(day).isSame(new Date(), 'day');
   useEffect(() => {
     if (data === undefined) {
       toggleEdit();

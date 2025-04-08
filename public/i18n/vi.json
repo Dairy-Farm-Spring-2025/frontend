@@ -572,5 +572,12 @@
   "Respiratory rate is not stable": "Nhịp thở không ổn định",
   "Ruminate activity is not stable": "Hoạt động nhai lại không ổn định",
   "Body templerature is not stable": "Nhiệt độ cơ thể không ổn định",
-  "Edit health record": "Cập nhật ghi nhận sức khỏe"
+  "Edit health record": "Cập nhật ghi nhận sức khỏe",
+  "From date": "Từ ngày",
+  "To date": "Tới ngày",
+  "Application of {{userName}}": "Đơn của {{userName}}",
+  "Must be number and have 10 digits": "Phải là số và có 10 ký tự",
+  "Province": "Tỉnh/Thành",
+  "District": "Quận/Huyện",
+  "Ward": "Phường/Xã"
 }

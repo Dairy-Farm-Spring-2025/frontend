@@ -1,20 +1,17 @@
-
-import { useState, useEffect, useMemo } from "react";
-import { Divider, Form } from "antd";
-import { useParams } from "react-router-dom";
-import ButtonComponent from "@components/Button/ButtonComponent";
-import useFetcher from "@hooks/useFetcher";
-import { Area } from "@model/Area";
-import { PenEntity } from "@model/CowPen/CowPen";
-import { useTranslation } from "react-i18next";
-import SelectComponent from "@components/Select/SelectComponent";
-import TableComponent, { Column } from "@components/Table/TableComponent";
-import WhiteBackground from "@components/UI/WhiteBackground";
-import { Tag } from "antd";
-import { formatDateHour } from "@utils/format";
-import useToast from "@hooks/useToast";
-import FormItemComponent from "@components/Form/Item/FormItemComponent";
-import LabelForm from "@components/LabelForm/LabelForm";
+import ButtonComponent from '@components/Button/ButtonComponent';
+import FormItemComponent from '@components/Form/Item/FormItemComponent';
+import LabelForm from '@components/LabelForm/LabelForm';
+import SelectComponent from '@components/Select/SelectComponent';
+import TableComponent, { Column } from '@components/Table/TableComponent';
+import WhiteBackground from '@components/UI/WhiteBackground';
+import useFetcher from '@hooks/useFetcher';
+import useToast from '@hooks/useToast';
+import { Area } from '@model/Area';
+import { PenEntity } from '@model/CowPen/CowPen';
+import { formatDateHour } from '@utils/format';
+import { Divider, Form, Tag } from 'antd';
+import { useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface CowPenHistory {
   penEntity: PenEntity;
@@ -30,22 +27,34 @@ interface HistoryMoveCowProps {
 const HistoryMoveCow = ({ id, isLoadingHistory }: HistoryMoveCowProps) => {
   const { t } = useTranslation();
   const toast = useToast();
-  const { data, mutate, error: fetchError } = useFetcher<CowPenHistory[]>(`cow-pens/cow/${id}`, "GET");
+  const {
+    data,
+    mutate,
+    error: fetchError,
+  } = useFetcher<CowPenHistory[]>(`cow-pens/cow/${id}`, 'GET');
 
-  const [form] = Form.useForm<{ areaId: number | null; penId: number | null }>();
-  const areaId = Form.useWatch("areaId", form);
-  const penId = Form.useWatch("penId", form);
+  const [form] = Form.useForm<{
+    areaId: number | null;
+    penId: number | null;
+  }>();
+  const areaId = Form.useWatch('areaId', form);
+  const penId = Form.useWatch('penId', form);
 
-  const { data: areasData } = useFetcher<Area[]>("areas", "GET");
+  const { data: areasData } = useFetcher<Area[]>('areas', 'GET');
   const { data: allPensInArea, mutate: mutatePens } = useFetcher<PenEntity[]>(
-    areaId ? `pens/area/${areaId}` : "",
-    "GET"
+    areaId ? `pens/area/${areaId}` : '',
+    'GET'
   );
-  const { trigger: moveCow, isLoading } = useFetcher("cow-pens/create", "POST");
+  const { trigger: moveCow, isLoading } = useFetcher('cow-pens/create', 'POST');
 
-  const emptyPens = allPensInArea?.filter((pen) => pen.penStatus === "empty") || [];
+  const emptyPens = useMemo(
+    () => allPensInArea?.filter((pen) => pen.penStatus === 'empty') || [],
+    [allPensInArea]
+  );
   const areaOptions = useMemo(
-    () => areasData?.map((area) => ({ label: area.name, value: area.areaId })) || [],
+    () =>
+      areasData?.map((area) => ({ label: area.name, value: area.areaId })) ||
+      [],
     [areasData]
   );
   const penOptions = useMemo(
@@ -69,7 +78,9 @@ const HistoryMoveCow = ({ id, isLoadingHistory }: HistoryMoveCowProps) => {
       const values = await form.validateFields();
       if (!id || !values.penId) return;
 
-      const response = await moveCow({ body: { cowId: id, penId: values.penId } });
+      const response = await moveCow({
+        body: { cowId: id, penId: values.penId },
+      });
 
       if (response) {
         const newRecord: CowPenHistory = {
@@ -82,62 +93,67 @@ const HistoryMoveCow = ({ id, isLoadingHistory }: HistoryMoveCowProps) => {
         mutate();
       }
 
-      toast.showSuccess(t("Move cow successfully"));
+      toast.showSuccess(t('Move cow successfully'));
       form.resetFields();
     } catch (error) {
       if (error instanceof Error) return;
-      toast.showError(t("Failed to move cow"));
+      toast.showError(t('Failed to move cow'));
     }
   };
 
-  const columns = useMemo<Column[]>(() => [
-    {
-      title: t("#"),
-      dataIndex: "stt",
-      key: "stt",
-      render: (_: unknown, __: CowPenHistory, index: number) => index + 1,
-    },
-    {
-      title: t("In Pen Name"),
-      dataIndex: "penEntity",
-      key: "penName",
-      render: (penEntity: PenEntity) => penEntity.name,
-      searchable: true,
-    },
-    {
-      title: t("Area"),
-      dataIndex: "penEntity",
-      key: "areaBelongto",
-      render: (penEntity: PenEntity) => penEntity?.areaBelongto?.name ?? "N/A",
-      searchable: true,
-    },
-    {
-      title: t("From Date"),
-      dataIndex: "fromDate",
-      key: "fromDate",
-      render: (fromDate: string) => formatDateHour(fromDate),
-      sorter: (a: CowPenHistory, b: CowPenHistory) =>
-        new Date(a.fromDate).getTime() - new Date(b.fromDate).getTime(),
-      defaultSortOrder: "descend",
-    },
-    {
-      title: t("To Date"),
-      dataIndex: "toDate",
-      key: "toDate",
-      render: (toDate: string | null) => (toDate ? formatDateHour(toDate) : <Tag color="blue">{t("Now")}</Tag>),
-      sorter: (a: CowPenHistory, b: CowPenHistory) => {
-        if (!a.toDate && !b.toDate) return 0;
-        if (!a.toDate) return -1;
-        if (!b.toDate) return 1;
-        return new Date(a.toDate).getTime() - new Date(b.toDate).getTime();
+  const columns = useMemo<Column[]>(
+    () => [
+      {
+        title: t('#'),
+        dataIndex: 'stt',
+        key: 'stt',
+        render: (_: unknown, __: CowPenHistory, index: number) => index + 1,
       },
-    },
-  ], [t]);
+      {
+        title: t('In Pen Name'),
+        dataIndex: 'penEntity',
+        key: 'penName',
+        render: (penEntity: PenEntity) => penEntity.name,
+        searchable: true,
+      },
+      {
+        title: t('Area'),
+        dataIndex: 'penEntity',
+        key: 'areaBelongto',
+        render: (penEntity: PenEntity) =>
+          penEntity?.areaBelongto?.name ?? 'N/A',
+        searchable: true,
+      },
+      {
+        title: t('From Date'),
+        dataIndex: 'fromDate',
+        key: 'fromDate',
+        render: (fromDate: string) => formatDateHour(fromDate),
+        sorter: (a: CowPenHistory, b: CowPenHistory) =>
+          new Date(a.fromDate).getTime() - new Date(b.fromDate).getTime(),
+        defaultSortOrder: 'descend',
+      },
+      {
+        title: t('To Date'),
+        dataIndex: 'toDate',
+        key: 'toDate',
+        render: (toDate: string | null) =>
+          toDate ? formatDateHour(toDate) : <Tag color="blue">{t('Now')}</Tag>,
+        sorter: (a: CowPenHistory, b: CowPenHistory) => {
+          if (!a.toDate && !b.toDate) return 0;
+          if (!a.toDate) return -1;
+          if (!b.toDate) return 1;
+          return new Date(a.toDate).getTime() - new Date(b.toDate).getTime();
+        },
+      },
+    ],
+    [t]
+  );
 
   if (isLoadingHistory) {
     return (
       <WhiteBackground>
-        <p>{t("Loading...")}</p>
+        <p>{t('Loading...')}</p>
       </WhiteBackground>
     );
   }
@@ -145,40 +161,50 @@ const HistoryMoveCow = ({ id, isLoadingHistory }: HistoryMoveCowProps) => {
   if (fetchError) {
     return (
       <WhiteBackground>
-        <p className="text-red-500">{t("Error loading history")}</p>
+        <p className="text-red-500">{t('Error loading history')}</p>
       </WhiteBackground>
     );
   }
 
   return (
     <>
-      <Form form={form} layout="vertical" initialValues={{ areaId: null, penId: null }}>
+      <Form
+        form={form}
+        layout="vertical"
+        initialValues={{ areaId: null, penId: null }}
+      >
         <div className="p-6 bg-white rounded-lg shadow-md">
-          <div className="text-2xl font-bold text-primary mb-6">{t("Choose Area & Pen to Move Cow")}</div>
+          <div className="text-2xl font-bold text-primary mb-6">
+            {t('Choose Area & Pen to Move Cow')}
+          </div>
           <div className="flex flex-col gap-6">
             <div className="flex  items-center">
               <div className="flex items-end gap-4">
                 <FormItemComponent
                   name="areaId"
-                  label={<LabelForm>{t("Area")}</LabelForm>}
-                  rules={[{ required: true, message: t("Please select an area") }]}
+                  label={<LabelForm>{t('Area')}</LabelForm>}
+                  rules={[
+                    { required: true, message: t('Please select an area') },
+                  ]}
                   className="w-48"
                 >
                   <SelectComponent
                     options={areaOptions}
-                    placeholder={t("Select area")}
+                    placeholder={t('Select area')}
                     size="middle"
                   />
                 </FormItemComponent>
 
                 <FormItemComponent
                   name="penId"
-                  label={<LabelForm>{t("Pen")}</LabelForm>}
-                  rules={[{ required: true, message: t("Please select a pen") }]}
+                  label={<LabelForm>{t('Pen')}</LabelForm>}
+                  rules={[
+                    { required: true, message: t('Please select a pen') },
+                  ]}
                   className="w-48"
                 >
                   <SelectComponent
-                    placeholder={t("Select Pen")}
+                    placeholder={t('Select Pen')}
                     options={penOptions}
                     disabled={!areaId || emptyPens.length === 0}
                     size="middle"
@@ -194,13 +220,15 @@ const HistoryMoveCow = ({ id, isLoadingHistory }: HistoryMoveCowProps) => {
                 size="large"
                 className="px-6 ml-5"
               >
-                {t("Move Cow")}
+                {t('Move Cow')}
               </ButtonComponent>
             </div>
 
             {/* Thông báo được đưa xuống hàng riêng */}
             {areaId && emptyPens.length === 0 && (
-              <div className="text-red-500 text-sm ">{t("No empty pens available in this area!")}</div>
+              <div className="text-red-500 text-sm ">
+                {t('No empty pens available in this area!')}
+              </div>
             )}
           </div>
         </div>

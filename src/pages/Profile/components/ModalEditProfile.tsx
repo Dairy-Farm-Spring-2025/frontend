@@ -1,5 +1,8 @@
-import { DatePicker, Form, Input, Select } from 'antd';
+import DatePickerComponent from '@components/DatePicker/DatePickerComponent';
+import SelectComponent from '@components/Select/SelectComponent';
+import { Form, Input } from 'antd';
 import dayjs from 'dayjs';
+import { t } from 'i18next';
 import { useEffect, useState } from 'react';
 import FormComponent from '../../../components/Form/FormComponent';
 import FormItemComponent from '../../../components/Form/Item/FormItemComponent';
@@ -142,121 +145,120 @@ const ModalEditProfile = ({
     <ModalComponent
       open={modal.open}
       onCancel={handleClose}
-      title="Edit Information"
+      title={t('Edit Information')}
       width={700}
       onOk={() => form.submit()}
       loading={isLoading}
     >
       <FormComponent form={form} onFinish={handleFinish}>
-        <FormItemComponent
-          name="name"
-          label={<LabelForm>Name</LabelForm>}
-          rules={[{ required: true }]}
-        >
-          <Input />
-        </FormItemComponent>
-        <FormItemComponent
-          name="phoneNumber"
-          rules={[
-            {
-              required: true,
-              pattern: /^\d{10}$/,
-              message: 'Must be number and have 10 digits',
-            },
-          ]}
-          label={<LabelForm>Phone number</LabelForm>}
-        >
-          <Input />
-        </FormItemComponent>
-        <div className="grid grid-cols-2 gap-5">
+        <div className="flex flex-col gap-5">
           <FormItemComponent
-            name="dob"
+            name="name"
+            label={<LabelForm>Name</LabelForm>}
             rules={[{ required: true }]}
-            label={<LabelForm>Date of birth</LabelForm>}
           >
-            <DatePicker format={'DD-MM-YYYY'} className="!w-full" />
+            <Input />
           </FormItemComponent>
           <FormItemComponent
-            rules={[{ required: true }]}
-            name="gender"
-            label={<LabelForm>Gender</LabelForm>}
+            name="phoneNumber"
+            rules={[
+              {
+                required: true,
+                pattern: /^\d{10}$/,
+                message: t('Must be number and have 10 digits'),
+              },
+            ]}
+            label={<LabelForm>{t('phone_number')}</LabelForm>}
           >
-            <Select placeholder="Select gender..." options={genderDataUser()} />
+            <Input />
+          </FormItemComponent>
+          <div className="grid grid-cols-2 gap-5">
+            <FormItemComponent
+              name="dob"
+              rules={[{ required: true }]}
+              label={<LabelForm>{t('date_of_birth')}</LabelForm>}
+            >
+              <DatePickerComponent className="!w-full" />
+            </FormItemComponent>
+            <FormItemComponent
+              rules={[{ required: true }]}
+              name="gender"
+              label={<LabelForm>{t('gender')}</LabelForm>}
+            >
+              <SelectComponent options={genderDataUser()} />
+            </FormItemComponent>
+          </div>
+
+          <div className="grid grid-cols-3 gap-5">
+            <FormItemComponent
+              name="province"
+              rules={[{ required: true }]}
+              label={<LabelForm>{t('Province')}</LabelForm>}
+            >
+              <SelectComponent
+                labelInValue
+                optionFilterProp="children"
+                showSearch
+                allowClear
+                options={province}
+                onChange={onChangeProvince}
+                filterOption={(input: any, option: any) =>
+                  (option?.label ?? '')
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
+              />
+            </FormItemComponent>
+
+            <FormItemComponent
+              name="district"
+              rules={[{ required: true }]}
+              label={<LabelForm>{t('District')}</LabelForm>}
+            >
+              <SelectComponent
+                labelInValue
+                optionFilterProp="children"
+                disabled={isDistrict}
+                showSearch
+                allowClear
+                options={district}
+                onChange={onChangeDistrict}
+                filterOption={(input: any, option: any) =>
+                  (option?.label ?? '')
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
+              />
+            </FormItemComponent>
+
+            <FormItemComponent
+              name="ward"
+              rules={[{ required: true }]}
+              label={<LabelForm>{t('Ward')}</LabelForm>}
+            >
+              <SelectComponent
+                labelInValue
+                optionFilterProp="children"
+                disabled={isWard}
+                showSearch
+                allowClear
+                options={ward}
+                filterOption={(input: any, option: any) =>
+                  (option?.label ?? '')
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
+              />
+            </FormItemComponent>
+          </div>
+          <FormItemComponent
+            name="address"
+            rules={[{ required: true }]}
+            label={<LabelForm>{t('Address')}</LabelForm>}
+          >
+            <Input placeholder="Enter your address" />
           </FormItemComponent>
         </div>
-
-        <div className="grid grid-cols-3 gap-5">
-          <FormItemComponent
-            name="province"
-            rules={[{ required: true }]}
-            label={<LabelForm>Province</LabelForm>}
-          >
-            <Select
-              placeholder={'Select Province...'}
-              labelInValue
-              optionFilterProp="children"
-              showSearch
-              allowClear
-              options={province}
-              onChange={onChangeProvince}
-              filterOption={(input: any, option: any) =>
-                (option?.label ?? '')
-                  .toLowerCase()
-                  .includes(input.toLowerCase())
-              }
-            />
-          </FormItemComponent>
-
-          <FormItemComponent
-            name="district"
-            rules={[{ required: true }]}
-            label={<LabelForm>District</LabelForm>}
-          >
-            <Select
-              labelInValue
-              optionFilterProp="children"
-              placeholder={'Select District...'}
-              disabled={isDistrict}
-              showSearch
-              allowClear
-              options={district}
-              onChange={onChangeDistrict}
-              filterOption={(input: any, option: any) =>
-                (option?.label ?? '')
-                  .toLowerCase()
-                  .includes(input.toLowerCase())
-              }
-            />
-          </FormItemComponent>
-
-          <FormItemComponent
-            name="ward"
-            rules={[{ required: true }]}
-            label={<LabelForm>Ward</LabelForm>}
-          >
-            <Select
-              labelInValue
-              placeholder={'Select Ward...'}
-              optionFilterProp="children"
-              disabled={isWard}
-              showSearch
-              allowClear
-              options={ward}
-              filterOption={(input: any, option: any) =>
-                (option?.label ?? '')
-                  .toLowerCase()
-                  .includes(input.toLowerCase())
-              }
-            />
-          </FormItemComponent>
-        </div>
-        <FormItemComponent
-          name="address"
-          rules={[{ required: true }]}
-          label={<LabelForm>Address</LabelForm>}
-        >
-          <Input placeholder="Enter your address" />
-        </FormItemComponent>
       </FormComponent>
     </ModalComponent>
   );

@@ -15,7 +15,7 @@ interface CardAreaPenProps {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const CardAreaPen = ({ element, handleEdit }: CardAreaPenProps) => {
+const CardAreaPen = ({ element }: CardAreaPenProps) => {
   const navigate = useNavigate();
 
   // const columns: Column[] = [
