@@ -31,7 +31,7 @@ export const formatAreaType = (type: string) => {
     ?.trim(); // Loại bỏ khoảng trắng dư thừa
 };
 
-export const validateInput = (rule: any, value: string) => {
+export const validateInput = (_: any, value: string) => {
   const regex = /^[A-Z]+-Pen-[0-9]+$/;
 
   if (!value) {

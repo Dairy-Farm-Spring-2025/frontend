@@ -1,5 +1,6 @@
 import useSWR from 'swr';
 import { Image, Spin } from 'antd';
+import { getQR } from '@utils/getImage';
 
 const fetcher = async (url: string) => {
   const res = await fetch(url);
@@ -9,17 +10,13 @@ const fetcher = async (url: string) => {
 };
 
 const CowQRImage = ({ id }: { id: string }) => {
-  const {
-    data: qrUrl,
-    error,
-    isLoading,
-  } = useSWR(`http://34.124.196.11:8080/api/v1/cows/qr/${id}`, fetcher);
+  const { data: qrUrl, error, isLoading } = useSWR(getQR(id), fetcher);
 
   if (isLoading) return <Spin />;
   if (error) return <p>Error loading QR</p>;
   if (!qrUrl) return <p>No QR available</p>;
 
-  return <Image width={200} src={qrUrl} alt='QR Code' />;
+  return <Image width={200} src={qrUrl} alt="QR Code" />;
 };
 
 export default CowQRImage;

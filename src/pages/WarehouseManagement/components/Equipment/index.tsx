@@ -1,22 +1,21 @@
+import TagComponents from '@components/UI/TagComponents';
+import { getEquipmentStatusTag } from '@utils/statusRender/equipmentStatusRender';
 import { useState } from 'react';
-import useFetcher from '../../../../hooks/useFetcher';
-import { WarehouseType } from '../../../../model/Warehouse/warehouse';
-import useToast from '../../../../hooks/useToast';
-import useModal from '../../../../hooks/useModal';
 import { useTranslation } from 'react-i18next';
+import ButtonComponent from '../../../../components/Button/ButtonComponent';
+import PopconfirmComponent from '../../../../components/Popconfirm/PopconfirmComponent';
 import TableComponent, {
   Column,
 } from '../../../../components/Table/TableComponent';
-import PopconfirmComponent from '../../../../components/Popconfirm/PopconfirmComponent';
-import ButtonComponent from '../../../../components/Button/ButtonComponent';
 import AnimationAppear from '../../../../components/UI/AnimationAppear';
 import WhiteBackground from '../../../../components/UI/WhiteBackground';
+import useFetcher from '../../../../hooks/useFetcher';
+import useModal from '../../../../hooks/useModal';
+import useToast from '../../../../hooks/useToast';
 import { EquipmentType } from '../../../../model/Warehouse/equipment';
+import { formatAreaType } from '../../../../utils/format';
 import ModalAddEquipment from './components/ModalAddEquipment';
 import ModalDetailEquipment from './components/ModalDeatialEquipment';
-import { formatAreaType } from '../../../../utils/format';
-import TagComponents from '@components/UI/TagComponents';
-import { getEquipmentStatusTag } from '@utils/statusRender/equipmentStatusRender';
 
 const Equipment = () => {
   const { data, isLoading, mutate } = useFetcher<EquipmentType[]>(

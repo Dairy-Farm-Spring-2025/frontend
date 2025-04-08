@@ -1,6 +1,3 @@
-import { UserProfileData } from '../User';
-import { Item } from '../Warehouse/items';
-
 export type IllnessDetail = {
   illnessDetailId: string;
   date: string;

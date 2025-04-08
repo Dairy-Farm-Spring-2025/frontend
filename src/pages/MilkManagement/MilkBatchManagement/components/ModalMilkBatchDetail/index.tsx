@@ -4,7 +4,6 @@ import React, { useEffect, useMemo, useState } from 'react';
 import ModalComponent from '../../../../../components/Modal/ModalComponent';
 import TableComponent from '../../../../../components/Table/TableComponent';
 import AnimationAppear from '../../../../../components/UI/AnimationAppear';
-import WhiteBackground from '../../../../../components/UI/WhiteBackground';
 import useFetcher from '../../../../../hooks/useFetcher';
 import { formatAreaType } from '../../../../../utils/format';
 
@@ -42,7 +41,6 @@ interface Milk {
 const ModalMilkBatchDetail: React.FC<ModalMilkBatchDetailProps> = ({
   modal,
   milkBatchId,
-  mutate,
 }) => {
   const {
     data,
@@ -201,22 +199,21 @@ const ModalMilkBatchDetail: React.FC<ModalMilkBatchDetailProps> = ({
             options={
               Array?.isArray(availableDailyMilk ? availableDailyMilk : [])
                 ? availableDailyMilk?.map((milk: Milk) => ({
-                  value: milk.dailyMilkId,
-                  label: `ID: ${milk.dailyMilkId} - Volume: ${milk.volume
+                    value: milk.dailyMilkId,
+                    label: `ID: ${milk.dailyMilkId} - Volume: ${
+                      milk.volume
                     } - Milk Date: ${milk.milkDate} (${formatAreaType(
                       milk.shift
                     )})`,
-                }))
+                  }))
                 : []
             }
             onFocus={fetchAvailableDailyMilk} // Gọi API khi nhấn vào Select
           />
         </Col>
-
       </Row>
 
       <AnimationAppear duration={0.5}>
-
         <TableComponent
           rowSelection={rowSelection}
           columns={columns}
@@ -234,16 +231,13 @@ const ModalMilkBatchDetail: React.FC<ModalMilkBatchDetailProps> = ({
             >
               <Button
                 type="primary"
-                disabled={
-                  !tempSelectedMilks.length && !selectedRowKeys.length
-                }
+                disabled={!tempSelectedMilks.length && !selectedRowKeys.length}
               >
                 Update Daily Milk
               </Button>
             </Popconfirm>
           </Col>
         </Row>
-
       </AnimationAppear>
     </ModalComponent>
   );

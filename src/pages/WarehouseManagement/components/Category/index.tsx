@@ -51,7 +51,6 @@ const Category = () => {
       dataIndex: 'name',
       key: 'name',
       title: t('Name'),
-      render: (data) => <p className="text-base font-bold">{data}</p>,
     },
     {
       dataIndex: 'categoryId',
@@ -59,7 +58,6 @@ const Category = () => {
       title: t('Action'),
       render: (data) => (
         <div className="flex gap-5">
-
           <ButtonComponent
             type="primary"
             onClick={() => handleOpenModalDetail(data)}

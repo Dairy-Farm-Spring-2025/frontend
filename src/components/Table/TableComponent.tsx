@@ -20,7 +20,6 @@ export interface Column extends ColumnProps<any> {
   searchText?: boolean;
   objectKeyFilter?: string;
   editable?: boolean;
-
 }
 
 interface TableComponentProps extends TableProps<any> {
@@ -59,7 +58,7 @@ const EditableCell: React.FC<any> = ({
         childNode = (
           <DatePicker
             format="YYYY-MM-DD"
-            onChange={(date, dateString) => {
+            onChange={(_date, dateString) => {
               setValue(dateString);
               save(dateString);
             }}
@@ -142,7 +141,6 @@ const EditableCell: React.FC<any> = ({
 const TableComponent = ({
   columns,
   dataSource,
-  onDataChange,
   ...props
 }: TableComponentProps) => {
   const [filteredData, setFilteredData] = useState<any[]>(dataSource);
@@ -215,17 +213,6 @@ const TableComponent = ({
   const handleSearchTextFilter = useCallback((value: string, key: string) => {
     setSearchTextFilters((prev) => ({ ...prev, [key]: value }));
   }, []);
-  const handleChange = (value: any, record: any, dataIndex: string) => {
-    const newData = [...dataSource];
-    const index = newData.findIndex((item) => item.key === record.key);
-    if (index > -1) {
-      newData[index] = { ...newData[index], [dataIndex]: value };
-      setFilteredData(newData);
-      if (onDataChange) {
-        onDataChange(newData); // Gửi dữ liệu mới lên component cha
-      }
-    }
-  };
   const getRowIndex = (index: number) => {
     return (pagination.current - 1) * pagination.pageSize + index + 1;
   };
@@ -277,63 +264,63 @@ const TableComponent = ({
         filterDropdown:
           col.searchable || col.searchText
             ? ({
-              setSelectedKeys,
-              selectedKeys,
-              confirm,
-              clearFilters,
-            }: any) => {
-              const handleReset = (clearFilters: () => void) => {
-                clearFilters();
-                setSelectedKeys([]);
-                confirm();
-                setSearchTextFilters({});
-              };
-              return (
-                <div style={{ padding: 8, width: 250 }}>
-                  <Input
-                    placeholder={`${t('Search')} ${col.title}`}
-                    value={selectedKeys[0] || ``}
-                    onChange={(e) => {
-                      setSelectedKeys(e.target.value ? [e.target.value] : []);
-                    }}
-                    onPressEnter={() =>
-                      handleSearchTextFilter(selectedKeys[0], col.dataIndex)
-                    }
-                    style={{ marginBottom: 8, display: 'block' }}
-                    className="!w-full"
-                  />
-                  <div className="flex items-center gap-1">
-                    <Button
-                      type="primary"
-                      onClick={() => {
-                        handleSearchTextFilter(
-                          selectedKeys[0],
-                          col.dataIndex
-                        );
-                        confirm();
+                setSelectedKeys,
+                selectedKeys,
+                confirm,
+                clearFilters,
+              }: any) => {
+                const handleReset = (clearFilters: () => void) => {
+                  clearFilters();
+                  setSelectedKeys([]);
+                  confirm();
+                  setSearchTextFilters({});
+                };
+                return (
+                  <div style={{ padding: 8, width: 250 }}>
+                    <Input
+                      placeholder={`${t('Search')} ${col.title}`}
+                      value={selectedKeys[0] || ``}
+                      onChange={(e) => {
+                        setSelectedKeys(e.target.value ? [e.target.value] : []);
                       }}
-                      icon={<SearchOutlined />}
-                      size="small"
-                      style={{ marginRight: 8 }}
-                      className="!w-1/2"
-                    >
-                      {t('Search')}
-                    </Button>
-                    <Button
-                      onClick={() =>
-                        clearFilters && handleReset(clearFilters)
+                      onPressEnter={() =>
+                        handleSearchTextFilter(selectedKeys[0], col.dataIndex)
                       }
-                      size="small"
-                      className="!w-1/2"
-                    >
-                      {t('Reset')}
-                    </Button>
+                      style={{ marginBottom: 8, display: 'block' }}
+                      className="!w-full"
+                    />
+                    <div className="flex items-center gap-1">
+                      <Button
+                        type="primary"
+                        onClick={() => {
+                          handleSearchTextFilter(
+                            selectedKeys[0],
+                            col.dataIndex
+                          );
+                          confirm();
+                        }}
+                        icon={<SearchOutlined />}
+                        size="small"
+                        style={{ marginRight: 8 }}
+                        className="!w-1/2"
+                      >
+                        {t('Search')}
+                      </Button>
+                      <Button
+                        onClick={() =>
+                          clearFilters && handleReset(clearFilters)
+                        }
+                        size="small"
+                        className="!w-1/2"
+                      >
+                        {t('Reset')}
+                      </Button>
+                    </div>
                   </div>
-                </div>
-              );
-            }
+                );
+              }
             : col.filterable
-              ? () => (
+            ? () => (
                 <div style={{ padding: 8, width: 250 }}>
                   <Select
                     placeholder={`Filter ${col.title}`}
@@ -353,25 +340,25 @@ const TableComponent = ({
                   </Select>
                 </div>
               )
-              : col.filteredDate
-                ? () => (
-                  <div style={{ padding: 8 }}>
-                    <DatePicker
-                      style={{ width: '100%' }}
-                      onChange={(date) => handleDateFilter(date, col.dataIndex)}
-                      placeholder={`Select ${col.title}`}
-                      allowClear
-                    />
-                  </div>
-                )
-                : undefined,
+            : col.filteredDate
+            ? () => (
+                <div style={{ padding: 8 }}>
+                  <DatePicker
+                    style={{ width: '100%' }}
+                    onChange={(date) => handleDateFilter(date, col.dataIndex)}
+                    placeholder={`Select ${col.title}`}
+                    allowClear
+                  />
+                </div>
+              )
+            : undefined,
         filterIcon:
           col.searchable || col.searchText
             ? (filtered: boolean) => (
-              <SearchOutlined
-                style={{ color: filtered ? '#1890ff' : undefined }}
-              />
-            )
+                <SearchOutlined
+                  style={{ color: filtered ? '#1890ff' : undefined }}
+                />
+              )
             : undefined,
       };
     });
@@ -412,9 +399,9 @@ const TableComponent = ({
           dataSource={
             filteredData
               ? filteredData.map((element, index) => ({
-                ...element,
-                key: element.key || index, // Đảm bảo có key
-              }))
+                  ...element,
+                  key: element.key || index, // Đảm bảo có key
+                }))
               : []
           }
           pagination={{ position: ['bottomCenter'] }}

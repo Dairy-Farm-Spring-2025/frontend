@@ -7,14 +7,12 @@ import TextTitle from '@components/UI/TextTitle';
 import Title from '@components/UI/Title';
 import useFetcher from '@hooks/useFetcher';
 import { ModalActionProps } from '@hooks/useModal';
-import { ReportTaskByDate } from '@model/Task/ReportTask';
 import { Task } from '@model/Task/Task';
-import { REPORT_TASK_PATH } from '@service/api/Task/reportTaskApi';
 import { TASK_PATH } from '@service/api/Task/taskApi';
 import { formatDateHour, formatStatusWithCamel } from '@utils/format';
 import { priorityColors } from '@utils/statusRender/taskStatusRender';
 import { t } from 'i18next';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { MdModeNight, MdSunny } from 'react-icons/md';
 
 interface ReportTasksModalProps {
@@ -26,14 +24,8 @@ interface ReportTasksModalProps {
 }
 
 const ReportTasksModal = ({ modal, taskId, day }: ReportTasksModalProps) => {
-  const [dataReportTask, setDataReportTask] = useState();
-  const { isLoading: isLoadingReportTask, trigger: triggerDataReportTask } =
-    useFetcher<ReportTaskByDate>(
-      REPORT_TASK_PATH.REPORT_TASK_DATE(taskId, day),
-      'GET'
-    );
   const { data: dataTask, isLoading: isLoadingTask } = useFetcher<Task>(
-    TASK_PATH.MY_TASK_DETAIL(taskId),
+    TASK_PATH.TASK_DETAIL(taskId),
     'GET'
   );
   useEffect(() => {
