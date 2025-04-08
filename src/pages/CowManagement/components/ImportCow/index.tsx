@@ -1,4 +1,4 @@
-import { CheckCircleOutlined, CloseCircleOutlined, EditOutlined, SaveOutlined, CloseOutlined, DeleteOutlined, DownloadOutlined } from '@ant-design/icons';
+import { EditOutlined, SaveOutlined, CloseOutlined, DeleteOutlined, DownloadOutlined } from '@ant-design/icons';
 import TableComponent, { Column } from '@components/Table/TableComponent';
 import AnimationAppear from '@components/UI/AnimationAppear';
 import WhiteBackground from '@components/UI/WhiteBackground';
@@ -8,7 +8,7 @@ import { COW_PATH } from '@service/api/Cow/cowApi';
 import { cowOrigin, cowOriginFiltered } from '@service/data/cowOrigin';
 import { cowStatus } from '@service/data/cowStatus';
 import { formatDateHour, formatSTT } from '@utils/format';
-import { getLabelByValue } from '@utils/getLabel';
+
 import { Button, Divider, message, InputNumber } from 'antd';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -23,7 +23,6 @@ import SelectComponent from '@components/Select/SelectComponent';
 import dayjs from 'dayjs';
 import { HEALTH_RECORD_STATUS } from '@service/data/healthRecordStatus';
 import CreateBulkModal from '@pages/CowPenManagement/components/MoveCowManagement/components/ListCowNotInPen/components/CreateBulk/CreateBulk';
-
 
 const ListCowImport = () => {
     const { t } = useTranslation();
@@ -566,5 +565,4 @@ const ListCowImport = () => {
         </AnimationAppear>
     );
 };
-
 export default ListCowImport;
