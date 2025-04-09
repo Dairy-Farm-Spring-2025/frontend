@@ -24,6 +24,7 @@ import { HEALTH_RECORD_PATH } from '@service/api/HealthRecord/healthRecordApi';
 import { useTranslation } from 'react-i18next';
 import ModalCreateIllNess from './components/ModalCreateIllNess';
 import ModalViewDetail from './components/ModalViewDetail';
+import { IllnessStatus, IllnessStatus_Filter } from '@service/data/healthRecordStatus';
 const IllNess = () => {
   const [healthReport, setHealthReport] = useState<Health[]>([]);
   const { data, error, isLoading, mutate } = useFetch<Health[]>(
@@ -69,7 +70,6 @@ const IllNess = () => {
       title: t('Cow'),
       render: (data) => (
         <Tooltip
-          color="#87d068"
           placement="top"
           title={
             <div className="cowEntity">
@@ -101,21 +101,29 @@ const IllNess = () => {
             </div>
           }
         >
-          <span className="text-blue-500 ">{data.name}</span>
+          <span className="text-500 ">{data.name}</span>,
         </Tooltip>
+
       ),
+      searchText: true,
     },
     {
       dataIndex: 'startDate',
       key: 'startDate',
       title: t('Start Date'),
       render: (data) => formatDateHour(data),
+      sorter: (a: any, b: any) =>
+        new Date(a.startDate).getTime() - new Date(b.startDate).getTime(),
+      filteredDate: true,
     },
     {
       dataIndex: 'endDate',
       key: 'endDate',
       title: t('End Date'),
       render: (data) => (data ? formatDateHour(data) : '-'),
+      sorter: (a: any, b: any) =>
+        new Date(a.endDate).getTime() - new Date(b.endDate).getTime(),
+      filteredDate: true,
     },
 
     {
@@ -124,7 +132,7 @@ const IllNess = () => {
       title: t('user'),
       render: (data) => (
         <Tooltip
-          color="#87d068"
+
           placement="top"
           title={
             <div className="userEntity">
@@ -151,6 +159,7 @@ const IllNess = () => {
           <span className="text-blue-500 ">{data.name}</span>
         </Tooltip>
       ),
+      searchText: true,
     },
     {
       dataIndex: 'illnessStatus',
@@ -163,6 +172,9 @@ const IllNess = () => {
           {t(formatStatusWithCamel(status))}
         </TagComponents>
       ),
+
+      filterable: true,
+      filterOptions: IllnessStatus_Filter(),
     },
     {
       dataIndex: 'illnessId',
