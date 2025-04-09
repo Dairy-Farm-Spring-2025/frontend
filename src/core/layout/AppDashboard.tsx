@@ -1,4 +1,8 @@
-import { BellOutlined, WalletOutlined } from '@ant-design/icons';
+import {
+  BellOutlined,
+  DashboardOutlined,
+  WalletOutlined,
+} from '@ant-design/icons';
 import {
   Avatar,
   ConfigProvider,
@@ -159,6 +163,14 @@ const AppDashboard: React.FC = React.memo(() => {
   );
 
   const itemsMenu: MenuItem[] = [
+    getItem(t('dashboard'), 'dairy/dashboard', <AiOutlineDashboard />, [
+      getItem(
+        t('Dashboard today'),
+        'dairy/dashboard/today',
+        <DashboardOutlined />
+      ),
+      getItem(t('daily_milk'), 'dairy/dashboard/daily-milk', <LuMilk />),
+    ]),
     {
       key: 'user-group',
       label: <LabelDashboard>{t('user_management')}</LabelDashboard>,
@@ -169,9 +181,6 @@ const AppDashboard: React.FC = React.memo(() => {
         getItem(t('Role management'), 'dairy/role-management', <BiCategory />),
       ],
     },
-    getItem(t('dashboard'), 'dairy/dashboard', <AiOutlineDashboard />, [
-      getItem(t('daily_milk'), 'dairy/dashboard/daily-milk', <LuMilk />),
-    ]),
     {
       key: 'group-cow',
       label: <LabelDashboard>{t('dairy_management')}</LabelDashboard>,
