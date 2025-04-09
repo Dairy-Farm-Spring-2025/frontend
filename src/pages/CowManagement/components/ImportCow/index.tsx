@@ -62,7 +62,7 @@ const ListCowImport = () => {
             setImportedCowIds(cowIds);
             setImportSuccess(success);
             // Hiển thị popup xác nhận thay vì mở modal ngay lập tức
-            Modal.success({
+            Modal.confirm({
                 title: t('Xác nhận di chuyển bò'),
                 content: t('Bạn có muốn di chuyển các con bò vừa import không?'),
                 okText: t('Có'),
@@ -512,7 +512,7 @@ const ListCowImport = () => {
                     dataSource={reviewData ? formatSTT(reviewData) : []}
                     onDataChange={handleDataChange}
                     scroll={{ x: 'max-content' }}
-                    pagination={{ pageSize: 5, position: ['bottomCenter'] }}
+                    pagination={{ pageSize: 10, position: ['bottomCenter'] }}
                 />
                 {importSuccess && (
                     <CreateBulkModal

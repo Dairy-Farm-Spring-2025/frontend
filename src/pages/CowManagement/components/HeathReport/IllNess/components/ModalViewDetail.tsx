@@ -248,13 +248,21 @@ const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
                         {detail.date
                           ? dayjs(detail.date).format('DD/MM/YYYY')
                           : t('No data')}
+
+
+
                       </div>
                     </Col>
                     <Col span={12}>
                       <LabelForm>{t('Description')}</LabelForm>
-                      <div className="font-medium text-gray-700">
-                        {detail.description || t('No data')}
-                      </div>
+                      <div
+                        className="prose mb-6"
+                        dangerouslySetInnerHTML={{
+                          __html: detail.description || t('No data'),
+                        }}
+                      />
+
+
                     </Col>
                     <Col span={12}>
                       <LabelForm>{t('Dosage')}</LabelForm>
