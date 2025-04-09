@@ -26,6 +26,14 @@ export interface ReportTaskDate {
   taskId: Task;
 }
 
+export interface ReportTaskDashboard {
+  description: string;
+  endTime: string;
+  reportTaskId: number;
+  startTime: string;
+  status: StatusReportTask;
+}
+
 type ImageReport = {
   reportTaskImageId: number;
   url: string;

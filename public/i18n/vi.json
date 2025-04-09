@@ -600,5 +600,18 @@
   "Size (m)": "Kích thước (m)",
   "Import cow": "Nhập bò",
   "Download Template": "Tải file excel mẫu",
-  "Vaccine injection list": "Danh sách tiêm vắc-xin"
+  "Vaccine injection list": "Danh sách tiêm vắc-xin",
+  "Dashboard today": "Thống kê hôm nay",
+  "Daily tasks date {{date}} statistics": "Thống kê công việc hàng ngày ngày {{date}}",
+  "Daily statistics": "Thống kê hàng ngày",
+  "Daily tasks": "Công việc hàng ngày",
+  "Vaccine injection tasks": "Công việc tiêm vắc-xin",
+  "Illness tasks": "Công việc khám bệnh",
+  "Illness detail tasks": "Công việc khám chi tiết bệnh",
+  "Total milk": "Tổng lượng sữa",
+  "Total report tasks": "Tổng báo cáo công việc",
+  "Total processing application": "Tổng đơn đang đợi duyệt",
+  "tasks": "công việc",
+  "reports": "báo cáo",
+  "applications": "đơn"
 }

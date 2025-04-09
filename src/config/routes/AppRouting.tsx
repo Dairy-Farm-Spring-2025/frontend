@@ -24,6 +24,7 @@ import ListVaccineInjection from '@pages/VaccineCycleManagement/components/ListV
 import ApplicationListing from '@pages/ApplicationManagement/Application-management';
 import ListCowImport from '@pages/CowManagement/components/ImportCow';
 import AuthCallback from '@pages/Login/components/AuthCallback';
+import DashboardToday from '@pages/Dashboard/components/DashboardToday';
 
 const NotificationManagement = lazy(
   () => import('@pages/NotificationManagement')
@@ -235,6 +236,10 @@ const AppRouting = () => {
         ),
       children: [
         {
+          path: '',
+          element: <Navigate to={'dashboard/today'} />,
+        },
+        {
           path: 'user-management',
           element: SuspenseWrapper(<ListUser />),
         },
@@ -249,11 +254,15 @@ const AppRouting = () => {
           children: [
             {
               path: '',
-              element: <Navigate to={'daily-milk'} />,
+              element: <Navigate to={'today'} />,
             },
             {
               path: 'daily-milk',
               element: SuspenseWrapper(<DailyMilkDashboard />),
+            },
+            {
+              path: 'today',
+              element: SuspenseWrapper(<DashboardToday />),
             },
           ],
         },

@@ -54,7 +54,7 @@ const TaskCreateModal = ({
   >(undefined);
   const [form] = Form.useForm();
   const fromDate = Form.useWatch('fromDate', form); // Watch the fromDate field
-  const [selectedTaskTypes, setSelectedTaskTypes] = useState<any>(undefined);
+  const [selectedTaskTypes, setSelectedTaskTypes] = useState<TaskType>();
   const [isToDateDisabled, setIsToDateDisabled] = useState(true); // State to control To Date DatePicker
   const requiredFields = [
     'taskTypeId',
@@ -83,7 +83,7 @@ const TaskCreateModal = ({
     if (modal.open) {
       form.resetFields(); // Reset form khi modal mở
     }
-  }, [form, modal.open, selectedTaskTypes]);
+  }, [form, modal.open]);
 
   useEffect(() => {
     if (fromDate) {
@@ -97,7 +97,7 @@ const TaskCreateModal = ({
   const disabledFromDate = (current: dayjs.Dayjs) => {
     return (
       (current && current.isBefore(dayjs().startOf('day'))) ||
-      (selectedTaskTypes !== 'Khám bệnh' &&
+      (selectedTaskTypes?.name !== 'Khám bệnh' &&
         current.isSame(dayjs().startOf('day')))
     );
   };
@@ -164,9 +164,9 @@ const TaskCreateModal = ({
           <SelectComponent
             options={optionsDataTaskTypes}
             onChange={(_, option: any) => {
-              form.resetFields(['assigneeIds']);
               setSelectedRole(option?.desc?.roleId?.name);
-              setSelectedTaskTypes(option?.desc?.name);
+              setSelectedTaskTypes(option?.desc);
+              form.setFieldsValue({ assigneeIds: undefined });
             }}
             optionRender={(option) => {
               const taskType: TaskType = option?.data?.desc;
