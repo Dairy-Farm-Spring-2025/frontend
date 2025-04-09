@@ -11,7 +11,7 @@ export const cowStatus = () => {
       label: i18n.t('Dry cow', { defaultValue: 'Dry cow' }),
     },
     {
-      value: 'youngCow',
+      value: 'pregnant',
       label: i18n.t('Pregnant cow', { defaultValue: 'Pregnant cow' }),
     },
 
@@ -92,7 +92,7 @@ export const COW_STATUS_DRY_MATTER = () => {
     },
     {
       value: 'youngCow',
-      label: i18n.t('Pregnant cow', { defaultValue: 'Pregnant cow' }),
+      label: i18n.t('Young cow', { defaultValue: 'Young cow' }),
     },
   ];
 };

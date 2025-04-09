@@ -1,5 +1,3 @@
-
-
 import {
     CloseOutlined,
     DeleteOutlined,
