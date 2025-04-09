@@ -10,7 +10,7 @@ import SelectComponent from '@components/Select/SelectComponent';
 import { Area } from '@model/Area';
 import Title from '@components/UI/Title';
 import { formatStatusWithCamel } from '@utils/format';
-import { SearchOutlined, CheckCircleOutlined } from '@ant-design/icons';
+import { CheckCircleOutlined } from '@ant-design/icons';
 
 interface CreateBulkModalProps {
   modal: any;
@@ -74,7 +74,7 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
 
   const handleSelectAllCows = () => {
     const numPens = dataPenInArea?.length || 0;
-    if (selectedCows.length === numPens) {
+    if (selectedCows.length > 0) { // Chỉ kiểm tra số bò đã chọn
       setSelectedCows([]);
       setSelectedPens([]);
     } else {
@@ -213,17 +213,15 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
                       rowKey="cowId"
                       pagination={{ pageSize: 7 }}
                       size="small"
-
                       rowClassName={() => 'hover:bg-gray-50'}
                     />
                   </Card>
                 </Col>
                 <Col span={12} style={{ position: 'relative' }}>
-                  {/* Đường kẻ dọc ở giữa */}
                   <div
                     style={{
                       position: 'absolute',
-                      left: '-12px', // Nửa khoảng cách gutter để căn giữa
+                      left: '-12px',
                       top: 0,
                       bottom: 0,
                       width: '2px',
@@ -242,7 +240,6 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
                       rowKey="penId"
                       pagination={{ pageSize: 7 }}
                       size="small"
-
                       rowClassName={() => 'hover:bg-gray-50'}
                     />
                   </Card>
@@ -269,8 +266,8 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
                 disabled={!selectedArea || !dataPenInArea.length}
                 className="mr-4 hover:bg-blue-50"
               >
-                {selectedCows.length === dataPenInArea.length ? t('Deselect All') : t('Select All Cows')} (
-                {dataPenInArea?.length || 0})
+                {selectedCows.length > 0 ? t('Deselect All') : t('Select All Cows')} (
+                {selectedCows.length}/{dataPenInArea?.length || 0})
               </ButtonComponent>
             </div>
           </Form>

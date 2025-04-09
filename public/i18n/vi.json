@@ -157,7 +157,7 @@
   "In Pen": "Trong chuồng",
   "Submit": "Nộp",
   "Select Dairy Cows and Pens": "Chọn bò sữa và chuồng",
-  "Select All Cows": "Chọn tất cả bò",
+  "Select All Cows": "Chọn tất cả bò vào chuồng",
   "The number of selected cows must match the number of selected pens.": "Số lượng bò được chọn phải bằng số lượng chuồng được chọn.",
   "Create Bulk": " Tạo hàng loạt",
   "Pens": "Chuồng",
@@ -194,7 +194,7 @@
   "View by category": "Xem bằng loại hàng ",
   "Select category": "Chọn loại hàng",
   "Storage Location": " Vị trí nhà kho",
-  "Create Item Batch": "Tạo kho mặt hàng",
+  "Create Item Batch": "Tạo lô hàng",
   "Import Date": " Ngày nhập vào",
   "Expired Date": "Ngày hết hạn",
   "Supplier": "Nhà cung cấp",
@@ -408,7 +408,7 @@
   "pagination": {
     "total_page": "Tổng {{items}} thành phần"
   },
-  "Please choose area type first": "Hãy chọn loại khu vực trước",
+  "Step 1: Choose Area": "Bước 1: Hãy chọn loại khu vực trước",
   "Join task": "Tham gia công việc",
   "View report": "Xem báo cáo",
   "Task is expired": "Công việc đã quá hạn",
@@ -509,8 +509,7 @@
   "Years": "Năm",
   "Food": "Thức ăn",
   "Move a large number of Cow": "Di chuyển số lượng lớn bò",
-  "1. Choose Area First": "1. Chọn khu vực trước",
-  "2. Select Cows and Pens": "2. Chọn bò và chuồng cần chuyển",
+  "Step 2: Select Cows and Pens": "Bước 2: Chọn bò và chuồng cần chuyển",
   "Max": "tối đa",
   "Illness Information": "Thông tin bệnh",
   "Illness Details": "Chi tiết bệnh",
@@ -614,5 +613,6 @@
   "tasks": "công việc",
   "reports": "báo cáo",
   "applications": "đơn",
-  "Deselect All": "Bỏ chọn tất cả"
+  "Deselect All": "Bỏ chọn tất cả",
+  "Create Equipment": "Tạo thiết bị"
 }
