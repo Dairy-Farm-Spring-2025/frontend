@@ -1,15 +1,12 @@
-import { message, Popconfirm, Button, Divider, Table } from 'antd';
-import { useTranslation } from 'react-i18next';
+import { Column } from '@components/Table/TableComponent';
 import Title from '@components/UI/Title';
-import { FeedMealDetails } from '@model/Feed/Feed';
 import useFetcher from '@hooks/useFetcher';
+import { FeedMealDetails } from '@model/Feed/Feed';
 import { Item } from '@model/Warehouse/items';
+import { Divider, Table } from 'antd';
+import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import AddDetail from './AddDetail';
-import EditDetail from './EditDetail';
-import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import api from '@config/axios/axios';
-import { useState, useCallback, useMemo } from 'react';
-import TableComponent, { Column } from '@components/Table/TableComponent';
 
 interface FeedMealDetailsInformationProps {
   detailData: FeedMealDetails[];
@@ -22,19 +19,24 @@ const FeedMealDetailsInformation = ({
   detailData = [],
   feedMealId,
   mutate,
-  feedMealData,
 }: FeedMealDetailsInformationProps) => {
   const { t } = useTranslation();
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedDetail, setSelectedDetail] = useState<FeedMealDetails | null>(null);
+  // const [isModalVisible, setIsModalVisible] = useState(false);
+  // const [selectedDetail, setSelectedDetail] = useState<FeedMealDetails | null>(
+  //   null
+  // );
 
-  const { data: items = [], isLoading: isLoadingItems } = useFetcher<Item[]>('items', 'GET');
+  const { data: items = [], isLoading: isLoadingItems } = useFetcher<Item[]>(
+    'items',
+    'GET'
+  );
 
   // Nhóm dữ liệu theo category
   const groupedData = useMemo(() => {
     const categoryMap: { [key: string]: FeedMealDetails[] } = {};
     detailData.forEach((detail) => {
-      const categoryName = detail.itemEntity?.categoryEntity?.name || 'Uncategorized';
+      const categoryName =
+        detail.itemEntity?.categoryEntity?.name || 'Uncategorized';
       if (!categoryMap[categoryName]) {
         categoryMap[categoryName] = [];
       }
@@ -48,14 +50,10 @@ const FeedMealDetailsInformation = ({
     return total.toFixed(2);
   }, []);
 
-
-
-  const toggleModal = useCallback((detail?: FeedMealDetails) => {
-    setIsModalVisible((prev) => !prev);
-    setSelectedDetail(detail || null);
-  }, []);
-
-
+  // const toggleModal = useCallback((detail?: FeedMealDetails) => {
+  //   setIsModalVisible((prev) => !prev);
+  //   setSelectedDetail(detail || null);
+  // }, []);
 
   // Cột cho mỗi bảng con (chỉ có Name và Quantity)
   const columns: Column[] = [
@@ -72,7 +70,6 @@ const FeedMealDetailsInformation = ({
       render: (quantity) => `${(quantity || 0).toFixed(2)} (${t('kilogram')})`,
       align: 'right',
     },
-
   ];
 
   // Lấy danh sách category và giới hạn tối đa 4 category
@@ -86,6 +83,7 @@ const FeedMealDetailsInformation = ({
           {t('Feed meal details')}:
         </Title>
         <AddDetail
+          onAddClick={() => console.log('Fix build')}
           feedMealId={feedMealId}
           category=""
           items={items}
@@ -102,7 +100,10 @@ const FeedMealDetailsInformation = ({
           const total = calculateTotalQuantity(items);
 
           return (
-            <div key={categoryName} className="bg-white rounded-lg shadow-sm p-4">
+            <div
+              key={categoryName}
+              className="bg-white rounded-lg shadow-sm p-4"
+            >
               {/* Tiêu đề category và tổng số lượng */}
               <div className="flex justify-between items-center mb-3">
                 <Title className="text-lg font-medium text-gray-700">
@@ -123,8 +124,6 @@ const FeedMealDetailsInformation = ({
                 pagination={false}
                 className="rounded-md overflow-hidden"
               />
-
-
             </div>
           );
         })}
@@ -148,8 +147,6 @@ const FeedMealDetailsInformation = ({
           {calculateTotalQuantity(detailData)} ({t('kilogram')})
         </span>
       </p>
-
-
     </div>
   );
 };

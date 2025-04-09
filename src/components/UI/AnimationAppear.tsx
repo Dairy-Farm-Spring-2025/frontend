@@ -7,9 +7,9 @@ interface AnimationAppearProps {
 const AnimationAppear = ({ children }: AnimationAppearProps) => {
   return (
     <motion.div
-      initial={{ y: 50, opacity: 0.7 }}
+      initial={{ y: 50, opacity: 0.5 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0 }}
+      transition={{ duration: 0.3 }}
       className="box-border w-full"
     >
       {children}

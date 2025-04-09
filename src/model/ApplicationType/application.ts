@@ -2,6 +2,7 @@ import { UserProfileData } from '../User';
 import { ApplicationType } from './applicationType';
 
 export type Application = {
+  applicationId: number;
   title: string;
   content: string;
   status: ApplicationStatus;

@@ -85,8 +85,6 @@ const AppDashboard: React.FC = React.memo(() => {
   const [openKeys, setOpenKeys] = useState<string[]>([]);
   const { data, mutate } = useFetcher<UserProfileData>('users/profile', 'GET');
   const { roleName } = useSelector((state: RootState) => state.user);
-  const user = useSelector((state: RootState) => state.user);
-  console.log(user);
   const { trigger: triggerFCM } = useFetcher(USER_PATH.FCM_TOKEN_UPDATE, 'PUT');
   const shouldRefreshAvatar = useSelector(
     (state: RootState) => state.avatar.shouldRefreshAvatar
@@ -95,7 +93,6 @@ const AppDashboard: React.FC = React.memo(() => {
   useEffect(() => {
     const fetchToken = async () => {
       const fcmToken = await requestFCMToken().then((element) => element);
-      console.log(fcmToken);
       await triggerFCM({ body: { fcmTokenWeb: fcmToken } });
     };
     fetchToken();
@@ -425,7 +422,6 @@ const AppDashboard: React.FC = React.memo(() => {
             className="!bg-white flex items-center gap-5 justify-end"
             style={{ padding: 0 }}
           >
-            {' '}
             <div className="flex items-center gap-5 pr-16">
               <NotificationDropDown />
               <div>

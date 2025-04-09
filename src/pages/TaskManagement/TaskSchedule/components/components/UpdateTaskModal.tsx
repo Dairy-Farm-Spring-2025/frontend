@@ -1,3 +1,4 @@
+import ButtonComponent from '@components/Button/ButtonComponent';
 import DatePickerComponent from '@components/DatePicker/DatePickerComponent';
 import DescriptionComponent from '@components/Description/DescriptionComponent';
 import FormComponent from '@components/Form/FormComponent';
@@ -54,11 +55,13 @@ const UpdateTaskModal = ({
     data: dataTaskDetail,
     isLoading: isLoadingTask,
     trigger,
+    mutate,
   } = useFetcher<Task>(TASK_PATH.TASK_DETAIL(taskId), 'GET');
   const { trigger: triggerUpdate, isLoading } = useFetcher(
     'update-task',
     'PUT'
   );
+
   const {
     data: dataApplication,
     trigger: triggerApplication,
@@ -71,6 +74,23 @@ const UpdateTaskModal = ({
     }),
     'GET'
   );
+  const { trigger: approvalRequest, isLoading: isLoadingConfirm } = useFetcher(
+    'approve-request',
+    'PUT'
+  );
+
+  useEffect(() => {
+    if (
+      modal.open &&
+      dataApplication &&
+      dataApplication?.status === 'complete'
+    ) {
+      form.setFieldsValue({
+        offDateStart: dataApplication?.fromDate,
+        offDateEnd: dataApplication?.toDate,
+      });
+    }
+  }, [dataApplication, form, modal.open]);
 
   const disabledOffDateStart = (current: dayjs.Dayjs) => {
     if (!dataTaskDetail?.fromDate || !dataTaskDetail?.toDate) return true;
@@ -84,6 +104,63 @@ const UpdateTaskModal = ({
     const minDate = fromDate.startOf('day');
     const maxDate = dayjs(dataTaskDetail.toDate).endOf('day');
     return current.isBefore(minDate) || current.isAfter(maxDate);
+  };
+
+  const handleApprove = async () => {
+    try {
+      const response = await approvalRequest({
+        url: APPLICATION_PATH.APPLICATION_APPROVE(
+          dataApplication ? dataApplication?.applicationId : (0 as any)
+        ),
+        body: {
+          approvalStatus: 'approve',
+          commentApprove: `Cho nhân viên nghỉ việc ${dataApplication?.fromDate}- ${dataApplication?.toDate}`,
+        },
+      });
+      const offDates: string[] = [];
+      const offDateStart = dataApplication?.fromDate;
+      const offDateEnd = dataApplication?.toDate;
+      if (offDateStart && offDateEnd) {
+        let current = dayjs(offDateStart);
+        while (
+          current.isBefore(dayjs(offDateEnd)) ||
+          current.isSame(dayjs(offDateEnd), 'day')
+        ) {
+          offDates.push(current.format('YYYY-MM-DD')); // Store as YYYY-MM-DD
+          current = current.add(1, 'day');
+        }
+      }
+      const payload = {
+        offDates,
+      };
+      await triggerUpdate({
+        url: TASK_PATH.TASK_UPDATE(taskId),
+        body: payload,
+      });
+      toast.showSuccess(response.message || t('Approve success'));
+      handleCloseModal();
+      setRefetch(true);
+    } catch (error: any) {
+      toast.showError(error.message);
+    }
+  };
+
+  const handleReject = async () => {
+    try {
+      const response = await approvalRequest({
+        url: APPLICATION_PATH.APPLICATION_APPROVE(
+          dataApplication ? dataApplication?.applicationId : (0 as any)
+        ),
+        body: {
+          approvalStatus: 'reject',
+          commentApprove: `Không cho nhân viên nghỉ việc ${dataApplication?.fromDate}- ${dataApplication?.toDate}`,
+        },
+      });
+      toast.showSuccess(response.message || t('Reject success'));
+      mutate();
+    } catch (error: any) {
+      toast.showError(error.message);
+    }
   };
 
   const handleCloseModal = () => {
@@ -257,19 +334,31 @@ const UpdateTaskModal = ({
                     {
                       label: t('Status'),
                       children: (
-                        <TagComponents
-                          color={
-                            statusColor[
-                              dataApplication?.status as keyof typeof statusColor
-                            ] || 'default'
-                          }
-                        >
-                          {t(
-                            formatStatusWithCamel(
-                              dataApplication?.status as any
-                            )
+                        <div className="flex flex-col gap-5">
+                          <TagComponents
+                            className="!w-fit"
+                            color={
+                              statusColor[
+                                dataApplication?.status as keyof typeof statusColor
+                              ] || 'default'
+                            }
+                          >
+                            {t(
+                              formatStatusWithCamel(
+                                dataApplication?.status as any
+                              )
+                            )}
+                          </TagComponents>
+                          {dataApplication?.status !== 'complete' && (
+                            <p>
+                              ({' '}
+                              {t(
+                                'Application must be completed to request off date'
+                              )}
+                              )
+                            </p>
                           )}
-                        </TagComponents>
+                        </div>
                       ),
                       span: 3,
                     },
@@ -300,6 +389,23 @@ const UpdateTaskModal = ({
                     },
                   ]}
                 />
+                {dataApplication.status !== 'complete' && (
+                  <div className="flex gap-2">
+                    <ButtonComponent
+                      loading={isLoadingConfirm}
+                      danger
+                      onClick={handleReject}
+                    >
+                      {t('Reject')}
+                    </ButtonComponent>
+                    <ButtonComponent
+                      loading={isLoadingConfirm}
+                      onClick={handleApprove}
+                    >
+                      {t('Approve')}
+                    </ButtonComponent>
+                  </div>
+                )}
               </div>
             </>
           )}
