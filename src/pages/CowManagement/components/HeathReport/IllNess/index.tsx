@@ -212,7 +212,7 @@ const IllNess = () => {
     <AnimationAppear duration={0.5}>
       <WhiteBackground>
         <ButtonComponent type="primary" onClick={() => setModalOpen(true)}>
-          {t('Create IllNess')}
+          {t('Create Illness')}
         </ButtonComponent>
         <Divider className="my-4" />
         <TableComponent
