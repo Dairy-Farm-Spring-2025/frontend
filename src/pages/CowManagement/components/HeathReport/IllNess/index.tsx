@@ -24,7 +24,7 @@ import { HEALTH_RECORD_PATH } from '@service/api/HealthRecord/healthRecordApi';
 import { useTranslation } from 'react-i18next';
 import ModalCreateIllNess from './components/ModalCreateIllNess';
 import ModalViewDetail from './components/ModalViewDetail';
-import { IllnessStatus, IllnessStatus_Filter } from '@service/data/healthRecordStatus';
+import { IllnessStatus_Filter } from '@service/data/healthRecordStatus';
 const IllNess = () => {
   const [healthReport, setHealthReport] = useState<Health[]>([]);
   const { data, error, isLoading, mutate } = useFetch<Health[]>(
