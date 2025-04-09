@@ -63,9 +63,12 @@ const TaskCreateModal = ({
     'toDate',
     'priority',
     'shift',
-    'areaId',
     'description',
-    ...(selectedRole === 'Veterinarians' ? ['illnessId'] : []), // Add illnessId if role is Veterinarian
+    ...(selectedTaskTypes?.name === 'Khám bệnh' ? [] : ['areaId']),
+    ...(selectedRole === 'Veterinarians' &&
+    selectedTaskTypes?.name !== 'Khám định kì'
+      ? ['illnessId']
+      : []), // Add illnessId if role is Veterinarian
   ];
   const disabledButton = useRequiredForm(form, requiredFields);
 
@@ -261,40 +264,41 @@ const TaskCreateModal = ({
                 </FormItemComponent>
               </div>
               <div className="flex flex-col gap-2 w-1/2">
-                {selectedRole === 'Veterinarians' && (
-                  <FormItemComponent
-                    rules={[{ required: true }]}
-                    name="illnessId"
-                    label={<LabelForm>{t('Illness')}</LabelForm>}
-                  >
-                    <SelectComponent
-                      options={optionsIllness}
-                      search
-                      optionRender={(data) => {
-                        const illness: IllnessCow = data.data.desc;
-                        return (
-                          <div>
+                {selectedRole === 'Veterinarians' &&
+                  selectedTaskTypes?.name !== 'Khám định kì' && (
+                    <FormItemComponent
+                      rules={[{ required: true }]}
+                      name="illnessId"
+                      label={<LabelForm>{t('Illness')}</LabelForm>}
+                    >
+                      <SelectComponent
+                        options={optionsIllness}
+                        search
+                        optionRender={(data) => {
+                          const illness: IllnessCow = data.data.desc;
+                          return (
                             <div>
-                              <p>
-                                <strong>{t('Cow')}</strong>:{' '}
-                                {illness.cowEntity.name}
-                              </p>
-                              <p>
-                                <strong>{t('Severity')}</strong>:{' '}
-                                {t(formatStatusWithCamel(illness.severity))}
-                              </p>
-                              <p>
-                                <strong>{t('Start date')}</strong>:{' '}
-                                {formatDateHour(illness.startDate)}
-                              </p>
+                              <div>
+                                <p>
+                                  <strong>{t('Cow')}</strong>:{' '}
+                                  {illness.cowEntity.name}
+                                </p>
+                                <p>
+                                  <strong>{t('Severity')}</strong>:{' '}
+                                  {t(formatStatusWithCamel(illness.severity))}
+                                </p>
+                                <p>
+                                  <strong>{t('Start date')}</strong>:{' '}
+                                  {formatDateHour(illness.startDate)}
+                                </p>
+                              </div>
+                              <Divider className="!my-1" />
                             </div>
-                            <Divider className="!my-1" />
-                          </div>
-                        );
-                      }}
-                    />
-                  </FormItemComponent>
-                )}
+                          );
+                        }}
+                      />
+                    </FormItemComponent>
+                  )}
                 <FormItemComponent
                   rules={[{ required: true }]}
                   name="shift"
@@ -305,22 +309,24 @@ const TaskCreateModal = ({
               </div>
             </div>
             <div className="flex flex-col items-center">
-              <FormItemComponent
-                name="areaId"
-                label={<LabelForm>{t('Area')}</LabelForm>}
-                rules={[{ required: true }]}
-                className="w-full"
-              >
-                <SelectComponent
-                  options={optionsAreas}
-                  listHeight={400}
-                  search
-                  optionRender={(option) => {
-                    const area: Area = option?.data?.desc;
-                    return <CardSelectArea area={area} />;
-                  }}
-                />
-              </FormItemComponent>
+              {selectedTaskTypes?.name !== 'Khám bệnh' && (
+                <FormItemComponent
+                  name="areaId"
+                  label={<LabelForm>{t('Area')}</LabelForm>}
+                  rules={[{ required: true }]}
+                  className="w-full"
+                >
+                  <SelectComponent
+                    options={optionsAreas}
+                    listHeight={400}
+                    search
+                    optionRender={(option) => {
+                      const area: Area = option?.data?.desc;
+                      return <CardSelectArea area={area} />;
+                    }}
+                  />
+                </FormItemComponent>
+              )}
               <FormItemComponent
                 name="description"
                 label={<LabelForm>{t('Description')}</LabelForm>}
