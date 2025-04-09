@@ -94,7 +94,7 @@
   "Severity": "Mức độ nghiêm trọng",
   "Prognosis": "Tiên lượng",
   "View Detail": "Xem chi tiết",
-  "Create IllNess": "Tạo căn bệnh",
+  "Create Illness": "Tạo căn bệnh",
   "Illness": "Bệnh",
   "Edit": "Chỉnh sửa",
   "Feed": "Thức ăn",
@@ -613,5 +613,6 @@
   "Total processing application": "Tổng đơn đang đợi duyệt",
   "tasks": "công việc",
   "reports": "báo cáo",
-  "applications": "đơn"
+  "applications": "đơn",
+  "Deselect All": "Bỏ chọn tất cả"
 }
