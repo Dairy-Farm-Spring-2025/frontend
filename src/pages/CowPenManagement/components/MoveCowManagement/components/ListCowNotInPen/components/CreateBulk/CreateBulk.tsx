@@ -63,11 +63,11 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
     const payload = { cowEntities: selectedCows, penEntities: selectedPens };
     try {
       await trigger({ body: payload });
-      message.success(t('Data submitted successfully'));
+      message.success(t('Di chuyển bò thành công'));
       mutateCows();
       onClose();
     } catch (error) {
-      message.error(t('Failed to submit data'));
+      message.error(t('Di chuyển bò thất bại !'));
       console.error(error);
     }
   };

@@ -62,11 +62,11 @@ const ListCowImport = () => {
             setImportedCowIds(cowIds);
             setImportSuccess(success);
             // Hiển thị popup xác nhận thay vì mở modal ngay lập tức
-            Modal.confirm({
-                title: t('Xác nhận di chuyển bò'),
-                content: t('Bạn có muốn di chuyển các con bò vừa import không?'),
-                okText: t('Có'),
-                cancelText: t('Không'),
+            Modal.success({
+                title: t('Đã nhập bò thành công'),
+                // content: t('Bạn có muốn di chuyển các con bò vừa import không?'),
+                okText: t('Tiếp theo'),
+
                 onOk: () => {
                     setIsBulkModalOpen(true); // Chỉ mở modal nếu người dùng đồng ý
                 },
@@ -519,6 +519,7 @@ const ListCowImport = () => {
                         modal={modalControl}
                         availableCows={availableCows as any}
                         mutateCows={mutateCows}
+
                     />
                 )}
             </WhiteBackground>
