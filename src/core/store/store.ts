@@ -7,6 +7,7 @@ import mutateReducer from './slice/mutateSlice';
 import functionReducer from './slice/functionSlice';
 import itemManagementReducer from './slice/itemManagementSlice';
 import sidebarReducer from './slice/sidebarSlice';
+import taskModalReducer from './slice/taskModalSlice';
 
 const persistConfig = {
   key: 'dairy-farm',
@@ -21,6 +22,7 @@ const rootReducer = combineReducers({
   function: functionReducer,
   itemManagement: itemManagementReducer,
   sidebar: sidebarReducer,
+  taskModal: taskModalReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

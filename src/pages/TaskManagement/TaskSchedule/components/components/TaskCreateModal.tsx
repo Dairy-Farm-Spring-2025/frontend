@@ -32,6 +32,10 @@ import dayjs from 'dayjs';
 import { t } from 'i18next';
 import { memo, useCallback, useEffect, useState } from 'react';
 import RulesCreateTask from './RulesCreateTask';
+import { useSelector } from 'react-redux';
+import { RootState } from '@core/store/store';
+import { useDispatch } from 'react-redux';
+import { setModalCreate } from '@core/store/slice/taskModalSlice';
 
 interface FreeUserInterface {
   isLoading?: any;
@@ -82,6 +86,8 @@ const TaskCreateModal = ({
   const [isToDateDisabled, setIsToDateDisabled] = useState(true); // State to control To Date DatePicker
   const [disabledShift, setDisabledShift] = useState(false);
   const [assignees, setAssignees] = useState<any[]>([]);
+  const createModal = useSelector((state: RootState) => state.taskModal);
+  const dispatch = useDispatch();
 
   const requiredFields = [
     'taskTypeId',
@@ -101,6 +107,13 @@ const TaskCreateModal = ({
       : []), // Add illnessId if role is Veterinarian
   ];
   const disabledButton = useRequiredForm(form, requiredFields);
+  console.log(createModal.modalCreate);
+  useEffect(() => {
+    if (createModal.modalCreate === true) {
+      modal.setOpen(createModal.modalCreate);
+      dispatch(setModalCreate(null));
+    }
+  }, []);
 
   useEffect(() => {
     const fetchFreeUsers = async () => {

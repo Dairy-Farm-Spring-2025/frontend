@@ -6,6 +6,7 @@ import ModalComponent from '@components/Modal/ModalComponent';
 import ReactQuillComponent from '@components/ReactQuill/ReactQuillComponent';
 import SelectComponent from '@components/Select/SelectComponent';
 import Title from '@components/UI/Title';
+import { setModalCreate } from '@core/store/slice/taskModalSlice';
 import useFetcher from '@hooks/useFetcher';
 import useToast from '@hooks/useToast';
 import { Health } from '@model/Cow/HealthReport';
@@ -16,6 +17,8 @@ import { Card, Col, Divider, Form, Row } from 'antd';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 interface ModalViewDetailProps {
   modal: any;
@@ -26,9 +29,9 @@ interface ModalViewDetailProps {
 const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
   const [form] = Form.useForm();
   const toast = useToast();
+  const dispatch = useDispatch();
   const { t } = useTranslation();
   const [edit, setEdit] = useState(false);
-
   const {
     data,
     isLoading: isLoadingDetail,
@@ -40,6 +43,7 @@ const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
     HEALTH_RECORD_PATH.UPDATE_ILLNESS(id),
     'PUT'
   );
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (data && !edit) {
@@ -76,6 +80,11 @@ const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
     modal.closeModal();
     form.resetFields();
     setEdit(false);
+  };
+
+  const handleNavigate = () => {
+    dispatch(setModalCreate(true));
+    navigate('/dairy/task-management/list');
   };
 
   if (isLoadingDetail) {
@@ -149,6 +158,17 @@ const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
       <FormComponent form={form} onFinish={handleFinish} layout="vertical">
         <div className="p-6 space-y-6">
           {/* Cow Information */}
+          {data?.illnessStatus === 'pending' ||
+            (data?.illnessStatus === 'processing' && (
+              <div className="flex justify-end">
+                <ButtonComponent
+                  className="!text-base"
+                  onClick={handleNavigate}
+                >
+                  {t('Move to create task')}
+                </ButtonComponent>
+              </div>
+            ))}
           <Card>
             <Title className="!text-2xl mb-6">{t('Cow Information')}</Title>
             <Row gutter={[16, 16]}>
@@ -248,9 +268,6 @@ const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
                         {detail.date
                           ? dayjs(detail.date).format('DD/MM/YYYY')
                           : t('No data')}
-
-
-
                       </div>
                     </Col>
                     <Col span={12}>
@@ -261,8 +278,6 @@ const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
                           __html: detail.description || t('No data'),
                         }}
                       />
-
-
                     </Col>
                     <Col span={12}>
                       <LabelForm>{t('Dosage')}</LabelForm>
