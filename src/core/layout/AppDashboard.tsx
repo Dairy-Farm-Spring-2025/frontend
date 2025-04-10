@@ -238,6 +238,23 @@ const AppDashboard: React.FC = React.memo(() => {
           ]
         ),
         getItem(
+          t('Vaccine management'),
+          'dairy/vaccine-cycle-management',
+          <MdOutlineVaccines />,
+          [
+            getItem(
+              t('Vaccine cycle list'),
+              'dairy/vaccine-cycle-management/list',
+              <CiBoxList size={sizeIcon} />
+            ),
+            getItem(
+              t('Vaccine injection list'),
+              'dairy/vaccine-cycle-management/vaccine-injection-list',
+              <CiBoxList size={sizeIcon} />
+            ),
+          ]
+        ),
+        getItem(
           t('Area & Pen Management'),
           'dairy/area-management',
           <LiaChartAreaSolid />
@@ -256,23 +273,6 @@ const AppDashboard: React.FC = React.memo(() => {
             <WalletOutlined size={sizeIcon} />
           ),
         ]),
-        getItem(
-          t('Vaccine management'),
-          'dairy/vaccine-cycle-management',
-          <MdOutlineVaccines />,
-          [
-            getItem(
-              t('Vaccine cycle list'),
-              'dairy/vaccine-cycle-management/list',
-              <CiBoxList size={sizeIcon} />
-            ),
-            getItem(
-              t('Vaccine injection list'),
-              'dairy/vaccine-cycle-management/vaccine-injection-list',
-              <CiBoxList size={sizeIcon} />
-            ),
-          ]
-        ),
         getItem(
           t('Storage management'),
           'dairy/warehouse-management',
