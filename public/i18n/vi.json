@@ -613,5 +613,7 @@
   "Total processing application": "Tổng đơn đang đợi duyệt",
   "tasks": "công việc",
   "reports": "báo cáo",
-  "applications": "đơn"
+  "applications": "đơn",
+  "Because of the assignee leaves of absence or busy, you need to re-assign to another assignee": "Bởi vì người được giao đang nghỉ phép hoặc có việc, bạn cần giao việc lại cho người khác",
+  "Work date": "Ngày làm"
 }

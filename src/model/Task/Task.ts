@@ -17,6 +17,19 @@ export interface TaskPayload {
   illnessId: number;
 }
 
+export interface TaskValuesPayload {
+  description: string;
+  fromDate: string;
+  toDate: string;
+  areaId: number;
+  assigneeIds: number[];
+  priority: Priority;
+  taskTypeId: number;
+  shift: ShiftTask;
+  illnessId: number;
+  workDate: string;
+}
+
 export interface Task {
   taskId: number;
   description: string;

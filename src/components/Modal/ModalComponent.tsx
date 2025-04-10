@@ -1,4 +1,4 @@
-import React, { memo, useMemo } from 'react';
+import React, { memo, useEffect, useMemo, useState } from 'react';
 import { Button, ConfigProvider, Modal, ModalProps, Typography } from 'antd';
 import { CgClose } from 'react-icons/cg';
 import ButtonComponent from '../Button/ButtonComponent';
@@ -25,6 +25,19 @@ const ModalComponent = memo(
     disabledButtonOk = false,
     ...props
   }: ModalComponentInterface) => {
+    const [viewportHeight, setViewportHeight] = useState<number>(
+      window.innerHeight
+    );
+
+    useEffect(() => {
+      const handleResize = () => {
+        setViewportHeight(window.innerHeight);
+      };
+
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
     const computedFooter = useMemo(
       () =>
         footer ?? [
@@ -52,7 +65,6 @@ const ModalComponent = memo(
       <ConfigProvider
         modal={{
           closable: false,
-
           styles: {
             content: {
               padding: 0,
@@ -60,13 +72,13 @@ const ModalComponent = memo(
             body: {
               padding: '0px 30px',
               overflowY: 'auto',
-              maxHeight: 600,
+              maxHeight: viewportHeight * 0.7, // Chiều cao body modal tối đa là 70% màn hình
             },
             footer: {
               padding: '15px 30px',
             },
             wrapper: {
-              height: '100vh',
+              height: viewportHeight, // Thay đổi theo kích thước màn hình
             },
           },
         }}
@@ -74,6 +86,7 @@ const ModalComponent = memo(
         <Modal
           onClose={onCancel}
           className="!rounded-lg"
+          style={{ top: viewportHeight * 0.02 }}
           title={
             <div className="flex justify-between items-center py-3 px-5 !rounded-lg">
               <Typography.Title

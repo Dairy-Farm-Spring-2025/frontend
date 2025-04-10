@@ -42,7 +42,8 @@ const fetcher = async (
 const useFetcher = <T>(
   url: string,
   method: string = 'GET',
-  contentType: 'application/json' | 'multipart/form-data' = 'application/json'
+  contentType: 'application/json' | 'multipart/form-data' = 'application/json',
+  shouldFetch: boolean = true // Thêm điều kiện fetch
 ) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<any>(null);
@@ -52,13 +53,17 @@ const useFetcher = <T>(
     mutate,
     isValidating,
     error: swrError,
-  } = useSWR<T>(method === 'GET' ? url : null, () => fetcher(url, method), {
-    revalidateOnFocus: false,
-    shouldRetryOnError: false,
-    onError: (err) => {
-      setError(err);
-    },
-  });
+  } = useSWR<T>(
+    method === 'GET' && shouldFetch ? url : null, // Chỉ fetch khi shouldFetch = true
+    () => fetcher(url, method),
+    {
+      revalidateOnFocus: false,
+      shouldRetryOnError: false,
+      onError: (err) => {
+        setError(err);
+      },
+    }
+  );
 
   useEffect(() => {
     if (method === 'GET') {
