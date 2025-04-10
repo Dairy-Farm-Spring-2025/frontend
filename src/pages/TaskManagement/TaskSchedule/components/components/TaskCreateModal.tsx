@@ -31,6 +31,7 @@ import { Avatar, Divider, Form } from 'antd';
 import dayjs from 'dayjs';
 import { t } from 'i18next';
 import { memo, useCallback, useEffect, useState } from 'react';
+import RulesCreateTask from './RulesCreateTask';
 
 interface FreeUserInterface {
   isLoading?: any;
@@ -268,6 +269,10 @@ const TaskCreateModal = ({
       onOk={() => form.submit()}
       loading={isLoading}
     >
+      <div className="mb-2">
+        <RulesCreateTask />
+      </div>
+      <Divider className="!my-2 !border-gray-300" />
       <FormComponent form={form} onFinish={onFinish}>
         <FormItemComponent
           name="taskTypeId"
