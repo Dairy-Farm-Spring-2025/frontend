@@ -56,6 +56,7 @@ const TaskScheduleCalendar: React.FC = () => {
   const [date, setDate] = useState();
   const modalUpdateTask = useModal<ModalActionProps>();
   const [id, setId] = useState<number>(0);
+  const modalCreate = useModal();
   const [currentWeekStart, setCurrentWeekStart] = useState(
     selectedYear === dayjs().year()
       ? dayjs().startOf('week')
@@ -98,7 +99,6 @@ const TaskScheduleCalendar: React.FC = () => {
     HEALTH_RECORD_PATH.ILLNESS,
     'GET'
   );
-  const modal = useModal();
 
   useEffect(() => {
     if (dataTaskTypes) {
@@ -402,7 +402,7 @@ const TaskScheduleCalendar: React.FC = () => {
         <ButtonComponent
           type="primary"
           icon={<PlusCircleFilled />}
-          onClick={modal.openModal}
+          onClick={modalCreate.openModal}
         >
           {t('Add Task')}
         </ButtonComponent>
@@ -486,7 +486,7 @@ const TaskScheduleCalendar: React.FC = () => {
         optionsDataTaskTypes={optionsDataTaskTypes}
         optionsIllness={optionsIllness}
         setRefetch={setRefetch}
-        modal={modal as any}
+        modal={modalCreate as any}
         mutate={mutate}
       />
       <UpdateTaskModal
