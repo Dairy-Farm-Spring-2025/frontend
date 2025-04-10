@@ -20,6 +20,7 @@ export type Cow = {
   healthInfoResponses: HealthResponse[];
   penResponse: any;
   key: any;
+
 };
 
 export type HealthResponse = {

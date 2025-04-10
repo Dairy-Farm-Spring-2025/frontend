@@ -30,6 +30,11 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import ModalCreatePen from '../ModalCreatePen';
 import useToast from '@hooks/useToast';
+import { Cow } from '@model/Cow/Cow';
+import { COW_PATH } from '@service/api/Cow/cowApi';
+import { getLabelByValue } from '@utils/getLabel';
+import { COW_STATUS_FILTER, cowStatus } from '@service/data/cowStatus';
+import { COW_TYPE } from '@service/data/cowType';
 
 const validateInput = (_: any, value: string) => {
   const regex = /^[A-Z]+-area-[0-9]+$/;
@@ -63,6 +68,13 @@ const AreaDetail = () => {
     isLoading: isLoadingPens,
     mutate: mutatePen,
   } = useFetcher<Pen[]>(PEN_PATH.PEN_AREA(id ? id : ''));
+  const {
+    data: cowInArea,
+    isLoading: isLoadingcowInArea,
+    mutate: mutatecowInArea,
+  } = useFetcher<Cow[]>(COW_PATH.COW_IN_AREA(id ? id : ''));
+
+
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -172,6 +184,88 @@ const AreaDetail = () => {
   ];
   if (isLoadingArea || isLoadingPens) return <p>Loading...</p>;
   if (!area) return <p>Area not found!</p>;
+
+
+  const cowColumns: Column[] = [
+    // {
+    //   dataIndex: 'cowId',
+    //   key: 'cowId',
+    //   title: t('Cow ID'),
+    //   render: (id: number) => <span>{id}</span>,
+    //   searchable: true,
+    // },
+    {
+      dataIndex: 'name',
+      key: 'name',
+      title: t('Cow Name'),
+      render: (name: string) => (
+        <p className="text-blue-600 underline underline-offset-1 cursor-pointer">
+          {name}
+        </p>
+      ),
+      searchable: true,
+    },
+    {
+      dataIndex: 'cowStatus',
+      key: 'cowStatus',
+      title: t('Cow Status'),
+      render: (data) => getLabelByValue(data, cowStatus()),
+      filterable: true,
+      filterOptions: COW_STATUS_FILTER(),
+    },
+    // {
+    //   dataIndex: 'cowType',
+    //   key: 'cowType',
+    //   title: t('Cow Type'),
+    //   render: (data) => <p>{data.name}</p>,
+    //   filterable: true,
+    //   filterOptions: COW_TYPE(),
+    //   objectKeyFilter: 'name',
+    // },
+    {
+      dataIndex: 'dateOfBirth',
+      key: 'dateOfBirth',
+      title: t('Date of Birth'),
+      render: (date: string) => formatDateHour(date),
+      filteredDate: true,
+    },
+    {
+      dataIndex: 'dateOfEnter',
+      key: 'dateOfEnter',
+      title: t('Date of Entry'),
+      render: (date: string) => formatDateHour(date),
+      filteredDate: true,
+    },
+    {
+      dataIndex: 'dateOfOut',
+      key: 'dateOfOut',
+      title: t('Date of Exit'),
+      render: (date: string | null) => (date ? formatDateHour(date) : 'N/A'),
+    },
+    {
+      dataIndex: 'cowTypeEntity',
+      key: 'cowType',
+      title: t('Cow Type'),
+      render: (cowTypeEntity: { name: string }) => (
+        <Tag color="blue">{cowTypeEntity?.name || 'N/A'}</Tag>
+      ),
+      // filterable: true,
+      // filterOptions: COW_TYPE(),
+      // objectKeyFilter: 'name',
+    },
+    {
+      dataIndex: 'gender',
+      key: 'gender',
+      title: t('Gender'),
+      render: (gender: string) => <span>{gender}</span>,
+    },
+    {
+      dataIndex: 'cowOrigin',
+      key: 'cowOrigin',
+      title: t('Origin'),
+      render: (origin: string) => <span>{origin}</span>,
+    },
+  ];
   return (
     <AnimationAppear>
       <WhiteBackground>
@@ -293,10 +387,20 @@ const AreaDetail = () => {
             </div>{' '} */}
           </div>
           <Divider />
+          <h2 className="text-lg font-semibold mb-4">{t('Pens in Area')}</h2>
           <TableComponent
             columns={columns}
             dataSource={pens ? formatSTT(pens) : []}
             loading={isLoadingPens}
+            pagination={{ pageSize: 5, position: ['bottomCenter'] }}
+          />
+          <Divider />
+          {/* New Cows Table */}
+          <h2 className="text-lg font-semibold mb-4">{t('Cows in Area')}</h2>
+          <TableComponent
+            columns={cowColumns}
+            dataSource={cowInArea ? formatSTT(cowInArea) : []}
+            loading={isLoadingcowInArea}
             pagination={{ pageSize: 5, position: ['bottomCenter'] }}
           />
           <ModalCreatePen
