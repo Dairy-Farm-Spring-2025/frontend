@@ -75,7 +75,7 @@
   "Delete": "Xóa",
   "cow_type": "Loại bò",
   "create_cow": "Thêm bò",
-  "General information": "Thông tin chung",
+  "General Information": "Thông tin chung",
   "Date Information": "Thông tin ngày",
   "Health Information": "Thông tin sức khỏe",
   "Description": "Mô tả",
@@ -618,5 +618,6 @@
   "Deselect All": "Bỏ chọn tất cả",
   "Create Equipment": "Tạo thiết bị",
   "Login with Google": "Đăng nhập bằng google",
-  "or sign in with": "hoặc đăng nhập với"
+  "or sign in with": "hoặc đăng nhập với",
+  "Young cow": "Bò tơ"
 }
