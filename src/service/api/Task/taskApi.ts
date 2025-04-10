@@ -4,4 +4,6 @@ export const TASK_PATH = {
   TASKS_TYPE: 'task_types',
   TASK_DETAIL: (taskId: number) => `tasks/${taskId}`,
   TASK_UPDATE: (taskId: number) => `tasks/update/${taskId}`,
+  TASK_REASSIGN: (taskId: number, assigneeId: number) =>
+    `tasks/${taskId}/assign/${assigneeId}`,
 };

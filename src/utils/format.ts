@@ -19,6 +19,21 @@ export const formatSTT = (data: any[]) => {
   );
 };
 
+export const formatDate = ({
+  data,
+  type = 'render',
+}: {
+  data: any;
+  type: 'render' | 'params';
+}) => {
+  const date = dayjs(data);
+  const formatted =
+    type === 'render'
+      ? date.format('DD / MM / YYYY')
+      : date.format('YYYY-MM-DD');
+  return formatted;
+};
+
 export const formatAddMilkBatch = (data: any[]) => {
   if (!Array.isArray(data)) return []; // Kiểm tra dữ liệu đầu vào
   return data.sort((a, b) => b.dailyMilkId - a.dailyMilkId);

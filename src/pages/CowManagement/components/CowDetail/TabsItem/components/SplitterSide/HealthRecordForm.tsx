@@ -99,7 +99,7 @@ const HealthRecordForm = ({
             },
             {
               label: t('Cow Type'),
-              children: dataCow?.cowTypeEntity?.name,
+              children: dataCow?.cowType?.name,
               span: 2,
             },
             {

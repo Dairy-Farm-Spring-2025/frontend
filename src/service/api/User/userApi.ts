@@ -51,4 +51,27 @@ export const USER_PATH = {
   VETERINARIANS: 'users/veterinarians',
   SIGN_IN: 'users/signin',
   FCM_TOKEN_UPDATE: 'users/update/fcmToken',
+  VETERINARIANS_AVAILABLE: (date: string) =>
+    `users/available/veterinarians?date=${date}`,
+  NIGHT_USERS_FREE: ({
+    fromDate,
+    toDate,
+  }: {
+    fromDate: string;
+    toDate: string;
+  }) => `users/free/night?fromDate=${fromDate}&toDate=${toDate}`,
+  USERS_FREE: ({
+    roleId,
+    fromDate,
+    toDate,
+    areaId,
+  }: {
+    roleId: string;
+    fromDate: string;
+    toDate: string;
+    areaId?: number;
+  }) =>
+    `users/free?roleId=${roleId}&fromDate=${fromDate}&toDate=${toDate}${
+      areaId ? `&areaId=${areaId}` : ''
+    }`,
 };

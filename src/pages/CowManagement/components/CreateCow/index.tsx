@@ -1,23 +1,22 @@
-import { Form, Steps } from 'antd';
-import dayjs from 'dayjs';
-import { useEffect, useState } from 'react';
 import ButtonComponent from '@components/Button/ButtonComponent';
 import FormComponent from '@components/Form/FormComponent';
+import AnimationAppear from '@components/UI/AnimationAppear';
 import WhiteBackground from '@components/UI/WhiteBackground';
 import useFetcher from '@hooks/useFetcher';
 import useToast from '@hooks/useToast';
 import { Cow } from '@model/Cow/Cow';
-import CreateCowInformation from './CreateCowInformation/CreateCowInformation';
-import AnimationAppear from '@components/UI/AnimationAppear';
-import HealthRecordInformation from './CreateCowInformation/HealthRecordInformation';
-import { useTranslation } from 'react-i18next';
+import { HealthRecordPayload } from '@model/Cow/HealthRecord';
 import { COW_PATH } from '@service/api/Cow/cowApi';
 import { HEALTH_RECORD_PATH } from '@service/api/HealthRecord/healthRecordApi';
+import { Form, Steps } from 'antd';
+import dayjs from 'dayjs';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import CreateCowInformation from './CreateCowInformation/CreateCowInformation';
+import HealthRecordInformation from './CreateCowInformation/HealthRecordInformation';
 
 const CreateCow = () => {
   const [form] = Form.useForm();
-  const formValues = Form.useWatch([], form);
-  const [disabledButton, setDisabledButton] = useState(true);
   const [currentStep, setCurrentStep] = useState(0);
   const [inforData, setInforData] = useState<Cow>();
   const { trigger, isLoading } = useFetcher(COW_PATH.COW_CREATE, 'POST');
@@ -25,12 +24,6 @@ const CreateCow = () => {
   const { isLoading: isLoadingHealthRecord, trigger: triggerHealthRecord } =
     useFetcher(HEALTH_RECORD_PATH.CREATE_HEALTH_RECORD, 'POST');
   const toast = useToast();
-
-  useEffect(() => {
-    const isButtonDisabled =
-      !formValues || Object.values(formValues).some((value) => !value);
-    setDisabledButton(isButtonDisabled);
-  }, [formValues]);
 
   const steps = [
     {
@@ -72,13 +65,18 @@ const CreateCow = () => {
     }
     if (currentStep === 1) {
       try {
-        const payload = {
+        const payload: HealthRecordPayload = {
           status: values.status,
           period: values.period,
-          weight: values.weight,
           size: values.size,
-          cowId: inforData?.cowId,
-          reportTime: '2025-02-15T02:46:21.358Z',
+          cowId: inforData?.cowId as any,
+          description: values.description,
+          bodyLength: values.bodyLength,
+          bodyTemperature: values.bodyTemperature,
+          chestCircumference: values.chestCircumference,
+          heartRate: values.heartRate,
+          respiratoryRate: values.respiratoryRate,
+          ruminateActivity: values.ruminateActivity,
         };
         const response = await triggerHealthRecord({ body: payload });
         toast.showSuccess(response.message);
@@ -119,7 +117,6 @@ const CreateCow = () => {
                 type="primary"
                 htmlType="submit"
                 loading={isLoading}
-                disabled={disabledButton}
               >
                 {t('Next')}
               </ButtonComponent>
@@ -127,7 +124,6 @@ const CreateCow = () => {
             {currentStep === 1 && (
               <ButtonComponent
                 type="primary"
-                disabled={disabledButton}
                 htmlType="submit"
                 loading={isLoadingHealthRecord}
               >

@@ -5,6 +5,7 @@ import {
 } from '@ant-design/icons';
 import ButtonComponent from '@components/Button/ButtonComponent';
 import SelectComponent from '@components/Select/SelectComponent';
+import TagComponents from '@components/UI/TagComponents';
 import Title from '@components/UI/Title';
 import useFetcher from '@hooks/useFetcher';
 import useModal, { ModalActionProps } from '@hooks/useModal';
@@ -16,8 +17,10 @@ import { UserProfileData } from '@model/User';
 import ShiftTitle from '@pages/TaskManagement/components/ShiftTitle';
 import StatusTask from '@pages/TaskManagement/components/StatusTask';
 import WeekSelectorDropdown from '@pages/TaskManagement/components/WeekSelectorDropdown';
+import { AREA_PATH } from '@service/api/Area/areaApi';
 import { HEALTH_RECORD_PATH } from '@service/api/HealthRecord/healthRecordApi';
 import { TASK_PATH } from '@service/api/Task/taskApi';
+import { getColorByRole } from '@utils/statusRender/roleRender';
 import { Select, Table } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
@@ -27,8 +30,6 @@ import PopoverTask from '../components/PopoverTask';
 import TaskCreateModal from '../components/TaskCreateModal';
 import UpdateTaskModal from '../components/UpdateTaskModal';
 import './index.scss';
-import TagComponents from '@components/UI/TagComponents';
-import { getColorByRole } from '@utils/statusRender/roleRender';
 
 const { Option } = Select;
 
@@ -72,14 +73,26 @@ const TaskScheduleCalendar: React.FC = () => {
     TASK_PATH.TASKS_TYPE,
     'GET'
   );
-  const { data: dataAreas } = useFetcher<Area[]>('areas', 'GET');
-  const { data: dataWorker } = useFetcher<UserProfileData[]>(
-    'users/workers',
-    'GET'
+  const { data: dataAreas } = useFetcher<Area[]>(AREA_PATH.AREAS, 'GET');
+  const {
+    data: dataUserFree,
+    trigger: triggerFetchingFreeUser,
+    isLoading: isLoadingTriggerFetchingFreeUser,
+  } = useFetcher<UserProfileData[]>(
+    'free-users',
+    'GET',
+    'application/json',
+    false
   );
-  const { data: dataVeterinarians } = useFetcher<UserProfileData[]>(
-    'users/veterinarians',
-    'GET'
+  const {
+    data: dataUserNightShift,
+    trigger: triggerFetchingUserNightShift,
+    isLoading: isLoadingTriggerUserNightShift,
+  } = useFetcher<UserProfileData[]>(
+    'night-shift',
+    'GET',
+    'application/json',
+    false
   );
   const { data: dataIllness } = useFetcher<IllnessCow[]>(
     HEALTH_RECORD_PATH.ILLNESS,
@@ -459,8 +472,16 @@ const TaskScheduleCalendar: React.FC = () => {
         scroll={{ x: 'max-content', y: 550 }} // Enable scrolling
       />
       <TaskCreateModal
-        dataVeterinarians={dataVeterinarians as UserProfileData[]}
-        dataWorker={dataWorker as UserProfileData[]}
+        dataFreeUser={{
+          isLoading: isLoadingTriggerFetchingFreeUser,
+          data: dataUserFree,
+          triggerFetchingFreeUser: triggerFetchingFreeUser,
+        }}
+        dataNightUser={{
+          isLoading: isLoadingTriggerUserNightShift,
+          data: dataUserNightShift,
+          triggerFetchingFreeUser: triggerFetchingUserNightShift,
+        }}
         optionsAreas={optionsAreas}
         optionsDataTaskTypes={optionsDataTaskTypes}
         optionsIllness={optionsIllness}
