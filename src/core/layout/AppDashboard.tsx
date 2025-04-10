@@ -28,17 +28,13 @@ import { USER_PATH } from '@service/api/User/userApi';
 import { requestFCMToken } from '@utils/firebase';
 import { getAvatar } from '@utils/getImage';
 import { useTranslation } from 'react-i18next';
-import {
-  AiOutlineDashboard,
-  AiOutlineIssuesClose,
-  AiTwotoneTool,
-} from 'react-icons/ai';
+import { AiOutlineDashboard, AiTwotoneTool } from 'react-icons/ai';
 import { BiCategory, BiTask, BiUser } from 'react-icons/bi';
 import { CiBoxList, CiExport } from 'react-icons/ci';
 import { FaWpforms } from 'react-icons/fa';
 import { IoIosLogOut } from 'react-icons/io';
 import { LiaChartAreaSolid, LiaProductHunt } from 'react-icons/lia';
-import { LuGitPullRequest, LuMilk } from 'react-icons/lu';
+import { LuMilk } from 'react-icons/lu';
 import {
   MdOutlineFastfood,
   MdOutlineHealthAndSafety,
@@ -79,6 +75,14 @@ const siderStyle: React.CSSProperties = {
   bottom: 0,
   left: 0,
   zIndex: 1,
+};
+
+const checkVeterinarians = (role: string) => {
+  return role === 'Veterinarians';
+};
+
+const checkManager = (role: string) => {
+  return role === 'Manager';
 };
 
 const AppDashboard: React.FC = React.memo(() => {
@@ -164,23 +168,31 @@ const AppDashboard: React.FC = React.memo(() => {
 
   const itemsMenu: MenuItem[] = [
     getItem(t('dashboard'), 'dairy/dashboard', <AiOutlineDashboard />, [
-      getItem(
-        t('Dashboard today'),
-        'dairy/dashboard/today',
-        <DashboardOutlined />
-      ),
       getItem(t('daily_milk'), 'dairy/dashboard/daily-milk', <LuMilk />),
+      !checkVeterinarians(roleName)
+        ? getItem(
+            t('Dashboard today'),
+            'dairy/dashboard/today',
+            <DashboardOutlined />
+          )
+        : null,
     ]),
-    {
-      key: 'user-group',
-      label: <LabelDashboard>{t('user_management')}</LabelDashboard>,
+    checkVeterinarians(roleName)
+      ? null
+      : {
+          key: 'user-group',
+          label: <LabelDashboard>{t('user_management')}</LabelDashboard>,
 
-      type: 'group',
-      children: [
-        getItem(t('user_management'), 'dairy/user-management', <BiUser />),
-        getItem(t('Role management'), 'dairy/role-management', <BiCategory />),
-      ],
-    },
+          type: 'group',
+          children: [
+            getItem(t('user_management'), 'dairy/user-management', <BiUser />),
+            getItem(
+              t('Role management'),
+              'dairy/role-management',
+              <BiCategory />
+            ),
+          ],
+        },
     {
       key: 'group-cow',
       label: <LabelDashboard>{t('dairy_management')}</LabelDashboard>,
@@ -197,16 +209,20 @@ const AppDashboard: React.FC = React.memo(() => {
             'dairy/cow-management/cow-type-management',
             <BiCategory size={sizeIcon} />
           ),
-          getItem(
-            t('create_cow'),
-            'dairy/cow-management/create-cow',
-            <PiPlus size={sizeIcon} />
-          ),
-          getItem(
-            t('Import cow'),
-            'dairy/cow-management/import-cow',
-            <PiPlus size={sizeIcon} />
-          ),
+          checkVeterinarians(roleName)
+            ? null
+            : getItem(
+                t('create_cow'),
+                'dairy/cow-management/create-cow',
+                <PiPlus size={sizeIcon} />
+              ),
+          checkVeterinarians(roleName)
+            ? null
+            : getItem(
+                t('Import cow'),
+                'dairy/cow-management/import-cow',
+                <PiPlus size={sizeIcon} />
+              ),
           getItem(
             t('health_report'),
             'dairy/cow-management/health-report',
@@ -261,144 +277,168 @@ const AppDashboard: React.FC = React.memo(() => {
         ),
       ],
     },
-    {
-      key: 'group-warehouse',
-      label: <LabelDashboard>{t('warehouse-management')}</LabelDashboard>,
-      type: 'group',
-      children: [
-        getItem(t('Milk management'), 'dairy/milk-management', <LuMilk />, [
-          getItem(
-            t('Milk batch'),
-            'dairy/milk-management/milk-batch',
-            <WalletOutlined size={sizeIcon} />
-          ),
-        ]),
-        getItem(
-          t('Storage management'),
-          'dairy/warehouse-management',
-          <PiWarehouse />,
-          [
+    checkVeterinarians(roleName)
+      ? null
+      : {
+          key: 'group-warehouse',
+          label: <LabelDashboard>{t('warehouse-management')}</LabelDashboard>,
+          type: 'group',
+          children: [
+            getItem(t('Milk management'), 'dairy/milk-management', <LuMilk />, [
+              getItem(
+                t('Milk batch'),
+                'dairy/milk-management/milk-batch',
+                <WalletOutlined size={sizeIcon} />
+              ),
+            ]),
             getItem(
-              t('Storage'),
-              'dairy/warehouse-management/warehouse',
-              <PiWarehouse size={sizeIcon} />
-            ),
-            getItem(
-              t('Category'),
-              'dairy/warehouse-management/category',
-              <BiCategory size={sizeIcon} />
-            ),
-            getItem(
-              t('Item'),
-              'dairy/warehouse-management/item-management',
-              <RiAlignItemLeftLine size={sizeIcon} />,
+              t('Storage management'),
+              'dairy/warehouse-management',
+              <PiWarehouse />,
               [
                 getItem(
-                  t('List'),
-                  'dairy/warehouse-management/item-management/list',
-                  <CiBoxList size={sizeIcon} />
+                  t('Storage'),
+                  'dairy/warehouse-management/warehouse',
+                  <PiWarehouse size={sizeIcon} />
                 ),
                 getItem(
-                  t('Item batch'),
-                  'dairy/warehouse-management/item-management/item-batch',
+                  t('Category'),
+                  'dairy/warehouse-management/category',
                   <BiCategory size={sizeIcon} />
                 ),
                 getItem(
-                  t('Export item'),
-                  'dairy/warehouse-management/item-management/export-item',
-                  <CiExport size={sizeIcon} />
+                  t('Item'),
+                  'dairy/warehouse-management/item-management',
+                  <RiAlignItemLeftLine size={sizeIcon} />,
+                  [
+                    getItem(
+                      t('List'),
+                      'dairy/warehouse-management/item-management/list',
+                      <CiBoxList size={sizeIcon} />
+                    ),
+                    getItem(
+                      t('Item batch'),
+                      'dairy/warehouse-management/item-management/item-batch',
+                      <BiCategory size={sizeIcon} />
+                    ),
+                    getItem(
+                      t('Export item'),
+                      'dairy/warehouse-management/item-management/export-item',
+                      <CiExport size={sizeIcon} />
+                    ),
+                  ]
+                ),
+                getItem(
+                  t('Supplier'),
+                  'dairy/warehouse-management/supplier',
+                  <LiaProductHunt size={sizeIcon} />
+                ),
+                getItem(
+                  t('Equipment'),
+                  'dairy/warehouse-management/equipment',
+                  <AiTwotoneTool size={sizeIcon} />
                 ),
               ]
             ),
+          ],
+        },
+    checkVeterinarians(roleName)
+      ? {
+          key: 'group-vet-schedule',
+          label: <LabelDashboard>{t('Schedule management')}</LabelDashboard>,
+          type: 'group',
+          children: [
             getItem(
-              t('Supplier'),
-              'dairy/warehouse-management/supplier',
-              <LiaProductHunt size={sizeIcon} />
-            ),
-            getItem(
-              t('Equipment'),
-              'dairy/warehouse-management/equipment',
-              <AiTwotoneTool size={sizeIcon} />
-            ),
-          ]
-        ),
-      ],
-    },
-    {
-      key: 'group-schedule',
-      label: <LabelDashboard>{t('HR management')}</LabelDashboard>,
-      type: 'group',
-      children: [
-        getItem(t('Human management'), 'dairy/human-management', <BiUser />, [
-          getItem(
-            t('Worker'),
-            'dairy/human-management/worker',
-            <CiBoxList size={sizeIcon} />
-          ),
-          getItem(
-            t('Veterinarians'),
-            'dairy/human-management/veterinarian',
-            <CiBoxList size={sizeIcon} />
-          ),
-        ]),
-        getItem(t('Task management'), 'dairy/task-management', <BiTask />, [
-          roleName !== 'Manager'
-            ? null
-            : getItem(
-                t('Task'),
-                'dairy/task-management/list',
-                <CiBoxList size={sizeIcon} />
-              ),
-          roleName === 'Veterinarians'
-            ? getItem(
-                t('My task'),
-                'dairy/task-management/my-task',
-                <CiBoxList size={sizeIcon} />
-              )
-            : null,
-          roleName !== 'Manager'
-            ? null
-            : getItem(
-                t('Task type'),
-                'dairy/task-management/task-type',
-                <BiCategory size={sizeIcon} />
-              ),
-        ]),
-
-        getItem(
-          t('Application management'),
-          'dairy/application-management',
-          <FaWpforms />,
-          [
-            getItem(
-              t('Application'),
-              'dairy/application-management/application',
+              t('My task'),
+              'dairy/task-management/my-task',
               <CiBoxList size={sizeIcon} />
             ),
+          ],
+        }
+      : {
+          key: 'group-schedule',
+          label: <LabelDashboard>{t('HR management')}</LabelDashboard>,
+          type: 'group',
+          children: [
             getItem(
-              t('Application Type'),
-              'dairy/application-management/application-type',
-              <BiCategory size={sizeIcon} />
+              t('Human management'),
+              'dairy/human-management',
+              <BiUser />,
+              [
+                getItem(
+                  t('Worker'),
+                  'dairy/human-management/worker',
+                  <CiBoxList size={sizeIcon} />
+                ),
+                getItem(
+                  t('Veterinarians'),
+                  'dairy/human-management/veterinarian',
+                  <CiBoxList size={sizeIcon} />
+                ),
+              ]
             ),
-          ]
-        ),
-        getItem(
-          t('Issue management'),
-          'dairy/issue-management',
-          <AiOutlineIssuesClose />
-        ),
-        getItem(
-          t('Notification management'),
-          'dairy/notification-management',
-          <BellOutlined />
-        ),
-        getItem(
-          t('Request schedule'),
-          'dairy/request-schedule-management',
-          <LuGitPullRequest />
-        ),
-      ],
-    },
+            getItem(t('Task management'), 'dairy/task-management', <BiTask />, [
+              !checkManager(roleName)
+                ? null
+                : getItem(
+                    t('Task'),
+                    'dairy/task-management/list',
+                    <CiBoxList size={sizeIcon} />
+                  ),
+              checkVeterinarians(roleName)
+                ? getItem(
+                    t('My task'),
+                    'dairy/task-management/my-task',
+                    <CiBoxList size={sizeIcon} />
+                  )
+                : null,
+              !checkManager(roleName)
+                ? null
+                : getItem(
+                    t('Task type'),
+                    'dairy/task-management/task-type',
+                    <BiCategory size={sizeIcon} />
+                  ),
+            ]),
+
+            !checkManager(roleName)
+              ? null
+              : getItem(
+                  t('Application management'),
+                  'dairy/application-management',
+                  <FaWpforms />,
+                  [
+                    getItem(
+                      t('Application'),
+                      'dairy/application-management/application',
+                      <CiBoxList size={sizeIcon} />
+                    ),
+                    getItem(
+                      t('Application Type'),
+                      'dairy/application-management/application-type',
+                      <BiCategory size={sizeIcon} />
+                    ),
+                  ]
+                ),
+            // getItem(
+            //   t('Issue management'),
+            //   'dairy/issue-management',
+            //   <AiOutlineIssuesClose />
+            // ),
+            checkManager(roleName)
+              ? getItem(
+                  t('Notification management'),
+                  'dairy/notification-management',
+                  <BellOutlined />
+                )
+              : null,
+            // getItem(
+            //   t('Request schedule'),
+            //   'dairy/request-schedule-management',
+            //   <LuGitPullRequest />
+            // ),
+          ],
+        },
   ];
   return (
     <AnimationAppear>
