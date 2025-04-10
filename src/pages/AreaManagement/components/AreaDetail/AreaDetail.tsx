@@ -34,8 +34,6 @@ import { Cow } from '@model/Cow/Cow';
 import { COW_PATH } from '@service/api/Cow/cowApi';
 import { getLabelByValue } from '@utils/getLabel';
 import { COW_STATUS_FILTER, cowStatus } from '@service/data/cowStatus';
-import { COW_TYPE } from '@service/data/cowType';
-
 const validateInput = (_: any, value: string) => {
   const regex = /^[A-Z]+-area-[0-9]+$/;
 
@@ -71,7 +69,6 @@ const AreaDetail = () => {
   const {
     data: cowInArea,
     isLoading: isLoadingcowInArea,
-    mutate: mutatecowInArea,
   } = useFetcher<Cow[]>(COW_PATH.COW_IN_AREA(id ? id : ''));
 
 
