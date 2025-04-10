@@ -14,8 +14,8 @@ const AuthCallback = () => {
   const accessToken = searchParams.get('access_token');
   const refreshToken = searchParams.get('refresh_token');
   const userId = searchParams.get('userId');
-  const userName = searchParams.get('userName');
-  const roleName = searchParams.get('roleName');
+  const roleName = decodeURIComponent(searchParams.get('roleName') || '');
+  const userName = decodeURIComponent(searchParams.get('userName') || '');
   const error = searchParams.get('error');
   useEffect(() => {
     const fetchData = async () => {
