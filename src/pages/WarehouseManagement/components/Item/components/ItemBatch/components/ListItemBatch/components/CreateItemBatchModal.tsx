@@ -105,25 +105,7 @@ const CreateItemBatchModal = ({ modal, mutate }: CreateItemBatchModalProps) => {
       loading={isLoading}
     >
       <FormComponent form={form} onFinish={onFinish}>
-        <div className="grid grid-cols-2 gap-5">
-          <FormItemComponent
-            name="quantity"
-            label={<LabelForm>{t('Quantity')}</LabelForm>}
-            rules={[{ required: true }]}
-          >
-            <InputComponent.Number />
-          </FormItemComponent>
-          <FormItemComponent
-            name="expiryDate"
-            label={<LabelForm>{t('Expired Date')}</LabelForm>}
-            rules={[{ required: true }]}
-          >
-            <DatePicker
-              className="w-full !text-[18px]"
-              disabledDate={disablePastDates}
-            />
-          </FormItemComponent>
-        </div>
+
         <div>
           <FormItemComponent
             name="itemId"
@@ -181,6 +163,25 @@ const CreateItemBatchModal = ({ modal, mutate }: CreateItemBatchModalProps) => {
               <p>{t('Phone')}</p>
             </div>
           </div>
+        </div>
+        <div className="grid grid-cols-2 gap-5">
+          <FormItemComponent
+            name="quantity"
+            label={<LabelForm>{t('Quantity')}</LabelForm>}
+            rules={[{ required: true }]}
+          >
+            <InputComponent.Number />
+          </FormItemComponent>
+          <FormItemComponent
+            name="expiryDate"
+            label={<LabelForm>{t('Expired Date')}</LabelForm>}
+            rules={[{ required: true }]}
+          >
+            <DatePicker
+              className="w-full !text-[18px]"
+              disabledDate={disablePastDates}
+            />
+          </FormItemComponent>
         </div>
       </FormComponent>
     </ModalComponent>

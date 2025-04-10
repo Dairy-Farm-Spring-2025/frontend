@@ -512,7 +512,7 @@ const ListCowImport = () => {
                     dataSource={reviewData ? formatSTT(reviewData) : []}
                     onDataChange={handleDataChange}
                     scroll={{ x: 'max-content' }}
-                    pagination={{ pageSize: 5, position: ['bottomCenter'] }}
+                    pagination={{ pageSize: 10, position: ['bottomCenter'] }}
                 />
                 {importSuccess && (
                     <CreateBulkModal
