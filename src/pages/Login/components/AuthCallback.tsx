@@ -27,7 +27,11 @@ const AuthCallback = () => {
           roleName: roleName,
           userId: userId,
         };
-        if (roleName !== 'Manager' && roleName !== 'Admin') {
+        if (
+          roleName !== 'Manager' &&
+          roleName !== 'Admin' &&
+          roleName !== 'Veterinarians'
+        ) {
           toast.showError(t('You do not permission to access'));
           navigate('/login');
         } else {

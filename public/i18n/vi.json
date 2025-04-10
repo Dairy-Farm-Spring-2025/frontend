@@ -619,5 +619,22 @@
   "Create Equipment": "Tạo thiết bị",
   "Login with Google": "Đăng nhập bằng google",
   "or sign in with": "hoặc đăng nhập với",
-  "Young cow": "Bò tơ"
+  "Young cow": "Bò tơ",
+  "Schedule management": "Quản lý lịch làm việc",
+  "Re-assign": "Giao việc lại cho",
+  "Task Creation Rules:": "Quy tắc tạo công việc:",
+  "Check-up, Treatment, Vaccination": "Khám bệnh, Chữa bệnh, Chích ngừa",
+  "Can": "Có thể",
+  "perform multiple tasks in different areas within the same day": "làm nhiều task ở nhiều khu vực khác nhau trong cùng một ngày",
+  "Regular Check-up": "Khám bệnh định kỳ",
+  "Can only be performed in one single area": "Chỉ được thực hiện ở một khu duy nhất",
+  "within a specific period of time.": "trong một khoảng thời gian nhất định.",
+  "If the veterinarian is performing a Regular Check-up": "Nếu thú y đang làm Khám bệnh định kỳ",
+  "they": "thì",
+  "must not be assigned additional tasks such as": "không được giao thêm các task:",
+  "within that same time period.": "trong cùng khoảng thời gian đó.",
+  "Feeding, Night Shift, Cleaning the Barn, Milking": "Cho ăn, Trực đêm, Dọn chuồng, Lấy sữa",
+  "perform multiple tasks in the same area": "làm nhiều task trong cùng một khu vực",
+  "within the same day.": "trong cùng một ngày."
 }
+
