@@ -52,17 +52,17 @@ const ReviewImportCow = ({ onReviewData }: ReviewImportCowProps) => {
           description: cow.description,
           healthRecord: healthRecord
             ? {
-                status: healthRecord.healthRecordStatus || healthRecord.status,
-                size: healthRecord.size,
-                period: healthRecord.period,
-                bodyTemperature: healthRecord.bodyTemperature,
-                heartRate: healthRecord.heartRate,
-                respiratoryRate: healthRecord.respiratoryRate,
-                ruminateActivity: healthRecord.ruminateActivity,
-                chestCircumference: healthRecord.chestCircumference,
-                bodyLength: healthRecord.bodyLength,
-                description: healthRecord.description,
-              }
+              status: healthRecord.healthRecordStatus || healthRecord.status,
+              size: healthRecord.size,
+              period: healthRecord.period,
+              bodyTemperature: healthRecord.bodyTemperature,
+              heartRate: healthRecord.heartRate,
+              respiratoryRate: healthRecord.respiratoryRate,
+              ruminateActivity: healthRecord.ruminateActivity,
+              chestCircumference: healthRecord.chestCircumference,
+              bodyLength: healthRecord.bodyLength,
+              description: healthRecord.description,
+            }
             : null,
         };
       });
