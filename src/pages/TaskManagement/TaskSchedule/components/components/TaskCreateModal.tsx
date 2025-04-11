@@ -49,6 +49,7 @@ interface TaskCreateModalProps {
   setRefetch: any;
   dataFreeUser: FreeUserInterface;
   dataNightUser: FreeUserInterface;
+  dataVetAvailable: FreeUserInterface;
   optionsDataTaskTypes: any[];
   optionsAreas: any[];
   optionsIllness: any[];
@@ -70,6 +71,7 @@ const TaskCreateModal = ({
   setRefetch,
   dataFreeUser,
   dataNightUser,
+  dataVetAvailable,
   optionsDataTaskTypes,
   optionsAreas,
   optionsIllness,
@@ -107,7 +109,6 @@ const TaskCreateModal = ({
       : []), // Add illnessId if role is Veterinarian
   ];
   const disabledButton = useRequiredForm(form, requiredFields);
-  console.log(createModal.modalCreate);
   useEffect(() => {
     if (createModal.modalCreate === true) {
       modal.setOpen(createModal.modalCreate);
@@ -140,40 +141,65 @@ const TaskCreateModal = ({
           ? formatDate({ data: workDate, type: 'params' })
           : formatDate({ data: toDate, type: 'params' }),
       };
-      let response;
-      if (selectedTaskTypes?.name === 'Trực ca đêm') {
-        response = await dataNightUser
-          .triggerFetchingFreeUser({
-            url: USER_PATH.NIGHT_USERS_FREE(bodyNightShift),
-          })
-          .then((response: UserProfileData[]) => {
-            return (response || []).map((user) => ({
-              label: user?.name,
-              value: user.id,
-              desc: user,
-              searchLabel: user?.name,
-            }));
-          })
-          .catch(() => {
-            setAssignees([]);
-          });
-      } else {
-        response = await dataFreeUser
-          .triggerFetchingFreeUser({
-            url: USER_PATH.USERS_FREE(body),
-          })
-          .then((response: UserProfileData[]) => {
-            return (response || []).map((user) => ({
-              label: user?.name,
-              value: user.id,
-              desc: user,
-              searchLabel: user?.name,
-            }));
-          })
-          .catch(() => {
-            setAssignees([]);
-          });
-      }
+      const fetchHandlers: Record<string, () => Promise<any>> = {
+        'Trực ca đêm': async () =>
+          dataNightUser
+            .triggerFetchingFreeUser({
+              url: USER_PATH.NIGHT_USERS_FREE(bodyNightShift),
+            })
+            .then((response: UserProfileData[]) =>
+              (response || []).map((user) => ({
+                label: user?.name,
+                value: user.id,
+                desc: user,
+                searchLabel: user?.name,
+              }))
+            )
+            .catch(() => {
+              setAssignees([]);
+              return [];
+            }),
+        'Khám bệnh': async () =>
+          dataVetAvailable
+            .triggerFetchingFreeUser({
+              url: USER_PATH.VETERINARIANS_AVAILABLE(
+                formatDate({ data: workDate, type: 'params' })
+              ),
+            })
+            .then((response: UserProfileData[]) =>
+              (response || []).map((user) => ({
+                label: user?.name,
+                value: user.id,
+                desc: user,
+                searchLabel: user?.name,
+              }))
+            )
+            .catch(() => {
+              setAssignees([]);
+              return [];
+            }),
+        default: async () =>
+          dataFreeUser
+            .triggerFetchingFreeUser({
+              url: USER_PATH.USERS_FREE(body),
+            })
+            .then((response: UserProfileData[]) =>
+              (response || []).map((user) => ({
+                label: user?.name,
+                value: user.id,
+                desc: user,
+                searchLabel: user?.name,
+              }))
+            )
+            .catch(() => {
+              setAssignees([]);
+              return [];
+            }),
+      };
+      const response = await (fetchHandlers[
+        selectedTaskTypes?.name || 'default'
+      ]?.() ?? fetchHandlers.default());
+
       console.log(response);
       setAssignees(response);
     };
@@ -457,6 +483,9 @@ const TaskCreateModal = ({
                       label={<LabelForm>{t('Assignee')}</LabelForm>}
                     >
                       <SelectComponent
+                        loading={
+                          dataFreeUser.isLoading || dataNightUser.isLoading
+                        }
                         disabled={selectedRole === undefined}
                         mode="multiple"
                         options={assignees}
