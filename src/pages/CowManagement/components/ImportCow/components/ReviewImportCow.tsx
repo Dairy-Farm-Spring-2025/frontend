@@ -5,7 +5,7 @@ import { COW_PATH } from '@service/api/Cow/cowApi';
 import { message, Upload } from 'antd';
 
 interface ReviewImportCowProps {
-  onReviewData: (data: any[], errors: any[]) => void; // Callback to pass review data
+  onReviewData: (data: any[], errors: any[]) => void;
 }
 
 const ReviewImportCow = ({ onReviewData }: ReviewImportCowProps) => {
@@ -22,87 +22,103 @@ const ReviewImportCow = ({ onReviewData }: ReviewImportCowProps) => {
     try {
       const response = await trigger({ body: formData });
       const data = response.data || response;
+      console.log('API response:', data);
 
-      // Extract cow and health record responses
-      const cowResponse = data?.cowResponseCowPenBulkResponse || {};
-      const healthResponse = data?.healthRecordEntityCowPenBulkResponse || {};
+      const cowResponse = data?.cowResponseCowPenBulkResponse || { successes: [], errors: [] };
+      const healthResponse = data?.healthRecordEntityCowPenBulkResponse || { successes: [], errors: [] };
 
-      // Get successes and errors
       const cowSuccesses = cowResponse.successes || [];
       const healthSuccesses = healthResponse.successes || [];
       const cowErrors = cowResponse.errors || [];
       const healthErrors = healthResponse.errors || [];
 
-      // Combine successes with health records
       const combinedSuccesses = cowSuccesses.map((cow: any) => {
         const healthRecord = healthSuccesses.find(
           (health: any) => health.cowName === cow.name
         );
-        if (!healthRecord) {
-          console.warn(`No health record found for cow: ${cow.name}`);
-        }
         return {
           name: cow.name,
-          cowStatus: cow.cowStatus, // Sử dụng cowStatus từ cowResponse
+          cowStatus: cow.cowStatus,
           dateOfBirth: cow.dateOfBirth,
           dateOfEnter: cow.dateOfEnter,
           cowOrigin: cow.cowOrigin,
           gender: cow.gender,
           cowTypeName: cow.cowTypeName,
           description: cow.description,
-          healthRecord: healthRecord
-            ? {
-              status: healthRecord.healthRecordStatus || healthRecord.status,
-              size: healthRecord.size,
-              period: healthRecord.period,
-              bodyTemperature: healthRecord.bodyTemperature,
-              heartRate: healthRecord.heartRate,
-              respiratoryRate: healthRecord.respiratoryRate,
-              ruminateActivity: healthRecord.ruminateActivity,
-              chestCircumference: healthRecord.chestCircumference,
-              bodyLength: healthRecord.bodyLength,
-              description: healthRecord.description,
-            }
-            : null,
+          healthRecord: healthRecord || null,
         };
       });
 
-      // Combine errors with source identification
       const combinedErrors = [
-        ...cowErrors.map((err: any) => ({ source: 'cow', ...err })),
-        ...healthErrors.map((err: any) => ({ source: 'health', ...err })),
+        ...cowErrors.map((err: string) => ({ source: 'cow', message: err })),
+        ...healthErrors.map((err: string) => ({ source: 'health', message: err })),
       ];
+      console.log('Combined errors:', combinedErrors);
 
-      // Pass data to parent component
       onReviewData(combinedSuccesses, combinedErrors);
 
-      // Provide feedback based on results
       if (combinedErrors.length > 0) {
+        const errorMessages = combinedErrors.map((err) => err.message).join('; ');
         message.warning(
-          `Đã review thành công ${combinedSuccesses.length} con bò, nhưng có ${combinedErrors.length} lỗi. Vui lòng kiểm tra chi tiết.`
+          `Đã review ${combinedSuccesses.length} con bò, nhưng có ${combinedErrors.length} lỗi: ${errorMessages}`
         );
       } else {
-        message.success(
-          `Dữ liệu đã được review thành công! Đã xử lý ${combinedSuccesses.length} con bò.`
-        );
-      }
-
-      // Log unmatched health records (if any)
-      const unmatchedHealthRecords = healthSuccesses.filter(
-        (health: any) =>
-          !cowSuccesses.some((cow: any) => cow.name === health.cowName)
-      );
-      if (unmatchedHealthRecords.length > 0) {
-        console.warn('Unmatched health records:', unmatchedHealthRecords);
-        message.warning(
-          `${unmatchedHealthRecords.length} hồ sơ sức khỏe không khớp với bất kỳ con bò nào.`
-        );
+        message.success(`Đã review thành công ${combinedSuccesses.length} con bò`);
       }
     } catch (error: any) {
       console.error('Lỗi khi review:', error);
-      const errorMessage =
-        error.response?.data?.message || error.message || 'Có lỗi xảy ra!';
-      onReviewData([], [errorMessage]);
+      console.log('Error full details:', {
+        data: error,
+        message: error.message,
+        hasResponseData: !!error.cowResponseCowPenBulkResponse,
+      });
+
+      let combinedSuccesses: any[] = [];
+      let combinedErrors: { source: string; message: string }[] = [];
+      let errorMessage = 'Có lỗi xảy ra khi xử lý file excel. Vui lòng kiểm tra lại.';
+
+      if (error && error.cowResponseCowPenBulkResponse) {
+        const cowResponse = error.cowResponseCowPenBulkResponse;
+        const healthResponse = error.healthRecordEntityCowPenBulkResponse || { successes: [], errors: [] };
+
+        const cowSuccesses = cowResponse.successes || [];
+        const healthSuccesses = healthResponse.successes || [];
+        const cowErrors = cowResponse.errors || [];
+        const healthErrors = healthResponse.errors || [];
+
+        combinedSuccesses = cowSuccesses.map((cow: any) => {
+          const healthRecord = healthSuccesses.find(
+            (health: any) => health.cowName === cow.name
+          );
+          return {
+            name: cow.name,
+            cowStatus: cow.cowStatus,
+            dateOfBirth: cow.dateOfBirth,
+            dateOfEnter: cow.dateOfEnter,
+            cowOrigin: cow.cowOrigin,
+            gender: cow.gender,
+            cowTypeName: cow.cowTypeName,
+            description: cow.description,
+            healthRecord: healthRecord || null,
+          };
+        });
+
+        combinedErrors = [
+          ...cowErrors.map((err: string) => ({ source: 'cow', message: err })),
+          ...healthErrors.map((err: string) => ({ source: 'health', message: err })),
+        ];
+
+        if (combinedErrors.length > 0) {
+          errorMessage = combinedErrors.map((err) => err.message).join('; ');
+        }
+      } else if (error?.message) {
+        errorMessage = error.message;
+      } else if (typeof error === 'string') {
+        errorMessage = error;
+      }
+
+      onReviewData(combinedSuccesses, combinedErrors.length > 0 ? combinedErrors : [{ source: 'system', message: errorMessage }]);
+      // message.error(`Lỗi: ${errorMessage}`);
     }
   };
 
@@ -110,7 +126,7 @@ const ReviewImportCow = ({ onReviewData }: ReviewImportCowProps) => {
     <Upload
       beforeUpload={async (file) => {
         await handleUpload(file);
-        return false; // Prevent default upload behavior of Ant Design
+        return false;
       }}
       showUploadList={false}
     >
