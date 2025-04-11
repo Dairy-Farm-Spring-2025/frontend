@@ -637,5 +637,8 @@
   "Feeding, Night Shift, Cleaning the Barn, Milking": "Cho ăn, Trực đêm, Dọn chuồng, Lấy sữa",
   "perform multiple tasks in the same area": "làm nhiều task trong cùng một khu vực",
   "within the same day.": "trong cùng một ngày.",
-  "Move to create task": "Di chuyển tới tạo công việc"
+  "Move to create task": "Di chuyển tới tạo công việc",
+  "Bulk Cow Movement": "Di chuyển bò vào chuồng",
+  "Move cow successfully": "Di chuyển bò thành công",
+  "Choose Area & Pen to Move Cow": "Chọn khu vực & chuồng để di chuyển bò"
 }
