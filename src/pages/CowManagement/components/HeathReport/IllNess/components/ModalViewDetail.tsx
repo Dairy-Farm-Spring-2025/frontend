@@ -158,17 +158,18 @@ const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
       <FormComponent form={form} onFinish={handleFinish} layout="vertical">
         <div className="p-6 space-y-6">
           {/* Cow Information */}
-          {data?.illnessStatus === 'pending' ||
-            (data?.illnessStatus === 'processing' && (
-              <div className="flex justify-end">
-                <ButtonComponent
-                  className="!text-base"
-                  onClick={handleNavigate}
-                >
-                  {t('Move to create task')}
-                </ButtonComponent>
-              </div>
-            ))}
+          {data?.illnessStatus === 'pending' && (
+            <div className="flex justify-end">
+              <ButtonComponent
+                type="primary"
+                buttonType="warning"
+                className="!text-base"
+                onClick={handleNavigate}
+              >
+                {t('Move to create task')}
+              </ButtonComponent>
+            </div>
+          )}
           <Card>
             <Title className="!text-2xl mb-6">{t('Cow Information')}</Title>
             <Row gutter={[16, 16]}>
