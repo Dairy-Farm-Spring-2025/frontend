@@ -21,7 +21,7 @@ import { AREA_PATH } from '@service/api/Area/areaApi';
 import { HEALTH_RECORD_PATH } from '@service/api/HealthRecord/healthRecordApi';
 import { TASK_PATH } from '@service/api/Task/taskApi';
 import { getColorByRole } from '@utils/statusRender/roleRender';
-import { Select, Table } from 'antd';
+import { Select, Skeleton, Table } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import { t } from 'i18next';
@@ -83,7 +83,7 @@ const TaskScheduleCalendar: React.FC = () => {
     'free-users',
     'GET',
     'application/json',
-    false
+    modalCreate.open
   );
   const {
     data: dataUserNightShift,
@@ -93,7 +93,17 @@ const TaskScheduleCalendar: React.FC = () => {
     'night-shift',
     'GET',
     'application/json',
-    false
+    modalCreate.open
+  );
+  const {
+    data: dataVetAvailable,
+    trigger: triggerDataVetAivailable,
+    isLoading: isLoadingTriggerVetAvailable,
+  } = useFetcher<UserProfileData[]>(
+    'get-vet-availabel',
+    'GET',
+    'application/json',
+    modalCreate.open
   );
   const { data: dataIllness } = useFetcher<IllnessCow[]>(
     HEALTH_RECORD_PATH.ILLNESS,
@@ -384,6 +394,8 @@ const TaskScheduleCalendar: React.FC = () => {
     [dataIllness]
   );
 
+  console.log(tableData);
+
   return (
     <div className="flex flex-col gap-2">
       <div className="flex gap-5 items-center">
@@ -461,16 +473,17 @@ const TaskScheduleCalendar: React.FC = () => {
           onClick={() => setCurrentWeekStart(currentWeekStart.add(1, 'week'))}
         />
       </div>
-      <Table
-        className="schedule-table"
-        bordered
-        loading={isLoading}
-        columns={columns}
-        dataSource={tableData}
-        pagination={false}
-        rowKey="key"
-        scroll={{ x: 'max-content', y: 550 }} // Enable scrolling
-      />
+      <Skeleton loading={isLoading}>
+        <Table
+          className="schedule-table"
+          bordered
+          columns={columns}
+          dataSource={tableData}
+          pagination={false}
+          rowKey="key"
+          scroll={{ x: 'max-content', y: 530 }} // Enable scrolling
+        />
+      </Skeleton>
       <TaskCreateModal
         dataFreeUser={{
           isLoading: isLoadingTriggerFetchingFreeUser,
@@ -481,6 +494,11 @@ const TaskScheduleCalendar: React.FC = () => {
           isLoading: isLoadingTriggerUserNightShift,
           data: dataUserNightShift,
           triggerFetchingFreeUser: triggerFetchingUserNightShift,
+        }}
+        dataVetAvailable={{
+          isLoading: isLoadingTriggerVetAvailable,
+          triggerFetchingFreeUser: triggerDataVetAivailable,
+          data: dataVetAvailable,
         }}
         optionsAreas={optionsAreas}
         optionsDataTaskTypes={optionsDataTaskTypes}
