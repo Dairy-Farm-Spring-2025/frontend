@@ -1,80 +1,75 @@
-import {
-    CloseOutlined,
-    DeleteOutlined,
-    DownloadOutlined,
-    EditOutlined,
-    SaveOutlined,
-} from '@ant-design/icons';
-import TableComponent, { Column } from '@components/Table/TableComponent';
-import AnimationAppear from '@components/UI/AnimationAppear';
-import WhiteBackground from '@components/UI/WhiteBackground';
-import useFetcher from '@hooks/useFetcher';
-import { Cow } from '@model/Cow/Cow';
-import { cowOrigin, cowOriginFiltered } from '@service/data/cowOrigin';
-import { cowStatus } from '@service/data/cowStatus';
-import { formatDateHour, formatStatusWithCamel, formatSTT } from '@utils/format';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import ModalComponent from '@components/Modal/ModalComponent';
 import ButtonComponent from '@components/Button/ButtonComponent';
+import TableComponent, { Column } from '@components/Table/TableComponent';
 import DatePickerComponent from '@components/DatePicker/DatePickerComponent';
 import InputComponent from '@components/Input/InputComponent';
 import SelectComponent from '@components/Select/SelectComponent';
-import { CowType } from '@model/Cow/CowType';
-import CreateBulkModal from '@pages/CowPenManagement/components/MoveCowManagement/components/ListCowNotInPen/components/CreateBulk/CreateBulk';
-import { COW_TYPE_PATH } from '@service/api/CowType/cowType';
-import { HEALTH_RECORD_STATUS } from '@service/data/healthRecordStatus';
-import { Divider, InputNumber, message, Modal } from 'antd';
-import dayjs from 'dayjs';
-import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import InputNumber from 'antd/es/input-number';
+import { CloseOutlined, SaveOutlined } from '@ant-design/icons';
 import { IoMdFemale, IoMdMale } from 'react-icons/io';
-import ConfirmImport from './components/ConfirmImport';
-import ReviewImportCow from './components/ReviewImportCow';
-import ModalListError from './components/ModalListErrors';
+import dayjs from 'dayjs';
+import { formatDateHour, formatStatusWithCamel } from '@utils/format';
+import { cowOrigin, cowOriginFiltered } from '@service/data/cowOrigin';
+import { cowStatus } from '@service/data/cowStatus';
+import { HEALTH_RECORD_STATUS } from '@service/data/healthRecordStatus';
 
+interface ModalListErrorProps {
+    visible: boolean;
+    errors: { source: string; message: string }[];
+    data: any[]; // Dữ liệu từ reviewData
+    onClose: () => void;
+    onSave: (updatedData: any[]) => void; // Callback để cập nhật reviewData
+}
 
-const ListCowImport = () => {
+const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErrorProps) => {
     const { t } = useTranslation();
-    const [reviewData, setReviewData] = useState<Cow[]>([]);
-    const [reviewErrors, setReviewErrors] = useState<any[]>([]);
     const [editingKey, setEditingKey] = useState<string | null>(null);
-    const [isErrorModalVisible, setIsErrorModalVisible] = useState(false);
-    const { data: dataCowType } = useFetcher<CowType[]>(COW_TYPE_PATH.COW_TYPES, 'GET');
-    const { data: importTimes, trigger: fetchImportTimes } = useFetcher<number>(
-        COW_TYPE_PATH.IMPORT_TIME,
-        'GET'
-    );
-    const [importedCowIds, setImportedCowIds] = useState<number[]>([]);
-    const [importSuccess, setImportSuccess] = useState(false);
-    const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
+    const [localData, setLocalData] = useState<any[]>([]);
 
-    const modalControl = {
-        open: isBulkModalOpen,
-        openModal: () => setIsBulkModalOpen(true),
-        closeModal: () => setIsBulkModalOpen(false),
+    // Lọc dữ liệu chỉ hiển thị các dòng có lỗi
+    const errorCowNames = errors
+        .filter((err) => err.source === 'health')
+        .map((err) => err.message.split(':')[0].trim()); // Lấy tên bò từ lỗi, ví dụ: "Cow2" từ "Cow2: Body Length is required"
+    const errorData = data.filter((item) => errorCowNames.includes(item.name));
+
+    // Khởi tạo localData khi modal mở
+    if (visible && localData.length === 0 && errorData.length > 0) {
+        setLocalData(errorData);
+    }
+
+    const handleEdit = (key: string) => setEditingKey(key);
+
+    const handleCancel = () => setEditingKey(null);
+
+    const handleSave = () => {
+        setEditingKey(null);
     };
 
-    const availableCows = importedCowIds.map((id, index) => ({
-        cowId: id,
-        name: reviewData[index]?.name || `Cow ${id}`,
-        cowStatus: reviewData[index]?.cowStatus || 'active',
-    }));
+    const handleChange = (key: string, field: string, value: any) => {
+        setLocalData((prev) =>
+            prev.map((item) =>
+                item.key === key
+                    ? {
+                        ...item,
+                        [field]:
+                            field === 'dateOfBirth' || field === 'dateOfEnter'
+                                ? value
+                                    ? dayjs(value).format('YYYY-MM-DD')
+                                    : ''
+                                : value,
+                    }
+                    : item
+            )
+        );
+    };
 
-    const { handleConfirmImport, isImporting } = ConfirmImport({
-        reviewData,
-        dataCowType,
-        onImportSuccess: (cowIds, success) => {
-            setImportedCowIds(cowIds);
-            setImportSuccess(success);
-            Modal.success({
-                title: t('Đã nhập bò thành công'),
-                okText: t('Tiếp theo'),
-                onOk: () => {
-                    setIsBulkModalOpen(true);
-                },
-                onCancel: () => { },
-            });
-        },
-        onFetchImportTimes: fetchImportTimes,
-    });
+    const handleSaveAll = () => {
+        onSave(localData); // Gọi callback để cập nhật reviewData
+        setLocalData([]); // Reset localData
+        onClose(); // Đóng modal
+    };
 
     const columns: Column[] = [
         {
@@ -386,169 +381,43 @@ const ListCowImport = () => {
                         />
                     </>
                 ) : (
-                    !importSuccess && (
-                        <>
-                            <ButtonComponent
-                                icon={<EditOutlined />}
-                                onClick={() => handleEdit(record.key)}
-                                style={{ marginRight: 8 }}
-                                shape="circle"
-                                type="primary"
-                            />
-                            <ButtonComponent
-                                icon={<DeleteOutlined />}
-                                onClick={() => handleDelete(record.key)}
-                                danger
-                                shape="circle"
-                                type="primary"
-                            />
-                        </>
-                    )
+                    <>
+                        <ButtonComponent
+                            icon={<EditOutlined />}
+                            onClick={() => handleEdit(record.key)}
+                            style={{ marginRight: 8 }}
+                            shape="circle"
+                            type="primary"
+                        />
+                    </>
                 ),
         },
     ];
 
-    const handleDownloadTemplate = () => {
-        window.location.href =
-            'https://api.dairyfarmfpt.website/api/v1/cows/templates/download/cow-bulk-excel';
-        message.success('Đã bắt đầu tải template!');
-    };
-
-    const handleReviewData = (data: any[], errors: any[]) => {
-        const dataWithKeys = data.map((item, index) => ({
-            ...item,
-            key: index.toString(),
-            name: item.name || '',
-            dateOfBirth: item.dateOfBirth || '',
-            dateOfEnter: item.dateOfEnter || '',
-            cowOrigin: item.cowOrigin || '',
-            gender: item.gender || '',
-            cowTypeName: item.cowTypeName || null,
-            cowStatus: item.cowStatus || '',
-            healthRecord: item.healthRecord || {},
-            description: item.description || '',
-        }));
-        setReviewData(dataWithKeys);
-        setReviewErrors(errors);
-        setImportSuccess(false);
-
-        if (errors.length > 0) {
-            setIsErrorModalVisible(true); // Mở modal khi có lỗi
-        }
-    };
-
-    const handleCloseErrorModal = () => {
-        setIsErrorModalVisible(false);
-    };
-
-    const handleSaveErrorData = (updatedData: any[]) => {
-        setReviewData((prev) =>
-            prev.map((item) => {
-                const updatedItem = updatedData.find((updated) => updated.key === item.key);
-                return updatedItem || item;
-            })
-        );
-        setReviewErrors([]); // Xóa lỗi sau khi chỉnh sửa (giả sử đã sửa hết)
-    };
-
-    const handleEdit = (key: string) => setEditingKey(key);
-
-    const handleSave = () => {
-        setEditingKey(null);
-        message.success('Đã lưu thay đổi!');
-    };
-
-    const handleDelete = (key: string) => {
-        setReviewData((prev) => prev.filter((item) => item.key !== key));
-        message.success('Dữ liệu đã được xóa!');
-    };
-
-    const handleCancel = () => setEditingKey(null);
-
-    const handleChange = (key: string, field: string, value: any) => {
-        setReviewData((prev) =>
-            prev.map((item) =>
-                item.key === key
-                    ? {
-                        ...item,
-                        [field]:
-                            field === 'dateOfBirth' || field === 'dateOfEnter'
-                                ? value
-                                    ? dayjs(value).format('YYYY-MM-DD')
-                                    : ''
-                                : value,
-                    }
-                    : item
-            )
-        );
-    };
-
-    const handleDataChange = (newData: any[]) => {
-        setReviewData(newData);
-    };
-
-    const mutateCows = () => {
-        console.log('Cows data mutated');
-    };
-
     return (
-        <AnimationAppear duration={0.5}>
-            <WhiteBackground>
-                <div style={{ marginBottom: 16 }}>
-                    <ReviewImportCow onReviewData={handleReviewData} />
-                    <ButtonComponent
-                        type="default"
-                        icon={<DownloadOutlined />}
-                        onClick={handleDownloadTemplate}
-                        style={{ marginLeft: 16 }}
-                    >
-                        {t('Download Template')}
-                    </ButtonComponent>
-                    <div style={{ marginTop: 10 }}>
-                        <span style={{ fontWeight: 'bold' }}>
-                            {t('Số lần đã import:')} {importTimes ?? 0}
-                        </span>
-                    </div>
-                    {reviewData.length > 0 && (
-                        <div style={{ textAlign: 'right', marginTop: 16 }}>
-                            <ButtonComponent
-                                type="primary"
-                                onClick={handleConfirmImport}
-                                loading={isImporting}
-                                disabled={isImporting || reviewErrors.length > 0}
-                            >
-                                {isImporting ? 'Đang lưu...' : 'Confirm Import'}
-                            </ButtonComponent>
-                        </div>
-                    )}
-                </div>
-
-                <Divider className="my-4" />
-                <TableComponent
-                    loading={false}
-                    columns={columns}
-                    dataSource={reviewData ? formatSTT(reviewData) : []}
-                    onDataChange={handleDataChange}
-                    scroll={{ x: 'max-content' }}
-                    pagination={{ pageSize: 10, position: ['bottomCenter'] }}
-                />
-                {importSuccess && (
-                    <CreateBulkModal
-                        modal={modalControl}
-                        availableCows={availableCows as any}
-                        mutateCows={mutateCows}
-                    />
-                )}
-                <ModalListError
-                    visible={isErrorModalVisible}
-                    errors={reviewErrors}
-                    data={reviewData}
-                    onClose={handleCloseErrorModal}
-                    onSave={handleSaveErrorData}
-                />
-            </WhiteBackground>
-        </AnimationAppear>
+        <ModalComponent
+            title={t('Fix Import Errors')}
+            open={visible}
+            onCancel={onClose}
+            footer={[
+                <ButtonComponent key="cancel" onClick={onClose}>
+                    {t('Cancel')}
+                </ButtonComponent>,
+                <ButtonComponent key="save" type="primary" onClick={handleSaveAll}>
+                    {t('Save')}
+                </ButtonComponent>,
+            ]}
+            width={2000}
+        >
+            <TableComponent
+                loading={false}
+                columns={columns}
+                dataSource={localData}
+                scroll={{ x: 'max-content' }}
+                pagination={false}
+            />
+        </ModalComponent>
     );
 };
 
-export default ListCowImport;
+export default ModalListError;
