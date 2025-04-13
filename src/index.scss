@@ -32,3 +32,26 @@
 tr.ant-table-measure-row {
   visibility: collapse;
 }
+
+/* Ghim màu nền + text khi hover và không hover */
+.ant-table-tbody > tr.row-error {
+  background-color: #ef4444 !important; /* red-500 */
+  color: white !important;
+}
+
+/* Khóa hover */
+.ant-table-tbody > tr.row-error:hover {
+  background-color: #ef4444 !important;
+  color: white !important;
+}
+
+.error-row > td {
+  background-color: #f5222d !important;
+  color: #fff;
+}
+
+/* Giữ nền đỏ khi hover */
+.error-row:hover > td {
+  background-color: #f5222d !important;
+  color: #fff;
+}
