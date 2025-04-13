@@ -6,4 +6,6 @@ export const TASK_PATH = {
   TASK_UPDATE: (taskId: number) => `tasks/update/${taskId}`,
   TASK_REASSIGN: (taskId: number, assigneeId: number) =>
     `tasks/${taskId}/assign/${assigneeId}`,
+  DOWNLOAD_TEMPLATE: 'tasks/download-template',
+  GET_IMPORT_FILES: 'tasks/import-tasks',
 };

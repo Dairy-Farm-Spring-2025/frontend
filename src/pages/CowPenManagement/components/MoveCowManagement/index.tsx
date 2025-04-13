@@ -18,7 +18,7 @@ import { useTranslation } from 'react-i18next';
 const { TabPane } = Tabs;
 const { confirm } = Modal;
 
-export const MoveCowManagement: React.FC = () => {
+const MoveCowManagement: React.FC = () => {
   const { data: cowPenData, mutate } = useFetcher<any>('cow-pens', 'GET');
   const { data: availablePens } = useFetcher<any>('pens/available', 'GET');
   const { trigger } = useFetcher('cow-pens', 'POST');
@@ -170,3 +170,5 @@ export const MoveCowManagement: React.FC = () => {
     </Tabs>
   );
 };
+
+export default MoveCowManagement;

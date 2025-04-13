@@ -1,5 +1,7 @@
 import { Outlet } from 'react-router-dom';
 
-export const CowPenManagement = () => {
+const CowPenManagement = () => {
   return <Outlet />;
 };
+
+export default CowPenManagement;
