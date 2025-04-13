@@ -1,8 +1,4 @@
-import {
-  BellOutlined,
-  DashboardOutlined,
-  WalletOutlined,
-} from '@ant-design/icons';
+import { WalletOutlined } from '@ant-design/icons';
 import {
   Avatar,
   ConfigProvider,
@@ -12,6 +8,7 @@ import {
   Menu,
   MenuProps,
   theme,
+  Tooltip,
 } from 'antd';
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -28,10 +25,11 @@ import { USER_PATH } from '@service/api/User/userApi';
 import { requestFCMToken } from '@utils/firebase';
 import { getAvatar } from '@utils/getImage';
 import { useTranslation } from 'react-i18next';
-import { AiOutlineDashboard, AiTwotoneTool } from 'react-icons/ai';
+import { AiOutlineImport, AiTwotoneTool } from 'react-icons/ai';
 import { BiCategory, BiTask, BiUser } from 'react-icons/bi';
 import { CiBoxList, CiExport } from 'react-icons/ci';
-import { FaWpforms } from 'react-icons/fa';
+import { FaWarehouse, FaWpforms } from 'react-icons/fa';
+import { HiOutlineBell } from 'react-icons/hi';
 import { IoIosLogOut } from 'react-icons/io';
 import { LiaChartAreaSolid, LiaProductHunt } from 'react-icons/lia';
 import { LuMilk } from 'react-icons/lu';
@@ -40,9 +38,16 @@ import {
   MdOutlineHealthAndSafety,
   MdOutlineVaccines,
 } from 'react-icons/md';
-import { PiCow, PiPlus, PiWarehouse } from 'react-icons/pi';
-import { RiAlignItemLeftLine } from 'react-icons/ri';
+import {
+  PiCow,
+  PiFarmFill,
+  PiPlus,
+  PiUserListFill,
+  PiWarehouse,
+} from 'react-icons/pi';
+import { RiAccountPinCircleFill, RiAlignItemLeftLine } from 'react-icons/ri';
 import { SiHappycow } from 'react-icons/si';
+import { TbDashboardFilled } from 'react-icons/tb';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import LabelDashboard from './components/LabelDashboard';
@@ -56,14 +61,42 @@ function getItem(
   label: React.ReactNode,
   key: React.Key,
   icon?: React.ReactNode,
-  children?: MenuItem[]
+  children?: MenuItem[],
+  disabledClick: boolean = false
 ): MenuItem {
+  const tooltipContent = typeof label === 'string' ? label : undefined;
+
+  const itemContent = disabledClick ? (
+    <LabelDashboard>
+      {typeof label === 'string' && label.length > 20
+        ? `${label.slice(0, 20)}...`
+        : label}
+    </LabelDashboard>
+  ) : (
+    <Link className="!w-full" to={`/${key}`}>
+      {typeof label === 'string' && label.length > 20
+        ? `${label.slice(0, 20)}...`
+        : label}
+    </Link>
+  );
+
   return {
     key,
     icon,
     children,
-    label: <Link to={`/${key}`}>{label}</Link>,
-    title: label,
+    label: (
+      <Tooltip
+        arrow
+        placement="right"
+        title={tooltipContent}
+        overlayClassName="menu-item-tooltip"
+        // optional: add delay
+        // mouseEnterDelay={0.5}
+      >
+        <div className="w-full flex items-center">{itemContent}</div>
+      </Tooltip>
+    ),
+    title: tooltipContent,
   } as MenuItem;
 }
 
@@ -144,7 +177,7 @@ const AppDashboard: React.FC = React.memo(() => {
   const menuStyle: React.CSSProperties = {
     boxShadow: 'none',
   };
-  const sizeIcon = 15;
+  const sizeIcon = 20;
 
   const handleLogout = useCallback(() => {
     dispatch(logout());
@@ -167,79 +200,100 @@ const AppDashboard: React.FC = React.memo(() => {
   );
 
   const itemsMenu: MenuItem[] = [
-    getItem(t('dashboard'), 'dairy/dashboard', <AiOutlineDashboard />, [
-      getItem(t('daily_milk'), 'dairy/dashboard/daily-milk', <LuMilk />),
-      !checkVeterinarians(roleName)
-        ? getItem(
-            t('Dashboard today'),
-            'dairy/dashboard/today',
-            <DashboardOutlined />
-          )
-        : null,
-    ]),
     checkVeterinarians(roleName)
       ? null
-      : {
-          key: 'user-group',
-          label: <LabelDashboard>{t('user_management')}</LabelDashboard>,
-
-          type: 'group',
-          children: [
-            getItem(t('user_management'), 'dairy/user-management', <BiUser />),
+      : getItem(
+          t('dashboard'),
+          'dairy/dashboard',
+          <TbDashboardFilled size={sizeIcon} />,
+          [
+            getItem(
+              t('daily_milk'),
+              'dairy/dashboard/daily-milk',
+              <LuMilk size={sizeIcon} />
+            ),
+            !checkVeterinarians(roleName)
+              ? getItem(
+                  t('Dashboard today'),
+                  'dairy/dashboard/today',
+                  <TbDashboardFilled size={sizeIcon} />
+                )
+              : null,
+          ],
+          true
+        ),
+    checkVeterinarians(roleName)
+      ? null
+      : getItem(
+          t('user_management'),
+          'user-group',
+          <PiUserListFill size={sizeIcon} color="black" />,
+          [
+            getItem(
+              t('user_management'),
+              'dairy/user-management',
+              <BiUser size={sizeIcon} />
+            ),
             getItem(
               t('Role management'),
               'dairy/role-management',
-              <BiCategory />
+              <BiCategory size={sizeIcon} />
             ),
           ],
-        },
-    {
-      key: 'group-cow',
-      label: <LabelDashboard>{t('dairy_management')}</LabelDashboard>,
-      type: 'group',
-      children: [
-        getItem(t('Cow management'), 'dairy/cow-management', <PiCow />, [
-          getItem(
-            t('List'),
-            'dairy/cow-management/list-cow',
-            <CiBoxList size={sizeIcon} />
-          ),
-          getItem(
-            t('cow_type'),
-            'dairy/cow-management/cow-type-management',
-            <BiCategory size={sizeIcon} />
-          ),
-          checkVeterinarians(roleName)
-            ? null
-            : getItem(
-                t('create_cow'),
-                'dairy/cow-management/create-cow',
-                <PiPlus size={sizeIcon} />
-              ),
-          checkVeterinarians(roleName)
-            ? null
-            : getItem(
-                t('Import cow'),
-                'dairy/cow-management/import-cow',
-                <PiPlus size={sizeIcon} />
-              ),
-          getItem(
-            t('health_report'),
-            'dairy/cow-management/health-report',
-            <MdOutlineHealthAndSafety size={sizeIcon} />,
-            [
-              getItem(
-                t('Illness'),
-                'dairy/cow-management/health-report/illness',
-                <BiCategory size={sizeIcon} />
-              ),
-            ]
-          ),
-        ]),
+          true
+        ),
+    getItem(
+      t('dairy_management'),
+      'group-cow',
+      <PiFarmFill size={sizeIcon} />,
+      [
+        getItem(
+          t('Cow management'),
+          'dairy/cow-management',
+          <PiCow size={sizeIcon} />,
+          [
+            getItem(
+              t('List'),
+              'dairy/cow-management/list-cow',
+              <CiBoxList size={sizeIcon} />
+            ),
+            getItem(
+              t('cow_type'),
+              'dairy/cow-management/cow-type-management',
+              <BiCategory size={sizeIcon} />
+            ),
+            checkVeterinarians(roleName)
+              ? null
+              : getItem(
+                  t('create_cow'),
+                  'dairy/cow-management/create-cow',
+                  <PiPlus size={sizeIcon} />
+                ),
+            checkVeterinarians(roleName)
+              ? null
+              : getItem(
+                  t('Import cow'),
+                  'dairy/cow-management/import-cow',
+                  <AiOutlineImport size={sizeIcon} />
+                ),
+            getItem(
+              t('health_report'),
+              'dairy/cow-management/health-report',
+              <MdOutlineHealthAndSafety size={sizeIcon} />,
+              [
+                getItem(
+                  t('Illness'),
+                  'dairy/cow-management/health-report/illness',
+                  <BiCategory size={sizeIcon} />
+                ),
+              ]
+            ),
+          ]
+        ),
         getItem(
           t('Feed management'),
           'dairy/feed-management',
-          <MdOutlineFastfood />,
+          <MdOutlineFastfood size={sizeIcon} />,
           [
             getItem(
               t('List'),
@@ -256,7 +310,7 @@ const AppDashboard: React.FC = React.memo(() => {
         getItem(
           t('Vaccine management'),
           'dairy/vaccine-cycle-management',
-          <MdOutlineVaccines />,
+          <MdOutlineVaccines size={sizeIcon} />,
           [
             getItem(
               t('Vaccine cycle list'),
@@ -273,28 +327,34 @@ const AppDashboard: React.FC = React.memo(() => {
         getItem(
           t('Area & Pen Management'),
           'dairy/area-management',
-          <LiaChartAreaSolid />
+          <LiaChartAreaSolid size={sizeIcon} />
         ),
       ],
-    },
+      true
+    ),
     checkVeterinarians(roleName)
       ? null
-      : {
-          key: 'group-warehouse',
-          label: <LabelDashboard>{t('warehouse-management')}</LabelDashboard>,
-          type: 'group',
-          children: [
-            getItem(t('Milk management'), 'dairy/milk-management', <LuMilk />, [
-              getItem(
-                t('Milk batch'),
-                'dairy/milk-management/milk-batch',
-                <WalletOutlined size={sizeIcon} />
-              ),
-            ]),
+      : getItem(
+          t('Warehouse management'),
+          'dairy/warehouse',
+          <FaWarehouse size={sizeIcon} />,
+          [
+            getItem(
+              t('Milk management'),
+              'dairy/milk-management',
+              <LuMilk size={sizeIcon} />,
+              [
+                getItem(
+                  t('Milk batch'),
+                  'dairy/milk-management/milk-batch',
+                  <WalletOutlined size={sizeIcon} />
+                ),
+              ]
+            ),
             getItem(
               t('Storage management'),
               'dairy/warehouse-management',
-              <PiWarehouse />,
+              <PiWarehouse size={sizeIcon} />,
               [
                 getItem(
                   t('Storage'),
@@ -341,7 +401,8 @@ const AppDashboard: React.FC = React.memo(() => {
               ]
             ),
           ],
-        },
+          true
+        ),
     checkVeterinarians(roleName)
       ? {
           key: 'group-vet-schedule',
@@ -355,15 +416,15 @@ const AppDashboard: React.FC = React.memo(() => {
             ),
           ],
         }
-      : {
-          key: 'group-schedule',
-          label: <LabelDashboard>{t('HR management')}</LabelDashboard>,
-          type: 'group',
-          children: [
+      : getItem(
+          t('HR management'),
+          'group-schedule',
+          <RiAccountPinCircleFill size={sizeIcon} color="black" />,
+          [
             getItem(
               t('Human management'),
               'dairy/human-management',
-              <BiUser />,
+              <BiUser size={sizeIcon} />,
               [
                 getItem(
                   t('Worker'),
@@ -377,36 +438,41 @@ const AppDashboard: React.FC = React.memo(() => {
                 ),
               ]
             ),
-            getItem(t('Task management'), 'dairy/task-management', <BiTask />, [
-              !checkManager(roleName)
-                ? null
-                : getItem(
-                    t('Task'),
-                    'dairy/task-management/list',
-                    <CiBoxList size={sizeIcon} />
-                  ),
-              checkVeterinarians(roleName)
-                ? getItem(
-                    t('My task'),
-                    'dairy/task-management/my-task',
-                    <CiBoxList size={sizeIcon} />
-                  )
-                : null,
-              !checkManager(roleName)
-                ? null
-                : getItem(
-                    t('Task type'),
-                    'dairy/task-management/task-type',
-                    <BiCategory size={sizeIcon} />
-                  ),
-            ]),
+            getItem(
+              t('Task management'),
+              'dairy/task-management',
+              <BiTask size={sizeIcon} />,
+              [
+                !checkManager(roleName)
+                  ? null
+                  : getItem(
+                      t('Task'),
+                      'dairy/task-management/list',
+                      <CiBoxList size={sizeIcon} />
+                    ),
+                !checkManager(roleName)
+                  ? null
+                  : getItem(
+                      t('Import task'),
+                      'dairy/task-management/import',
+                      <AiOutlineImport size={sizeIcon} />
+                    ),
+                !checkManager(roleName)
+                  ? null
+                  : getItem(
+                      t('Task type'),
+                      'dairy/task-management/task-type',
+                      <BiCategory size={sizeIcon} />
+                    ),
+              ]
+            ),
 
             !checkManager(roleName)
               ? null
               : getItem(
                   t('Application management'),
                   'dairy/application-management',
-                  <FaWpforms />,
+                  <FaWpforms size={sizeIcon} />,
                   [
                     getItem(
                       t('Application'),
@@ -429,7 +495,7 @@ const AppDashboard: React.FC = React.memo(() => {
               ? getItem(
                   t('Notification management'),
                   'dairy/notification-management',
-                  <BellOutlined />
+                  <HiOutlineBell size={sizeIcon} />
                 )
               : null,
             // getItem(
@@ -438,7 +504,8 @@ const AppDashboard: React.FC = React.memo(() => {
             //   <LuGitPullRequest />
             // ),
           ],
-        },
+          true
+        ),
   ];
   return (
     <AnimationAppear>
@@ -456,15 +523,25 @@ const AppDashboard: React.FC = React.memo(() => {
             <p className="text-2xl font-bold text-black">Dairy Farm</p>
           </div>
           <Divider className="!m-0 border-white" />
-          <Menu
-            theme="light"
-            items={itemsMenu}
-            className="menu-sider !text-base"
-            selectedKeys={[selectedKey]}
-            openKeys={openKeys}
-            mode="inline"
-            onOpenChange={handleOpenChange}
-          />
+          <ConfigProvider
+            theme={{
+              components: {
+                Menu: {
+                  itemMarginBlock: 5,
+                },
+              },
+            }}
+          >
+            <Menu
+              theme="light"
+              items={itemsMenu}
+              className="menu-sider !text-base"
+              selectedKeys={[selectedKey]}
+              openKeys={openKeys}
+              mode="inline"
+              onOpenChange={handleOpenChange}
+            />
+          </ConfigProvider>
         </Sider>
         <Layout style={{ marginLeft: 270 }} className="duration-300">
           <Header

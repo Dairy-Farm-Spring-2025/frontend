@@ -1,6 +1,4 @@
 import { RootState } from '@core/store/store';
-import { CowPenManagement } from '@pages/CowPenManagement';
-import { MoveCowManagement } from '@pages/CowPenManagement/components/MoveCowManagement';
 import { Spin } from 'antd';
 import { lazy, Suspense } from 'react';
 import { useSelector } from 'react-redux';
@@ -9,23 +7,43 @@ import {
   Navigate,
   RouterProvider,
 } from 'react-router-dom';
-
-import ApplicationManagement from '@pages/ApplicationManagement';
-import ApplicationType from '@pages/ApplicationManagement/ApplicationType';
-import ErrorPageNotification from '@pages/Error';
-import ListNotification from '@pages/NotificationManagement/components/List/ListNotification';
-import TaskManagement from '@pages/TaskManagement';
-import TaskType from '@pages/TaskManagement/TaskType';
-import Equipment from '@pages/WarehouseManagement/components/Equipment';
 import { SiHappycow } from 'react-icons/si';
 
-import ListVaccineInjection from '@pages/VaccineCycleManagement/components/ListVaccineInjection';
-
-import ApplicationListing from '@pages/ApplicationManagement/Application-management';
-import ListCowImport from '@pages/CowManagement/components/ImportCow';
-import AuthCallback from '@pages/Login/components/AuthCallback';
-import DashboardToday from '@pages/Dashboard/components/DashboardToday';
-
+const CowPenManagement = lazy(() => import('@pages/CowPenManagement'));
+const MoveCowManagement = lazy(
+  () => import('@pages/CowPenManagement/components/MoveCowManagement')
+);
+const ApplicationType = lazy(
+  () => import('@pages/ApplicationManagement/ApplicationType')
+);
+const ErrorPageNotification = lazy(() => import('@pages/Error'));
+const ListNotification = lazy(
+  () => import('@pages/NotificationManagement/components/List/ListNotification')
+);
+const TaskManagement = lazy(() => import('@pages/TaskManagement'));
+const TaskType = lazy(() => import('@pages/TaskManagement/TaskType'));
+const Equipment = lazy(
+  () => import('@pages/WarehouseManagement/components/Equipment')
+);
+const ListVaccineInjection = lazy(
+  () => import('@pages/VaccineCycleManagement/components/ListVaccineInjection')
+);
+const ApplicationListing = lazy(
+  () => import('@pages/ApplicationManagement/Application-management')
+);
+const ListCowImport = lazy(
+  () => import('@pages/CowManagement/components/ImportCow')
+);
+const AuthCallback = lazy(() => import('@pages/Login/components/AuthCallback'));
+const DashboardToday = lazy(
+  () => import('@pages/Dashboard/components/DashboardToday')
+);
+const ApplicationManagement = lazy(
+  () => import('@pages/ApplicationManagement')
+);
+const ImportTask = lazy(
+  () => import('@pages/TaskManagement/ImportTask/ImportTask')
+);
 const NotificationManagement = lazy(
   () => import('@pages/NotificationManagement')
 );
@@ -515,6 +533,10 @@ const AppRouting = () => {
             {
               path: ':taskId',
               element: <Navigate to={'../list'} />,
+            },
+            {
+              path: 'import',
+              element: SuspenseWrapper(<ImportTask />),
             },
           ],
         },
