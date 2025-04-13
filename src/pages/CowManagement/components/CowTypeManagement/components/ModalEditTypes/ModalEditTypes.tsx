@@ -35,11 +35,15 @@ const ModalEditTypes = ({ mutate, modal, id }: ModalTypesProps) => {
         status: data?.status,
         description: data?.description,
         maxWeight: data?.maxWeight,
+        maxHeight: data?.maxHeight,
+        maxLength: data?.maxLength
       });
     }
   }, [
     data?.description,
     data?.maxWeight,
+    data?.maxheight,
+    data?.maxlength,
     data?.name,
     data?.status,
     form,
@@ -78,7 +82,7 @@ const ModalEditTypes = ({ mutate, modal, id }: ModalTypesProps) => {
           <FormItemComponent
             rules={[{ required: true }]}
             name="name"
-            label={<LabelForm>Name:</LabelForm>}
+            label={<LabelForm>{t('Name')}:</LabelForm>}
           >
             <Input />
           </FormItemComponent>
@@ -90,8 +94,22 @@ const ModalEditTypes = ({ mutate, modal, id }: ModalTypesProps) => {
             <InputComponent.Number min={1} />
           </FormItemComponent>
           <FormItemComponent
+            rules={[{ required: true }]}
+            name="maxHeight"
+            label={<LabelForm>{t('Max height')}:</LabelForm>}
+          >
+            <InputComponent.Number min={1} />
+          </FormItemComponent>
+          <FormItemComponent
+            rules={[{ required: true }]}
+            name="maxLength"
+            label={<LabelForm>{t('Max length')}:</LabelForm>}
+          >
+            <InputComponent.Number min={1} />
+          </FormItemComponent>
+          <FormItemComponent
             name="status"
-            label={<LabelForm>Status:</LabelForm>}
+            label={<LabelForm>{t('Status')}:</LabelForm>}
             rules={[{ required: true }]}
           >
             <Select options={cowTypesStatus()} />
@@ -99,7 +117,7 @@ const ModalEditTypes = ({ mutate, modal, id }: ModalTypesProps) => {
           <FormItemComponent
             rules={[{ required: true }]}
             name="description"
-            label={<LabelForm>Description:</LabelForm>}
+            label={<LabelForm>{t('Description')}:</LabelForm>}
           >
             <Input.TextArea></Input.TextArea>
           </FormItemComponent>

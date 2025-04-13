@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import ModalComponent from '@components/Modal/ModalComponent';
 import ButtonComponent from '@components/Button/ButtonComponent';
@@ -7,20 +7,19 @@ import DatePickerComponent from '@components/DatePicker/DatePickerComponent';
 import InputComponent from '@components/Input/InputComponent';
 import SelectComponent from '@components/Select/SelectComponent';
 import InputNumber from 'antd/es/input-number';
-import { CloseOutlined, SaveOutlined } from '@ant-design/icons';
+import { CloseOutlined, SaveOutlined, EditOutlined, } from '@ant-design/icons';
 import { IoMdFemale, IoMdMale } from 'react-icons/io';
 import dayjs from 'dayjs';
 import { formatDateHour, formatStatusWithCamel } from '@utils/format';
 import { cowOrigin, cowOriginFiltered } from '@service/data/cowOrigin';
 import { cowStatus } from '@service/data/cowStatus';
 import { HEALTH_RECORD_STATUS } from '@service/data/healthRecordStatus';
-
 interface ModalListErrorProps {
     visible: boolean;
     errors: { source: string; message: string }[];
-    data: any[]; // Dữ liệu từ reviewData
+    data: any[];
     onClose: () => void;
-    onSave: (updatedData: any[]) => void; // Callback để cập nhật reviewData
+    onSave: (updatedData: any[]) => void;
 }
 
 const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErrorProps) => {
@@ -28,16 +27,29 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
     const [editingKey, setEditingKey] = useState<string | null>(null);
     const [localData, setLocalData] = useState<any[]>([]);
 
-    // Lọc dữ liệu chỉ hiển thị các dòng có lỗi
-    const errorCowNames = errors
-        .filter((err) => err.source === 'health')
-        .map((err) => err.message.split(':')[0].trim()); // Lấy tên bò từ lỗi, ví dụ: "Cow2" từ "Cow2: Body Length is required"
-    const errorData = data.filter((item) => errorCowNames.includes(item.name));
+    // Log errors for debugging
+    useEffect(() => {
+        console.log('Errors in ModalListError:', errors);
+    }, [errors]);
 
-    // Khởi tạo localData khi modal mở
-    if (visible && localData.length === 0 && errorData.length > 0) {
-        setLocalData(errorData);
-    }
+    // Initialize localData when modal opens
+    useEffect(() => {
+        if (visible && localData.length === 0 && data.length > 0) {
+            setLocalData(data.map((item, index) => ({ ...item, key: item.key || index.toString() })));
+        }
+    }, [visible, data, localData.length]);
+
+    // Filter errors and extract cow names
+    const errorCowNames = errors
+        .filter((err) => err.source === 'health' && typeof err.message === 'string')
+        .map((err) => {
+            const [cowName] = err.message.split(':').map((s) => s.trim());
+            return cowName || '';
+        })
+        .filter((name) => name);
+
+    // Filter data to show only rows with errors
+    const errorData = localData.filter((item) => errorCowNames.includes(item.name));
 
     const handleEdit = (key: string) => setEditingKey(key);
 
@@ -58,7 +70,9 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
                                 ? value
                                     ? dayjs(value).format('YYYY-MM-DD')
                                     : ''
-                                : value,
+                                : field === 'healthRecord'
+                                    ? { ...item.healthRecord, ...value }
+                                    : value,
                     }
                     : item
             )
@@ -66,9 +80,9 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
     };
 
     const handleSaveAll = () => {
-        onSave(localData); // Gọi callback để cập nhật reviewData
-        setLocalData([]); // Reset localData
-        onClose(); // Đóng modal
+        onSave(localData);
+        setLocalData([]);
+        onClose();
     };
 
     const columns: Column[] = [
@@ -381,15 +395,13 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
                         />
                     </>
                 ) : (
-                    <>
-                        <ButtonComponent
-                            icon={<EditOutlined />}
-                            onClick={() => handleEdit(record.key)}
-                            style={{ marginRight: 8 }}
-                            shape="circle"
-                            type="primary"
-                        />
-                    </>
+                    <ButtonComponent
+                        icon={<EditOutlined />}
+                        onClick={() => handleEdit(record.key)}
+                        style={{ marginRight: 8 }}
+                        shape="circle"
+                        type="primary"
+                    />
                 ),
         },
     ];
@@ -412,7 +424,7 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
             <TableComponent
                 loading={false}
                 columns={columns}
-                dataSource={localData}
+                dataSource={errorData}
                 scroll={{ x: 'max-content' }}
                 pagination={false}
             />

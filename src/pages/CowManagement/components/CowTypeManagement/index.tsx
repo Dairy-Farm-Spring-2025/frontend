@@ -55,26 +55,24 @@ const CowTypeManagement = () => {
       render: (data) => <p>{data} (kg)</p>,
     },
     {
+      dataIndex: 'maxHeight',
+      key: 'maxHeight',
+      title: t('Max height'),
+      render: (data) => <p>{data} (cm)</p>,
+    },
+    {
+      dataIndex: 'maxLength',
+      key: 'maxLength',
+      title: t('Max Length'),
+      render: (data) => <p>{data} (cm)</p>,
+    },
+    {
       dataIndex: 'status',
       key: 'status',
       title: t('Status'),
       render: (data) => (data === 'exist' ? 'Exist' : 'Not Exist'),
     },
-    {
-      dataIndex: 'cowTypeId',
-      key: 'action',
-      title: t('Action'),
-      render: (data) => (
-        <ButtonComponent
-          key={'deleteButton'}
-          onClick={() => console.log(data)}
-          danger
-          type="primary"
-        >
-          {t('Delete')}
-        </ButtonComponent>
-      ),
-    },
+
   ];
   return (
     <AnimationAppear duration={0.5}>
