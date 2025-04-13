@@ -21,7 +21,7 @@ import { CowType } from '@model/Cow/CowType';
 import CreateBulkModal from '@pages/CowPenManagement/components/MoveCowManagement/components/ListCowNotInPen/components/CreateBulk/CreateBulk';
 import { COW_TYPE_PATH } from '@service/api/CowType/cowType';
 import { HEALTH_RECORD_STATUS } from '@service/data/healthRecordStatus';
-import { Divider, InputNumber, message, Modal } from 'antd'; // Thêm Modal
+import { Divider, InputNumber, message, Modal } from 'antd'; // Thêm List
 import dayjs from 'dayjs';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -61,18 +61,13 @@ const ListCowImport = () => {
         onImportSuccess: (cowIds, success) => {
             setImportedCowIds(cowIds);
             setImportSuccess(success);
-            // Hiển thị popup xác nhận thay vì mở modal ngay lập tức
             Modal.success({
                 title: t('Đã nhập bò thành công'),
-                // content: t('Bạn có muốn di chuyển các con bò vừa import không?'),
                 okText: t('Tiếp theo'),
-
                 onOk: () => {
-                    setIsBulkModalOpen(true); // Chỉ mở modal nếu người dùng đồng ý
+                    setIsBulkModalOpen(true);
                 },
-                onCancel: () => {
-                    // Không làm gì nếu người dùng từ chối
-                },
+                onCancel: () => { },
             });
         },
         onFetchImportTimes: fetchImportTimes,
@@ -428,9 +423,11 @@ const ListCowImport = () => {
         }));
         setReviewData(dataWithKeys);
         setReviewErrors(errors);
-        setImportSuccess(false); // Reset importSuccess khi review lại
+        setImportSuccess(false);
+
         if (errors.length > 0) {
-            message.error(`Có lỗi trong dữ liệu: ${errors.join(', ')}`);
+            const errorMessages = errors.map((err) => err.message).join('; ');
+            message.error(`Có lỗi trong dữ liệu: ${errorMessages}`);
         }
     };
 
@@ -505,6 +502,7 @@ const ListCowImport = () => {
                         </div>
                     )}
                 </div>
+
                 <Divider className="my-4" />
                 <TableComponent
                     loading={false}
@@ -519,7 +517,6 @@ const ListCowImport = () => {
                         modal={modalControl}
                         availableCows={availableCows as any}
                         mutateCows={mutateCows}
-
                     />
                 )}
             </WhiteBackground>

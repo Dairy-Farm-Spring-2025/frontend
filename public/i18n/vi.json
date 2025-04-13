@@ -101,6 +101,7 @@
   "Feed": "Thức ăn",
   "Pen": "Chuồng",
   "Move cow": "Di chuyển bò",
+  "Move Cow": "Di chuyển bò",
   "Milk": "Sữa",
   "Milk batch": "Lô sữa",
   "Vaccine cycle": "Chu kỳ vắc-xin",
@@ -156,7 +157,7 @@
   "Select Cow": "Chọn bò",
   "Select Pen": "Chọn chuồng ",
   "In Pen": "Trong chuồng",
-  "Submit": "Nộp",
+  "Submit": "Hoàn tất",
   "Select Dairy Cows and Pens": "Chọn bò sữa và chuồng",
   "Select All Cows": "Chọn tất cả bò vào chuồng",
   "The number of selected cows must match the number of selected pens.": "Số lượng bò được chọn phải bằng số lượng chuồng được chọn.",
@@ -641,5 +642,9 @@
   "Warehouse management": "Quản lý nhà kho",
   "Import task": "Nhập công việc",
   "Download template success": "Tải mẫu thành công",
-  "Download task template": "Tải file mẫu công việc"
+  "Download task template": "Tải file mẫu công việc",
+  "Bulk Cow Movement": "Di chuyển bò vào chuồng",
+  "Move cow successfully": "Di chuyển bò thành công",
+  "Choose Area & Pen to Move Cow": "Chọn khu vực & chuồng để di chuyển bò",
+  "Confirm Import": "Lưu"
 }
