@@ -651,5 +651,6 @@
   "Please select area for all unknown tasks before submitting": "Làm ơn chọn khu vực cho tât cả công việc không biết trước nhập",
   "Some tasks have invalid dates. Dates must be from tomorrow to 6 days after": "Vài công việc có ngày không hợp lệ. Ngày nên từ ngày mai tới 6 ngày sau đó",
   "Some task types are not selected": "Vài công việc chưa được chọn",
-  "Some tasks do not have assignees selected": "Vài công việc chưa có người làm"
+  "Some tasks do not have assignees selected": "Vài công việc chưa có người làm",
+  "Selected cows must match selected pens": "Số lượng bò được chọn phải bằng với số chuồng"
 }

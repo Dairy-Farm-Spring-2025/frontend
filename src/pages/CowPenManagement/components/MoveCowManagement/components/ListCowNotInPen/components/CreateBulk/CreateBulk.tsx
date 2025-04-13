@@ -247,7 +247,7 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
               </Row>
               {selectedCows.length !== selectedPens.length && (
                 <p className="text-red-500 mt-4 text-center">
-                  {t('Selected cows ({count0}) must match selected pens ({count1})', {
+                  {t('Selected cows must match selected pens', {
                     count0: selectedCows.length,
                     count1: selectedPens.length,
                   })}
