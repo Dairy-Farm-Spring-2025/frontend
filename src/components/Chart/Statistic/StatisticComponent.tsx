@@ -17,27 +17,29 @@ const StatisticComponent = ({
   ...props
 }: StatisticComponentProps) => {
   return (
-    <CardComponent className="!px-3">
+    <CardComponent className="!px-3 !shadow-card">
       <ConfigProvider
         theme={{
           components: {
             Statistic: {
-              contentFontSize: 18,
+              contentFontSize: 16,
             },
           },
         }}
       >
-        <Statistic
-          title={
-            <div className="flex gap-2 items-center !text-primary">
-              {icon && icon}
-              <Title>{title}</Title>
-            </div>
-          }
-          value={value}
-          suffix={suffix}
-          {...props}
-        />
+        <div className="flex items-center gap-4">
+          <div>{icon && icon}</div>
+          <Statistic
+            title={
+              <div className="flex gap-2 items-center !text-primary">
+                <Title className="!text-base">{title}</Title>
+              </div>
+            }
+            value={value}
+            suffix={suffix}
+            {...props}
+          />{' '}
+        </div>
       </ConfigProvider>
     </CardComponent>
   );

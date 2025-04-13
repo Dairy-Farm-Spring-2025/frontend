@@ -11,4 +11,12 @@ export type DashboardTodayType = {
   todayReports: ReportTaskByDate[];
   totalMilkToday: number;
   usedItemsToday: any;
+  totalCow: number;
+  cowStatsByType: CowStatByType[];
+};
+
+export type CowStatByType = {
+  cowTypeName: string;
+  total: number;
+  statusCount: any[];
 };
