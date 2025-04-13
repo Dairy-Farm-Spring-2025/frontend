@@ -1,34 +1,36 @@
-import { UploadOutlined } from '@ant-design/icons';
+import { CheckOutlined, UploadOutlined } from '@ant-design/icons';
 import ButtonComponent from '@components/Button/ButtonComponent';
+import FloatButtonComponent from '@components/FloatButton/FloatButtonComponent';
 import AnimationAppear from '@components/UI/AnimationAppear';
 import WhiteBackground from '@components/UI/WhiteBackground';
 import api from '@config/axios/axios';
 import useFetcher from '@hooks/useFetcher';
 import useToast from '@hooks/useToast';
-import { TASK_PATH } from '@service/api/Task/taskApi';
-import { Divider, Upload } from 'antd';
-import { t } from 'i18next';
-import { useEffect, useState } from 'react';
-import CardAreaImportTask from './components/CardAreaImportTask';
 import { Area } from '@model/Area';
-import { AREA_PATH } from '@service/api/Area/areaApi';
 import { TaskType } from '@model/Task/task-type';
+import { AREA_PATH } from '@service/api/Area/areaApi';
+import { TASK_PATH } from '@service/api/Task/taskApi';
 import { TASK_TYPE_PATH } from '@service/api/Task/taskType';
+import { USER_PATH } from '@service/api/User/userApi';
+import { Divider, Popover, Skeleton, Upload } from 'antd';
 import dayjs from 'dayjs';
+import { t } from 'i18next';
+import { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
+import CardAreaImportTask from './components/CardAreaImportTask';
 
 const ImportTask = () => {
   const toast = useToast();
   const [loadingDownload, setLoadingDownload] = useState(false);
   const [importedData, setImportedData] = useState<any>({});
   const [allValid, setAllValid] = useState(true);
+  const navigate = useNavigate();
   const [editingKeys, setEditingKeys] = useState<Record<string, boolean>>({});
-  const [availableAreas, setAvailableAreas] = useState<
-    { value: string; label: string }[]
-  >([]);
-  const [availableTaskTypes, setAvailableTaskTypes] = useState<
-    { value: string; label: string }[]
-  >([]);
-
+  const { trigger: triggerCreate, isLoading: isLoadingCreate } = useFetcher(
+    TASK_PATH.CREATE_FROM_EXCEL,
+    'POST'
+  );
   const { trigger: triggerImportFile, isLoading: isLoadingImport } = useFetcher(
     TASK_PATH.GET_IMPORT_FILES,
     'POST',
@@ -41,26 +43,26 @@ const ImportTask = () => {
     'GET'
   );
 
-  useEffect(() => {
-    if (dataArea) {
-      setAvailableAreas(
-        dataArea.map((element) => ({
-          value: element.name,
-          label: element.name,
-        }))
-      );
-    }
-    if (dataTaskType) {
-      setAvailableTaskTypes(
-        dataTaskType.map((element) => ({
-          value: element.name,
-          label: element.name,
-        }))
-      );
-    }
-  }, [dataArea, dataTaskType]);
+  const availableAreas = useMemo(
+    () =>
+      (dataArea || []).map((element) => ({
+        value: element.name,
+        label: element.name,
+      })),
+    [dataArea]
+  );
 
-  // Validation function for dates (to catch invalid dates from file imports)
+  const availableTaskTypes = useMemo(
+    () =>
+      (dataTaskType || []).map((element) => ({
+        value: element.name,
+        label: element.name,
+        role: element.roleId.id,
+      })),
+    [dataTaskType]
+  );
+
+  // Validation function for dates
   const validateDates = (data: any) => {
     const tomorrow = dayjs().add(1, 'day').startOf('day');
     const maxDate = tomorrow.add(6, 'day').endOf('day');
@@ -96,9 +98,55 @@ const ImportTask = () => {
     return isValid;
   };
 
+  const validateTaskType = (data: any) => {
+    let isValid = true;
+    for (const area in data) {
+      for (const taskType in data[area]) {
+        for (const task of data[area][taskType]) {
+          if (task.deleted) continue;
+          if (task.taskType === null) {
+            isValid = false;
+            break;
+          }
+        }
+        if (!isValid) break;
+      }
+      if (!isValid) break;
+    }
+    return isValid;
+  };
+
+  const validateAssignees = (data: any) => {
+    let isValid = true;
+    for (const area in data) {
+      for (const taskType in data[area]) {
+        for (const task of data[area][taskType]) {
+          if (task.deleted) continue;
+          if (task.assigneeId === undefined || task.assigneeId === null) {
+            isValid = false;
+            break;
+          }
+        }
+        if (!isValid) break;
+      }
+      if (!isValid) break;
+    }
+    return isValid;
+  };
+
+  const hasAssignees = useMemo(
+    () => validateAssignees(importedData),
+    [importedData]
+  );
+
   useEffect(() => {
     setAllValid(validateDates(importedData));
   }, [importedData]);
+
+  const isValidTaskType = useMemo(
+    () => validateTaskType(importedData),
+    [importedData]
+  );
 
   const handleDownload = async () => {
     try {
@@ -132,25 +180,13 @@ const ImportTask = () => {
           acc[area] = Object.keys(response[area]).reduce(
             (taskAcc, taskType) => {
               const normalizedTaskType = taskType || 'Chưa rõ loại công việc';
-              const tasksByDateRange: Record<string, any[]> = {};
-              response[area][taskType].forEach((task: any) => {
-                const dateRange = `${task.fromDate}-${task.toDate}`;
-                if (!tasksByDateRange[dateRange]) {
-                  tasksByDateRange[dateRange] = [];
-                }
-                tasksByDateRange[dateRange].push(task);
-              });
-
-              taskAcc[normalizedTaskType] = [];
-              Object.entries(tasksByDateRange).forEach(([, tasks]) => {
-                tasks.forEach((task, idx) => {
-                  taskAcc[normalizedTaskType].push({
-                    ...task,
-                    key: `${area}-${normalizedTaskType}-${task.fromDate}-${task.toDate}-${idx}`,
-                    taskType: task.taskType || null,
-                  });
-                });
-              });
+              taskAcc[normalizedTaskType] = response[area][taskType].map(
+                (task: any) => ({
+                  ...task,
+                  key: uuidv4(), // Sử dụng UUID làm key
+                  taskType: task.taskType || null,
+                })
+              );
               return taskAcc;
             },
             {} as Record<string, any[]>
@@ -199,15 +235,7 @@ const ImportTask = () => {
         return prev;
       }
 
-      const dateRange = `${updatedRow.fromDate}-${updatedRow.toDate}`;
-      const tasksInSameDateRange = (newData[area][newTaskType] || []).filter(
-        (task: any) =>
-          `${task.fromDate}-${task.toDate}` === dateRange && task.key !== rowKey
-      );
-      const newIndex = tasksInSameDateRange.length;
-      const newKey = `${area}-${newTaskType}-${updatedRow.fromDate}-${updatedRow.toDate}-${newIndex}`;
-
-      if (normalizedOriginalTaskType !== newTaskType || rowKey !== newKey) {
+      if (normalizedOriginalTaskType !== newTaskType) {
         if (!newData[area][newTaskType]) {
           newData[area][newTaskType] = [];
         }
@@ -215,7 +243,7 @@ const ImportTask = () => {
         const updatedTask = {
           ...tasks[taskIndex],
           ...updatedRow,
-          key: newKey,
+          key: uuidv4(), // Tạo key mới khi thay đổi taskType
         };
         newData[area][newTaskType].push(updatedTask);
         tasks.splice(taskIndex, 1);
@@ -227,7 +255,6 @@ const ImportTask = () => {
         newData[area][normalizedOriginalTaskType][taskIndex] = {
           ...tasks[taskIndex],
           ...updatedRow,
-          key: newKey,
         };
       }
 
@@ -308,23 +335,12 @@ const ImportTask = () => {
           newData[newArea][normalizedTaskType] = [];
         }
 
-        const tasksByDateRange: Record<string, any[]> = {};
-        newData[oldArea][taskType].forEach((task: any) => {
-          const dateRange = `${task.fromDate}-${task.toDate}`;
-          if (!tasksByDateRange[dateRange]) {
-            tasksByDateRange[dateRange] = [];
-          }
-          tasksByDateRange[dateRange].push(task);
-        });
-
-        Object.entries(tasksByDateRange).forEach(([, tasks]) => {
-          tasks.forEach((task, idx) => {
-            const newKey = `${newArea}-${normalizedTaskType}-${task.fromDate}-${task.toDate}-${idx}`;
-            newData[newArea][normalizedTaskType].push({
-              ...task,
-              key: newKey,
-              areaName: newArea,
-            });
+        newData[oldArea][taskType].forEach((task: any, idx: number) => {
+          const newKey = `${newArea}-${normalizedTaskType}-${task.fromDate}-${task.toDate}-${idx}`;
+          newData[newArea][normalizedTaskType].push({
+            ...task,
+            key: newKey,
+            areaName: newArea,
           });
         });
       });
@@ -347,6 +363,11 @@ const ImportTask = () => {
         return;
       }
 
+      if (!isValidTaskType) {
+        toast.showError(t('Please select task types for all tasks'));
+        return;
+      }
+
       const requestBody = [];
       for (const area in importedData) {
         for (const taskType in importedData[area]) {
@@ -366,13 +387,66 @@ const ImportTask = () => {
           }
         }
       }
-
-      console.log('Request body:', requestBody);
-      toast.showSuccess(t('Submit successful'));
+      const response = await triggerCreate({ body: requestBody });
+      toast.showSuccess(response.message);
+      navigate('../list');
     } catch {
       toast.showError(t('Validation failed'));
     }
   };
+
+  const useGetAssignees = () => {
+    const { trigger } = useFetcher('', 'GET');
+
+    const getAssignees = async (
+      taskType: string,
+      area: string,
+      fromDate: string,
+      toDate: string
+    ): Promise<{ value: number; label: string }[]> => {
+      try {
+        const normalizedTaskType = taskType || 'Chưa rõ loại công việc';
+        let url = '';
+
+        if (
+          ['Cho bò ăn', 'Dọn chuồng bò', 'Lấy sữa bò'].includes(
+            normalizedTaskType
+          )
+        ) {
+          const areaName = availableAreas.find((a) => a.value === area)?.value;
+          if (!areaName) {
+            toast.showError(t('Area not found'));
+            return [];
+          }
+          url = USER_PATH.USERS_FREE_IMPORT({
+            roleId: '4',
+            fromDate,
+            toDate,
+            areaName,
+          });
+        } else if (normalizedTaskType === 'Trực ca đêm') {
+          url = USER_PATH.NIGHT_USERS_FREE({ fromDate, toDate });
+        } else if (normalizedTaskType === 'Khám định kì') {
+          url = USER_PATH.VETERINARIANS_AVAILABLE(fromDate);
+        } else {
+          return [];
+        }
+
+        const response = await trigger({ url });
+        return response.map((user: any) => ({
+          value: user.id,
+          label: user.name,
+        }));
+      } catch {
+        toast.showError(t('Failed to fetch assignees'));
+        return [];
+      }
+    };
+
+    return getAssignees;
+  };
+
+  const getAssignees = useGetAssignees();
 
   const isUnknownAreaExist = !!importedData['Chưa rõ khu vực'];
 
@@ -398,65 +472,97 @@ const ImportTask = () => {
           </ButtonComponent>
         </div>
         <Divider className="!my-2" />
+        <Skeleton loading={isLoadingCreate || isLoadingImport}>
+          {isUnknownAreaExist && (
+            <div className="my-4 p-3 bg-yellow-50 border border-yellow-200 rounded">
+              <p className="text-amber-600 font-medium">
+                {t(
+                  'Some tasks need area selection. Please select area from dropdown.'
+                )}
+              </p>
+            </div>
+          )}
 
-        {isUnknownAreaExist && (
-          <div className="my-4 p-3 bg-yellow-50 border border-yellow-200 rounded">
-            <p className="text-amber-600 font-medium">
-              {t(
-                'Some tasks need area selection. Please select area from dropdown.'
+          <div className="flex flex-col gap-10">
+            {Object.entries(importedData || {}).map(([area, task]) => (
+              <CardAreaImportTask
+                key={area}
+                area={area}
+                task={task as any}
+                availableAreas={availableAreas}
+                availableTaskTypes={availableTaskTypes}
+                editingKeys={editingKeys}
+                setEditingKeys={setEditingKeys}
+                onUpdateTask={handleUpdateTask}
+                onDeleteTask={handleDeleteTask}
+                onRestoreTask={handleRestoreTask}
+                onChangeArea={handleChangeArea}
+                getAssignees={getAssignees}
+              />
+            ))}
+          </div>
+
+          {Object.keys(importedData).length > 0 && (
+            <FloatButtonComponent.Group>
+              {!(
+                isUnknownAreaExist ||
+                !allValid ||
+                !isValidTaskType ||
+                !hasAssignees
+              ) ? (
+                <FloatButtonComponent
+                  tooltip={'Confirm'}
+                  type="primary"
+                  onClick={handleSubmit}
+                  children={undefined}
+                  icon={<CheckOutlined />}
+                />
+              ) : (
+                <Popover
+                  title={t('Error')}
+                  content={
+                    <div className="flex flex-col gap-2 text-base bg-white">
+                      {isUnknownAreaExist && (
+                        <span className="text-red-500">
+                          -{' '}
+                          {t(
+                            'Please select area for all unknown tasks before submitting'
+                          )}
+                        </span>
+                      )}
+                      {!allValid && (
+                        <span className="text-red-500">
+                          -{' '}
+                          {t(
+                            'Some tasks have invalid dates. Dates must be from tomorrow to 6 days after'
+                          )}
+                        </span>
+                      )}
+                      {!isValidTaskType && (
+                        <span className="text-red-500">
+                          - {t('Some task types are not selected')}
+                        </span>
+                      )}
+                      {!hasAssignees && (
+                        <span className="text-red-500">
+                          - {t('Some tasks do not have assignees selected')}
+                        </span>
+                      )}
+                    </div>
+                  }
+                >
+                  <FloatButtonComponent
+                    type="primary"
+                    children={undefined}
+                    buttonType="volcano"
+                    tooltip=""
+                  />
+                </Popover>
               )}
-            </p>
-          </div>
-        )}
-
-        <div className="flex flex-col gap-10">
-          {Object.entries(importedData || {}).map(([area, task]) => (
-            <CardAreaImportTask
-              key={area}
-              area={area}
-              task={task as any}
-              assignees={[
-                { id: 1, name: 'Nguyễn Văn A' },
-                { id: 2, name: 'Trần Thị B' },
-                { id: 3, name: 'Phạm Văn C' },
-              ]}
-              availableAreas={availableAreas}
-              availableTaskTypes={availableTaskTypes}
-              editingKeys={editingKeys}
-              setEditingKeys={setEditingKeys}
-              onUpdateTask={handleUpdateTask}
-              onDeleteTask={handleDeleteTask}
-              onRestoreTask={handleRestoreTask}
-              onChangeArea={handleChangeArea}
-            />
-          ))}
-        </div>
-
-        {Object.keys(importedData).length > 0 && (
-          <div className="mt-4">
-            <ButtonComponent
-              type="primary"
-              disabled={isUnknownAreaExist || !allValid}
-              onClick={handleSubmit}
-            >
-              {t('Confirm import')}
-            </ButtonComponent>
-            {isUnknownAreaExist && (
-              <span className="ml-3 text-red-500">
-                {t(
-                  'Please select area for all unknown tasks before submitting'
-                )}
-              </span>
-            )}
-            {!allValid && (
-              <span className="ml-3 text-red-500">
-                {t(
-                  'Some tasks have invalid dates. Dates must be from tomorrow to 6 days after.'
-                )}
-              </span>
-            )}
-          </div>
-        )}
+              <FloatButtonComponent.BackTop />
+            </FloatButtonComponent.Group>
+          )}
+        </Skeleton>
       </WhiteBackground>
     </AnimationAppear>
   );
