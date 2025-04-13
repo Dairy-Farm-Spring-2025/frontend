@@ -69,9 +69,23 @@ export const USER_PATH = {
     roleId: string;
     fromDate: string;
     toDate: string;
-    areaId?: number;
+    areaId?: number | string;
   }) =>
     `users/free?roleId=${roleId}&fromDate=${fromDate}&toDate=${toDate}${
       areaId ? `&areaId=${areaId}` : ''
+    }`,
+  USERS_FREE_IMPORT: ({
+    roleId,
+    fromDate,
+    toDate,
+    areaName,
+  }: {
+    roleId: string;
+    fromDate: string;
+    toDate: string;
+    areaName?: number | string;
+  }) =>
+    `users/free?roleId=${roleId}&fromDate=${fromDate}&toDate=${toDate}${
+      areaName ? `&areaName=${areaName}` : ''
     }`,
 };

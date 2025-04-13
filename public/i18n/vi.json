@@ -646,5 +646,10 @@
   "Bulk Cow Movement": "Di chuyển bò vào chuồng",
   "Move cow successfully": "Di chuyển bò thành công",
   "Choose Area & Pen to Move Cow": "Chọn khu vực & chuồng để di chuyển bò",
-  "Confirm Import": "Lưu"
+  "Confirm Import": "Lưu",
+  "Import task from file": "Nhập công việc từ file",
+  "Please select area for all unknown tasks before submitting": "Làm ơn chọn khu vực cho tât cả công việc không biết trước nhập",
+  "Some tasks have invalid dates. Dates must be from tomorrow to 6 days after": "Vài công việc có ngày không hợp lệ. Ngày nên từ ngày mai tới 6 ngày sau đó",
+  "Some task types are not selected": "Vài công việc chưa được chọn",
+  "Some tasks do not have assignees selected": "Vài công việc chưa có người làm"
 }
