@@ -35,23 +35,23 @@ tr.ant-table-measure-row {
 
 /* Ghim màu nền + text khi hover và không hover */
 .ant-table-tbody > tr.row-error {
-  background-color: #ef4444 !important; /* red-500 */
+  background-color: rgba(255, 0, 0, 0.7) !important; /* red-500 */
   color: white !important;
 }
 
 /* Khóa hover */
 .ant-table-tbody > tr.row-error:hover {
-  background-color: #ef4444 !important;
+  background-color: rgba(255, 0, 0, 0.7) !important;
   color: white !important;
 }
 
 .error-row > td {
-  background-color: #f5222d !important;
+  background-color: rgba(255, 0, 0, 0.7) !important;
   color: #fff;
 }
 
 /* Giữ nền đỏ khi hover */
 .error-row:hover > td {
-  background-color: #f5222d !important;
+  background-color: rgba(255, 0, 0, 0.7) !important;
   color: #fff;
 }

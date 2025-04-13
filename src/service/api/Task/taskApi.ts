@@ -8,4 +8,5 @@ export const TASK_PATH = {
     `tasks/${taskId}/assign/${assigneeId}`,
   DOWNLOAD_TEMPLATE: 'tasks/download-template',
   GET_IMPORT_FILES: 'tasks/import-tasks',
+  CREATE_FROM_EXCEL: 'tasks/create-from-excel',
 };

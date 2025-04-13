@@ -82,3 +82,14 @@ export const formatStatusWithCamel = (type: string) =>
         ?.replace(/([a-z])([A-Z])/g, '$1 $2')
         ?.replace(/^\w/, (c) => c.toUpperCase())
     : '';
+
+export const formatDateRangeImportTask = (dateRange: string): string => {
+  const [start, end] = dateRange.split('~');
+
+  const formatDate = (dateStr: string): string => {
+    const [year, month, day] = dateStr.split('-');
+    return `${day} / ${month} / ${year}`;
+  };
+
+  return `${formatDate(start)} ~ ${formatDate(end)}`;
+};

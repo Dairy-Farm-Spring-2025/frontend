@@ -8,19 +8,20 @@ import {
 import ButtonComponent from '@components/Button/ButtonComponent';
 import CardComponent from '@components/Card/CardComponent';
 import DatePickerComponent from '@components/DatePicker/DatePickerComponent';
+import InputComponent from '@components/Input/InputComponent';
+import SelectComponent from '@components/Select/SelectComponent';
 import TableComponent, { Column } from '@components/Table/TableComponent';
+import Title from '@components/UI/Title';
+import { SHIFT_TASK } from '@service/data/shiftData';
 import { formatDateHour } from '@utils/format';
-import { Input, Select, Tooltip } from 'antd';
+import { Form, Tooltip } from 'antd';
 import dayjs from 'dayjs';
 import { t } from 'i18next';
-import { useState } from 'react';
-
-const { Option } = Select;
+import { useCallback, useEffect, useState } from 'react';
 
 interface CardAreaImportTaskProps {
   area?: string;
   task?: Record<string, any[]>;
-  assignees: { id: number; name: string }[];
   availableAreas?: { value: string; label: string }[];
   availableTaskTypes?: { value: string; label: string }[];
   editingKeys: Record<string, boolean>;
@@ -34,12 +35,17 @@ interface CardAreaImportTaskProps {
   onDeleteTask: (area: string, taskType: string, rowKey: string) => void;
   onRestoreTask?: (area: string, taskType: string, rowKey: string) => void;
   onChangeArea?: (oldArea: string, newArea: string) => void;
+  getAssignees: (
+    taskType: string,
+    area: string,
+    fromDate: string,
+    toDate: string
+  ) => Promise<{ value: number; label: string }[]>;
 }
 
 const CardAreaImportTask = ({
   area = '',
   task = {},
-  assignees,
   availableAreas = [],
   availableTaskTypes = [],
   editingKeys,
@@ -48,62 +54,192 @@ const CardAreaImportTask = ({
   onDeleteTask,
   onRestoreTask,
   onChangeArea,
+  getAssignees,
 }: CardAreaImportTaskProps) => {
-  const [editData, setEditData] = useState<Record<string, any>>({});
+  const [form] = Form.useForm();
   const [selectedArea, setSelectedArea] = useState<string>(area);
-
+  const [assigneeOptions, setAssigneeOptions] = useState<
+    Record<string, { value: number; label: string }[]>
+  >({});
   const isUnknownArea = area === 'Chưa rõ khu vực';
 
-  // Function to disable dates before tomorrow and after 6 days from tomorrow
-  const disabledDate = (current: dayjs.Dayjs) => {
+  const hasError = (record: any) => {
+    const tomorrow = dayjs().add(1, 'day').startOf('day');
+    const maxDate = tomorrow.add(6, 'day').endOf('day');
+
+    const fromDate = record.fromDate ? dayjs(record.fromDate) : null;
+    const toDate = record.toDate ? dayjs(record.toDate) : null;
+
+    // Kiểm tra các điều kiện lỗi
+    const isFromDateInvalid =
+      !fromDate || fromDate.isBefore(tomorrow) || fromDate.isAfter(maxDate);
+
+    const isToDateInvalid =
+      !toDate ||
+      (fromDate && toDate.isBefore(fromDate)) ||
+      toDate.isBefore(tomorrow) ||
+      toDate.isAfter(maxDate);
+
+    const isDateRangeInvalid =
+      fromDate && toDate && toDate.diff(fromDate, 'day') > 6;
+
+    const isTaskTypeInvalid = !record.taskType;
+
+    const isAssigneeInvalid =
+      record.assigneeId === null || record.assigneeId === undefined;
+
+    // Trả về true nếu có bất kỳ lỗi nào
+    return (
+      isFromDateInvalid ||
+      isToDateInvalid ||
+      isDateRangeInvalid ||
+      isTaskTypeInvalid ||
+      isAssigneeInvalid
+    );
+  };
+
+  const fetchAssigneesForRow = useCallback(
+    async (
+      rowKey: string,
+      taskType: string,
+      fromDate: string,
+      toDate: string
+    ) => {
+      try {
+        console.log(
+          `Fetching assignees for rowKey: ${rowKey}, taskType: ${taskType}, fromDate: ${fromDate}, toDate: ${toDate}`
+        );
+
+        const effectiveToDate =
+          toDate && dayjs(toDate).isBefore(dayjs(fromDate)) ? fromDate : toDate;
+
+        const assignees = await getAssignees(
+          taskType,
+          area,
+          fromDate,
+          effectiveToDate
+        );
+
+        setAssigneeOptions((prev) => ({
+          ...prev,
+          [rowKey]: assignees,
+        }));
+      } catch (error) {
+        console.error(`Error fetching assignees for ${rowKey}:`, error);
+        setAssigneeOptions((prev) => ({
+          ...prev,
+          [rowKey]: [],
+        }));
+      }
+    },
+    [area, getAssignees]
+  );
+
+  useEffect(() => {
+    Object.entries(editingKeys).forEach(async ([rowKey, isEditing]) => {
+      if (isEditing) {
+        const rowData = form.getFieldValue(rowKey);
+        if (
+          rowData?.taskType &&
+          rowData?.fromDate &&
+          (!assigneeOptions[rowKey] || assigneeOptions[rowKey].length === 0)
+        ) {
+          const fromDateStr = rowData.fromDate.format('YYYY-MM-DD');
+          const toDateStr = rowData.toDate
+            ? rowData.toDate.format('YYYY-MM-DD')
+            : fromDateStr;
+          await fetchAssigneesForRow(
+            rowKey,
+            rowData.taskType,
+            fromDateStr,
+            toDateStr
+          );
+        }
+      }
+    });
+  }, [editingKeys, form, assigneeOptions, fetchAssigneesForRow]);
+
+  // Disabled date function for fromDate
+  const disabledFromDate = (current: dayjs.Dayjs) => {
     const tomorrow = dayjs().add(1, 'day').startOf('day');
     const maxDate = tomorrow.add(6, 'day').endOf('day');
     return current && (current < tomorrow || current > maxDate);
   };
 
+  // Disabled date function for toDate, dynamic based on fromDate
+  const disabledToDate = (current: dayjs.Dayjs, rowKey: string) => {
+    const fromDate = form.getFieldValue([rowKey, 'fromDate']);
+    const tomorrow = dayjs().add(1, 'day').startOf('day');
+    const maxDate = tomorrow.add(6, 'day').endOf('day');
+
+    if (!fromDate) {
+      return current && (current < tomorrow || current > maxDate);
+    }
+
+    const maxToDate = fromDate.add(6, 'day').endOf('day');
+    return (
+      current &&
+      (current < fromDate.startOf('day') ||
+        current > maxToDate ||
+        current > maxDate)
+    );
+  };
+
   const handleEdit = (rowKey: string, record: any) => {
-    setEditData((prev) => ({
-      ...prev,
+    form.setFieldsValue({
       [rowKey]: {
         ...record,
         fromDate: record.fromDate ? dayjs(record.fromDate) : null,
         toDate: record.toDate ? dayjs(record.toDate) : null,
         taskType: record.taskType || null,
       },
-    }));
+    });
     setEditingKeys((prev) => ({ ...prev, [rowKey]: true }));
-  };
 
-  const handleSave = (rowKey: string, originalTaskType: string) => {
-    const updatedRow = editData[rowKey];
-    if (updatedRow) {
-      onUpdateTask(area, originalTaskType || 'Chưa rõ loại công việc', rowKey, {
-        ...updatedRow,
-        taskType: updatedRow.taskType || null,
-        fromDate: updatedRow.fromDate
-          ? updatedRow.fromDate.format('YYYY-MM-DD')
-          : null,
-        toDate: updatedRow.toDate
-          ? updatedRow.toDate.format('YYYY-MM-DD')
-          : null,
-        stripes: updatedRow.stripes || null,
-      });
-      setEditData((prev) => {
-        const { [rowKey]: _, ...rest } = prev;
-        console.log(_);
-        return rest;
-      });
-      setEditingKeys((prev) => ({ ...prev, [rowKey]: false }));
+    if (record.taskType && record.fromDate) {
+      const fromDateStr = record.fromDate;
+      const toDateStr = record.toDate || fromDateStr;
+      fetchAssigneesForRow(rowKey, record.taskType, fromDateStr, toDateStr);
+    } else {
+      setAssigneeOptions((prev) => ({
+        ...prev,
+        [rowKey]: [],
+      }));
     }
   };
 
+  const handleSave = (rowKey: string, originalTaskType: string) => {
+    form
+      .validateFields([rowKey])
+      .then(() => {
+        const updatedRow = form.getFieldValue(rowKey);
+        onUpdateTask(
+          area,
+          originalTaskType || 'Chưa rõ loại công việc',
+          rowKey,
+          {
+            ...updatedRow,
+            taskType: updatedRow.taskType || null,
+            fromDate: updatedRow.fromDate
+              ? updatedRow.fromDate.format('YYYY-MM-DD')
+              : null,
+            toDate: updatedRow.toDate
+              ? updatedRow.toDate.format('YYYY-MM-DD')
+              : null,
+            stripes: updatedRow.stripes || null,
+          }
+        );
+        setEditingKeys((prev) => ({ ...prev, [rowKey]: false }));
+        form.resetFields([rowKey]);
+      })
+      .catch((error) => {
+        console.log('Validation failed:', error);
+      });
+  };
+
   const handleCancel = (rowKey: string) => {
-    setEditData((prev) => {
-      const { [rowKey]: _, ...rest } = prev;
-      console.log(_);
-      return rest;
-    });
     setEditingKeys((prev) => ({ ...prev, [rowKey]: false }));
+    form.resetFields([rowKey]);
   };
 
   const handleDelete = (rowKey: string, taskType: string) => {
@@ -116,16 +252,6 @@ const CardAreaImportTask = ({
     }
   };
 
-  const handleInputChange = (rowKey: string, field: string, value: any) => {
-    setEditData((prev) => ({
-      ...prev,
-      [rowKey]: {
-        ...prev[rowKey],
-        [field]: value,
-      },
-    }));
-  };
-
   const handleAreaChange = (value: string) => {
     setSelectedArea(value);
     if (onChangeArea && value !== area) {
@@ -133,37 +259,111 @@ const CardAreaImportTask = ({
     }
   };
 
+  const handleValuesChange = async (
+    changedValues: any,
+    allValues: any,
+    rowKey: string
+  ) => {
+    const changedField = Object.keys(changedValues[rowKey])[0];
+    const value = changedValues[rowKey][changedField];
+
+    if (changedField === 'taskType') {
+      form.setFieldsValue({
+        [rowKey]: {
+          ...allValues[rowKey],
+          taskType: value,
+          fromDate: null,
+          toDate: null,
+          shift: null,
+          assigneeId: null,
+          description: allValues[rowKey]?.description || '',
+        },
+      });
+      setAssigneeOptions((prev) => ({
+        ...prev,
+        [rowKey]: [],
+      }));
+      return;
+    }
+
+    if (changedField === 'fromDate') {
+      if (
+        allValues[rowKey].taskType === 'Khám định kì' ||
+        allValues[rowKey].taskType === 'Trực ca đêm'
+      ) {
+        form.setFieldsValue({
+          [rowKey]: {
+            ...allValues[rowKey],
+            toDate: value,
+            assigneeId: null,
+          },
+        });
+      } else {
+        form.setFieldsValue({
+          [rowKey]: {
+            ...allValues[rowKey],
+            assigneeId: null,
+          },
+        });
+      }
+    }
+
+    if (['fromDate', 'toDate'].includes(changedField)) {
+      const updatedRow = allValues[rowKey];
+      if (updatedRow.taskType && updatedRow.fromDate) {
+        const fromDateStr = updatedRow.fromDate.format('YYYY-MM-DD');
+        const toDateStr = updatedRow.toDate
+          ? updatedRow.toDate.format('YYYY-MM-DD')
+          : fromDateStr;
+        await fetchAssigneesForRow(
+          rowKey,
+          updatedRow.taskType,
+          fromDateStr,
+          toDateStr
+        );
+      } else {
+        setAssigneeOptions((prev) => ({
+          ...prev,
+          [rowKey]: [],
+        }));
+      }
+    }
+  };
+
   const columnsDateRange: Column[] = [
     {
       title: t('Task type'),
       dataIndex: 'taskType',
+      minWidth: 200,
       key: 'taskType',
       render: (_, record) =>
         editingKeys[record.key] ? (
-          <Select
-            value={editData[record.key]?.taskType || undefined}
-            onChange={(value) =>
-              handleInputChange(record.key, 'taskType', value)
-            }
-            style={{ width: '100%' }}
-            placeholder={t('Select task type')}
-            allowClear
+          <Form.Item
+            name={[record.key, 'taskType']}
+            rules={[{ required: true, message: t('Please select task type') }]}
+            noStyle
           >
-            {availableTaskTypes.map((type) => (
-              <Option key={type.value} value={type.value}>
-                {type.label}
-              </Option>
-            ))}
-          </Select>
+            <SelectComponent
+              options={availableTaskTypes}
+              style={{ width: '100%' }}
+              placeholder={t('Select task type')}
+              allowClear
+            />
+          </Form.Item>
         ) : record.error ? (
           <Tooltip
-            title={record.errorMessage
-              ?.split(';')
-              .map((msg: string, index: number) => (
-                <div key={index}>- {msg.trim()}</div>
-              ))}
+            title={
+              hasError(record) &&
+              record.errorMessage
+                ?.split(';')
+                .map((msg: string, index: number) => (
+                  <div key={index}>- {msg.trim()}</div>
+                ))
+            }
           >
-            <span className="text-white">
+            <span
+              className={`${hasError(record) ? 'text-white' : 'text-black'}`}
+            >
               {record.taskType || t('Chưa rõ loại công việc')}
             </span>
           </Tooltip>
@@ -174,16 +374,17 @@ const CardAreaImportTask = ({
     {
       title: t('From date'),
       dataIndex: 'fromDate',
+      minWidth: 250,
       key: 'fromDate',
       render: (_, record) =>
         editingKeys[record.key] ? (
-          <DatePickerComponent
-            value={editData[record.key]?.fromDate || null}
-            onChange={(value) =>
-              handleInputChange(record.key, 'fromDate', value)
-            }
-            disabledDate={disabledDate}
-          />
+          <Form.Item
+            name={[record.key, 'fromDate']}
+            rules={[{ required: true, message: t('Please select from date') }]}
+            noStyle
+          >
+            <DatePickerComponent disabledDate={disabledFromDate} />
+          </Form.Item>
         ) : (
           <span
             style={record.deleted ? { textDecoration: 'line-through' } : {}}
@@ -195,14 +396,24 @@ const CardAreaImportTask = ({
     {
       title: t('To date'),
       dataIndex: 'toDate',
+      minWidth: 250,
       key: 'toDate',
       render: (_, record) =>
         editingKeys[record.key] ? (
-          <DatePickerComponent
-            value={editData[record.key]?.toDate || null}
-            onChange={(value) => handleInputChange(record.key, 'toDate', value)}
-            disabledDate={disabledDate}
-          />
+          <Form.Item
+            name={[record.key, 'toDate']}
+            rules={[{ required: true, message: t('Please select to date') }]}
+            noStyle
+          >
+            <DatePickerComponent
+              disabledDate={(current) => disabledToDate(current, record.key)}
+              disabled={
+                form.getFieldValue([record.key, 'taskType']) ===
+                  'Khám định kì' ||
+                form.getFieldValue([record.key, 'taskType']) === 'Trực ca đêm'
+              }
+            />
+          </Form.Item>
         ) : (
           <span
             style={record.deleted ? { textDecoration: 'line-through' } : {}}
@@ -214,15 +425,13 @@ const CardAreaImportTask = ({
     {
       title: t('Description'),
       dataIndex: 'description',
+      minWidth: 250,
       key: 'description',
       render: (_, record) =>
         editingKeys[record.key] ? (
-          <Input
-            value={editData[record.key]?.description || ''}
-            onChange={(e) =>
-              handleInputChange(record.key, 'description', e.target.value)
-            }
-          />
+          <Form.Item name={[record.key, 'description']} noStyle>
+            <InputComponent />
+          </Form.Item>
         ) : (
           <span
             style={record.deleted ? { textDecoration: 'line-through' } : {}}
@@ -235,16 +444,12 @@ const CardAreaImportTask = ({
       title: t('Shift'),
       dataIndex: 'shift',
       key: 'shift',
+      minWidth: 200,
       render: (_, record) =>
         editingKeys[record.key] ? (
-          <Select
-            value={editData[record.key]?.shift || undefined}
-            onChange={(value) => handleInputChange(record.key, 'shift', value)}
-            style={{ width: '100%' }}
-          >
-            <Option value="dayShift">{t('Day Shift')}</Option>
-            <Option value="nightShift">{t('Night Shift')}</Option>
-          </Select>
+          <Form.Item name={[record.key, 'shift']} noStyle>
+            <SelectComponent options={SHIFT_TASK()} style={{ width: '100%' }} />
+          </Form.Item>
         ) : (
           <span
             style={record.deleted ? { textDecoration: 'line-through' } : {}}
@@ -260,27 +465,30 @@ const CardAreaImportTask = ({
     {
       title: t('Assignee'),
       dataIndex: 'assigneeId',
+      minWidth: 200,
       key: 'assigneeId',
       render: (_, record) =>
         editingKeys[record.key] ? (
-          <Select
-            value={editData[record.key]?.assigneeId || undefined}
-            onChange={(value) =>
-              handleInputChange(record.key, 'assigneeId', value)
-            }
-            style={{ width: '100%' }}
+          <Form.Item
+            name={[record.key, 'assigneeId']}
+            rules={[{ required: true, message: t('Please select assignee') }]}
+            noStyle
           >
-            {assignees.map((assignee) => (
-              <Option key={assignee.id} value={assignee.id}>
-                {assignee.name}
-              </Option>
-            ))}
-          </Select>
+            <SelectComponent
+              style={{ width: '100%' }}
+              options={assigneeOptions[record.key] || []}
+              placeholder={t('Select assignee')}
+            />
+          </Form.Item>
         ) : (
           <span
             style={record.deleted ? { textDecoration: 'line-through' } : {}}
           >
-            {assignees.find((a) => a.id === record.assigneeId)?.name || '-'}
+            {record.assigneeName ||
+              (assigneeOptions[record.key] || []).find(
+                (a) => a.value === record.assigneeId
+              )?.label ||
+              '-'}
           </span>
         ),
     },
@@ -288,6 +496,7 @@ const CardAreaImportTask = ({
       title: t('Action'),
       key: 'action',
       dataIndex: 'id',
+      minWidth: 100,
       render: (_, record) => {
         if (record.deleted) {
           return (
@@ -360,32 +569,18 @@ const CardAreaImportTask = ({
     },
   ];
 
-  const groupByDateRange = (tasks: any[]) => {
-    return tasks.reduce((acc: any, curr) => {
-      const dateRange = `${curr.fromDate}~${curr.toDate}`;
-      if (!acc[dateRange]) acc[dateRange] = [];
-      acc[dateRange].push(curr);
-      return acc;
-    }, {} as Record<string, any[]>);
-  };
-
   const renderAreaTitle = () => {
     if (isUnknownArea) {
       return (
         <div className="flex items-center gap-2">
           <span>{t('Select area')}:</span>
-          <Select
+          <SelectComponent
             placeholder={t('Please select area')}
             style={{ width: 240 }}
             value={selectedArea}
             onChange={handleAreaChange}
-          >
-            {availableAreas.map((area) => (
-              <Option key={area.value} value={area.value}>
-                {area.label}
-              </Option>
-            ))}
-          </Select>
+            options={availableAreas}
+          />
         </div>
       );
     }
@@ -393,42 +588,51 @@ const CardAreaImportTask = ({
   };
 
   return (
-    <CardComponent title={renderAreaTitle()}>
-      {Object.entries(task).map(([taskType, taskList]: [string, any[]]) => {
-        const displayTaskType = taskType || t('Chưa rõ loại công việc');
-        const groupedByDate = groupByDateRange(taskList);
-        return (
-          <div key={taskType || 'unknown'} className="mb-6">
-            <h3 className="font-semibold text-base text-green-700 mb-2">
-              {t('Task type')}: {displayTaskType}
-            </h3>
-            {(Object.entries(groupedByDate) as [string, any[]][]).map(
-              ([dateRange, tasksInDateRange]: [string, any[]]) => (
-                <div key={dateRange} className="mb-4">
-                  <h4 className="font-semibold text-sm text-blue-700 mb-2">
-                    {t('Date range')}: {dateRange}
-                  </h4>
-                  <TableComponent
-                    columns={columnsDateRange}
-                    dataSource={tasksInDateRange.map((item) => ({
-                      ...item,
-                      taskType: item.taskType || null,
-                      error: item.error,
-                      errorMessage: item.errorMessage,
-                    }))}
-                    pagination={false}
-                    rowClassName={(record) => {
-                      let className = record.error ? 'error-row' : '';
-                      if (record.deleted) className += ' deleted-row';
-                      return className;
-                    }}
-                  />
-                </div>
-              )
-            )}
-          </div>
-        );
-      })}
+    <CardComponent
+      className="!shadow-card"
+      title={<Title>{renderAreaTitle()}</Title>}
+    >
+      <Form
+        form={form}
+        onValuesChange={(changedValues, allValues) => {
+          const rowKey = Object.keys(changedValues)[0];
+          if (rowKey) {
+            handleValuesChange(changedValues, allValues, rowKey);
+          }
+        }}
+      >
+        {Object.entries(task).map(([taskType, taskList]: [string, any[]]) => {
+          const displayTaskType = taskType || t('Chưa rõ loại công việc');
+          return (
+            <div key={taskType || 'unknown'} className="mb-6">
+              <Title className="font-bold text-base text-green-700 mb-2">
+                {t('Task type')}:{' '}
+                <span className="font-semibold ml-1">{displayTaskType}</span>
+              </Title>
+              <TableComponent
+                columns={columnsDateRange}
+                dataSource={taskList.map((item) => ({
+                  ...item,
+                  taskType: item.taskType || null,
+                  error: item.error,
+                  errorMessage: item.errorMessage,
+                }))}
+                pagination={false}
+                rowClassName={(record) => {
+                  let className = '';
+                  if (hasError(record)) {
+                    className += 'error-row '; // Thêm class error-row nếu có lỗi
+                  }
+                  if (record.deleted) {
+                    className += 'deleted-row ';
+                  }
+                  return className.trim();
+                }}
+              />
+            </div>
+          );
+        })}
+      </Form>
     </CardComponent>
   );
 };
