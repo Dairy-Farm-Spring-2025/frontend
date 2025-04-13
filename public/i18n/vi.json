@@ -646,5 +646,7 @@
   "Bulk Cow Movement": "Di chuyển bò vào chuồng",
   "Move cow successfully": "Di chuyển bò thành công",
   "Choose Area & Pen to Move Cow": "Chọn khu vực & chuồng để di chuyển bò",
-  "Confirm Import": "Lưu"
-}
+  "Confirm Import": "Lưu",
+  "Selected cows must match selected pens": "Số lượng bò được chọn phải bằng với số chuồng"
+
+
