@@ -17,7 +17,7 @@ import { formatDateHour } from '@utils/format';
 import { Form, Tooltip } from 'antd';
 import dayjs from 'dayjs';
 import { t } from 'i18next';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 
 interface CardAreaImportTaskProps {
   area?: string;
@@ -62,41 +62,49 @@ const CardAreaImportTask = ({
     Record<string, { value: number; label: string }[]>
   >({});
   const isUnknownArea = area === 'Chưa rõ khu vực';
+  // Track fetching status per row
+  const fetchingStatus = useRef<Record<string, boolean>>({});
+  // Track last fetched data to prevent redundant fetches
+  const lastFetchedData = useRef<Record<string, string>>({});
 
-  const hasError = (record: any) => {
-    const tomorrow = dayjs().add(1, 'day').startOf('day');
-    const maxDate = tomorrow.add(6, 'day').endOf('day');
+  const hasError = useMemo(
+    () => (record: any) => {
+      const today = dayjs().startOf('day');
 
-    const fromDate = record.fromDate ? dayjs(record.fromDate) : null;
-    const toDate = record.toDate ? dayjs(record.toDate) : null;
+      const fromDate = record.fromDate ? dayjs(record.fromDate) : null;
+      const toDate = record.toDate ? dayjs(record.toDate) : null;
+      const isFromDateInvalid = !fromDate || fromDate.isBefore(today);
 
-    // Kiểm tra các điều kiện lỗi
-    const isFromDateInvalid =
-      !fromDate || fromDate.isBefore(tomorrow) || fromDate.isAfter(maxDate);
+      const isToDateInvalid =
+        !toDate ||
+        (fromDate && toDate.isBefore(fromDate)) ||
+        toDate.isBefore(today);
+      const isDateRangeInvalid =
+        fromDate && toDate && toDate.diff(fromDate, 'day') > 6;
 
-    const isToDateInvalid =
-      !toDate ||
-      (fromDate && toDate.isBefore(fromDate)) ||
-      toDate.isBefore(tomorrow) ||
-      toDate.isAfter(maxDate);
+      const isTaskTypeInvalid = !record.taskType;
 
-    const isDateRangeInvalid =
-      fromDate && toDate && toDate.diff(fromDate, 'day') > 6;
+      const isAssigneeInvalid =
+        record.assigneeId === null || record.assigneeId === undefined;
 
-    const isTaskTypeInvalid = !record.taskType;
+      console.log(
+        isFromDateInvalid,
+        isToDateInvalid,
+        isDateRangeInvalid,
+        isTaskTypeInvalid,
+        isAssigneeInvalid
+      );
 
-    const isAssigneeInvalid =
-      record.assigneeId === null || record.assigneeId === undefined;
-
-    // Trả về true nếu có bất kỳ lỗi nào
-    return (
-      isFromDateInvalid ||
-      isToDateInvalid ||
-      isDateRangeInvalid ||
-      isTaskTypeInvalid ||
-      isAssigneeInvalid
-    );
-  };
+      return (
+        isFromDateInvalid ||
+        isToDateInvalid ||
+        isDateRangeInvalid ||
+        isTaskTypeInvalid ||
+        isAssigneeInvalid
+      );
+    },
+    []
+  );
 
   const fetchAssigneesForRow = useCallback(
     async (
@@ -105,6 +113,20 @@ const CardAreaImportTask = ({
       fromDate: string,
       toDate: string
     ) => {
+      // Skip if already fetching
+      if (fetchingStatus.current[rowKey]) {
+        return;
+      }
+
+      // Create a unique key for the fetch data
+      const fetchKey = `${taskType}-${fromDate}-${toDate}-${area}`;
+      // Skip if we already fetched this exact data
+      if (lastFetchedData.current[rowKey] === fetchKey) {
+        return;
+      }
+
+      fetchingStatus.current[rowKey] = true;
+
       try {
         console.log(
           `Fetching assignees for rowKey: ${rowKey}, taskType: ${taskType}, fromDate: ${fromDate}, toDate: ${toDate}`
@@ -120,69 +142,44 @@ const CardAreaImportTask = ({
           effectiveToDate
         );
 
-        setAssigneeOptions((prev) => ({
-          ...prev,
-          [rowKey]: assignees,
-        }));
+        setAssigneeOptions((prev) => {
+          const prevAssignees = prev[rowKey] || [];
+          if (JSON.stringify(prevAssignees) !== JSON.stringify(assignees)) {
+            return { ...prev, [rowKey]: assignees };
+          }
+          return prev;
+        });
+
+        // Update last fetched data
+        lastFetchedData.current[rowKey] = fetchKey;
       } catch (error) {
         console.error(`Error fetching assignees for ${rowKey}:`, error);
         setAssigneeOptions((prev) => ({
           ...prev,
           [rowKey]: [],
         }));
+      } finally {
+        fetchingStatus.current[rowKey] = false;
       }
     },
-    [area, getAssignees]
+    [getAssignees, area]
   );
 
-  useEffect(() => {
-    Object.entries(editingKeys).forEach(async ([rowKey, isEditing]) => {
-      if (isEditing) {
-        const rowData = form.getFieldValue(rowKey);
-        if (
-          rowData?.taskType &&
-          rowData?.fromDate &&
-          (!assigneeOptions[rowKey] || assigneeOptions[rowKey].length === 0)
-        ) {
-          const fromDateStr = rowData.fromDate.format('YYYY-MM-DD');
-          const toDateStr = rowData.toDate
-            ? rowData.toDate.format('YYYY-MM-DD')
-            : fromDateStr;
-          await fetchAssigneesForRow(
-            rowKey,
-            rowData.taskType,
-            fromDateStr,
-            toDateStr
-          );
-        }
-      }
-    });
-  }, [editingKeys, form, assigneeOptions, fetchAssigneesForRow]);
-
-  // Disabled date function for fromDate
   const disabledFromDate = (current: dayjs.Dayjs) => {
-    const tomorrow = dayjs().add(1, 'day').startOf('day');
-    const maxDate = tomorrow.add(6, 'day').endOf('day');
-    return current && (current < tomorrow || current > maxDate);
+    return (
+      (current && current.isBefore(dayjs().startOf('day'))) ||
+      current.isSame(dayjs().startOf('day'))
+    );
   };
 
-  // Disabled date function for toDate, dynamic based on fromDate
   const disabledToDate = (current: dayjs.Dayjs, rowKey: string) => {
     const fromDate = form.getFieldValue([rowKey, 'fromDate']);
-    const tomorrow = dayjs().add(1, 'day').startOf('day');
-    const maxDate = tomorrow.add(6, 'day').endOf('day');
-
     if (!fromDate) {
-      return current && (current < tomorrow || current > maxDate);
+      return false;
     }
-
-    const maxToDate = fromDate.add(6, 'day').endOf('day');
-    return (
-      current &&
-      (current < fromDate.startOf('day') ||
-        current > maxToDate ||
-        current > maxDate)
-    );
+    const minDate = dayjs(fromDate).startOf('day');
+    const maxDate = dayjs(fromDate).add(5, 'day').endOf('day');
+    return current && (current.isBefore(minDate) || current.isAfter(maxDate));
   };
 
   const handleEdit = (rowKey: string, record: any) => {
@@ -195,17 +192,6 @@ const CardAreaImportTask = ({
       },
     });
     setEditingKeys((prev) => ({ ...prev, [rowKey]: true }));
-
-    if (record.taskType && record.fromDate) {
-      const fromDateStr = record.fromDate;
-      const toDateStr = record.toDate || fromDateStr;
-      fetchAssigneesForRow(rowKey, record.taskType, fromDateStr, toDateStr);
-    } else {
-      setAssigneeOptions((prev) => ({
-        ...prev,
-        [rowKey]: [],
-      }));
-    }
   };
 
   const handleSave = (rowKey: string, originalTaskType: string) => {
@@ -231,6 +217,9 @@ const CardAreaImportTask = ({
         );
         setEditingKeys((prev) => ({ ...prev, [rowKey]: false }));
         form.resetFields([rowKey]);
+        // Cleanup
+        delete fetchingStatus.current[rowKey];
+        delete lastFetchedData.current[rowKey];
       })
       .catch((error) => {
         console.log('Validation failed:', error);
@@ -240,10 +229,16 @@ const CardAreaImportTask = ({
   const handleCancel = (rowKey: string) => {
     setEditingKeys((prev) => ({ ...prev, [rowKey]: false }));
     form.resetFields([rowKey]);
+    // Cleanup
+    delete fetchingStatus.current[rowKey];
+    delete lastFetchedData.current[rowKey];
   };
 
   const handleDelete = (rowKey: string, taskType: string) => {
     onDeleteTask(area, taskType || 'Chưa rõ loại công việc', rowKey);
+    // Cleanup
+    delete fetchingStatus.current[rowKey];
+    delete lastFetchedData.current[rowKey];
   };
 
   const handleRestore = (rowKey: string, taskType: string) => {
@@ -259,7 +254,27 @@ const CardAreaImportTask = ({
     }
   };
 
-  const handleValuesChange = async (
+  const handleAssigneeDropdownVisibleChange = (
+    open: boolean,
+    rowKey: string
+  ) => {
+    if (open) {
+      const rowData = form.getFieldValue(rowKey);
+      if (rowData?.taskType && rowData?.fromDate) {
+        const fromDateStr = rowData.fromDate.format
+          ? rowData.fromDate.format('YYYY-MM-DD')
+          : rowData.fromDate;
+        const toDateStr = rowData.toDate
+          ? rowData.toDate.format
+            ? rowData.toDate.format('YYYY-MM-DD')
+            : rowData.toDate
+          : fromDateStr;
+        fetchAssigneesForRow(rowKey, rowData.taskType, fromDateStr, toDateStr);
+      }
+    }
+  };
+
+  const handleValuesChange = (
     changedValues: any,
     allValues: any,
     rowKey: string
@@ -283,7 +298,8 @@ const CardAreaImportTask = ({
         ...prev,
         [rowKey]: [],
       }));
-      return;
+      delete fetchingStatus.current[rowKey];
+      delete lastFetchedData.current[rowKey];
     }
 
     if (changedField === 'fromDate') {
@@ -303,30 +319,16 @@ const CardAreaImportTask = ({
           [rowKey]: {
             ...allValues[rowKey],
             assigneeId: null,
+            toDate: null,
           },
         });
       }
-    }
-
-    if (['fromDate', 'toDate'].includes(changedField)) {
-      const updatedRow = allValues[rowKey];
-      if (updatedRow.taskType && updatedRow.fromDate) {
-        const fromDateStr = updatedRow.fromDate.format('YYYY-MM-DD');
-        const toDateStr = updatedRow.toDate
-          ? updatedRow.toDate.format('YYYY-MM-DD')
-          : fromDateStr;
-        await fetchAssigneesForRow(
-          rowKey,
-          updatedRow.taskType,
-          fromDateStr,
-          toDateStr
-        );
-      } else {
-        setAssigneeOptions((prev) => ({
-          ...prev,
-          [rowKey]: [],
-        }));
-      }
+      setAssigneeOptions((prev) => ({
+        ...prev,
+        [rowKey]: [],
+      }));
+      delete fetchingStatus.current[rowKey];
+      delete lastFetchedData.current[rowKey];
     }
   };
 
@@ -478,6 +480,10 @@ const CardAreaImportTask = ({
               style={{ width: '100%' }}
               options={assigneeOptions[record.key] || []}
               placeholder={t('Select assignee')}
+              onDropdownVisibleChange={(open) =>
+                handleAssigneeDropdownVisibleChange(open, record.key)
+              }
+              loading={fetchingStatus.current[record.key] || false}
             />
           </Form.Item>
         ) : (
@@ -621,7 +627,7 @@ const CardAreaImportTask = ({
                 rowClassName={(record) => {
                   let className = '';
                   if (hasError(record)) {
-                    className += 'error-row '; // Thêm class error-row nếu có lỗi
+                    className += 'error-row ';
                   }
                   if (record.deleted) {
                     className += 'deleted-row ';

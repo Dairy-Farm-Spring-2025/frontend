@@ -659,5 +659,9 @@
   "cows": "bò",
   "Cow statistics": "Thống kê bò",
   "items": "mặt hàng",
-  "Total Item": "Tổng mặt hàng"
+  "Total Item": "Tổng mặt hàng",
+  "Total Worker": "Tổng nhân viên",
+  "Total Veterinarian": "Tổng bác sĩ thú y",
+  "workers": "Nhân viên",
+  "veterinarians": "Bác sĩ thú y"
 }

@@ -207,18 +207,18 @@ const AppDashboard: React.FC = React.memo(() => {
           'dairy/dashboard',
           <TbDashboardFilled size={sizeIcon} />,
           [
+            !checkVeterinarians(roleName)
+              ? getItem(
+                  t('Dashboard'),
+                  'dairy/dashboard/total',
+                  <TbDashboardFilled size={sizeIcon} />
+                )
+              : null,
             getItem(
               t('daily_milk'),
               'dairy/dashboard/daily-milk',
               <LuMilk size={sizeIcon} />
             ),
-            !checkVeterinarians(roleName)
-              ? getItem(
-                  t('Dashboard today'),
-                  'dairy/dashboard/today',
-                  <TbDashboardFilled size={sizeIcon} />
-                )
-              : null,
           ],
           true
         ),

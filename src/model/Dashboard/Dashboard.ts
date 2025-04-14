@@ -13,6 +13,8 @@ export type DashboardTodayType = {
   usedItemsToday: any;
   totalCow: number;
   cowStatsByType: CowStatByType[];
+  totalWorkers: number;
+  totalVeterinarians: number;
 };
 
 export type CowStatByType = {
