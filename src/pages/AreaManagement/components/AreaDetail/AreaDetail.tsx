@@ -23,7 +23,7 @@ import {
   penStatusFilter,
   penType,
 } from '@service/data/pen';
-import { formatDateHour, formatSTT } from '@utils/format';
+import { formatDateHour, formatStatusWithCamel, formatSTT } from '@utils/format';
 import { Divider, Form, Skeleton, Tag, Tooltip } from 'antd';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -254,13 +254,13 @@ const AreaDetail = () => {
       dataIndex: 'gender',
       key: 'gender',
       title: t('Gender'),
-      render: (gender: string) => <span>{gender}</span>,
+      render: (gender: string) => <span>{formatStatusWithCamel(gender)}</span>,
     },
     {
       dataIndex: 'cowOrigin',
       key: 'cowOrigin',
       title: t('Origin'),
-      render: (origin: string) => <span>{origin}</span>,
+      render: (origin: string) => <span>{formatStatusWithCamel(origin)}</span>,
     },
   ];
   return (

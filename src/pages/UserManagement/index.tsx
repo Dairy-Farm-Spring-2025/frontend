@@ -2,7 +2,7 @@ import TableComponent, { Column } from '../../components/Table/TableComponent';
 import WhiteBackground from '../../components/UI/WhiteBackground';
 import useFetcher from '../../hooks/useFetcher';
 
-import { Divider, Space } from 'antd';
+import { Divider, Space, Tag } from 'antd';
 
 import { useTranslation } from 'react-i18next';
 import SelectComponent from '../../components/Select/SelectComponent';
@@ -10,7 +10,7 @@ import AnimationAppear from '../../components/UI/AnimationAppear';
 import useModal from '../../hooks/useModal';
 import useToast from '../../hooks/useToast';
 import { role } from '../../service/data/role';
-import { formatAreaType, formatSTT } from '../../utils/format';
+import { formatStatusWithCamel, formatSTT } from '../../utils/format';
 import BanUnbanUser from './components/BanUnBanUser/BanUnBanUser';
 import ModalCreateUser from './components/ModalCreateUser/ModalCreateUser';
 
@@ -63,7 +63,11 @@ const ListUser = () => {
       dataIndex: 'status',
       key: 'status',
       title: t('Status'),
-      render: (data) => formatAreaType(data),
+      render: (status) => (
+        <Tag color={status === 'active' ? 'green' : 'volcano'}>
+          {formatStatusWithCamel(status)}
+        </Tag>
+      ),
     },
     {
       dataIndex: 'action',

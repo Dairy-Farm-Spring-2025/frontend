@@ -7,13 +7,14 @@ import DatePickerComponent from '@components/DatePicker/DatePickerComponent';
 import InputComponent from '@components/Input/InputComponent';
 import SelectComponent from '@components/Select/SelectComponent';
 import InputNumber from 'antd/es/input-number';
-import { CloseOutlined, SaveOutlined, EditOutlined, } from '@ant-design/icons';
+import { CloseOutlined, SaveOutlined, EditOutlined } from '@ant-design/icons';
 import { IoMdFemale, IoMdMale } from 'react-icons/io';
 import dayjs from 'dayjs';
 import { formatDateHour, formatStatusWithCamel } from '@utils/format';
 import { cowOrigin, cowOriginFiltered } from '@service/data/cowOrigin';
 import { cowStatus } from '@service/data/cowStatus';
 import { HEALTH_RECORD_STATUS } from '@service/data/healthRecordStatus';
+
 interface ModalListErrorProps {
     visible: boolean;
     errors: { source: string; message: string }[];
@@ -30,7 +31,8 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
     // Log errors for debugging
     useEffect(() => {
         console.log('Errors in ModalListError:', errors);
-    }, [errors]);
+        console.log('Data in ModalListError:', data);
+    }, [errors, data]);
 
     // Initialize localData when modal opens
     useEffect(() => {
@@ -48,8 +50,16 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
         })
         .filter((name) => name);
 
-    // Filter data to show only rows with errors
-    const errorData = localData.filter((item) => errorCowNames.includes(item.name));
+    // Filter data to show only rows with errors and attach error messages
+    const errorData = localData
+        .filter((item) => errorCowNames.includes(item.name))
+        .map((item) => {
+            const errorForCow = errors.find((err) => err.message.startsWith(`${item.name}:`));
+            return {
+                ...item,
+                errorMessage: errorForCow ? errorForCow.message.split(':').slice(1).join(':').trim() : '-',
+            };
+        });
 
     const handleEdit = (key: string) => setEditingKey(key);
 
@@ -87,46 +97,16 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
 
     const columns: Column[] = [
         {
+            dataIndex: 'key',
+            key: 'key',
+            title: '#',
+            render: (_, __, index) => (index + 1).toString(),
+        },
+        {
             dataIndex: 'name',
             key: 'name',
             title: t('Cow Name'),
             render: (data) => data || '-',
-        },
-        {
-            dataIndex: 'dateOfBirth',
-            key: 'dateOfBirth',
-            title: t('Date Of Birth'),
-            sorter: (a: any, b: any) =>
-                new Date(a.dateOfBirth).getTime() - new Date(b.dateOfBirth).getTime(),
-            filteredDate: true,
-            editable: true,
-            render: (data, record) =>
-                editingKey === record.key ? (
-                    <DatePickerComponent
-                        value={data ? dayjs(data) : null}
-                        onChange={(date) => handleChange(record.key, 'dateOfBirth', date)}
-                    />
-                ) : (
-                    formatDateHour(data) || '-'
-                ),
-        },
-        {
-            dataIndex: 'dateOfEnter',
-            key: 'dateOfEnter',
-            title: t('Date Of Enter'),
-            sorter: (a: any, b: any) =>
-                new Date(a.dateOfEnter).getTime() - new Date(b.dateOfEnter).getTime(),
-            filteredDate: true,
-            editable: true,
-            render: (data, record) =>
-                editingKey === record.key ? (
-                    <DatePickerComponent
-                        value={data ? dayjs(data) : null}
-                        onChange={(date) => handleChange(record.key, 'dateOfEnter', date)}
-                    />
-                ) : (
-                    formatDateHour(data) || '-'
-                ),
         },
         {
             dataIndex: 'cowOrigin',
@@ -340,8 +320,9 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
             dataIndex: 'healthRecord',
             key: 'bodyLength',
             title: t('Body Length (m)'),
-            render: (data, record) =>
-                editingKey === record.key ? (
+            render: (data, record) => {
+                const hasError = record.errorMessage?.includes('Body Length');
+                return editingKey === record.key ? (
                     <InputNumber
                         min={0}
                         value={data?.bodyLength}
@@ -351,26 +332,21 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
                                 bodyLength: value,
                             })
                         }
+                        style={hasError ? { borderColor: 'red' } : {}}
                     />
                 ) : (
-                    data?.bodyLength || '-'
-                ),
+                    <span style={hasError ? { color: 'red' } : {}}>
+                        {data?.bodyLength || '-'}
+                    </span>
+                );
+            },
         },
-        {
-            dataIndex: 'description',
-            key: 'description',
-            title: t('Description'),
-            editable: true,
-            render: (data, record) =>
-                editingKey === record.key ? (
-                    <InputComponent
-                        value={data}
-                        onChange={(e) => handleChange(record.key, 'description', e.target.value)}
-                    />
-                ) : (
-                    data || '-'
-                ),
-        },
+        // {
+        //     dataIndex: 'errorMessage',
+        //     key: 'errorMessage',
+        //     title: t('Error Message'),
+        //     render: (data) => <span style={{ color: 'red' }}>{data || '-'}</span>,
+        // },
         {
             title: t('Action'),
             key: 'action',
