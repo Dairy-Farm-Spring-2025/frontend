@@ -1,1 +1,1 @@
-export type AreaType = "cowHousing" | "milkingParlor" | "warehouse";
+export type AreaType = "cowHousing" | "quarantine";

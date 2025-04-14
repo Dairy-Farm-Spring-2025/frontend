@@ -13,4 +13,6 @@ export type CowType = {
   createdAt: string;
   updatedAt: string;
   maxWeight: number;
+  maxHeight: number;
+  maxLength: number;
 };

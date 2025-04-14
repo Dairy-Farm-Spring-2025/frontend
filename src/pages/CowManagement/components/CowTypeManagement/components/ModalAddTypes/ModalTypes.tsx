@@ -84,6 +84,20 @@ const ModalTypes = ({ mutate, modal }: ModalTypesProps) => {
             <InputComponent.Number min={1} />
           </FormItemComponent>
           <FormItemComponent
+            rules={[{ required: true }]}
+            name="maxHeight"
+            label={<LabelForm>{t('Max height')}:</LabelForm>}
+          >
+            <InputComponent.Number min={1} />
+          </FormItemComponent>
+          <FormItemComponent
+            rules={[{ required: true }]}
+            name="maxLength"
+            label={<LabelForm>{t('Max length')}:</LabelForm>}
+          >
+            <InputComponent.Number min={1} />
+          </FormItemComponent>
+          <FormItemComponent
             name="status"
             label={<LabelForm>{t('Status')}:</LabelForm>}
             rules={[{ required: true }]}

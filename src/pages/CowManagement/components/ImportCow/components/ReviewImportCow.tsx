@@ -14,7 +14,6 @@ const ReviewImportCow = ({ onReviewData }: ReviewImportCowProps) => {
     'POST',
     'multipart/form-data'
   );
-
   const handleUpload = async (file: File) => {
     const formData = new FormData();
     formData.append('file', file);
@@ -32,10 +31,33 @@ const ReviewImportCow = ({ onReviewData }: ReviewImportCowProps) => {
       const cowErrors = cowResponse.errors || [];
       const healthErrors = healthResponse.errors || [];
 
+      // Combine cow successes with health record data (including errors)
       const combinedSuccesses = cowSuccesses.map((cow: any) => {
-        const healthRecord = healthSuccesses.find(
+        // Look for a matching health record in successes
+        let healthRecord = healthSuccesses.find(
           (health: any) => health.cowName === cow.name
         );
+
+        // If no matching success, look for a matching health record in errors
+        if (!healthRecord) {
+          const healthError = healthErrors.find(
+            (health: any) => health.cowName === cow.name
+          );
+          if (healthError) {
+            healthRecord = {
+              status: healthError.healthRecordStatus || healthError.status,
+              size: healthError.size,
+              bodyTemperature: healthError.bodyTemperature,
+              heartRate: healthError.heartRate,
+              respiratoryRate: healthError.respiratoryRate,
+              ruminateActivity: healthError.ruminateActivity,
+              chestCircumference: healthError.chestCircumference,
+              bodyLength: healthError.bodyLength,
+              description: healthError.description,
+            };
+          }
+        }
+
         return {
           name: cow.name,
           cowStatus: cow.cowStatus,
@@ -49,10 +71,15 @@ const ReviewImportCow = ({ onReviewData }: ReviewImportCowProps) => {
         };
       });
 
+      // Map errors, handling errorString array for health errors
       const combinedErrors = [
         ...cowErrors.map((err: string) => ({ source: 'cow', message: err })),
-        ...healthErrors.map((err: string) => ({ source: 'health', message: err })),
+        ...healthErrors.map((err: any) => ({
+          source: 'health',
+          message: `${err.cowName}: ${err.errorString?.join(', ') || 'Unknown error'}`
+        })),
       ];
+      console.log('Combined successes:', combinedSuccesses);
       console.log('Combined errors:', combinedErrors);
 
       onReviewData(combinedSuccesses, combinedErrors);
@@ -77,19 +104,39 @@ const ReviewImportCow = ({ onReviewData }: ReviewImportCowProps) => {
       let combinedErrors: { source: string; message: string }[] = [];
       let errorMessage = 'Có lỗi xảy ra khi xử lý file excel. Vui lòng kiểm tra lại.';
 
-      if (error && error.cowResponseCowPenBulkResponse) {
+      if (error?.cowResponseCowPenBulkResponse) {
         const cowResponse = error.cowResponseCowPenBulkResponse;
         const healthResponse = error.healthRecordEntityCowPenBulkResponse || { successes: [], errors: [] };
 
-        const cowSuccesses = cowResponse.successes || [];
-        const healthSuccesses = healthResponse.successes || [];
-        const cowErrors = cowResponse.errors || [];
-        const healthErrors = healthResponse.errors || [];
+        const cowSuccesses = Array.isArray(cowResponse.successes) ? cowResponse.successes : [];
+        const healthSuccesses = Array.isArray(healthResponse.successes) ? healthResponse.successes : [];
+        const cowErrors = Array.isArray(cowResponse.errors) ? cowResponse.errors : [];
+        const healthErrors = Array.isArray(healthResponse.errors) ? healthResponse.errors : [];
 
         combinedSuccesses = cowSuccesses.map((cow: any) => {
-          const healthRecord = healthSuccesses.find(
+          let healthRecord = healthSuccesses.find(
             (health: any) => health.cowName === cow.name
           );
+
+          if (!healthRecord) {
+            const healthError = healthErrors.find(
+              (health: any) => health.cowName === cow.name
+            );
+            if (healthError) {
+              healthRecord = {
+                status: healthError.healthRecordStatus || healthError.status,
+                size: healthError.size,
+                bodyTemperature: healthError.bodyTemperature,
+                heartRate: healthError.heartRate,
+                respiratoryRate: healthError.respiratoryRate,
+                ruminateActivity: healthError.ruminateActivity,
+                chestCircumference: healthError.chestCircumference,
+                bodyLength: healthError.bodyLength,
+                description: healthError.description,
+              };
+            }
+          }
+
           return {
             name: cow.name,
             cowStatus: cow.cowStatus,
@@ -105,20 +152,20 @@ const ReviewImportCow = ({ onReviewData }: ReviewImportCowProps) => {
 
         combinedErrors = [
           ...cowErrors.map((err: string) => ({ source: 'cow', message: err })),
-          ...healthErrors.map((err: string) => ({ source: 'health', message: err })),
+          ...healthErrors.map((err: any) => ({
+            source: 'health',
+            message: `${err.cowName}: ${err.errorString?.join(', ') || 'Unknown error'}`
+          })),
         ];
 
         if (combinedErrors.length > 0) {
           errorMessage = combinedErrors.map((err) => err.message).join('; ');
         }
-      } else if (error?.message) {
-        errorMessage = error.message;
-      } else if (typeof error === 'string') {
-        errorMessage = error;
+      } else {
+        errorMessage = typeof error?.message === 'string' ? error.message : 'Unknown error occurred';
       }
 
       onReviewData(combinedSuccesses, combinedErrors.length > 0 ? combinedErrors : [{ source: 'system', message: errorMessage }]);
-      // message.error(`Lỗi: ${errorMessage}`);
     }
   };
 

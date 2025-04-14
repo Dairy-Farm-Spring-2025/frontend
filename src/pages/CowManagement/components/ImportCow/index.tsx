@@ -170,8 +170,8 @@ const ListCowImport = () => {
             render: (data) => data || '-',
             filterable: true,
             filterOptions: [
-                { text: 'Đực', value: 'male' },
-                { text: 'Cái', value: 'female' },
+                { text: t('Male'), value: 'male' },
+                { text: t('Female'), value: 'female' },
             ],
         },
         {
@@ -428,12 +428,14 @@ const ListCowImport = () => {
             healthRecord: item.healthRecord || {},
             description: item.description || '',
         }));
+        console.log('Review data:', dataWithKeys);
+        console.log('Review errors:', errors);
         setReviewData(dataWithKeys);
         setReviewErrors(errors);
         setImportSuccess(false);
 
         if (errors.length > 0) {
-            setIsErrorModalVisible(true); // Mở modal khi có lỗi
+            setIsErrorModalVisible(true);
         }
     };
 
