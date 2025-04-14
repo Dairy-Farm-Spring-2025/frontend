@@ -255,7 +255,7 @@ const AppRouting = () => {
       children: [
         {
           path: '',
-          element: <Navigate to={'dashboard/today'} />,
+          element: <Navigate to={'dashboard/total'} />,
         },
         {
           path: 'user-management',
@@ -272,14 +272,14 @@ const AppRouting = () => {
           children: [
             {
               path: '',
-              element: <Navigate to={'today'} />,
+              element: <Navigate to={'total'} />,
             },
             {
               path: 'daily-milk',
               element: SuspenseWrapper(<DailyMilkDashboard />),
             },
             {
-              path: 'today',
+              path: 'total',
               element: SuspenseWrapper(<DashboardToday />),
             },
           ],
