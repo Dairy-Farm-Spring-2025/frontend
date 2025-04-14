@@ -10,7 +10,8 @@ import AnimationAppear from '../../../../components/UI/AnimationAppear';
 import WhiteBackground from '../../../../components/UI/WhiteBackground';
 import useFetcher from '../../../../hooks/useFetcher';
 import useToast from '../../../../hooks/useToast';
-import { formatDateHour } from '../../../../utils/format';
+import { formatDateHour, formatStatusWithCamel } from '../../../../utils/format';
+import { Tag } from 'antd';
 
 const ListVaccineInjection = () => {
   const navigate = useNavigate();
@@ -23,6 +24,7 @@ const ListVaccineInjection = () => {
     'vaccine-injections/delete',
     'DELETE'
   );
+
   const toast = useToast();
   const { t } = useTranslation();
   const handleDelete = async (id: number) => {
@@ -52,6 +54,14 @@ const ListVaccineInjection = () => {
       dataIndex: 'status',
       key: 'status',
       title: t('Status'),
+      render: (status: string) => {
+        let color = 'blue';
+        if (status === 'pending') color = 'yellow';
+        if (status === 'inProgress') color = 'orange';
+        if (status === 'completed') color = 'green';
+        if (status === 'cancelled') color = 'red';
+        return <Tag color={color}>{formatStatusWithCamel(status)}</Tag>;
+      },
     },
     {
       dataIndex: 'id',

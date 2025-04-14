@@ -170,8 +170,8 @@ const ListCowImport = () => {
             render: (data) => data || '-',
             filterable: true,
             filterOptions: [
-                { text: 'Đực', value: 'male' },
-                { text: 'Cái', value: 'female' },
+                { text: t('Male'), value: 'male' },
+                { text: t('Female'), value: 'female' },
             ],
         },
         {

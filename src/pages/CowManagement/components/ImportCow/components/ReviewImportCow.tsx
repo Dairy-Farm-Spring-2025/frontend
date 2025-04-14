@@ -31,10 +31,33 @@ const ReviewImportCow = ({ onReviewData }: ReviewImportCowProps) => {
       const cowErrors = cowResponse.errors || [];
       const healthErrors = healthResponse.errors || [];
 
+      // Combine cow successes with health record data (including errors)
       const combinedSuccesses = cowSuccesses.map((cow: any) => {
-        const healthRecord = healthSuccesses.find(
+        // Look for a matching health record in successes
+        let healthRecord = healthSuccesses.find(
           (health: any) => health.cowName === cow.name
         );
+
+        // If no matching success, look for a matching health record in errors
+        if (!healthRecord) {
+          const healthError = healthErrors.find(
+            (health: any) => health.cowName === cow.name
+          );
+          if (healthError) {
+            healthRecord = {
+              status: healthError.healthRecordStatus || healthError.status,
+              size: healthError.size,
+              bodyTemperature: healthError.bodyTemperature,
+              heartRate: healthError.heartRate,
+              respiratoryRate: healthError.respiratoryRate,
+              ruminateActivity: healthError.ruminateActivity,
+              chestCircumference: healthError.chestCircumference,
+              bodyLength: healthError.bodyLength,
+              description: healthError.description,
+            };
+          }
+        }
+
         return {
           name: cow.name,
           cowStatus: cow.cowStatus,
@@ -56,6 +79,7 @@ const ReviewImportCow = ({ onReviewData }: ReviewImportCowProps) => {
           message: `${err.cowName}: ${err.errorString?.join(', ') || 'Unknown error'}`
         })),
       ];
+      console.log('Combined successes:', combinedSuccesses);
       console.log('Combined errors:', combinedErrors);
 
       onReviewData(combinedSuccesses, combinedErrors);
@@ -90,9 +114,29 @@ const ReviewImportCow = ({ onReviewData }: ReviewImportCowProps) => {
         const healthErrors = Array.isArray(healthResponse.errors) ? healthResponse.errors : [];
 
         combinedSuccesses = cowSuccesses.map((cow: any) => {
-          const healthRecord = healthSuccesses.find(
+          let healthRecord = healthSuccesses.find(
             (health: any) => health.cowName === cow.name
           );
+
+          if (!healthRecord) {
+            const healthError = healthErrors.find(
+              (health: any) => health.cowName === cow.name
+            );
+            if (healthError) {
+              healthRecord = {
+                status: healthError.healthRecordStatus || healthError.status,
+                size: healthError.size,
+                bodyTemperature: healthError.bodyTemperature,
+                heartRate: healthError.heartRate,
+                respiratoryRate: healthError.respiratoryRate,
+                ruminateActivity: healthError.ruminateActivity,
+                chestCircumference: healthError.chestCircumference,
+                bodyLength: healthError.bodyLength,
+                description: healthError.description,
+              };
+            }
+          }
+
           return {
             name: cow.name,
             cowStatus: cow.cowStatus,

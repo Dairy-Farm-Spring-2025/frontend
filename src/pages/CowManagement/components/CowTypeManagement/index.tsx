@@ -1,4 +1,4 @@
-import { Divider } from 'antd';
+import { Divider, Tag } from 'antd';
 import ButtonComponent from '@components/Button/ButtonComponent';
 import TableComponent, { Column } from '@components/Table/TableComponent';
 import AnimationAppear from '@components/UI/AnimationAppear';
@@ -58,19 +58,23 @@ const CowTypeManagement = () => {
       dataIndex: 'maxHeight',
       key: 'maxHeight',
       title: t('Max height'),
-      render: (data) => <p>{data} (cm)</p>,
+      render: (data) => <p>{data} (m)</p>,
     },
     {
       dataIndex: 'maxLength',
       key: 'maxLength',
       title: t('Max Length'),
-      render: (data) => <p>{data} (cm)</p>,
+      render: (data) => <p>{data} (m)</p>,
     },
     {
       dataIndex: 'status',
       key: 'status',
       title: t('Status'),
-      render: (data) => (data === 'exist' ? 'Exist' : 'Not Exist'),
+      render: (status) => (
+        <Tag color={status === 'exist' ? 'green' : 'volcano'}>
+          {status === 'exist' ? 'Exist' : 'Not Exist'}
+        </Tag>
+      ),
     },
 
   ];
