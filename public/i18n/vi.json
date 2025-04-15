@@ -663,5 +663,13 @@
   "Total Worker": "Tổng nhân viên",
   "Total Veterinarian": "Tổng bác sĩ thú y",
   "workers": "Nhân viên",
-  "veterinarians": "Bác sĩ thú y"
+  "veterinarians": "Bác sĩ thú y",
+  "Equipment name": "Tên thiết bị",
+  "Equipment type": "Loại thiết bị",
+  "Equiment status": "Trạng thái thiết bị",
+  "Required quantity": "Số lượng yêu cầu",
+  "Create equipment required": "Tạo thiết bị cần thiết",
+  "Equipment Required": "Thiết bị cần thiết",
+  "Required quantity must not exceed available quantity ({{quantity}})": "Số lượng yêu cầu không được vượt qua số lượng cho phép ({{quantity}})",
+  "equipments": "Thiết bị"
 }

@@ -35,23 +35,24 @@ tr.ant-table-measure-row {
 
 /* Ghim màu nền + text khi hover và không hover */
 .ant-table-tbody > tr.row-error {
-  background-color: rgba(255, 0, 0, 0.7) !important; /* red-500 */
-  color: white !important;
+  border: 1px solid rgba(255, 0, 0, 0.7) !important; /* red-500 */
+  color: black !important;
 }
-
-/* Khóa hover */
-.ant-table-tbody > tr.row-error:hover {
-  background-color: rgba(255, 0, 0, 0.7) !important;
-  color: white !important;
-}
-
 .error-row > td {
-  background-color: rgba(255, 0, 0, 0.7) !important;
-  color: #fff;
+  border-right: 1px solid rgba(255, 0, 0, 0.7) !important;
+  border-bottom: 2px solid rgba(255, 0, 0, 0.7) !important;
+  border-top: 2px solid rgba(255, 0, 0, 0.7) !important;
+  color: black;
 }
 
-/* Giữ nền đỏ khi hover */
-.error-row:hover > td {
-  background-color: rgba(255, 0, 0, 0.7) !important;
-  color: #fff;
+.error-row > td:first-child {
+  border-left: 2px solid rgba(255, 0, 0, 0.7) !important;
+}
+.error-row > td:last-child {
+  border-right: 2px solid rgba(255, 0, 0, 0.7) !important;
+}
+
+.ant-table-tbody > tr.deleted-row {
+  background-color: rgba(200, 200, 200, 0.2); /* Nền xám nhạt cho hàng bị xóa */
+  text-decoration: line-through; /* Giữ gạch ngang */
 }

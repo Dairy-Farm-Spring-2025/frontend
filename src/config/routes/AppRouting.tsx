@@ -8,8 +8,12 @@ import {
   RouterProvider,
 } from 'react-router-dom';
 import { SiHappycow } from 'react-icons/si';
+import TaskTypeManagement from '@pages/TaskManagement/TaskType';
 
 const CowPenManagement = lazy(() => import('@pages/CowPenManagement'));
+const EquipmentRequired = lazy(
+  () => import('@pages/TaskManagement/TaskType/EquipmentRequired')
+);
 const MoveCowManagement = lazy(
   () => import('@pages/CowPenManagement/components/MoveCowManagement')
 );
@@ -21,7 +25,9 @@ const ListNotification = lazy(
   () => import('@pages/NotificationManagement/components/List/ListNotification')
 );
 const TaskManagement = lazy(() => import('@pages/TaskManagement'));
-const TaskType = lazy(() => import('@pages/TaskManagement/TaskType'));
+const TaskType = lazy(
+  () => import('@pages/TaskManagement/TaskType/ListTaskType')
+);
 const Equipment = lazy(
   () => import('@pages/WarehouseManagement/components/Equipment')
 );
@@ -516,7 +522,21 @@ const AppRouting = () => {
             },
             {
               path: 'task-type',
-              element: SuspenseWrapper(<TaskType />),
+              element: SuspenseWrapper(<TaskTypeManagement />),
+              children: [
+                {
+                  path: '',
+                  element: <Navigate to={'list'} />,
+                },
+                {
+                  path: 'list',
+                  element: SuspenseWrapper(<TaskType />),
+                },
+                {
+                  path: 'use-equipment',
+                  element: SuspenseWrapper(<EquipmentRequired />),
+                },
+              ],
             },
             {
               path: 'my-task/:taskId',

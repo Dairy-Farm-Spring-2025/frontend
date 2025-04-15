@@ -364,7 +364,7 @@ const CardAreaImportTask = ({
             }
           >
             <span
-              className={`${hasError(record) ? 'text-white' : 'text-black'}`}
+              className={`${hasError(record) ? 'text-black' : 'text-black'}`}
             >
               {record.taskType || t('Chưa rõ loại công việc')}
             </span>
