@@ -12,14 +12,18 @@ import WhiteBackground from '../../../../components/UI/WhiteBackground';
 import useFetcher from '../../../../hooks/useFetcher';
 import useModal from '../../../../hooks/useModal';
 import useToast from '../../../../hooks/useToast';
-import { EquipmentType } from '../../../../model/Warehouse/equipment';
+import {
+  EquipmentType,
+  EquipmentTypeStatus,
+} from '../../../../model/Warehouse/equipment';
 import { formatAreaType } from '../../../../utils/format';
 import ModalAddEquipment from './components/ModalAddEquipment';
 import ModalDetailEquipment from './components/ModalDeatialEquipment';
+import { EQUIPMENT_PATH } from '@service/api/Equipment/equipmentApi';
 
 const Equipment = () => {
   const { data, isLoading, mutate } = useFetcher<EquipmentType[]>(
-    'equipment',
+    EQUIPMENT_PATH.GET_ALL_EQUIPMENT,
     'GET'
   );
   const [id, setId] = useState('');
@@ -33,7 +37,7 @@ const Equipment = () => {
   const { t } = useTranslation();
   const onConfirm = async (id: string) => {
     try {
-      await trigger({ url: `equipment/${id}` });
+      await trigger({ url: EQUIPMENT_PATH.DELETE_EQUIPMENT(id) });
       toast.showSuccess('Delete success');
       mutate();
     } catch (error: any) {
@@ -55,40 +59,35 @@ const Equipment = () => {
       dataIndex: 'name',
       key: 'name',
       title: t('Name'),
-      render: (data) => <p className="text-base font-bold">{data}</p>,
+      render: (data) => <p>{data}</p>,
     },
     {
       dataIndex: 'type',
       key: 'type',
       title: t('Type'),
-      render: (data) => (
-        <p className="text-base font-bold">{formatAreaType(data)}</p>
-      ),
+      render: (data) => <p>{t(formatAreaType(data))}</p>,
     },
     {
       dataIndex: 'status',
       key: 'status',
       title: t('Status'),
       render: (data) => (
-        <TagComponents
-          color={getEquipmentStatusTag(data)}
-          className="text-base font-bold"
-        >
-          {formatAreaType(data)}
+        <TagComponents color={getEquipmentStatusTag(data)}>
+          {t(formatAreaType(data))}
         </TagComponents>
       ),
     },
     {
       dataIndex: 'quantity',
       key: 'quantity',
-      title: t('quantity'),
-      render: (data) => <p className="text-base font-bold">{data}</p>,
+      title: t('Quantity'),
+      render: (data) => <p>{data}</p>,
     },
     {
       dataIndex: 'warehouseLocationEntity',
       key: 'warehouseLocationEntity',
-      title: t('Warehouse'),
-      render: (data) => <p className="text-base font-bold">{data.name}</p>,
+      title: t('Storage'),
+      render: (data) => <p>{data.name}</p>,
     },
     {
       dataIndex: 'equipmentId',

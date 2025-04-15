@@ -4,7 +4,11 @@ interface TitleProps {
 }
 const Title = ({ children, className }: TitleProps) => {
   return (
-    <p className={`text-xl font-bold text-primary ${className}`}>{children}</p>
+    <p
+      className={`md:text-xs lg:text-xs xl:text-base font-bold text-primary ${className}`}
+    >
+      {children}
+    </p>
   );
 };
 

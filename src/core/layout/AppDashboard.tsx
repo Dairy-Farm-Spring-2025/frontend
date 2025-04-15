@@ -53,6 +53,7 @@ import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import LabelDashboard from './components/LabelDashboard';
 import NotificationDropDown from './components/NotificationDropDown';
 import './index.scss';
+import { BsTools } from 'react-icons/bs';
 const { Header, Content, Sider } = Layout;
 type MenuItem = Required<MenuProps>['items'][number];
 const { useToken } = theme;
@@ -462,7 +463,19 @@ const AppDashboard: React.FC = React.memo(() => {
                   : getItem(
                       t('Task type'),
                       'dairy/task-management/task-type',
-                      <BiCategory size={sizeIcon} />
+                      <BiCategory size={sizeIcon} />,
+                      [
+                        getItem(
+                          t('List'),
+                          'dairy/task-management/task-type/list',
+                          <CiBoxList />
+                        ),
+                        getItem(
+                          t('Equipment Required'),
+                          'dairy/task-management/task-type/use-equipment',
+                          <BsTools />
+                        ),
+                      ]
                     ),
               ]
             ),
