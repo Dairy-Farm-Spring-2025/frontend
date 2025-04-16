@@ -16,16 +16,27 @@ import useToast from '@hooks/useToast';
 import { Application } from '@model/ApplicationType/application';
 import { Area } from '@model/Area';
 import { Task } from '@model/Task/Task';
+import { TaskType } from '@model/Task/task-type';
 import { UserProfileData } from '@model/User';
 import { APPLICATION_PATH } from '@service/api/Application/applicationApi';
 import { TASK_PATH } from '@service/api/Task/taskApi';
 import { USER_PATH } from '@service/api/User/userApi';
 import { PRIORITY_DATA } from '@service/data/priority';
-import { formatDateHour, formatStatusWithCamel } from '@utils/format';
+import {
+  formatDate,
+  formatDateHour,
+  formatStatusWithCamel,
+} from '@utils/format';
 import { Divider, Form, Skeleton } from 'antd';
 import dayjs from 'dayjs';
 import { t } from 'i18next';
 import { useCallback, useEffect, useState } from 'react';
+
+interface FreeUserInterface {
+  isLoading?: any;
+  data?: UserProfileData[];
+  triggerFetchingFreeUser: any;
+}
 
 interface UpdateTaskModalProps {
   modal: ModalActionProps;
@@ -34,6 +45,9 @@ interface UpdateTaskModalProps {
   setRefetch: any;
   optionsArea: any[];
   day: string;
+  dataFreeUser: FreeUserInterface;
+  dataNightUser: FreeUserInterface;
+  dataVetAvailable: FreeUserInterface;
 }
 
 const statusColor = {
@@ -43,18 +57,31 @@ const statusColor = {
   reject: 'red',
 };
 
+const validateTaskType = (selectedTaskType: TaskType) => {
+  if (
+    selectedTaskType.name === 'Khám bệnh' ||
+    selectedTaskType.name === 'Trực ca đêm'
+  ) {
+    return true;
+  }
+  return false;
+};
+
 const UpdateTaskModal = ({
   modal,
   taskId,
   optionsArea,
   setRefetch,
   day,
+  dataFreeUser,
+  dataNightUser,
+  dataVetAvailable,
 }: UpdateTaskModalProps) => {
   const toast = useToast();
   const [form] = Form.useForm();
   const [formUpdateAssignee] = Form.useForm();
   const [fromDate, setFromDate] = useState<dayjs.Dayjs | null>(null);
-  const [optionsVetAvailable, setOptionsVetAvailable] = useState<any[]>([]);
+  const [assignees, setAssignees] = useState<any[]>([]);
   const {
     data: dataTaskDetail,
     isLoading: isLoadingTask,
@@ -70,12 +97,12 @@ const UpdateTaskModal = ({
     'update-task',
     'PUT'
   );
-  const { data: dataVetAvailable } = useFetcher<UserProfileData[]>(
-    USER_PATH.VETERINARIANS_AVAILABLE(day),
-    'GET',
-    'application/json',
-    modal.open
-  );
+  // const { data: dataVetAvailable } = useFetcher<UserProfileData[]>(
+  //   USER_PATH.VETERINARIANS_AVAILABLE(day),
+  //   'GET',
+  //   'application/json',
+  //   modal.open
+  // );
   const { trigger: triggerReAssign, isLoading: isLoadingReassign } = useFetcher(
     'reassign',
     'PUT'
@@ -95,26 +122,105 @@ const UpdateTaskModal = ({
     'approve-request',
     'PUT'
   );
-
   useEffect(() => {
-    if (
-      dataTaskDetail?.assignee === null &&
-      dataTaskDetail?.taskTypeId?.roleId?.name === 'Veterinarians' &&
-      dataVetAvailable
-    ) {
-      setOptionsVetAvailable(
-        dataVetAvailable?.map((element) => ({
-          label: element.name,
-          value: element.id,
-          searchLabel: element.name,
-        }))
-      );
+    console.log('run effect');
+    const fetchFreeUsers = async () => {
+      const body = {
+        roleId: dataTaskDetail?.taskTypeId?.roleId?.id,
+        fromDate: validateTaskType(
+          dataTaskDetail?.taskTypeId ?? ({} as TaskType)
+        )
+          ? formatDate({ data: day, type: 'params' })
+          : formatDate({ data: day, type: 'params' }),
+        toDate: validateTaskType(dataTaskDetail?.taskTypeId ?? ({} as TaskType))
+          ? formatDate({ data: day, type: 'params' })
+          : formatDate({ data: day, type: 'params' }),
+        ...(dataTaskDetail?.taskTypeId?.roleId?.name === 'Worker' &&
+          dataTaskDetail?.areaId?.areaId && {
+            areaId: dataTaskDetail?.areaId?.areaId,
+          }),
+      };
+      const bodyNightShift = {
+        fromDate: validateTaskType(
+          dataTaskDetail?.taskTypeId ?? ({} as TaskType)
+        )
+          ? formatDate({ data: day, type: 'params' })
+          : formatDate({ data: day, type: 'params' }),
+        toDate: validateTaskType(dataTaskDetail?.taskTypeId ?? ({} as TaskType))
+          ? formatDate({ data: day, type: 'params' })
+          : formatDate({ data: day, type: 'params' }),
+      };
+      const fetchHandlers: Record<string, () => Promise<any>> = {
+        'Trực ca đêm': async () =>
+          dataNightUser
+            .triggerFetchingFreeUser({
+              url: USER_PATH.NIGHT_USERS_FREE(bodyNightShift),
+            })
+            .then((response: UserProfileData[]) =>
+              (response || []).map((user) => ({
+                label: user?.name,
+                value: user.id,
+                desc: user,
+                searchLabel: user?.name,
+              }))
+            )
+            .catch(() => {
+              setAssignees([]);
+              return [];
+            }),
+        'Khám bệnh': async () =>
+          dataVetAvailable
+            .triggerFetchingFreeUser({
+              url: USER_PATH.VETERINARIANS_AVAILABLE(
+                formatDate({ data: day, type: 'params' })
+              ),
+            })
+            .then((response: UserProfileData[]) =>
+              (response || []).map((user) => ({
+                label: user?.name,
+                value: user.id,
+                desc: user,
+                searchLabel: user?.name,
+              }))
+            )
+            .catch(() => {
+              setAssignees([]);
+              return [];
+            }),
+        default: async () =>
+          dataFreeUser
+            .triggerFetchingFreeUser({
+              url: USER_PATH.USERS_FREE(body as any),
+            })
+            .then((response: UserProfileData[]) =>
+              (response || []).map((user) => ({
+                label: user?.name,
+                value: user.id,
+                desc: user,
+                searchLabel: user?.name,
+              }))
+            )
+            .catch(() => {
+              setAssignees([]);
+              return [];
+            }),
+      };
+      const response = await (fetchHandlers[
+        dataTaskDetail?.taskTypeId?.name || 'default'
+      ]?.() ?? fetchHandlers.default());
+
+      console.log(response);
+      setAssignees(response);
+    };
+    if (modal.open && dataTaskDetail?.assignee === null) {
+      fetchFreeUsers();
     }
   }, [
+    dataTaskDetail?.areaId?.areaId,
     dataTaskDetail?.assignee,
-    dataTaskDetail?.taskTypeId.name,
-    dataTaskDetail?.taskTypeId?.roleId?.name,
-    dataVetAvailable,
+    dataTaskDetail?.taskTypeId,
+    day,
+    modal.open,
   ]);
 
   useEffect(() => {
@@ -331,7 +437,7 @@ const UpdateTaskModal = ({
                 name="assigneeId"
                 rules={[{ required: true }]}
               >
-                <SelectComponent options={optionsVetAvailable} search />
+                <SelectComponent options={assignees} search />
               </FormItemComponent>
             </FormComponent>
           </>

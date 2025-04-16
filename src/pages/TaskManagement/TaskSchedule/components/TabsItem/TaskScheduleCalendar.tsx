@@ -514,6 +514,21 @@ const TaskScheduleCalendar: React.FC = () => {
         taskId={id}
         optionsArea={optionsAreas}
         setRefetch={setRefetch}
+        dataFreeUser={{
+          isLoading: isLoadingTriggerFetchingFreeUser,
+          data: dataUserFree,
+          triggerFetchingFreeUser: triggerFetchingFreeUser,
+        }}
+        dataNightUser={{
+          isLoading: isLoadingTriggerUserNightShift,
+          data: dataUserNightShift,
+          triggerFetchingFreeUser: triggerFetchingUserNightShift,
+        }}
+        dataVetAvailable={{
+          isLoading: isLoadingTriggerVetAvailable,
+          triggerFetchingFreeUser: triggerDataVetAivailable,
+          data: dataVetAvailable,
+        }}
       />
     </div>
   );
