@@ -1,4 +1,5 @@
 import TagComponents from '@components/UI/TagComponents';
+import { EQUIPMENT_PATH } from '@service/api/Equipment/equipmentApi';
 import { getEquipmentStatusTag } from '@utils/statusRender/equipmentStatusRender';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -12,14 +13,10 @@ import WhiteBackground from '../../../../components/UI/WhiteBackground';
 import useFetcher from '../../../../hooks/useFetcher';
 import useModal from '../../../../hooks/useModal';
 import useToast from '../../../../hooks/useToast';
-import {
-  EquipmentType,
-  EquipmentTypeStatus,
-} from '../../../../model/Warehouse/equipment';
+import { EquipmentType } from '../../../../model/Warehouse/equipment';
 import { formatAreaType } from '../../../../utils/format';
 import ModalAddEquipment from './components/ModalAddEquipment';
 import ModalDetailEquipment from './components/ModalDeatialEquipment';
-import { EQUIPMENT_PATH } from '@service/api/Equipment/equipmentApi';
 
 const Equipment = () => {
   const { data, isLoading, mutate } = useFetcher<EquipmentType[]>(
