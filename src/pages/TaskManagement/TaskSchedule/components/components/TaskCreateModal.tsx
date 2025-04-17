@@ -7,6 +7,8 @@ import ModalComponent from '@components/Modal/ModalComponent';
 import CardSelectArea from '@components/Select/components/CardSelectArea';
 import SelectComponent from '@components/Select/SelectComponent';
 import TagComponents from '@components/UI/TagComponents';
+import { setModalCreate } from '@core/store/slice/taskModalSlice';
+import { RootState } from '@core/store/store';
 import useFetcher from '@hooks/useFetcher';
 import { ModalActionProps } from '@hooks/useModal';
 import useRequiredForm from '@hooks/useRequiredForm';
@@ -18,7 +20,6 @@ import { TaskPayload, TaskValuesPayload } from '@model/Task/Task';
 import { TaskType } from '@model/Task/task-type';
 import { UserProfileData } from '@model/User';
 import { USER_PATH } from '@service/api/User/userApi';
-import { PRIORITY_DATA } from '@service/data/priority';
 import { SHIFT_TASK } from '@service/data/shiftData';
 import {
   formatDate,
@@ -31,11 +32,8 @@ import { Avatar, Divider, Form } from 'antd';
 import dayjs from 'dayjs';
 import { t } from 'i18next';
 import { memo, useCallback, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import RulesCreateTask from './RulesCreateTask';
-import { useSelector } from 'react-redux';
-import { RootState } from '@core/store/store';
-import { useDispatch } from 'react-redux';
-import { setModalCreate } from '@core/store/slice/taskModalSlice';
 
 interface FreeUserInterface {
   isLoading?: any;
@@ -94,7 +92,6 @@ const TaskCreateModal = ({
   const requiredFields = [
     'taskTypeId',
     'assigneeIds',
-    'priority',
     'shift',
     'description',
     ...(validateTaskType(selectedTaskTypes ?? ({} as TaskType))
@@ -261,7 +258,6 @@ const TaskCreateModal = ({
       workDate: undefined,
       description: undefined,
       areaId: undefined,
-      priority: undefined,
       shift: shouldSetNightShift ? 'nightShift' : undefined,
     });
 
@@ -281,7 +277,6 @@ const TaskCreateModal = ({
           toDate: validateTaskType(selectedTaskTypes ?? ({} as TaskType))
             ? dayjs(values.workDate).format('YYYY-MM-DD')
             : dayjs(values.toDate).format('YYYY-MM-DD'),
-          priority: values.priority,
           shift: values.shift,
           taskTypeId: values.taskTypeId,
           illnessId: values.illnessId,
@@ -397,13 +392,6 @@ const TaskCreateModal = ({
                     </FormItemComponent>
                   </>
                 )}
-                <FormItemComponent
-                  rules={[{ required: true }]}
-                  name="priority"
-                  label={<LabelForm>{t('Priority')}</LabelForm>}
-                >
-                  <SelectComponent options={PRIORITY_DATA()} />
-                </FormItemComponent>
               </div>
               <div className="flex flex-col gap-2 w-1/2">
                 {selectedRole.name === 'Veterinarians' &&
