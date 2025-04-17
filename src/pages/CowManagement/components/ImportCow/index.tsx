@@ -1,3 +1,6 @@
+
+
+
 import {
     CloseOutlined,
     DeleteOutlined,
@@ -29,7 +32,6 @@ import { IoMdFemale, IoMdMale } from 'react-icons/io';
 import ConfirmImport from './components/ConfirmImport';
 import ReviewImportCow from './components/ReviewImportCow';
 import ModalListError from './components/ModalListErrors';
-
 
 const ListCowImport = () => {
     const { t } = useTranslation();
@@ -427,6 +429,7 @@ const ListCowImport = () => {
             cowStatus: item.cowStatus || '',
             healthRecord: item.healthRecord || {},
             description: item.description || '',
+            errorStrings: item.errorStrings || [],
         }));
         console.log('Review data:', dataWithKeys);
         console.log('Review errors:', errors);
@@ -450,7 +453,9 @@ const ListCowImport = () => {
                 return updatedItem || item;
             })
         );
-        setReviewErrors([]); // Xóa lỗi sau khi chỉnh sửa (giả sử đã sửa hết)
+        setReviewErrors([]); // Clear errors after saving (assumes all errors are resolved)
+        setIsErrorModalVisible(false);
+        message.success('Đã lưu dữ liệu sửa lỗi!');
     };
 
     const handleEdit = (key: string) => setEditingKey(key);
@@ -478,7 +483,9 @@ const ListCowImport = () => {
                                 ? value
                                     ? dayjs(value).format('YYYY-MM-DD')
                                     : ''
-                                : value,
+                                : field === 'healthRecord'
+                                    ? { ...item.healthRecord, ...value }
+                                    : value,
                     }
                     : item
             )

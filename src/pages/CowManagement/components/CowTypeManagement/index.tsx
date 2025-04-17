@@ -1,5 +1,4 @@
 import { Divider, Tag } from 'antd';
-import ButtonComponent from '@components/Button/ButtonComponent';
 import TableComponent, { Column } from '@components/Table/TableComponent';
 import AnimationAppear from '@components/UI/AnimationAppear';
 import WhiteBackground from '@components/UI/WhiteBackground';

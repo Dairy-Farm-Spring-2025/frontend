@@ -659,5 +659,8 @@
   "cows": "bò",
   "Cow statistics": "Thống kê bò",
   "items": "mặt hàng",
-  "Total Item": "Tổng mặt hàng"
+  "Total Item": "Tổng mặt hàng",
+  "Please fill in all required fields before saving": "Hãy điền đầy đủ các cột còn thiếu",
+  "Fix Import Errors": "Danh sách các dòng bị lỗi",
+  "Detail Equipment": "Chi tiết thiết bị"
 }
