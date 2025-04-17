@@ -1,23 +1,17 @@
-
-
-
-
 import { UploadOutlined } from '@ant-design/icons';
 import ButtonComponent from '@components/Button/ButtonComponent';
 import useFetcher from '@hooks/useFetcher';
 import { COW_PATH } from '@service/api/Cow/cowApi';
 import { message, Upload } from 'antd';
+import { Cow, HealthResponse } from '@model/Cow/Cow';
+import dayjs from 'dayjs';
 
 interface ReviewImportCowProps {
-  onReviewData: (data: any[], errors: any[]) => void;
+  onReviewData: (data: Cow[], errors: { source: string; message: string }[]) => void;
 }
 
 const ReviewImportCow = ({ onReviewData }: ReviewImportCowProps) => {
-  const { trigger, isLoading } = useFetcher(
-    COW_PATH.REVIEW_IMPORT_COW,
-    'POST',
-    'multipart/form-data'
-  );
+  const { trigger, isLoading } = useFetcher(COW_PATH.REVIEW_IMPORT_COW, 'POST', 'multipart/form-data');
 
   const handleUpload = async (file: File) => {
     const formData = new FormData();
@@ -26,7 +20,6 @@ const ReviewImportCow = ({ onReviewData }: ReviewImportCowProps) => {
     try {
       const response = await trigger({ body: formData });
       const data = response.data || response;
-      console.log('API response:', data);
 
       const cowResponse = data?.cowResponseCowPenBulkResponse || { successes: [], errors: [] };
       const healthResponse = data?.healthRecordEntityCowPenBulkResponse || { successes: [], errors: [] };
@@ -36,51 +29,95 @@ const ReviewImportCow = ({ onReviewData }: ReviewImportCowProps) => {
       const cowErrors = cowResponse.errors || [];
       const healthErrors = healthResponse.errors || [];
 
-      // Include both successes and errors in combinedSuccesses
-      const combinedSuccesses = [
-        ...cowSuccesses.map((cow: any) => {
+      const combinedSuccesses: Cow[] = [
+        ...cowSuccesses.map((cow: any, index: number) => {
           const healthRecord = healthSuccesses.find((health: any) => health.cowName === cow.name) || null;
           return {
-            name: cow.name,
-            cowStatus: cow.cowStatus,
-            dateOfBirth: cow.dateOfBirth,
-            dateOfEnter: cow.dateOfEnter,
-            cowOrigin: cow.cowOrigin,
-            gender: cow.gender,
-            cowTypeName: cow.cowTypeName,
-            description: cow.description,
-            healthRecord: healthRecord,
+            cowId: '',
+            name: cow.name || '',
+            cowStatus: cow.cowStatus || '',
+            dateOfBirth: cow.dateOfBirth || '',
+            dateOfEnter: cow.dateOfEnter || '',
+            dateOfOut: '',
+            description: cow.description || '',
+            cowOrigin: cow.cowOrigin || '',
+            gender: cow.gender || '',
+            cowType: { name: cow.cowTypeName || '' },
+            cowTypeEntity: { name: cow.cowTypeName || '' },
+            cowTypeName: cow.cowTypeName || '', // Explicitly include cowTypeName
+            createdAt: '',
+            updatedAt: '',
+            inPen: false,
+            healthInfoResponses: healthRecord
+              ? [
+                {
+                  date: cow.dateOfBirth || dayjs().format('YYYY-MM-DD'),
+                  health: {
+                    status: healthRecord.status || healthRecord.healthRecordStatus || '',
+                    size: healthRecord.size || null,
+                    bodyTemperature: healthRecord.bodyTemperature || null,
+                    heartRate: healthRecord.heartRate || null,
+                    respiratoryRate: healthRecord.respiratoryRate || null,
+                    ruminateActivity: healthRecord.ruminateActivity || null,
+                    chestCircumference: healthRecord.chestCircumference || null,
+                    bodyLength: healthRecord.bodyLength || null,
+                    description: healthRecord.description || null,
+                  },
+                  id: index,
+                  type: 'HEALTH_RECORD' as const,
+                },
+              ]
+              : [],
+            penResponse: null,
+            key: index.toString(),
             errorStrings: [],
           };
         }),
-        ...cowErrors.map((err: any) => {
+        ...cowErrors.map((err: any, index: number) => {
           const healthRecord = healthErrors.find((health: any) => health.cowName === err.name) || null;
           return {
-            name: err.name,
-            cowStatus: err.cowStatus,
-            dateOfBirth: err.dateOfBirth,
-            dateOfEnter: err.dateOfEnter,
-            cowOrigin: err.cowOrigin,
-            gender: err.gender,
-            cowTypeName: err.cowTypeName,
-            description: err.description,
-            healthRecord: healthRecord || {
-              status: healthRecord?.status || healthRecord?.healthRecordStatus || '',
-              size: healthRecord?.size || null,
-              bodyTemperature: healthRecord?.bodyTemperature || null,
-              heartRate: healthRecord?.heartRate || null,
-              respiratoryRate: healthRecord?.respiratoryRate || null,
-              ruminateActivity: healthRecord?.ruminateActivity || null,
-              chestCircumference: healthRecord?.chestCircumference || null,
-              bodyLength: healthRecord?.bodyLength || null,
-              description: healthRecord?.description || null,
-            },
+            cowId: '',
+            name: err.name || '',
+            cowStatus: err.cowStatus || '',
+            dateOfBirth: err.dateOfBirth || '',
+            dateOfEnter: err.dateOfEnter || '',
+            dateOfOut: '',
+            description: err.description || '',
+            cowOrigin: err.cowOrigin || '',
+            gender: err.gender || '',
+            cowType: { name: err.cowTypeName || '' },
+            cowTypeEntity: { name: err.cowTypeName || '' },
+            cowTypeName: err.cowTypeName || '', // Explicitly include cowTypeName
+            createdAt: '',
+            updatedAt: '',
+            inPen: false,
+            healthInfoResponses: healthRecord
+              ? [
+                {
+                  date: err.dateOfBirth || dayjs().format('YYYY-MM-DD'),
+                  health: {
+                    status: healthRecord.status || healthRecord.healthRecordStatus || '',
+                    size: healthRecord.size || null,
+                    bodyTemperature: healthRecord.bodyTemperature || null,
+                    heartRate: healthRecord.heartRate || null,
+                    respiratoryRate: healthRecord.respiratoryRate || null,
+                    ruminateActivity: healthRecord.ruminateActivity || null,
+                    chestCircumference: healthRecord.chestCircumference || null,
+                    bodyLength: healthRecord.bodyLength || null,
+                    description: healthRecord.description || null,
+                  },
+                  id: index,
+                  type: 'HEALTH_RECORD' as const,
+                },
+              ]
+              : [],
+            penResponse: null,
+            key: (cowSuccesses.length + index).toString(),
             errorStrings: err.errorStrings || [],
           };
         }),
       ];
 
-      // Map errors for both cow and health
       const combinedErrors = [
         ...cowErrors.map((err: any) => ({
           source: 'cow',
@@ -107,13 +144,7 @@ const ReviewImportCow = ({ onReviewData }: ReviewImportCowProps) => {
       }
     } catch (error: any) {
       console.error('Lỗi khi review:', error);
-      console.log('Error full details:', {
-        data: error,
-        message: error.message,
-        hasResponseData: !!error.cowResponseCowPenBulkResponse,
-      });
-
-      let combinedSuccesses: any[] = [];
+      let combinedSuccesses: Cow[] = [];
       let combinedErrors: { source: string; message: string }[] = [];
       let errorMessage = 'Có lỗi xảy ra khi xử lý file excel. Vui lòng kiểm tra lại.';
 
@@ -127,43 +158,89 @@ const ReviewImportCow = ({ onReviewData }: ReviewImportCowProps) => {
         const healthErrors = Array.isArray(healthResponse.errors) ? healthResponse.errors : [];
 
         combinedSuccesses = [
-          ...cowSuccesses.map((cow: any) => {
+          ...cowSuccesses.map((cow: any, index: number) => {
             const healthRecord = healthSuccesses.find((health: any) => health.cowName === cow.name) || null;
             return {
-              name: cow.name,
-              cowStatus: cow.cowStatus,
-              dateOfBirth: cow.dateOfBirth,
-              dateOfEnter: cow.dateOfEnter,
-              cowOrigin: cow.cowOrigin,
-              gender: cow.gender,
-              cowTypeName: cow.cowTypeName,
-              description: cow.description,
-              healthRecord: healthRecord,
+              cowId: '',
+              name: cow.name || '',
+              cowStatus: cow.cowStatus || '',
+              dateOfBirth: cow.dateOfBirth || '',
+              dateOfEnter: cow.dateOfEnter || '',
+              dateOfOut: '',
+              description: cow.description || '',
+              cowOrigin: cow.cowOrigin || '',
+              gender: cow.gender || '',
+              cowType: { name: cow.cowTypeName || '' },
+              cowTypeEntity: { name: cow.cowTypeName || '' },
+              cowTypeName: cow.cowTypeName || '',
+              createdAt: '',
+              updatedAt: '',
+              inPen: false,
+              healthInfoResponses: healthRecord
+                ? [
+                  {
+                    date: cow.dateOfBirth || dayjs().format('YYYY-MM-DD'),
+                    health: {
+                      status: healthRecord.status || healthRecord.healthRecordStatus || '',
+                      size: healthRecord.size || null,
+                      bodyTemperature: healthRecord.bodyTemperature || null,
+                      heartRate: healthRecord.heartRate || null,
+                      respiratoryRate: healthRecord.respiratoryRate || null,
+                      ruminateActivity: healthRecord.ruminateActivity || null,
+                      chestCircumference: healthRecord.chestCircumference || null,
+                      bodyLength: healthRecord.bodyLength || null,
+                      description: healthRecord.description || null,
+                    },
+                    id: index,
+                    type: 'HEALTH_RECORD' as const,
+                  },
+                ]
+                : [],
+              penResponse: null,
+              key: index.toString(),
               errorStrings: [],
             };
           }),
-          ...cowErrors.map((err: any) => {
+          ...cowErrors.map((err: any, index: number) => {
             const healthRecord = healthErrors.find((health: any) => health.cowName === err.name) || null;
             return {
-              name: err.name,
-              cowStatus: err.cowStatus,
-              dateOfBirth: err.dateOfBirth,
-              dateOfEnter: err.dateOfEnter,
-              cowOrigin: err.cowOrigin,
-              gender: err.gender,
-              cowTypeName: err.cowTypeName,
-              description: err.description,
-              healthRecord: healthRecord || {
-                status: healthRecord?.status || healthRecord?.healthRecordStatus || '',
-                size: healthRecord?.size || null,
-                bodyTemperature: healthRecord?.bodyTemperature || null,
-                heartRate: healthRecord?.heartRate || null,
-                respiratoryRate: healthRecord?.respiratoryRate || null,
-                ruminateActivity: healthRecord?.ruminateActivity || null,
-                chestCircumference: healthRecord?.chestCircumference || null,
-                bodyLength: healthRecord?.bodyLength || null,
-                description: healthRecord?.description || null,
-              },
+              cowId: '',
+              name: err.name || '',
+              cowStatus: err.cowStatus || '',
+              dateOfBirth: err.dateOfBirth || '',
+              dateOfEnter: err.dateOfEnter || '',
+              dateOfOut: '',
+              description: err.description || '',
+              cowOrigin: err.cowOrigin || '',
+              gender: err.gender || '',
+              cowType: { name: err.cowTypeName || '' },
+              cowTypeEntity: { name: err.cowTypeName || '' },
+              cowTypeName: err.cowTypeName || '',
+              createdAt: '',
+              updatedAt: '',
+              inPen: false,
+              healthInfoResponses: healthRecord
+                ? [
+                  {
+                    date: err.dateOfBirth || dayjs().format('YYYY-MM-DD'),
+                    health: {
+                      status: healthRecord.status || healthRecord.healthRecordStatus || '',
+                      size: healthRecord.size || null,
+                      bodyTemperature: healthRecord.bodyTemperature || null,
+                      heartRate: healthRecord.heartRate || null,
+                      respiratoryRate: healthRecord.respiratoryRate || null,
+                      ruminateActivity: healthRecord.ruminateActivity || null,
+                      chestCircumference: healthRecord.chestCircumference || null,
+                      bodyLength: healthRecord.bodyLength || null,
+                      description: healthRecord.description || null,
+                    },
+                    id: index,
+                    type: 'HEALTH_RECORD' as const,
+                  },
+                ]
+                : [],
+              penResponse: null,
+              key: (cowSuccesses.length + index).toString(),
               errorStrings: err.errorStrings || [],
             };
           }),
@@ -199,12 +276,7 @@ const ReviewImportCow = ({ onReviewData }: ReviewImportCowProps) => {
       }}
       showUploadList={false}
     >
-      <ButtonComponent
-        icon={<UploadOutlined />}
-        loading={isLoading}
-        disabled={isLoading}
-        type="primary"
-      >
+      <ButtonComponent icon={<UploadOutlined />} loading={isLoading} disabled={isLoading} type="primary">
         {isLoading ? 'Đang xử lý...' : 'Nhập bò'}
       </ButtonComponent>
     </Upload>

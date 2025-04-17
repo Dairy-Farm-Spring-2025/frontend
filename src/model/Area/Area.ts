@@ -11,6 +11,8 @@ export type Area = {
   areaType: AreaType;
   createdAt: string; // ISO 8601 format
   updatedAt: string; // ISO 8601 format
+  cowStatus: string;
+  cowTypeId: string;
 };
 
 export type CreateAreaRequest = {
@@ -19,4 +21,6 @@ export type CreateAreaRequest = {
   length: number;
   width: number;
   areaType: AreaType;
+  cowStatus: string;
+  cowTypeId: string;
 };
