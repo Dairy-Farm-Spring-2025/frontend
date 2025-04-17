@@ -37,7 +37,7 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
                 key: item.key || index.toString(),
                 errorStrings: item.errorStrings || [],
                 healthInfoResponses: item.healthInfoResponses || [],
-                cowTypeName: item.cowTypeName || item.cowType?.name || '', // Ensure cowTypeName is preserved
+                cowTypeName: item.cowTypeName || item.cowType?.name || '',
             }));
             setLocalData(formattedData);
             console.log('Initialized localData:', formattedData);
@@ -51,7 +51,7 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
         .filter((name) => name);
 
     const errorData = localData
-        .filter((item) => errorCowNames.includes(item.name) || item.errorStrings?.length > 0)
+        .filter((item) => errorCowNames.includes(item.name) || (item.errorStrings && item.errorStrings.length > 0))
         .map((item) => {
             const errorForCow = errors.filter((err) => err.message.startsWith(`${item.name}:`));
             return {
@@ -152,8 +152,7 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
 
     // Dynamically generate filter options for cowTypeName based on available cow types
     const cowTypeFilterOptions = COW_TYPE_FILTER().length > 0 ? COW_TYPE_FILTER() : [
-        { text: 'Ayrshire', value: 'Ayrshire' }, // Fallback to include known types
-        // Add more known types if needed
+        { text: 'Ayrshire', value: 'Ayrshire' },
     ];
 
     const columns: Column[] = [
@@ -221,7 +220,7 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
             title: t('Cow Type'),
             filterable: true,
             filterOptions: cowTypeFilterOptions,
-            editable: true, // Allow editing to fix errors
+            editable: true,
             render: (data, record) => {
                 const hasError = record.errorMessage?.includes('Cow Type is required');
                 return editingKey === record.key ? (

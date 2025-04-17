@@ -2,7 +2,7 @@ import DatePickerComponent from '@components/DatePicker/DatePickerComponent';
 import Text from '@components/UI/Text';
 import TextBorder from '@components/UI/TextBorder';
 import { formatDateHour, formatStatusWithCamel } from '@utils/format';
-import { Form, SelectProps, Spin } from 'antd';
+import { Form, SelectProps, Spin, message } from 'antd';
 import dayjs from 'dayjs';
 import { t } from 'i18next';
 import { useEffect, useState } from 'react';
@@ -41,11 +41,10 @@ const CowGeneralInformation = ({
   const [form] = Form.useForm();
   const { trigger, isLoading } = useFetcher(COW_PATH.COW_UPDATE(id), 'PUT');
   const { data } = useFetcher<any[]>(COW_TYPE_PATH.COW_TYPES, 'GET');
-  const [optionsCowType, setOptionsCowType] = useState<SelectProps['options']>(
-    []
-  );
+  const [optionsCowType, setOptionsCowType] = useState<SelectProps['options']>([]);
   const [showEdit, setShowEdit] = useState(false);
   const toast = useToast();
+
   useEffect(() => {
     if (data) {
       const options = data.map((element: CowType) => ({
@@ -70,16 +69,49 @@ const CowGeneralInformation = ({
     }
   }, [dataDetail, form]);
 
+  // Hàm kiểm tra ngày sinh và ngày nhập
+  const validateDates = (dateOfBirth: dayjs.Dayjs, dateOfEnter: dayjs.Dayjs, cowStatus: string) => {
+    // 1. Kiểm tra dateOfBirth không được muộn hơn dateOfEnter
+    if (dateOfBirth.isAfter(dateOfEnter)) {
+      return { valid: false, message: t('Date of birth cannot be later than date of enter') };
+    }
+
+    // 2. Kiểm tra nếu cowStatus là milkingCow, dateOfBirth phải nhỏ hơn dateOfEnter ít nhất 10 tháng
+    if (cowStatus === 'milkingCow') {
+      const minAgeForMilking = dateOfEnter.subtract(10, 'month');
+      if (dateOfBirth.isAfter(minAgeForMilking)) {
+        return {
+          valid: false,
+          message: t('Cow must be at least 10 months old from date of enter to be a milking cow'),
+        };
+      }
+    }
+
+    return { valid: true };
+  };
+
   const handleFinish = async (values: any) => {
+    const dateOfBirth = dayjs(values.dateOfBirth);
+    const dateOfEnter = dayjs(values.dateOfEnter);
+    const cowStatus = values.cowStatus;
+
+    // Kiểm tra hợp lệ ngày sinh và ngày nhập
+    const validation = validateDates(dateOfBirth, dateOfEnter, cowStatus);
+    if (!validation.valid) {
+      message.error(validation.message);
+      return;
+    }
+
     const data = {
       cowStatus: values.cowStatus,
-      dateOfBirth: dayjs(values.dateOfBirth).format('YYYY-MM-DD'),
-      dateOfEnter: dayjs(values.dateOfEnter).format('YYYY-MM-DD'),
+      dateOfBirth: dateOfBirth.format('YYYY-MM-DD'),
+      dateOfEnter: dateOfEnter.format('YYYY-MM-DD'),
       cowOrigin: values.cowOrigin,
       gender: values.gender,
       cowTypeId: values.cowTypeId,
       description: values.description,
     };
+
     try {
       const response = await trigger({ body: data });
       toast.showSuccess(response.message);
@@ -106,7 +138,23 @@ const CowGeneralInformation = ({
             <Title className="!text-2xl">{t('Date Information')}</Title>
             <div className="flex flex-col gap-5 w-3/4">
               <FormItemComponent
-                rules={[{ required: true }]}
+                rules={[
+                  { required: true, message: t('Please select date of birth') },
+                  ({ getFieldValue }) => ({
+                    validator(_, value) {
+                      if (!value) return Promise.resolve();
+                      const dateOfEnter = getFieldValue('dateOfEnter');
+                      const cowStatus = getFieldValue('cowStatus');
+                      if (dateOfEnter) {
+                        const validation = validateDates(value, dateOfEnter, cowStatus);
+                        if (!validation.valid) {
+                          return Promise.reject(new Error(validation.message));
+                        }
+                      }
+                      return Promise.resolve();
+                    },
+                  }),
+                ]}
                 className="w-full"
                 name="dateOfBirth"
                 label={<LabelForm>{t('Date Of Birth')}</LabelForm>}
@@ -120,7 +168,23 @@ const CowGeneralInformation = ({
                 )}
               </FormItemComponent>
               <FormItemComponent
-                rules={[{ required: true }]}
+                rules={[
+                  { required: true, message: t('Please select date of enter') },
+                  ({ getFieldValue }) => ({
+                    validator(_, value) {
+                      if (!value) return Promise.resolve();
+                      const dateOfBirth = getFieldValue('dateOfBirth');
+                      const cowStatus = getFieldValue('cowStatus');
+                      if (dateOfBirth) {
+                        const validation = validateDates(dateOfBirth, value, cowStatus);
+                        if (!validation.valid) {
+                          return Promise.reject(new Error(validation.message));
+                        }
+                      }
+                      return Promise.resolve();
+                    },
+                  }),
+                ]}
                 className="w-full"
                 name="dateOfEnter"
                 label={<LabelForm>{t('Date Of Enter')}</LabelForm>}
@@ -143,7 +207,7 @@ const CowGeneralInformation = ({
           <Title className="!text-2xl">{t('Cow Information')}</Title>
           <div className="flex flex-col gap-5 w-full">
             <FormItemComponent
-              rules={[{ required: true }]}
+              rules={[{ required: true, message: t('Please select gender') }]}
               name="gender"
               className="w-full"
               label={<LabelForm>{t('Gender')}</LabelForm>}
@@ -158,22 +222,37 @@ const CowGeneralInformation = ({
             </FormItemComponent>
             <FormItemComponent
               name="cowTypeId"
-              rules={[{ required: true }]}
+              rules={[{ required: true, message: t('Please select cow type') }]}
               className="w-full"
               label={<LabelForm>{t('Cow Type')}</LabelForm>}
             >
               {!showEdit ? (
                 <TextBorder>
-                  <Text>
-                    {formatStatusWithCamel(dataDetail?.cowType?.name)}
-                  </Text>
+                  <Text>{formatStatusWithCamel(dataDetail?.cowType?.name)}</Text>
                 </TextBorder>
               ) : (
                 <SelectComponent options={optionsCowType} className="w-full" />
               )}
             </FormItemComponent>
             <FormItemComponent
-              rules={[{ required: true }]}
+              rules={[
+                { required: true, message: t('Please select cow status') },
+                ({ getFieldValue }) => ({
+                  validator(_, value) {
+                    if (value === 'milkingCow') {
+                      const dateOfBirth = getFieldValue('dateOfBirth');
+                      const dateOfEnter = getFieldValue('dateOfEnter');
+                      if (dateOfBirth && dateOfEnter) {
+                        const validation = validateDates(dateOfBirth, dateOfEnter, value);
+                        if (!validation.valid) {
+                          return Promise.reject(new Error(validation.message));
+                        }
+                      }
+                    }
+                    return Promise.resolve();
+                  },
+                }),
+              ]}
               className="w-full"
               name="cowStatus"
               label={<LabelForm>{t('Cow Status')}</LabelForm>}
@@ -188,7 +267,7 @@ const CowGeneralInformation = ({
             </FormItemComponent>
             <FormItemComponent
               name="cowOrigin"
-              rules={[{ required: true }]}
+              rules={[{ required: true, message: t('Please select origin') }]}
               className="w-full"
               label={<LabelForm>{t('Origin')}</LabelForm>}
             >
@@ -206,7 +285,7 @@ const CowGeneralInformation = ({
       <FormItemComponent
         className="w-3/4"
         name="description"
-        rules={[{ required: true }]}
+        rules={[{ required: true, message: t('Please enter description') }]}
         label={<LabelForm>{t('Description')}</LabelForm>}
       >
         {showEdit ? (

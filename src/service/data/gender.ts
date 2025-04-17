@@ -1,10 +1,10 @@
 import { t } from 'i18next';
 
 export const genderData = () => [
-  {
-    value: 'male',
-    label: t('Male'),
-  },
+  // {
+  //   value: 'male',
+  //   label: t('Male'),
+  // },
   {
     value: 'female',
     label: t('Female'),

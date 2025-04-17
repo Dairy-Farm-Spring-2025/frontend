@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Table, Card, Row, Col, message, Button, Divider, Form, Badge, Tooltip } from 'antd';
+import React, { useState, useMemo } from 'react';
+import { Table, Card, Row, Col, message, Button, Divider, Form, Badge, Tooltip, Alert, Steps } from 'antd';
 import ModalComponent from '../../../../../../../../components/Modal/ModalComponent';
 import ButtonComponent from '../../../../../../../../components/Button/ButtonComponent';
 import { Cow } from '../../../../../../../../model/Cow/Cow';
@@ -34,40 +34,39 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
   const selectedCowTypeId = Form.useWatch('cowTypeId', form);
   const selectedCowStatus = Form.useWatch('cowStatus', form);
   const { t } = useTranslation();
+  const [currentStep, setCurrentStep] = useState(0);
 
-  // Map cowTypesData to options for the cowType dropdown
-  const cowTypeOptions = cowTypesData?.map((cowType) => ({
-    label: cowType.name,
-    value: cowType.cowTypeId,
-  })) || [];
+  // Memoize options to prevent unnecessary re-renders
+  const cowTypeOptions = useMemo(
+    () =>
+      cowTypesData?.map((cowType) => ({
+        label: cowType.name,
+        value: cowType.cowTypeId,
+      })) || [],
+    [cowTypesData]
+  );
 
-  // Map dataArea to options for the area dropdown, using areaId as the value
-  const areaOptions = dataArea?.map((area) => ({
-    label: area.name,
-    value: area.areaId,
-  })) || [];
+  const areaOptions = useMemo(
+    () =>
+      dataArea?.map((area) => ({
+        label: area.name,
+        value: area.areaId,
+      })) || [],
+    [dataArea]
+  );
 
-  // Find the selected area's details based on the selectedAreaId
+  // Find selected area's details
   const selectedArea = dataArea?.find(area => area.areaId === selectedAreaId);
   const selectedAreaType = selectedArea?.areaType;
   const selectedAreaDescription = selectedArea?.description;
 
-  // Format areaType for display (e.g., "cowHousing" -> "Cow Housing")
+  // Format areaType for display
   const formattedAreaType = selectedAreaType
     ? selectedAreaType
       .replace(/([A-Z])/g, ' $1')
       .replace(/^./, str => str.toUpperCase())
       .trim()
     : '';
-
-  // Debugging logs
-  console.log('selectedAreaId:', selectedAreaId);
-  console.log('selectedAreaType:', selectedAreaType);
-  console.log('selectedCowTypeId:', selectedCowTypeId);
-  console.log('selectedCowStatus:', selectedCowStatus);
-  console.log('API URL:', selectedAreaType && selectedCowTypeId && selectedCowStatus
-    ? `pens/available/cow?areaType=${selectedAreaType}&cowTypeId=${selectedCowTypeId}&cowStatus=${selectedCowStatus}`
-    : '');
 
   // Fetch pens based on areaType, cowTypeId, and cowStatus
   const { data: availablePens } = useFetcher<Pen[]>(
@@ -97,6 +96,7 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
     setSelectedCows([]);
     setSelectedPens([]);
     form.resetFields();
+    setCurrentStep(0);
     modal.closeModal();
   };
 
@@ -128,6 +128,7 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
       const selectedPenIds = dataPenInArea?.slice(0, selectedCowIds.length).map(pen => pen.penId) || [];
       setSelectedPens(selectedPenIds);
     }
+    setCurrentStep(2);
   };
 
   const cowColumns = [
@@ -186,44 +187,70 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
     },
   ];
 
-  // Use the cowStatus() function to populate cowStatusOptions
   const cowStatusOptions = cowStatus();
+
+  const steps = [
+    { title: t('Select Criteria') },
+    { title: t('Select Cows & Pens') },
+    { title: t('Confirm') },
+  ];
 
   return (
     <div className="mb-4">
-      <ButtonComponent onClick={modal.openModal} type="primary" icon={<CheckCircleOutlined />}>
+      <ButtonComponent
+        onClick={() => {
+          modal.openModal();
+          setCurrentStep(0);
+        }}
+        type="primary"
+        icon={<CheckCircleOutlined />}
+        size="large"
+      >
         {t('Move a large number of Cow')}
       </ButtonComponent>
       <ModalComponent
-        title={t('Bulk Cow Movement')}
-        width={1100}
+
+        width={1200}
         open={modal.open}
         onCancel={onClose}
-        footer={[
-          <Button key="back" onClick={onClose} disabled={isLoading}>
-            {t('Cancel')}
-          </Button>,
-          <Button
-            key="submit"
-            type="primary"
-            onClick={handleSubmit}
-            loading={isLoading}
-            disabled={selectedCows.length !== selectedPens.length || !selectedCows.length}
-          >
-            {t('Submit')}
-          </Button>,
-        ]}
-        className="rounded-lg shadow-lg"
+        footer={
+          <div className="flex justify-end space-x-4">
+            <Button key="back" onClick={onClose} disabled={isLoading} size="large">
+              {t('Cancel')}
+            </Button>
+            <Button
+              key="submit"
+              type="primary"
+              onClick={handleSubmit}
+              loading={isLoading}
+              disabled={selectedCows.length !== selectedPens.length || !selectedCows.length}
+              size="large"
+            >
+              {t('Submit')}
+            </Button>
+          </div>
+        }
+        className="rounded-xl shadow-2xl"
       >
-        <Card bordered={false} className="p-4">
-          <Form form={form} layout="vertical">
+        <Steps current={currentStep} items={steps} className="mb-8" />
+        <Card bordered={false} className="p-6 bg-gray-50 rounded-lg">
+          <Form
+            form={form}
+            layout="vertical"
+            onValuesChange={() => {
+              if (selectedAreaId && selectedCowTypeId && selectedCowStatus) setCurrentStep(1);
+            }}
+          >
             {/* Step 1: Area, CowType, and CowStatus Selection */}
             <div className="mb-8">
-              <Title className="text-blue-600 mb-4">
-                {t('Step 1: Choose Area, Cow Type, and Status')}
+              <Title className="text-blue-600 mb-6 flex items-center">
+                <span className="inline-block w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mr-2">
+                  1
+                </span>
+                {t('Step 1: Choose Area, Cow Type and Cow Status')}
               </Title>
-              <Row gutter={[16, 16]}>
-                <Col span={8}>
+              <Row gutter={[24, 24]}>
+                <Col xs={24} md={8}>
                   <Form.Item
                     name="selectedAreaId"
                     rules={[{ required: true, message: t('Please select an area') }]}
@@ -241,12 +268,9 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
                       }
                     />
                   </Form.Item>
-                  {/* Show Area Description only when an area is selected */}
                   {selectedAreaId && selectedAreaDescription && (
-                    <div className="mt-2 p-3 border border-gray-200 rounded-md bg-gray-50 shadow-sm">
-                      <h4 className="text-sm font-semibold text-gray-700 mb-1">
-                        {t('Area Description')}:
-                      </h4>
+                    <div className="mt-3 p-4 border border-gray-200 rounded-lg bg-white shadow-sm transition-all">
+                      <h4 className="text-sm font-semibold text-gray-700 mb-2">{t('Area Description')}:</h4>
                       <div
                         className="text-gray-600 text-sm leading-relaxed mb-2"
                         dangerouslySetInnerHTML={{ __html: selectedAreaDescription }}
@@ -257,9 +281,9 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
                     </div>
                   )}
                 </Col>
-                <Col span={8}>
+                <Col xs={24} md={8}>
                   <Form.Item
-                    name="cowTypeId" // Fixed typo: changed "cornTypeId" to "cowTypeId"
+                    name="cowTypeId"
                     rules={[{ required: true, message: t('Please select a cow type') }]}
                   >
                     <SelectComponent
@@ -270,7 +294,7 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
                     />
                   </Form.Item>
                 </Col>
-                <Col span={8}>
+                <Col xs={24} md={8}>
                   <Form.Item
                     name="cowStatus"
                     rules={[{ required: true, message: t('Please select a cow status') }]}
@@ -285,82 +309,100 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
                 </Col>
               </Row>
               {selectedAreaId && selectedCowTypeId && selectedCowStatus && !dataPenInArea.length && (
-                <p className="text-red-500 mt-2">{t('No empty pens available for the selected criteria')}</p>
+                <Alert
+                  message={t('No empty pens available for the selected criteria')}
+                  type="error"
+                  showIcon
+                  className="mt-3 rounded-lg"
+                />
               )}
             </div>
 
-            <Divider dashed className="my-8" />
+            <Divider className="my-10 border-gray-300" />
 
             {/* Step 2: Cows and Pens Selection */}
             <div className="mb-8">
-              <Title className="text-blue-600 mb-4">
+              <Title className="text-blue-600 mb-6 flex items-center">
+                <span className="inline-block w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mr-2">
+                  2
+                </span>
                 {t('Step 2: Select Cows and Pens')}
               </Title>
               <Row gutter={[24, 24]} align="stretch">
-                <Col span={12}>
+                <Col xs={24} lg={12}>
                   <Card
-                    title={<span>{t('Cows')} <Badge count={selectedCows.length} className="ml-2" /></span>}
+                    title={
+                      <span className="text-lg font-semibold">
+                        {t('Cows')}{' '}
+                        <Badge count={selectedCows.length} className="ml-2" style={{ backgroundColor: '#1890ff' }} />
+                      </span>
+                    }
                     bordered={false}
-                    className="shadow-sm h-full"
+                    className="shadow-md h-full bg-white rounded-lg"
                   >
                     <Table
                       dataSource={availableCows}
                       columns={cowColumns}
                       rowKey="cowId"
                       pagination={{ pageSize: 7 }}
-                      size="small"
-                      rowClassName={() => 'hover:bg-gray-50'}
+                      size="middle"
+                      rowClassName="hover:bg-blue-50 transition-colors"
+                      scroll={{ x: 'max-content' }}
                     />
                   </Card>
                 </Col>
-                <Col span={12} style={{ position: 'relative' }}>
-                  <div
-                    style={{
-                      position: 'absolute',
-                      left: '-12px',
-                      top: 0,
-                      bottom: 0,
-                      width: '2px',
-                      backgroundColor: '#d9d9d9',
-                      zIndex: 1,
-                    }}
-                  />
+                <Col xs={24} lg={12}>
                   <Card
-                    title={<span>{t('Pens')} <Badge count={selectedPens.length} className="ml-2" /></span>}
+                    title={
+                      <span className="text-lg font-semibold">
+                        {t('Pens')}{' '}
+                        <Badge count={selectedPens.length} className="ml-2" style={{ backgroundColor: '#1890ff' }} />
+                      </span>
+                    }
                     bordered={false}
-                    className="shadow-sm h-full"
+                    className="shadow-md h-full bg-white rounded-lg"
                   >
                     <Table
                       dataSource={dataPenInArea}
                       columns={penColumns}
                       rowKey="penId"
                       pagination={{ pageSize: 7 }}
-                      size="small"
-                      rowClassName={() => 'hover:bg-gray-50'}
+                      size="middle"
+                      rowClassName="hover:bg-blue-50 transition-colors"
+                      scroll={{ x: 'max-content' }}
                     />
                   </Card>
                 </Col>
               </Row>
               {selectedCows.length !== selectedPens.length && (
-                <p className="text-red-500 mt-4 text-center">
-                  {t('Selected cows must match selected pens', {
+                <Alert
+                  message={t('Selected cows must match selected pens', {
                     count0: selectedCows.length,
                     count1: selectedPens.length,
                   })}
-                </p>
+                  type="warning"
+                  showIcon
+                  className="mt-4 rounded-lg text-center"
+                />
               )}
             </div>
 
-            <Divider dashed className="my-8" />
+            <Divider className="my-10 border-gray-300" />
 
             {/* Step 3: Actions */}
             <div className="text-center">
+              <Title className="text-blue-600 mb-6 flex items-center justify-center">
+                <span className="inline-block w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mr-2">
+                  3
+                </span>
+                {t('Confirm Selection')}
+              </Title>
               <ButtonComponent
                 onClick={handleSelectAllCows}
                 type="primary"
                 size="large"
                 disabled={!selectedAreaId || !selectedCowTypeId || !selectedCowStatus || !dataPenInArea.length}
-                className="mr-4 hover:bg-blue-50"
+                className="hover:bg-blue-600 transition-colors"
               >
                 {selectedCows.length > 0 ? t('Deselect All') : t('Select All Cows')} (
                 {selectedCows.length}/{dataPenInArea?.length || 0})

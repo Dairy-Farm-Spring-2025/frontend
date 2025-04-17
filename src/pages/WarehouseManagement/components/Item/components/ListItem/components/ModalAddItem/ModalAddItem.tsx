@@ -29,7 +29,7 @@ const ModalAddItem = ({ modal, mutate }: ModalAddItemProps) => {
   const formValues = Form.useWatch([], form);
   const [disabledButton, setDisabledButton] = useState(true);
   const [warehouse, setWarehouse] = useState<WarehouseType>();
-  const [available, setAvailable] = useState(false);
+  const [, setAvailable] = useState(false);
   const itemManagementWarehouse = useSelector(
     (state: RootState) => state.itemManagement
   );

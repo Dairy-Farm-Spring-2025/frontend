@@ -8,80 +8,23 @@ import { t } from 'i18next';
 import { LiaChartAreaSolid } from 'react-icons/lia';
 import { useNavigate } from 'react-router-dom';
 import { DataGroupAreaPen } from '../AreaList';
+import { cowStatus } from '@service/data/cowStatus'; // Import cowStatus
 
 interface CardAreaPenProps {
   element: DataGroupAreaPen;
   handleEdit: any;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const CardAreaPen = ({ element }: CardAreaPenProps) => {
   const navigate = useNavigate();
 
-  // const columns: Column[] = [
-  //   {
-  //     dataIndex: 'createdAt',
-  //     key: 'createdAt',
-  //     title: t('Created Date'),
-  //     render: (data) => formatDateHour(data),
-  //     filteredDate: true,
-  //   },
-  //   {
-  //     dataIndex: 'name',
-  //     key: 'name',
-  //     title: t('Pen Name'),
-  //     render: (element: string, data) => (
-  //       <p
-  //         onClick={() => handleEdit(data.penId)}
-  //         className="text-blue-600 underline underline-offset-1 cursor-pointer"
-  //       >
-  //         {element}
-  //       </p>
-  //     ),
-  //     searchable: true,
-  //   },
-  //   {
-  //     dataIndex: 'length',
-  //     key: 'length',
-  //     title: t('Dimensions'),
-  //     render: (_: any, data) => (
-  //       <Tooltip
-  //         className="tooltip-content"
-  //         placement="top"
-  //         title={
-  //           <div className="dimensions flex flex-col">
-  //             <p>
-  //               <strong>{t('Length')}: </strong> {data.area.penLength} m
-  //             </p>{' '}
-  //             <p>
-  //               <strong> {t('Width')}: </strong>
-  //               {data.area.penWidth} m{' '}
-  //             </p>
-  //           </div>
-  //         }
-  //       >
-  //         <span>
-  //           {data.area.penLength} x {data.area.penWidth} m
-  //         </span>
-  //       </Tooltip>
-  //     ),
-  //   },
-  //   {
-  //     dataIndex: 'penStatus',
-  //     key: 'penStatus',
-  //     title: t('Status'),
-  //     render: (statusValue: string) => {
-  //       // Find the label for the given statusValue
-  //       const status = penStatus.find((status) => status.value === statusValue);
-  //       // Return the Tag with the status label
-  //       return status ? (
-  //         <TagComponents color="green">{status.label}</TagComponents>
-  //       ) : null;
-  //     },
-  //     filterable: true,
-  //     filterOptions: penStatusFilter,
-  //   },
-  // ];
+  // Helper function to get cowStatus label
+  const getCowStatusLabel = (status: string | null) => {
+    if (!status) return 'N/A';
+    const statusOption = cowStatus().find((s) => s.value === status);
+    return statusOption ? statusOption.label : status; // Fallback to raw status if not found
+  };
+
   return (
     <CardComponent key={element.area?.areaId} className="!h-full">
       <div className="space-y-4">
@@ -126,50 +69,47 @@ const CardAreaPen = ({ element }: CardAreaPenProps) => {
             <TextTitle
               title={t('Max pen')}
               description={
-                <p>{element?.area?.maxPen ? element?.area?.maxPen : 0}</p>
+                <p>{element?.area?.maxPen ?? 0}</p>
               }
             />
             <TextTitle
               title={t('Number in row')}
               description={
-                <p>
-                  {element?.area?.numberInRow ? element?.area?.numberInRow : 0}
-                </p>
+                <p>{element?.area?.numberInRow ?? 0}</p>
               }
             />
             <TextTitle
               title={t('Occupied pens')}
               description={
-                <p>
-                  {element?.area?.occupiedPens
-                    ? element?.area?.occupiedPens
-                    : 0}
-                </p>
+                <p>{element?.area?.occupiedPens ?? 0}</p>
               }
             />
             <TextTitle
               title={t('Empty pens')}
               description={
-                <p>{element?.area?.emptyPens ? element?.area?.emptyPens : 0}</p>
+                <p>{element?.area?.emptyPens ?? 0}</p>
               }
             />
             <TextTitle
               title={t('Damaged pens')}
               description={
-                <p>
-                  {element?.area?.damagedPens ? element?.area?.damagedPens : 0}
-                </p>
+                <p>{element?.area?.damagedPens ?? 0}</p>
+              }
+            />
+            <TextTitle
+              title={t('Cow Status')}
+              description={
+                <p>{getCowStatusLabel(element?.area?.cowStatus)}</p>
+              }
+            />
+            <TextTitle
+              title={t('Cow Type')}
+              description={
+                <p>{element?.area?.cowTypeEntity?.name ?? 'N/A'}</p>
               }
             />
           </div>
         </div>
-        {/* <Divider />
-        <TableComponent
-          className="!shadow-none"
-          columns={columns}
-          dataSource={element?.pens ? formatSTT(element?.pens) : []}
-          pagination={{ pageSize: 5 }}
-        /> */}
       </div>
     </CardComponent>
   );
