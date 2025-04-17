@@ -16,4 +16,8 @@ export type Area = {
   damagedPens: number;
   cowStatus: string;
   cowTypeId: string;
+  cowTypeEntity: {
+    cowTypeId: string;
+    name: string;
+  }
 };
