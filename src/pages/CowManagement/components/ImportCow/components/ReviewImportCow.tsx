@@ -1,3 +1,7 @@
+
+
+
+
 import { UploadOutlined } from '@ant-design/icons';
 import ButtonComponent from '@components/Button/ButtonComponent';
 import useFetcher from '@hooks/useFetcher';
@@ -14,6 +18,7 @@ const ReviewImportCow = ({ onReviewData }: ReviewImportCowProps) => {
     'POST',
     'multipart/form-data'
   );
+
   const handleUpload = async (file: File) => {
     const formData = new FormData();
     formData.append('file', file);
@@ -31,54 +36,62 @@ const ReviewImportCow = ({ onReviewData }: ReviewImportCowProps) => {
       const cowErrors = cowResponse.errors || [];
       const healthErrors = healthResponse.errors || [];
 
-      // Combine cow successes with health record data (including errors)
-      const combinedSuccesses = cowSuccesses.map((cow: any) => {
-        // Look for a matching health record in successes
-        let healthRecord = healthSuccesses.find(
-          (health: any) => health.cowName === cow.name
-        );
+      // Include both successes and errors in combinedSuccesses
+      const combinedSuccesses = [
+        ...cowSuccesses.map((cow: any) => {
+          const healthRecord = healthSuccesses.find((health: any) => health.cowName === cow.name) || null;
+          return {
+            name: cow.name,
+            cowStatus: cow.cowStatus,
+            dateOfBirth: cow.dateOfBirth,
+            dateOfEnter: cow.dateOfEnter,
+            cowOrigin: cow.cowOrigin,
+            gender: cow.gender,
+            cowTypeName: cow.cowTypeName,
+            description: cow.description,
+            healthRecord: healthRecord,
+            errorStrings: [],
+          };
+        }),
+        ...cowErrors.map((err: any) => {
+          const healthRecord = healthErrors.find((health: any) => health.cowName === err.name) || null;
+          return {
+            name: err.name,
+            cowStatus: err.cowStatus,
+            dateOfBirth: err.dateOfBirth,
+            dateOfEnter: err.dateOfEnter,
+            cowOrigin: err.cowOrigin,
+            gender: err.gender,
+            cowTypeName: err.cowTypeName,
+            description: err.description,
+            healthRecord: healthRecord || {
+              status: healthRecord?.status || healthRecord?.healthRecordStatus || '',
+              size: healthRecord?.size || null,
+              bodyTemperature: healthRecord?.bodyTemperature || null,
+              heartRate: healthRecord?.heartRate || null,
+              respiratoryRate: healthRecord?.respiratoryRate || null,
+              ruminateActivity: healthRecord?.ruminateActivity || null,
+              chestCircumference: healthRecord?.chestCircumference || null,
+              bodyLength: healthRecord?.bodyLength || null,
+              description: healthRecord?.description || null,
+            },
+            errorStrings: err.errorStrings || [],
+          };
+        }),
+      ];
 
-        // If no matching success, look for a matching health record in errors
-        if (!healthRecord) {
-          const healthError = healthErrors.find(
-            (health: any) => health.cowName === cow.name
-          );
-          if (healthError) {
-            healthRecord = {
-              status: healthError.healthRecordStatus || healthError.status,
-              size: healthError.size,
-              bodyTemperature: healthError.bodyTemperature,
-              heartRate: healthError.heartRate,
-              respiratoryRate: healthError.respiratoryRate,
-              ruminateActivity: healthError.ruminateActivity,
-              chestCircumference: healthError.chestCircumference,
-              bodyLength: healthError.bodyLength,
-              description: healthError.description,
-            };
-          }
-        }
-
-        return {
-          name: cow.name,
-          cowStatus: cow.cowStatus,
-          dateOfBirth: cow.dateOfBirth,
-          dateOfEnter: cow.dateOfEnter,
-          cowOrigin: cow.cowOrigin,
-          gender: cow.gender,
-          cowTypeName: cow.cowTypeName,
-          description: cow.description,
-          healthRecord: healthRecord || null,
-        };
-      });
-
-      // Map errors, handling errorString array for health errors
+      // Map errors for both cow and health
       const combinedErrors = [
-        ...cowErrors.map((err: string) => ({ source: 'cow', message: err })),
+        ...cowErrors.map((err: any) => ({
+          source: 'cow',
+          message: `${err.name}: ${err.errorStrings?.join(', ') || 'Unknown error'}`,
+        })),
         ...healthErrors.map((err: any) => ({
           source: 'health',
-          message: `${err.cowName}: ${err.errorString?.join(', ') || 'Unknown error'}`
+          message: `${err.cowName}: ${err.errorString?.join(', ') || 'Unknown error'}`,
         })),
       ];
+
       console.log('Combined successes:', combinedSuccesses);
       console.log('Combined errors:', combinedErrors);
 
@@ -113,48 +126,57 @@ const ReviewImportCow = ({ onReviewData }: ReviewImportCowProps) => {
         const cowErrors = Array.isArray(cowResponse.errors) ? cowResponse.errors : [];
         const healthErrors = Array.isArray(healthResponse.errors) ? healthResponse.errors : [];
 
-        combinedSuccesses = cowSuccesses.map((cow: any) => {
-          let healthRecord = healthSuccesses.find(
-            (health: any) => health.cowName === cow.name
-          );
-
-          if (!healthRecord) {
-            const healthError = healthErrors.find(
-              (health: any) => health.cowName === cow.name
-            );
-            if (healthError) {
-              healthRecord = {
-                status: healthError.healthRecordStatus || healthError.status,
-                size: healthError.size,
-                bodyTemperature: healthError.bodyTemperature,
-                heartRate: healthError.heartRate,
-                respiratoryRate: healthError.respiratoryRate,
-                ruminateActivity: healthError.ruminateActivity,
-                chestCircumference: healthError.chestCircumference,
-                bodyLength: healthError.bodyLength,
-                description: healthError.description,
-              };
-            }
-          }
-
-          return {
-            name: cow.name,
-            cowStatus: cow.cowStatus,
-            dateOfBirth: cow.dateOfBirth,
-            dateOfEnter: cow.dateOfEnter,
-            cowOrigin: cow.cowOrigin,
-            gender: cow.gender,
-            cowTypeName: cow.cowTypeName,
-            description: cow.description,
-            healthRecord: healthRecord || null,
-          };
-        });
+        combinedSuccesses = [
+          ...cowSuccesses.map((cow: any) => {
+            const healthRecord = healthSuccesses.find((health: any) => health.cowName === cow.name) || null;
+            return {
+              name: cow.name,
+              cowStatus: cow.cowStatus,
+              dateOfBirth: cow.dateOfBirth,
+              dateOfEnter: cow.dateOfEnter,
+              cowOrigin: cow.cowOrigin,
+              gender: cow.gender,
+              cowTypeName: cow.cowTypeName,
+              description: cow.description,
+              healthRecord: healthRecord,
+              errorStrings: [],
+            };
+          }),
+          ...cowErrors.map((err: any) => {
+            const healthRecord = healthErrors.find((health: any) => health.cowName === err.name) || null;
+            return {
+              name: err.name,
+              cowStatus: err.cowStatus,
+              dateOfBirth: err.dateOfBirth,
+              dateOfEnter: err.dateOfEnter,
+              cowOrigin: err.cowOrigin,
+              gender: err.gender,
+              cowTypeName: err.cowTypeName,
+              description: err.description,
+              healthRecord: healthRecord || {
+                status: healthRecord?.status || healthRecord?.healthRecordStatus || '',
+                size: healthRecord?.size || null,
+                bodyTemperature: healthRecord?.bodyTemperature || null,
+                heartRate: healthRecord?.heartRate || null,
+                respiratoryRate: healthRecord?.respiratoryRate || null,
+                ruminateActivity: healthRecord?.ruminateActivity || null,
+                chestCircumference: healthRecord?.chestCircumference || null,
+                bodyLength: healthRecord?.bodyLength || null,
+                description: healthRecord?.description || null,
+              },
+              errorStrings: err.errorStrings || [],
+            };
+          }),
+        ];
 
         combinedErrors = [
-          ...cowErrors.map((err: string) => ({ source: 'cow', message: err })),
+          ...cowErrors.map((err: any) => ({
+            source: 'cow',
+            message: `${err.name}: ${err.errorStrings?.join(', ') || 'Unknown error'}`,
+          })),
           ...healthErrors.map((err: any) => ({
             source: 'health',
-            message: `${err.cowName}: ${err.errorString?.join(', ') || 'Unknown error'}`
+            message: `${err.cowName}: ${err.errorString?.join(', ') || 'Unknown error'}`,
           })),
         ];
 

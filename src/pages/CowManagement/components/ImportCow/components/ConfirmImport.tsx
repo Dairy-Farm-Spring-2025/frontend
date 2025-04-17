@@ -93,7 +93,6 @@ const ConfirmImport = ({
                 cowName: cow.name || '',
                 status: cow.healthRecord?.status || '',
                 size: Math.round(cow.healthRecord?.size || 0),
-                period: cow.cowStatus || '',
                 bodyTemperature: Math.round(cow.healthRecord?.bodyTemperature || 0),
                 heartRate: Math.round(cow.healthRecord?.heartRate || 0),
                 respiratoryRate: Math.round(cow.healthRecord?.respiratoryRate || 0),

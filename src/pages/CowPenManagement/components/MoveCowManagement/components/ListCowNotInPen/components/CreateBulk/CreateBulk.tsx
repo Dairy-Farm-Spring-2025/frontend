@@ -11,6 +11,9 @@ import { Area } from '@model/Area';
 import Title from '@components/UI/Title';
 import { formatStatusWithCamel } from '@utils/format';
 import { CheckCircleOutlined } from '@ant-design/icons';
+import { CowType } from '@model/Cow/CowType';
+import { COW_TYPE_PATH } from '@service/api/CowType/cowType';
+import { cowStatus } from '@service/data/cowStatus';
 
 interface CreateBulkModalProps {
   modal: any;
@@ -25,16 +28,58 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
 }) => {
   const { trigger, isLoading } = useFetcher('cow-pens/create-bulk', 'POST');
   const { data: dataArea } = useFetcher<Area[]>('areas', 'GET');
+  const { data: cowTypesData } = useFetcher<CowType[]>(COW_TYPE_PATH.COW_TYPES, 'GET');
   const [form] = Form.useForm();
-  const selectedArea = Form.useWatch('selectedArea', form);
-  const { data: allPensInArea } = useFetcher<Pen[]>(
-    selectedArea ? `pens/area/${selectedArea}` : '',
+  const selectedAreaId = Form.useWatch('selectedAreaId', form);
+  const selectedCowTypeId = Form.useWatch('cowTypeId', form);
+  const selectedCowStatus = Form.useWatch('cowStatus', form);
+  const { t } = useTranslation();
+
+  // Map cowTypesData to options for the cowType dropdown
+  const cowTypeOptions = cowTypesData?.map((cowType) => ({
+    label: cowType.name,
+    value: cowType.cowTypeId,
+  })) || [];
+
+  // Map dataArea to options for the area dropdown, using areaId as the value
+  const areaOptions = dataArea?.map((area) => ({
+    label: area.name,
+    value: area.areaId,
+  })) || [];
+
+  // Find the selected area's details based on the selectedAreaId
+  const selectedArea = dataArea?.find(area => area.areaId === selectedAreaId);
+  const selectedAreaType = selectedArea?.areaType;
+  const selectedAreaDescription = selectedArea?.description;
+
+  // Format areaType for display (e.g., "cowHousing" -> "Cow Housing")
+  const formattedAreaType = selectedAreaType
+    ? selectedAreaType
+      .replace(/([A-Z])/g, ' $1')
+      .replace(/^./, str => str.toUpperCase())
+      .trim()
+    : '';
+
+  // Debugging logs
+  console.log('selectedAreaId:', selectedAreaId);
+  console.log('selectedAreaType:', selectedAreaType);
+  console.log('selectedCowTypeId:', selectedCowTypeId);
+  console.log('selectedCowStatus:', selectedCowStatus);
+  console.log('API URL:', selectedAreaType && selectedCowTypeId && selectedCowStatus
+    ? `pens/available/cow?areaType=${selectedAreaType}&cowTypeId=${selectedCowTypeId}&cowStatus=${selectedCowStatus}`
+    : '');
+
+  // Fetch pens based on areaType, cowTypeId, and cowStatus
+  const { data: availablePens } = useFetcher<Pen[]>(
+    selectedAreaType && selectedCowTypeId && selectedCowStatus
+      ? `pens/available/cow?areaType=${selectedAreaType}&cowTypeId=${selectedCowTypeId}&cowStatus=${selectedCowStatus}`
+      : '',
     'GET'
   );
-  const dataPenInArea = allPensInArea?.filter(pen => pen.penStatus === 'empty') || [];
+
+  const dataPenInArea = availablePens?.filter(pen => pen.penStatus === 'empty') || [];
   const [selectedCows, setSelectedCows] = useState<number[]>([]);
   const [selectedPens, setSelectedPens] = useState<string[]>([]);
-  const { t } = useTranslation();
 
   const handleCowSelection = (cowId: number) => {
     setSelectedCows(prev =>
@@ -74,7 +119,7 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
 
   const handleSelectAllCows = () => {
     const numPens = dataPenInArea?.length || 0;
-    if (selectedCows.length > 0) { // Chỉ kiểm tra số bò đã chọn
+    if (selectedCows.length > 0) {
       setSelectedCows([]);
       setSelectedPens([]);
     } else {
@@ -97,7 +142,7 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
             type="checkbox"
             checked={selectedCows.includes(cowId)}
             onChange={() => handleCowSelection(cowId)}
-            disabled={!selectedArea || !dataPenInArea.length}
+            disabled={!selectedAreaId || !selectedCowTypeId || !selectedCowStatus || !dataPenInArea.length}
           />
         </Tooltip>
       ),
@@ -125,7 +170,7 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
             type="checkbox"
             checked={selectedPens.includes(penId)}
             onChange={() => handlePenSelection(penId)}
-            disabled={!selectedArea || !dataPenInArea.length}
+            disabled={!selectedAreaId || !selectedCowTypeId || !selectedCowStatus || !dataPenInArea.length}
           />
         </Tooltip>
       ),
@@ -140,6 +185,9 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
       ),
     },
   ];
+
+  // Use the cowStatus() function to populate cowStatusOptions
+  const cowStatusOptions = cowStatus();
 
   return (
     <div className="mb-4">
@@ -169,27 +217,75 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
       >
         <Card bordered={false} className="p-4">
           <Form form={form} layout="vertical">
-            {/* Step 1: Area Selection */}
+            {/* Step 1: Area, CowType, and CowStatus Selection */}
             <div className="mb-8">
               <Title className="text-blue-600 mb-4">
-                {t('Step 1: Choose Area')}
+                {t('Step 1: Choose Area, Cow Type, and Status')}
               </Title>
-              <Form.Item name="selectedArea" rules={[{ required: true, message: t('Please select an area') }]}>
-                <SelectComponent
-                  style={{ width: '100%', maxWidth: 400 }}
-                  options={dataArea?.map(area => ({ value: area.areaId, label: area.name })) || []}
-                  placeholder={t('Select an area')}
-                  size="large"
-                  showSearch
-                  filterOption={(input, option) =>
-                    typeof option?.label === 'string'
-                      ? option.label.toLowerCase().includes(input.toLowerCase())
-                      : false
-                  }
-                />
-              </Form.Item>
-              {selectedArea && !dataPenInArea.length && (
-                <p className="text-red-500 mt-2">{t('No empty pens available in this area')}</p>
+              <Row gutter={[16, 16]}>
+                <Col span={8}>
+                  <Form.Item
+                    name="selectedAreaId"
+                    rules={[{ required: true, message: t('Please select an area') }]}
+                  >
+                    <SelectComponent
+                      style={{ width: '100%' }}
+                      options={areaOptions}
+                      placeholder={t('Select an area')}
+                      size="large"
+                      showSearch
+                      filterOption={(input, option) =>
+                        typeof option?.label === 'string'
+                          ? option.label.toLowerCase().includes(input.toLowerCase())
+                          : false
+                      }
+                    />
+                  </Form.Item>
+                  {/* Show Area Description only when an area is selected */}
+                  {selectedAreaId && selectedAreaDescription && (
+                    <div className="mt-2 p-3 border border-gray-200 rounded-md bg-gray-50 shadow-sm">
+                      <h4 className="text-sm font-semibold text-gray-700 mb-1">
+                        {t('Area Description')}:
+                      </h4>
+                      <div
+                        className="text-gray-600 text-sm leading-relaxed mb-2"
+                        dangerouslySetInnerHTML={{ __html: selectedAreaDescription }}
+                      />
+                      <div className="text-gray-600 text-sm">
+                        <span className="font-medium">{t('Area Type')}:</span> {formattedAreaType}
+                      </div>
+                    </div>
+                  )}
+                </Col>
+                <Col span={8}>
+                  <Form.Item
+                    name="cowTypeId" // Fixed typo: changed "cornTypeId" to "cowTypeId"
+                    rules={[{ required: true, message: t('Please select a cow type') }]}
+                  >
+                    <SelectComponent
+                      style={{ width: '100%' }}
+                      options={cowTypeOptions}
+                      placeholder={t('Select cow type')}
+                      size="large"
+                    />
+                  </Form.Item>
+                </Col>
+                <Col span={8}>
+                  <Form.Item
+                    name="cowStatus"
+                    rules={[{ required: true, message: t('Please select a cow status') }]}
+                  >
+                    <SelectComponent
+                      style={{ width: '100%' }}
+                      options={cowStatusOptions}
+                      placeholder={t('Select cow status')}
+                      size="large"
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+              {selectedAreaId && selectedCowTypeId && selectedCowStatus && !dataPenInArea.length && (
+                <p className="text-red-500 mt-2">{t('No empty pens available for the selected criteria')}</p>
               )}
             </div>
 
@@ -263,7 +359,7 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
                 onClick={handleSelectAllCows}
                 type="primary"
                 size="large"
-                disabled={!selectedArea || !dataPenInArea.length}
+                disabled={!selectedAreaId || !selectedCowTypeId || !selectedCowStatus || !dataPenInArea.length}
                 className="mr-4 hover:bg-blue-50"
               >
                 {selectedCows.length > 0 ? t('Deselect All') : t('Select All Cows')} (

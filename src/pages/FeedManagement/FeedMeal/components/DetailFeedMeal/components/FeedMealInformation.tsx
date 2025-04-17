@@ -23,11 +23,7 @@ const FeedMealInformation = ({ data }: FeedMealInformationProps) => {
       children: formatStatusWithCamel(data?.cowStatus),
       span: 3,
     },
-    {
-      label: t('Shift'),
-      children: formatStatusWithCamel(data?.shift),
-      span: 3,
-    },
+
   ];
   return (
     <div className="p-2">
