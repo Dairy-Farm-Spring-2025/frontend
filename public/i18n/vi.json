@@ -410,7 +410,7 @@
   "pagination": {
     "total_page": "Tổng {{items}} thành phần"
   },
-  "Step 1: Choose Area": "Bước 1: Hãy chọn loại khu vực trước",
+  "Step 1: Choose Area, Cow Type and Cow Status": " Hãy chọn loại khu vực, loại bò và trạng thái bò",
   "Join task": "Tham gia công việc",
   "View report": "Xem báo cáo",
   "Task is expired": "Công việc đã quá hạn",
@@ -511,7 +511,7 @@
   "Years": "Năm",
   "Food": "Thức ăn",
   "Move a large number of Cow": "Di chuyển số lượng lớn bò",
-  "Step 2: Select Cows and Pens": "Bước 2: Chọn bò và chuồng cần chuyển",
+  "Step 2: Select Cows and Pens": " Chọn bò và chuồng phù hợp cần chuyển",
   "Max": "tối đa",
   "Illness Information": "Thông tin bệnh",
   "Illness Details": "Chi tiết bệnh",
@@ -675,5 +675,14 @@
   "Equipment Required": "Thiết bị cần thiết",
   "Required quantity must not exceed available quantity ({{quantity}})": "Số lượng yêu cầu không được vượt qua số lượng cho phép ({{quantity}})",
   "equipments": "Thiết bị",
-  "Area updated successfully!": "Cập nhật khu vực thành công!"
+  "Area updated successfully!": "Cập nhật khu vực thành công!",
+  "No empty pens available for the selected criteria": "Không có chuồng phù hợp cho loại bò này",
+  "Select Criteria": "Chọn khu vực, loại bò, trạng thái bò",
+  "Select Cows & Pens": "Chọn bò và chuồng",
+  "Select an area": "chọn khu vực",
+  "Select cow type": "chọn loại bò",
+  "Select cow status": "chọn trạng thái bò",
+  "Confirm Selection": "Xác nhận",
+  "Date of Birth must be at least 10 months before Date of Enter for Milking Cow": "Bò đang vắt sữa phải có ngày sinh ít nhất 10 tháng tuổi",
+  "Cow must be at least 10 months old from date of enter to be a milking cow": "Bò đang vắt sữa phải có ngày sinh ít nhất 10 tháng tuổi"
 }

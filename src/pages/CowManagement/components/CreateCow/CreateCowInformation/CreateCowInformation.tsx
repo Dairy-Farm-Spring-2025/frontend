@@ -12,12 +12,13 @@ import { CowType } from '@model/Cow/CowType';
 import { cowOrigin } from '@service/data/cowOrigin';
 import { cowStatus } from '@service/data/cowStatus';
 import { genderData } from '@service/data/gender';
+
+
 const CreateCowInformation = () => {
   const { data } = useFetcher<any[]>('cow-types', 'GET');
-  const [optionsCowType, setOptionsCowType] = useState<SelectProps['options']>(
-    []
-  );
+  const [optionsCowType, setOptionsCowType] = useState<SelectProps['options']>([]);
   const { t } = useTranslation();
+
   useEffect(() => {
     if (data) {
       const options = data.map((element: CowType) => ({
@@ -33,9 +34,22 @@ const CreateCowInformation = () => {
       <div className="flex gap-5 w-3/4">
         <div className="flex flex-col gap-2 w-full">
           <Title className="!text-2xl w-1/2">{t('Date Information')}</Title>
-          <div className="flex flex-col gap-5 w-full ">
+          <div className="flex flex-col gap-5 w-full">
             <FormItemComponent
-              rules={[{ required: true }]}
+              rules={[
+                { required: true, message: t('Date of Birth is required') },
+                ({ getFieldValue }) => ({
+                  validator(_, value: any) {
+                    const dateOfEnter = getFieldValue('dateOfEnter');
+                    if (!value || !dateOfEnter || value.isBefore(dateOfEnter)) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(
+                      new Error(t('Date of Birth must be earlier than Date of Enter'))
+                    );
+                  },
+                }),
+              ]}
               className="w-full"
               name="dateOfBirth"
               label={<LabelForm>{t('Date Of Birth')}</LabelForm>}
@@ -44,7 +58,7 @@ const CreateCowInformation = () => {
             </FormItemComponent>
             <FormItemComponent
               rules={[
-                { required: true },
+                { required: true, message: t('Date of Enter is required') },
                 ({ getFieldValue }) => ({
                   validator(_, value: any) {
                     const dateOfBirth = getFieldValue('dateOfBirth');
@@ -52,9 +66,7 @@ const CreateCowInformation = () => {
                       return Promise.resolve();
                     }
                     return Promise.reject(
-                      new Error(
-                        'Date of Enter must be greater than Date of Birth.'
-                      )
+                      new Error(t('Date of Enter must be later than Date of Birth'))
                     );
                   },
                 }),
@@ -71,7 +83,7 @@ const CreateCowInformation = () => {
           <Title className="!text-2xl">{t('Cow Information')}</Title>
           <div className="flex flex-col gap-5 w-full">
             <FormItemComponent
-              rules={[{ required: true }]}
+              rules={[{ required: true, message: t('Gender is required') }]}
               name="gender"
               className="w-full"
               label={<LabelForm>{t('Gender')}</LabelForm>}
@@ -80,14 +92,35 @@ const CreateCowInformation = () => {
             </FormItemComponent>
             <FormItemComponent
               name="cowTypeId"
-              rules={[{ required: true }]}
+              rules={[{ required: true, message: t('Cow Type is required') }]}
               className="w-full"
               label={<LabelForm>{t('Cow Type')}</LabelForm>}
             >
               <SelectComponent options={optionsCowType} className="w-full" />
             </FormItemComponent>
             <FormItemComponent
-              rules={[{ required: true }]}
+              rules={[
+                { required: true, message: t('Cow Status is required') },
+                ({ getFieldValue }) => ({
+                  validator(_, value: string) {
+                    if (value === 'milkingCow') {
+                      const dateOfBirth = getFieldValue('dateOfBirth');
+                      const dateOfEnter = getFieldValue('dateOfEnter');
+                      if (dateOfBirth && dateOfEnter) {
+                        const monthsDiff = dateOfEnter.diff(dateOfBirth, 'month');
+                        if (monthsDiff < 10) {
+                          return Promise.reject(
+                            new Error(
+                              t('Date of Birth must be at least 10 months before Date of Enter for Milking Cow')
+                            )
+                          );
+                        }
+                      }
+                    }
+                    return Promise.resolve();
+                  },
+                }),
+              ]}
               className="w-full"
               name="cowStatus"
               label={<LabelForm>{t('Cow Status')}</LabelForm>}
@@ -96,7 +129,7 @@ const CreateCowInformation = () => {
             </FormItemComponent>
             <FormItemComponent
               name="cowOrigin"
-              rules={[{ required: true }]}
+              rules={[{ required: true, message: t('Origin is required') }]}
               className="w-full"
               label={<LabelForm>{t('Origin')}</LabelForm>}
             >
@@ -107,9 +140,9 @@ const CreateCowInformation = () => {
       </div>
       <div className="w-3/4 flex justify-center">
         <FormItemComponent
-          className="w-full "
+          className="w-full"
           name="description"
-          rules={[{ required: true }]}
+          rules={[{ required: true, message: t('Description is required') }]}
           label={<LabelForm>{t('Description')}</LabelForm>}
         >
           <ReactQuillComponent />

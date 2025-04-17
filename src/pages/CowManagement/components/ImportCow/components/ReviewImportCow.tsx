@@ -3,7 +3,7 @@ import ButtonComponent from '@components/Button/ButtonComponent';
 import useFetcher from '@hooks/useFetcher';
 import { COW_PATH } from '@service/api/Cow/cowApi';
 import { message, Upload } from 'antd';
-import { Cow, HealthResponse } from '@model/Cow/Cow';
+import { Cow } from '@model/Cow/Cow';
 import dayjs from 'dayjs';
 
 interface ReviewImportCowProps {
