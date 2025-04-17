@@ -20,6 +20,8 @@ export type Cow = {
   healthInfoResponses: HealthResponse[];
   penResponse: any;
   key: any;
+  errorStrings?: string[];
+  cowTypeName?: string; // Explicitly include cowTypeName
 
 };
 

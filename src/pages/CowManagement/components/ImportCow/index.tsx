@@ -1,6 +1,3 @@
-
-
-
 import {
     CloseOutlined,
     DeleteOutlined,
@@ -12,7 +9,7 @@ import TableComponent, { Column } from '@components/Table/TableComponent';
 import AnimationAppear from '@components/UI/AnimationAppear';
 import WhiteBackground from '@components/UI/WhiteBackground';
 import useFetcher from '@hooks/useFetcher';
-import { Cow } from '@model/Cow/Cow';
+import { Cow, HealthResponse } from '@model/Cow/Cow';
 import { cowOrigin, cowOriginFiltered } from '@service/data/cowOrigin';
 import { cowStatus } from '@service/data/cowStatus';
 import { formatDateHour, formatStatusWithCamel, formatSTT } from '@utils/format';
@@ -36,14 +33,11 @@ import ModalListError from './components/ModalListErrors';
 const ListCowImport = () => {
     const { t } = useTranslation();
     const [reviewData, setReviewData] = useState<Cow[]>([]);
-    const [reviewErrors, setReviewErrors] = useState<any[]>([]);
+    const [reviewErrors, setReviewErrors] = useState<{ source: string; message: string }[]>([]);
     const [editingKey, setEditingKey] = useState<string | null>(null);
     const [isErrorModalVisible, setIsErrorModalVisible] = useState(false);
     const { data: dataCowType } = useFetcher<CowType[]>(COW_TYPE_PATH.COW_TYPES, 'GET');
-    const { data: importTimes, trigger: fetchImportTimes } = useFetcher<number>(
-        COW_TYPE_PATH.IMPORT_TIME,
-        'GET'
-    );
+    const { data: importTimes, trigger: fetchImportTimes } = useFetcher<number>(COW_TYPE_PATH.IMPORT_TIME, 'GET');
     const [importedCowIds, setImportedCowIds] = useState<number[]>([]);
     const [importSuccess, setImportSuccess] = useState(false);
     const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
@@ -78,6 +72,51 @@ const ListCowImport = () => {
         onFetchImportTimes: fetchImportTimes,
     });
 
+    // Only include relevant changes for brevity
+    const handleReviewData = (data: Cow[], errors: { source: string; message: string }[]) => {
+        const dataWithKeys = data.map((item, index) => ({
+            ...item,
+            key: item.key || index.toString(),
+            name: item.name || '',
+            dateOfBirth: item.dateOfBirth || '',
+            dateOfEnter: item.dateOfEnter || '',
+            cowOrigin: item.cowOrigin || '',
+            gender: item.gender || '',
+            cowTypeName: item.cowTypeName || item.cowType?.name || '', // Ensure cowTypeName is preserved
+            cowStatus: item.cowStatus || '',
+            healthInfoResponses: item.healthInfoResponses || [],
+            description: item.description || '',
+            errorStrings: item.errorStrings || [],
+        }));
+        console.log('Review data:', dataWithKeys);
+        console.log('Review errors:', errors);
+        setReviewData(dataWithKeys);
+        setReviewErrors(errors);
+        setImportSuccess(false);
+
+        if (errors.length > 0) {
+            setIsErrorModalVisible(true);
+        }
+    };
+
+    const handleCloseErrorModal = () => {
+        setIsErrorModalVisible(false);
+    };
+
+    const handleSaveErrorData = (updatedData: Cow[]) => {
+        setReviewData((prev) =>
+            prev.map((item) => {
+                const updatedItem = updatedData.find((updated) => updated.key === item.key);
+                return updatedItem || item;
+            })
+        );
+        setReviewErrors([]);
+        setIsErrorModalVisible(false);
+        message.success('Đã lưu dữ liệu sửa lỗi!');
+    };
+
+    // Rest of the component remains unchanged
+    // Include columns, handleEdit, handleSave, handleDelete, handleCancel, handleChange, handleDataChange, mutateCows, and JSX as in the previous version
     const columns: Column[] = [
         {
             dataIndex: 'name',
@@ -89,8 +128,7 @@ const ListCowImport = () => {
             dataIndex: 'dateOfBirth',
             key: 'dateOfBirth',
             title: t('Date Of Birth'),
-            sorter: (a: any, b: any) =>
-                new Date(a.dateOfBirth).getTime() - new Date(b.dateOfBirth).getTime(),
+            sorter: (a: any, b: any) => new Date(a.dateOfBirth).getTime() - new Date(b.dateOfBirth).getTime(),
             filteredDate: true,
             editable: true,
             render: (data, record) =>
@@ -107,8 +145,7 @@ const ListCowImport = () => {
             dataIndex: 'dateOfEnter',
             key: 'dateOfEnter',
             title: t('Date Of Enter'),
-            sorter: (a: any, b: any) =>
-                new Date(a.dateOfEnter).getTime() - new Date(b.dateOfEnter).getTime(),
+            sorter: (a: any, b: any) => new Date(a.dateOfEnter).getTime() - new Date(b.dateOfEnter).getTime(),
             filteredDate: true,
             editable: true,
             render: (data, record) =>
@@ -172,8 +209,8 @@ const ListCowImport = () => {
             render: (data) => data || '-',
             filterable: true,
             filterOptions: [
-                { text: t('Male'), value: 'male' },
-                { text: t('Female'), value: 'female' },
+                { text: 'Ayrshire', value: 'Ayrshire' },
+                // Add more as needed
             ],
         },
         {
@@ -193,160 +230,187 @@ const ListCowImport = () => {
                 ),
         },
         {
-            dataIndex: 'healthRecord',
+            dataIndex: 'healthInfoResponses',
             key: 'healthRecordStatus',
             title: t('Health Status'),
-            render: (data, record) =>
+            render: (data: HealthResponse[], record) =>
                 editingKey === record.key ? (
                     <SelectComponent
-                        value={formatStatusWithCamel(data?.status)}
+                        value={formatStatusWithCamel(data[0]?.health?.status)}
                         options={HEALTH_RECORD_STATUS()}
                         onChange={(value) =>
-                            handleChange(record.key, 'healthRecord', {
-                                ...data,
-                                status: value,
-                            })
+                            handleChange(record.key, 'healthInfoResponses', [
+                                {
+                                    ...data[0],
+                                    health: { ...data[0]?.health, status: value },
+                                },
+                                ...data.slice(1),
+                            ])
                         }
                     />
                 ) : (
-                    formatStatusWithCamel(data?.status) || '-'
+                    formatStatusWithCamel(data[0]?.health?.status) || '-'
                 ),
         },
         {
-            dataIndex: 'healthRecord',
+            dataIndex: 'healthInfoResponses',
             key: 'healthRecordSize',
             title: t('Size (m)'),
-            render: (data, record) =>
+            render: (data: HealthResponse[], record) =>
                 editingKey === record.key ? (
                     <InputNumber
                         min={0}
-                        value={data?.size}
+                        value={data[0]?.health?.size}
                         onChange={(value) =>
-                            handleChange(record.key, 'healthRecord', { ...data, size: value })
+                            handleChange(record.key, 'healthInfoResponses', [
+                                {
+                                    ...data[0],
+                                    health: { ...data[0]?.health, size: value },
+                                },
+                                ...data.slice(1),
+                            ])
                         }
                     />
                 ) : (
-                    data?.size || '-'
+                    data[0]?.health?.size || '-'
                 ),
         },
         {
-            dataIndex: 'healthRecord',
+            dataIndex: 'healthInfoResponses',
             key: 'bodyTemperature',
             title: t('Body Temperature (°C)'),
-            render: (data, record) =>
+            render: (data: HealthResponse[], record) =>
                 editingKey === record.key ? (
                     <InputNumber
                         min={0}
-                        value={data?.bodyTemperature}
+                        value={data[0]?.health?.bodyTemperature}
                         onChange={(value) =>
-                            handleChange(record.key, 'healthRecord', {
-                                ...data,
-                                bodyTemperature: value,
-                            })
+                            handleChange(record.key, 'healthInfoResponses', [
+                                {
+                                    ...data[0],
+                                    health: { ...data[0]?.health, bodyTemperature: value },
+                                },
+                                ...data.slice(1),
+                            ])
                         }
                     />
                 ) : (
-                    data?.bodyTemperature || '-'
+                    data[0]?.health?.bodyTemperature || '-'
                 ),
         },
         {
-            dataIndex: 'healthRecord',
+            dataIndex: 'healthInfoResponses',
             key: 'heartRate',
             title: t('Heart Rate (bpm)'),
-            render: (data, record) =>
+            render: (data: HealthResponse[], record) =>
                 editingKey === record.key ? (
                     <InputNumber
                         min={0}
-                        value={data?.heartRate}
+                        value={data[0]?.health?.heartRate}
                         onChange={(value) =>
-                            handleChange(record.key, 'healthRecord', {
-                                ...data,
-                                heartRate: value,
-                            })
+                            handleChange(record.key, 'healthInfoResponses', [
+                                {
+                                    ...data[0],
+                                    health: { ...data[0]?.health, heartRate: value },
+                                },
+                                ...data.slice(1),
+                            ])
                         }
                     />
                 ) : (
-                    data?.heartRate || '-'
+                    data[0]?.health?.heartRate || '-'
                 ),
         },
         {
-            dataIndex: 'healthRecord',
+            dataIndex: 'healthInfoResponses',
             key: 'respiratoryRate',
             title: t('Respiratory Rate (breaths/min)'),
-            render: (data, record) =>
+            render: (data: HealthResponse[], record) =>
                 editingKey === record.key ? (
                     <InputNumber
                         min={0}
-                        value={data?.respiratoryRate}
+                        value={data[0]?.health?.respiratoryRate}
                         onChange={(value) =>
-                            handleChange(record.key, 'healthRecord', {
-                                ...data,
-                                respiratoryRate: value,
-                            })
+                            handleChange(record.key, 'healthInfoResponses', [
+                                {
+                                    ...data[0],
+                                    health: { ...data[0]?.health, respiratoryRate: value },
+                                },
+                                ...data.slice(1),
+                            ])
                         }
                     />
                 ) : (
-                    data?.respiratoryRate || '-'
+                    data[0]?.health?.respiratoryRate || '-'
                 ),
         },
         {
-            dataIndex: 'healthRecord',
+            dataIndex: 'healthInfoResponses',
             key: 'ruminateActivity',
             title: t('Ruminate Activity (min/day)'),
-            render: (data, record) =>
+            render: (data: HealthResponse[], record) =>
                 editingKey === record.key ? (
                     <InputNumber
                         min={0}
-                        value={data?.ruminateActivity}
+                        value={data[0]?.health?.ruminateActivity}
                         onChange={(value) =>
-                            handleChange(record.key, 'healthRecord', {
-                                ...data,
-                                ruminateActivity: value,
-                            })
+                            handleChange(record.key, 'healthInfoResponses', [
+                                {
+                                    ...data[0],
+                                    health: { ...data[0]?.health, ruminateActivity: value },
+                                },
+                                ...data.slice(1),
+                            ])
                         }
                     />
                 ) : (
-                    data?.ruminateActivity || '-'
+                    data[0]?.health?.ruminateActivity || '-'
                 ),
         },
         {
-            dataIndex: 'healthRecord',
+            dataIndex: 'healthInfoResponses',
             key: 'chestCircumference',
             title: t('Chest Circumference (m)'),
-            render: (data, record) =>
+            render: (data: HealthResponse[], record) =>
                 editingKey === record.key ? (
                     <InputNumber
                         min={0}
-                        value={data?.chestCircumference}
+                        value={data[0]?.health?.chestCircumference}
                         onChange={(value) =>
-                            handleChange(record.key, 'healthRecord', {
-                                ...data,
-                                chestCircumference: value,
-                            })
+                            handleChange(record.key, 'healthInfoResponses', [
+                                {
+                                    ...data[0],
+                                    health: { ...data[0]?.health, chestCircumference: value },
+                                },
+                                ...data.slice(1),
+                            ])
                         }
                     />
                 ) : (
-                    data?.chestCircumference || '-'
+                    data[0]?.health?.chestCircumference || '-'
                 ),
         },
         {
-            dataIndex: 'healthRecord',
+            dataIndex: 'healthInfoResponses',
             key: 'bodyLength',
             title: t('Body Length (m)'),
-            render: (data, record) =>
+            render: (data: HealthResponse[], record) =>
                 editingKey === record.key ? (
                     <InputNumber
                         min={0}
-                        value={data?.bodyLength}
+                        value={data[0]?.health?.bodyLength}
                         onChange={(value) =>
-                            handleChange(record.key, 'healthRecord', {
-                                ...data,
-                                bodyLength: value,
-                            })
+                            handleChange(record.key, 'healthInfoResponses', [
+                                {
+                                    ...data[0],
+                                    health: { ...data[0]?.health, bodyLength: value },
+                                },
+                                ...data.slice(1),
+                            ])
                         }
                     />
                 ) : (
-                    data?.bodyLength || '-'
+                    data[0]?.health?.bodyLength || '-'
                 ),
         },
         {
@@ -411,51 +475,8 @@ const ListCowImport = () => {
     ];
 
     const handleDownloadTemplate = () => {
-        window.location.href =
-            'https://api.dairyfarmfpt.website/api/v1/cows/templates/download/cow-bulk-excel';
+        window.location.href = 'https://api.dairyfarmfpt.website/api/v1/cows/templates/download/cow-bulk-excel';
         message.success('Đã bắt đầu tải template!');
-    };
-
-    const handleReviewData = (data: any[], errors: any[]) => {
-        const dataWithKeys = data.map((item, index) => ({
-            ...item,
-            key: index.toString(),
-            name: item.name || '',
-            dateOfBirth: item.dateOfBirth || '',
-            dateOfEnter: item.dateOfEnter || '',
-            cowOrigin: item.cowOrigin || '',
-            gender: item.gender || '',
-            cowTypeName: item.cowTypeName || null,
-            cowStatus: item.cowStatus || '',
-            healthRecord: item.healthRecord || {},
-            description: item.description || '',
-            errorStrings: item.errorStrings || [],
-        }));
-        console.log('Review data:', dataWithKeys);
-        console.log('Review errors:', errors);
-        setReviewData(dataWithKeys);
-        setReviewErrors(errors);
-        setImportSuccess(false);
-
-        if (errors.length > 0) {
-            setIsErrorModalVisible(true);
-        }
-    };
-
-    const handleCloseErrorModal = () => {
-        setIsErrorModalVisible(false);
-    };
-
-    const handleSaveErrorData = (updatedData: any[]) => {
-        setReviewData((prev) =>
-            prev.map((item) => {
-                const updatedItem = updatedData.find((updated) => updated.key === item.key);
-                return updatedItem || item;
-            })
-        );
-        setReviewErrors([]); // Clear errors after saving (assumes all errors are resolved)
-        setIsErrorModalVisible(false);
-        message.success('Đã lưu dữ liệu sửa lỗi!');
     };
 
     const handleEdit = (key: string) => setEditingKey(key);
@@ -483,16 +504,20 @@ const ListCowImport = () => {
                                 ? value
                                     ? dayjs(value).format('YYYY-MM-DD')
                                     : ''
-                                : field === 'healthRecord'
-                                    ? { ...item.healthRecord, ...value }
-                                    : value,
+                                : field === 'healthInfoResponses'
+                                    ? value
+                                    : field === 'cowTypeName'
+                                        ? value
+                                        : value,
+                        cowType: field === 'cowTypeName' ? { ...item.cowType, name: value } : item.cowType,
+                        cowTypeEntity: field === 'cowTypeName' ? { ...item.cowTypeEntity, name: value } : item.cowTypeEntity,
                     }
                     : item
             )
         );
     };
 
-    const handleDataChange = (newData: any[]) => {
+    const handleDataChange = (newData: Cow[]) => {
         setReviewData(newData);
     };
 
@@ -542,11 +567,7 @@ const ListCowImport = () => {
                     pagination={{ pageSize: 10, position: ['bottomCenter'] }}
                 />
                 {importSuccess && (
-                    <CreateBulkModal
-                        modal={modalControl}
-                        availableCows={availableCows as any}
-                        mutateCows={mutateCows}
-                    />
+                    <CreateBulkModal modal={modalControl} availableCows={availableCows as any} mutateCows={mutateCows} />
                 )}
                 <ModalListError
                     visible={isErrorModalVisible}

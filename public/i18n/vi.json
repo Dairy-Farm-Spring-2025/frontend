@@ -674,5 +674,6 @@
   "Create equipment required": "Tạo thiết bị cần thiết",
   "Equipment Required": "Thiết bị cần thiết",
   "Required quantity must not exceed available quantity ({{quantity}})": "Số lượng yêu cầu không được vượt qua số lượng cho phép ({{quantity}})",
-  "equipments": "Thiết bị"
+  "equipments": "Thiết bị",
+  "Area updated successfully!": "Cập nhật khu vực thành công!"
 }
