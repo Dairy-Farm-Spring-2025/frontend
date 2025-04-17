@@ -675,6 +675,7 @@
   "Equipment Required": "Thiết bị cần thiết",
   "Required quantity must not exceed available quantity ({{quantity}})": "Số lượng yêu cầu không được vượt qua số lượng cho phép ({{quantity}})",
   "equipments": "Thiết bị",
+
   "Area updated successfully!": "Cập nhật khu vực thành công!",
   "No empty pens available for the selected criteria": "Không có chuồng phù hợp cho loại bò này",
   "Select Criteria": "Chọn khu vực, loại bò, trạng thái bò",
@@ -684,5 +685,16 @@
   "Select cow status": "chọn trạng thái bò",
   "Confirm Selection": "Xác nhận",
   "Date of Birth must be at least 10 months before Date of Enter for Milking Cow": "Bò đang vắt sữa phải có ngày sinh ít nhất 10 tháng tuổi",
-  "Cow must be at least 10 months old from date of enter to be a milking cow": "Bò đang vắt sữa phải có ngày sinh ít nhất 10 tháng tuổi"
-}
+  "Cow must be at least 10 months old from date of enter to be a milking cow": "Bò đang vắt sữa phải có ngày sinh ít nhất 10 tháng tuổi",
+
+
+  "Please select area for unknown area tasks": "Hãy chọn khu vực cho các công việc có khu vực trống",
+  "Some tasks need area selection. Please select area from dropdown.": "Một vài công việc cần chọn khu vực. Hãy chọn khu vực.",
+  "Select area": "Chọn khu vực",
+  "Restore": "Hoàn tác",
+  "Import success": "Nhập thành công",
+  "Cow name": "Tên bò",
+  "Cow status": "Trạng thái bò",
+  "Cow type": "Loại bò",
+  "Area updated successfully!": "Cập nhật khu vực thành công!"
+

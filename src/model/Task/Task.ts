@@ -11,7 +11,6 @@ export interface TaskPayload {
   toDate: string;
   areaId: number;
   assigneeIds: number[];
-  priority: Priority;
   taskTypeId: number;
   shift: ShiftTask;
   illnessId: number;
