@@ -72,20 +72,20 @@ const ModalEditTypes = ({ mutate, modal, id }: ModalTypesProps) => {
         open={modal.open}
         onOk={() => form.submit()}
         onCancel={modal.closeModal}
-        title="Create new cow types"
+        title="Edit cow types"
         loading={isLoadingEdit}
       >
         <FormComponent form={form} onFinish={onFinish}>
           <FormItemComponent name="id" hidden>
             <Input />
           </FormItemComponent>
-          <FormItemComponent
+          {/* <FormItemComponent
             rules={[{ required: true }]}
             name="name"
             label={<LabelForm>{t('Name')}:</LabelForm>}
           >
             <Input />
-          </FormItemComponent>
+          </FormItemComponent> */}
           <FormItemComponent
             rules={[{ required: true }]}
             name="maxWeight"
