@@ -1,12 +1,9 @@
 import { Column } from '@components/Table/TableComponent';
 import Title from '@components/UI/Title';
-import useFetcher from '@hooks/useFetcher';
 import { FeedMealDetails } from '@model/Feed/Feed';
-import { Item } from '@model/Warehouse/items';
 import { Divider, Table } from 'antd';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import AddDetail from './AddDetail';
 
 interface FeedMealDetailsInformationProps {
   detailData: FeedMealDetails[];
@@ -17,19 +14,8 @@ interface FeedMealDetailsInformationProps {
 
 const FeedMealDetailsInformation = ({
   detailData = [],
-  feedMealId,
-  mutate,
 }: FeedMealDetailsInformationProps) => {
   const { t } = useTranslation();
-  // const [isModalVisible, setIsModalVisible] = useState(false);
-  // const [selectedDetail, setSelectedDetail] = useState<FeedMealDetails | null>(
-  //   null
-  // );
-
-  const { data: items = [], isLoading: isLoadingItems } = useFetcher<Item[]>(
-    'items',
-    'GET'
-  );
 
   // Nhóm dữ liệu theo category
   const groupedData = useMemo(() => {
@@ -49,11 +35,6 @@ const FeedMealDetailsInformation = ({
     const total = array.reduce((sum, item) => sum + (item.quantity || 0), 0);
     return total.toFixed(2);
   }, []);
-
-  // const toggleModal = useCallback((detail?: FeedMealDetails) => {
-  //   setIsModalVisible((prev) => !prev);
-  //   setSelectedDetail(detail || null);
-  // }, []);
 
   // Cột cho mỗi bảng con (chỉ có Name và Quantity)
   const columns: Column[] = [
@@ -82,14 +63,7 @@ const FeedMealDetailsInformation = ({
         <Title className="text-xl font-semibold text-gray-800">
           {t('Feed meal details')}:
         </Title>
-        <AddDetail
-          onAddClick={() => console.log('Fix build')}
-          feedMealId={feedMealId}
-          category=""
-          items={items}
-          isLoadingItems={isLoadingItems}
-          mutate={mutate}
-        />
+
       </div>
       <Divider className="my-6 border-gray-200" />
 

@@ -186,7 +186,7 @@ const ModalDetailEquipment = ({
 
   return (
     <ModalComponent
-      title={t('Create Warehouse')}
+      title={t('Detail Equipment')}
       open={modal.open}
       onCancel={handleClose}
       loading={isLoadingDetail}

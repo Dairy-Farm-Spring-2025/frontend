@@ -14,4 +14,6 @@ export type Area = {
   occupiedPens: number;
   emptyPens: number;
   damagedPens: number;
+  cowStatus: string;
+  cowTypeId: string;
 };

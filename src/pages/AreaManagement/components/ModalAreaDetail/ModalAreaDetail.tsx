@@ -108,7 +108,7 @@ const ModalAreaDetail: React.FC<ModalAreaDetailProps> = ({
       setIsEditing(false);
       // Trigger a re-fetch after successful update
       mutate();
-      toast.success('Area updated successfully!');
+      toast.success(t('Area updated successfully!'));
       return updatedArea; // Return the updated data for SWR cache
     } catch (err) {
       toast.error('Error updating area. Please try again.');

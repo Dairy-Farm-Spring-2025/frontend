@@ -112,14 +112,15 @@ const ModalAddItem = ({ modal, mutate }: ModalAddItemProps) => {
         width={800}
       >
         <FormComponent onFinish={handleFinish} form={form}>
-          <FormItemComponent
-            rules={[{ required: true }]}
-            name="name"
-            label={<LabelForm>{t('Name')}</LabelForm>}
-          >
-            <InputComponent />
-          </FormItemComponent>
+
           <div className="grid grid-cols-2 gap-5">
+            <FormItemComponent
+              rules={[{ required: true }]}
+              name="name"
+              label={<LabelForm>{t('Name')}</LabelForm>}
+            >
+              <InputComponent />
+            </FormItemComponent>
             <FormItemComponent
               rules={[{ required: true }]}
               name="unit"
@@ -130,13 +131,7 @@ const ModalAddItem = ({ modal, mutate }: ModalAddItemProps) => {
                 onChange={handleChangeUnit}
               />
             </FormItemComponent>
-            <FormItemComponent
-              name="quantity"
-              rules={[{ required: true }]}
-              label={<LabelForm>{t('Quantity')}</LabelForm>}
-            >
-              <InputComponent.Number disabled={!available} />
-            </FormItemComponent>
+
           </div>
           <div className="grid grid-cols-2 gap-5">
             <FormItemComponent

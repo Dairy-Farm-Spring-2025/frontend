@@ -660,6 +660,9 @@
   "Cow statistics": "Thống kê bò",
   "items": "mặt hàng",
   "Total Item": "Tổng mặt hàng",
+  "Please fill in all required fields before saving": "Hãy điền đầy đủ các cột còn thiếu",
+  "Fix Import Errors": "Danh sách các dòng bị lỗi",
+  "Detail Equipment": "Chi tiết thiết bị",
   "Total Worker": "Tổng nhân viên",
   "Total Veterinarian": "Tổng bác sĩ thú y",
   "workers": "Nhân viên",
@@ -679,5 +682,6 @@
   "Import success": "Nhập thành công",
   "Cow name": "Tên bò",
   "Cow status": "Trạng thái bò",
-  "Cow type": "Loại bò"
+  "Cow type": "Loại bò",
+  "Area updated successfully!": "Cập nhật khu vực thành công!"
 }
