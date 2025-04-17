@@ -340,15 +340,10 @@ const CardAreaImportTask = ({
       key: 'taskType',
       render: (_, record) =>
         editingKeys[record.key] ? (
-          <Form.Item
-            name={[record.key, 'taskType']}
-            rules={[{ required: true, message: t('Please select task type') }]}
-            noStyle
-          >
+          <Form.Item name={[record.key, 'taskType']} noStyle>
             <SelectComponent
               options={availableTaskTypes}
               style={{ width: '100%' }}
-              placeholder={t('Select task type')}
               allowClear
             />
           </Form.Item>
@@ -380,18 +375,14 @@ const CardAreaImportTask = ({
       key: 'fromDate',
       render: (_, record) =>
         editingKeys[record.key] ? (
-          <Form.Item
-            name={[record.key, 'fromDate']}
-            rules={[{ required: true, message: t('Please select from date') }]}
-            noStyle
-          >
+          <Form.Item name={[record.key, 'fromDate']} noStyle>
             <DatePickerComponent disabledDate={disabledFromDate} />
           </Form.Item>
         ) : (
           <span
             style={record.deleted ? { textDecoration: 'line-through' } : {}}
           >
-            {formatDateHour(record.fromDate)}
+            {record.fromDate ? formatDateHour(record.fromDate) : '-'}
           </span>
         ),
     },
@@ -402,11 +393,7 @@ const CardAreaImportTask = ({
       key: 'toDate',
       render: (_, record) =>
         editingKeys[record.key] ? (
-          <Form.Item
-            name={[record.key, 'toDate']}
-            rules={[{ required: true, message: t('Please select to date') }]}
-            noStyle
-          >
+          <Form.Item name={[record.key, 'toDate']} noStyle>
             <DatePickerComponent
               disabledDate={(current) => disabledToDate(current, record.key)}
               disabled={
@@ -420,7 +407,7 @@ const CardAreaImportTask = ({
           <span
             style={record.deleted ? { textDecoration: 'line-through' } : {}}
           >
-            {formatDateHour(record.toDate)}
+            {record.toDate ? formatDateHour(record.toDate) : '-'}
           </span>
         ),
     },
@@ -471,15 +458,10 @@ const CardAreaImportTask = ({
       key: 'assigneeId',
       render: (_, record) =>
         editingKeys[record.key] ? (
-          <Form.Item
-            name={[record.key, 'assigneeId']}
-            rules={[{ required: true, message: t('Please select assignee') }]}
-            noStyle
-          >
+          <Form.Item name={[record.key, 'assigneeId']} noStyle>
             <SelectComponent
               style={{ width: '100%' }}
               options={assigneeOptions[record.key] || []}
-              placeholder={t('Select assignee')}
               onDropdownVisibleChange={(open) =>
                 handleAssigneeDropdownVisibleChange(open, record.key)
               }

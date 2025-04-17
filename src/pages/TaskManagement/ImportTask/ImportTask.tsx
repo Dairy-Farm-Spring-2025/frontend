@@ -389,8 +389,8 @@ const ImportTask = () => {
       const response = await triggerCreate({ body: requestBody });
       toast.showSuccess(response.message);
       navigate('../list');
-    } catch {
-      toast.showError(t('Validation failed'));
+    } catch (error: any) {
+      toast.showError(error.message);
     }
   };
 
@@ -458,7 +458,7 @@ const ImportTask = () => {
                   !hasAssignees
                 ) ? (
                   <FloatButtonComponent
-                    tooltip={'Confirm'}
+                    tooltip={t('Confirm')}
                     type="primary"
                     onClick={handleSubmit}
                     children={undefined}

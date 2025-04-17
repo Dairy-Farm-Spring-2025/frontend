@@ -77,10 +77,10 @@ const UpdateTaskModal = ({
   dataNightUser,
   dataVetAvailable,
 }: UpdateTaskModalProps) => {
+  console.log(day);
   const toast = useToast();
   const [form] = Form.useForm();
   const [formUpdateAssignee] = Form.useForm();
-  const [fromDate, setFromDate] = useState<dayjs.Dayjs | null>(null);
   const [assignees, setAssignees] = useState<any[]>([]);
   const {
     data: dataTaskDetail,
@@ -107,23 +107,25 @@ const UpdateTaskModal = ({
     'reassign',
     'PUT'
   );
-  const { data: dataApplication, isLoading: isLoadingApplication } =
-    useFetcher<Application>(
-      APPLICATION_PATH.APPLICATION_FIND_APPLICATION({
-        userId: dataTaskDetail ? dataTaskDetail?.assignee?.id : 0,
-        fromDate: day,
-        toDate: dataTaskDetail ? dataTaskDetail?.toDate : '',
-      }),
-      'GET',
-      'application/json',
-      modal.open
-    );
+  const {
+    data: dataApplication,
+    isLoading: isLoadingApplication,
+    mutate: mutateApplication,
+  } = useFetcher<Application>(
+    APPLICATION_PATH.APPLICATION_FIND_APPLICATION({
+      userId: dataTaskDetail ? dataTaskDetail?.assignee?.id : 0,
+      fromDate: day,
+      toDate: dataTaskDetail ? dataTaskDetail?.toDate : '',
+    }),
+    'GET',
+    'application/json',
+    modal.open
+  );
   const { trigger: approvalRequest, isLoading: isLoadingConfirm } = useFetcher(
     'approve-request',
     'PUT'
   );
   useEffect(() => {
-    console.log('run effect');
     const fetchFreeUsers = async () => {
       const body = {
         roleId: dataTaskDetail?.taskTypeId?.roleId?.id,
@@ -255,20 +257,6 @@ const UpdateTaskModal = ({
     }
   }, [dataTaskDetail, form, modal.open]);
 
-  const disabledOffDateStart = (current: dayjs.Dayjs) => {
-    if (!dataTaskDetail?.fromDate || !dataTaskDetail?.toDate) return true;
-    const minDate = dayjs(day ? day : new Date()).startOf('day');
-    const maxDate = dayjs(dataTaskDetail.toDate).endOf('day');
-    return current.isBefore(minDate) || current.isAfter(maxDate);
-  };
-
-  const disabledOffDateEnd = (current: dayjs.Dayjs) => {
-    if (!fromDate || !dataTaskDetail?.toDate) return true;
-    const minDate = fromDate.startOf('day');
-    const maxDate = dayjs(dataTaskDetail.toDate).endOf('day');
-    return current.isBefore(minDate) || current.isAfter(maxDate);
-  };
-
   const handleCloseModal = useCallback(() => {
     modal.closeModal();
     form.resetFields([
@@ -278,7 +266,6 @@ const UpdateTaskModal = ({
       'priority',
       'description',
     ]);
-    setFromDate(null);
   }, [form, modal]);
 
   const handleReject = useCallback(async () => {
@@ -294,6 +281,7 @@ const UpdateTaskModal = ({
       });
       toast.showSuccess(response.message || t('Reject success'));
       mutate();
+      mutateApplication();
     } catch (error: any) {
       toast.showError(error.message);
     }
@@ -480,40 +468,29 @@ const UpdateTaskModal = ({
               >
                 <InputComponent.TextArea />
               </FormItemComponent>
+
               {dataApplication !== undefined && (
                 <>
                   <Divider />
                   <div className="flex flex-col gap-2">
                     <Title>{t('Off date request')}</Title>
                     <div className="flex gap-5">
-                      <FormItemComponent
-                        name="offDateStart"
-                        label={<LabelForm>{t('From')}</LabelForm>}
-                        className="!w-full"
-                      >
-                        <DatePickerComponent
-                          disabledDate={disabledOffDateStart}
-                          disabled={
-                            dataApplication?.status !== 'complete' && true
-                          }
-                          defaultPickerValue={day ? dayjs(day) : undefined}
-                          onChange={(date) => {
-                            form.resetFields(['offDateEnd']);
-                            setFromDate(date);
-                          }}
-                        />
-                      </FormItemComponent>
-                      <FormItemComponent
-                        name="offDateEnd"
-                        label={<LabelForm>{t('To')}</LabelForm>}
-                        className="!w-full"
-                      >
-                        <DatePickerComponent
-                          disabledDate={disabledOffDateEnd}
-                          defaultPickerValue={day ? dayjs(day) : undefined}
-                          disabled={!fromDate}
-                        />
-                      </FormItemComponent>
+                      <Form.Item noStyle shouldUpdate>
+                        {() => (
+                          <DatePickerComponent
+                            disabled
+                            value={dayjs(dataApplication?.fromDate)}
+                          />
+                        )}
+                      </Form.Item>
+                      <Form.Item noStyle shouldUpdate>
+                        {() => (
+                          <DatePickerComponent
+                            disabled
+                            value={dayjs(dataApplication?.toDate)}
+                          />
+                        )}
+                      </Form.Item>
                     </div>
                     <Title className="!my-4">
                       {t('Application of {{userName}}', {
@@ -599,6 +576,8 @@ const UpdateTaskModal = ({
                         </ButtonComponent>
                         <ButtonComponent
                           loading={isLoadingConfirm}
+                          type="primary"
+                          buttonType="secondary"
                           onClick={handleApprove}
                         >
                           {t('Approve')}
