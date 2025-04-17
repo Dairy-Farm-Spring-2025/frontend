@@ -13,8 +13,6 @@ import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IoMdFemale, IoMdMale } from 'react-icons/io';
-import { COW_TYPE_FILTER } from '@service/data/cowType';
-import toast from 'react-hot-toast';
 
 interface ModalListErrorProps {
     visible: boolean;
@@ -175,15 +173,15 @@ const ModalListError = ({
     const handleSave = (record: any) => {
         // Validate required fields
         if (!record.cowOrigin && errorData.some((item) => item.errorMessage.includes('Cow Origin is required'))) {
-            toast.error(t('Cow Origin is required'));
+            alert(t('Cow Origin is required'));
             return;
         }
         if (!record.healthRecord?.heartRate && errorData.some((item) => item.errorMessage.includes('Heart Rate is required'))) {
-            toast.error(t('Heart Rate is required'));
+            alert(t('Heart Rate is required'));
             return;
         }
         if (!record.healthRecord?.ruminateActivity && errorData.some((item) => item.errorMessage.includes('Ruminate Activity is required'))) {
-            toast.error(t('Ruminate Activity is required'));
+            alert(t('Ruminate Activity is required'));
             return;
         }
         setEditingKey(null);
@@ -225,7 +223,7 @@ const ModalListError = ({
         });
 
         if (hasErrors) {
-            toast.error(t('Please fix all errors before saving.'));
+            alert(t('Please fix all errors before saving.'));
             return;
         }
 
@@ -255,8 +253,8 @@ const ModalListError = ({
                         value={formatStatusWithCamel(data)}
                         options={cowOrigin()}
                         onChange={(value) => handleChange(record.key, 'cowOrigin', value)}
-                        style={hasError ? { borderColor: 'red', width: '100px' } : { width: '100px' }} // Tăng chiều rộng mặc định
-                        dropdownStyle={{ minWidth: '120px' }} // Tăng kích thước dropdown khi mở
+                        style={hasError ? { borderColor: 'red' } : { width: '200px' }}
+                        dropdownStyle={{ minWidth: '120px' }}
                     />
                 ) : (
                     <span style={hasError ? { color: 'red' } : {}}>
@@ -285,7 +283,7 @@ const ModalListError = ({
                             { value: 'female', label: 'Cái' },
                         ]}
                         onChange={(value) => handleChange(record.key, 'gender', value)}
-                        style={hasError ? { borderColor: 'red', width: '100px' } : { width: '100px' }}
+                        style={hasError ? { borderColor: 'red', width: '200px' } : { width: '200px' }}
                         dropdownStyle={{ minWidth: '120px' }}
                     />
                 ) : data === 'male' ? (
@@ -303,7 +301,10 @@ const ModalListError = ({
             title: t('Cow Type'),
             render: (data) => data || '-',
             filterable: true,
-            filterOptions: COW_TYPE_FILTER(),
+            filterOptions: [
+                { text: 'Đực', value: 'male' },
+                { text: 'Cái', value: 'female' },
+            ],
         },
         {
             dataIndex: 'cowStatus',
@@ -317,7 +318,7 @@ const ModalListError = ({
                         value={formatStatusWithCamel(data)}
                         options={cowStatus()}
                         onChange={(value) => handleChange(record.key, 'cowStatus', value)}
-                        style={hasError ? { borderColor: 'red', width: '100px' } : { width: '100px' }}
+                        style={hasError ? { borderColor: 'red', width: '200px' } : { width: '200px' }}
                         dropdownStyle={{ minWidth: '120px' }}
                     />
                 ) : (

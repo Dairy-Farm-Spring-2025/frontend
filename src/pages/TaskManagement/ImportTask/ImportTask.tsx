@@ -1,21 +1,23 @@
 import { CheckOutlined, UploadOutlined } from '@ant-design/icons';
 import ButtonComponent from '@components/Button/ButtonComponent';
+import EmptyComponent from '@components/Error/EmptyComponent';
 import FloatButtonComponent from '@components/FloatButton/FloatButtonComponent';
 import AnimationAppear from '@components/UI/AnimationAppear';
 import WhiteBackground from '@components/UI/WhiteBackground';
 import api from '@config/axios/axios';
 import useFetcher from '@hooks/useFetcher';
+import { useGetAssignees } from '@hooks/useGetAssignees';
 import useToast from '@hooks/useToast';
 import { Area } from '@model/Area';
 import { TaskType } from '@model/Task/task-type';
 import { AREA_PATH } from '@service/api/Area/areaApi';
 import { TASK_PATH } from '@service/api/Task/taskApi';
 import { TASK_TYPE_PATH } from '@service/api/Task/taskType';
-import { USER_PATH } from '@service/api/User/userApi';
 import { Divider, Popover, Skeleton, Upload } from 'antd';
 import dayjs from 'dayjs';
 import { t } from 'i18next';
 import { useEffect, useMemo, useState } from 'react';
+import { MdErrorOutline } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 import CardAreaImportTask from './components/CardAreaImportTask';
@@ -51,6 +53,7 @@ const ImportTask = () => {
       })),
     [dataArea]
   );
+  const getAssignees = useGetAssignees({ availableAreas });
 
   const availableTaskTypes = useMemo(
     () =>
@@ -62,10 +65,8 @@ const ImportTask = () => {
     [dataTaskType]
   );
 
-  // Validation function for dates
   const validateDates = (data: any) => {
     const tomorrow = dayjs().add(1, 'day').startOf('day');
-    const maxDate = tomorrow.add(6, 'day').endOf('day');
 
     let isValid = true;
 
@@ -80,9 +81,7 @@ const ImportTask = () => {
           if (fromDate && toDate) {
             if (
               fromDate.isBefore(tomorrow, 'day') ||
-              fromDate.isAfter(maxDate, 'day') ||
               toDate.isBefore(tomorrow, 'day') ||
-              toDate.isAfter(maxDate, 'day') ||
               toDate.isBefore(fromDate, 'day')
             ) {
               isValid = false;
@@ -183,7 +182,7 @@ const ImportTask = () => {
               taskAcc[normalizedTaskType] = response[area][taskType].map(
                 (task: any) => ({
                   ...task,
-                  key: uuidv4(), // Sử dụng UUID làm key
+                  key: uuidv4(),
                   taskType: task.taskType || null,
                 })
               );
@@ -243,7 +242,7 @@ const ImportTask = () => {
         const updatedTask = {
           ...tasks[taskIndex],
           ...updatedRow,
-          key: uuidv4(), // Tạo key mới khi thay đổi taskType
+          key: uuidv4(),
         };
         newData[area][newTaskType].push(updatedTask);
         tasks.splice(taskIndex, 1);
@@ -395,59 +394,6 @@ const ImportTask = () => {
     }
   };
 
-  const useGetAssignees = () => {
-    const { trigger } = useFetcher('', 'GET');
-
-    const getAssignees = async (
-      taskType: string,
-      area: string,
-      fromDate: string,
-      toDate: string
-    ): Promise<{ value: number; label: string }[]> => {
-      try {
-        const normalizedTaskType = taskType || 'Chưa rõ loại công việc';
-        let url = '';
-
-        if (
-          ['Cho bò ăn', 'Dọn chuồng bò', 'Lấy sữa bò'].includes(
-            normalizedTaskType
-          )
-        ) {
-          const areaName = availableAreas.find((a) => a.value === area)?.value;
-          if (!areaName) {
-            toast.showError(t('Area not found'));
-            return [];
-          }
-          url = USER_PATH.USERS_FREE_IMPORT({
-            roleId: '4',
-            fromDate,
-            toDate,
-            areaName,
-          });
-        } else if (normalizedTaskType === 'Trực ca đêm') {
-          url = USER_PATH.NIGHT_USERS_FREE({ fromDate, toDate });
-        } else if (normalizedTaskType === 'Khám định kì') {
-          url = USER_PATH.VETERINARIANS_AVAILABLE(fromDate);
-        } else {
-          return [];
-        }
-
-        const response = await trigger({ url });
-        return response.map((user: any) => ({
-          value: user.id,
-          label: user.name,
-        }));
-      } catch {
-        toast.showError(t('Failed to fetch assignees'));
-        return [];
-      }
-    };
-
-    return getAssignees;
-  };
-
-  const getAssignees = useGetAssignees();
-
   const isUnknownAreaExist = !!importedData['Chưa rõ khu vực'];
 
   return (
@@ -472,97 +418,102 @@ const ImportTask = () => {
           </ButtonComponent>
         </div>
         <Divider className="!my-2" />
-        <Skeleton loading={isLoadingCreate || isLoadingImport}>
-          {isUnknownAreaExist && (
-            <div className="my-4 p-3 bg-yellow-50 border border-yellow-200 rounded">
-              <p className="text-amber-600 font-medium">
-                {t(
-                  'Some tasks need area selection. Please select area from dropdown.'
-                )}
-              </p>
-            </div>
-          )}
+        {Object.keys(importedData).length > 0 ? (
+          <Skeleton loading={isLoadingCreate || isLoadingImport}>
+            {isUnknownAreaExist && (
+              <div className="my-4 p-3 bg-yellow-50 border border-yellow-200 rounded">
+                <p className="text-amber-600 font-medium">
+                  {t(
+                    'Some tasks need area selection. Please select area from dropdown.'
+                  )}
+                </p>
+              </div>
+            )}
 
-          <div className="flex flex-col gap-10">
-            {Object.entries(importedData || {}).map(([area, task]) => (
-              <CardAreaImportTask
-                key={area}
-                area={area}
-                task={task as any}
-                availableAreas={availableAreas}
-                availableTaskTypes={availableTaskTypes}
-                editingKeys={editingKeys}
-                setEditingKeys={setEditingKeys}
-                onUpdateTask={handleUpdateTask}
-                onDeleteTask={handleDeleteTask}
-                onRestoreTask={handleRestoreTask}
-                onChangeArea={handleChangeArea}
-                getAssignees={getAssignees}
-              />
-            ))}
-          </div>
-
-          {Object.keys(importedData).length > 0 && (
-            <FloatButtonComponent.Group>
-              {!(
-                isUnknownAreaExist ||
-                !allValid ||
-                !isValidTaskType ||
-                !hasAssignees
-              ) ? (
-                <FloatButtonComponent
-                  tooltip={'Confirm'}
-                  type="primary"
-                  onClick={handleSubmit}
-                  children={undefined}
-                  icon={<CheckOutlined />}
+            <div className="flex flex-col gap-10">
+              {Object.entries(importedData || {}).map(([area, task]) => (
+                <CardAreaImportTask
+                  key={area}
+                  area={area}
+                  task={task as any}
+                  availableAreas={availableAreas}
+                  availableTaskTypes={availableTaskTypes}
+                  editingKeys={editingKeys}
+                  setEditingKeys={setEditingKeys}
+                  onUpdateTask={handleUpdateTask}
+                  onDeleteTask={handleDeleteTask}
+                  onRestoreTask={handleRestoreTask}
+                  onChangeArea={handleChangeArea}
+                  getAssignees={getAssignees}
                 />
-              ) : (
-                <Popover
-                  title={t('Error')}
-                  content={
-                    <div className="flex flex-col gap-2 text-base bg-white">
-                      {isUnknownAreaExist && (
-                        <span className="text-red-500">
-                          -{' '}
-                          {t(
-                            'Please select area for all unknown tasks before submitting'
-                          )}
-                        </span>
-                      )}
-                      {!allValid && (
-                        <span className="text-red-500">
-                          -{' '}
-                          {t(
-                            'Some tasks have invalid dates. Dates must be from tomorrow to 6 days after'
-                          )}
-                        </span>
-                      )}
-                      {!isValidTaskType && (
-                        <span className="text-red-500">
-                          - {t('Some task types are not selected')}
-                        </span>
-                      )}
-                      {!hasAssignees && (
-                        <span className="text-red-500">
-                          - {t('Some tasks do not have assignees selected')}
-                        </span>
-                      )}
-                    </div>
-                  }
-                >
+              ))}
+            </div>
+
+            {Object.keys(importedData).length > 0 && (
+              <FloatButtonComponent.Group>
+                {!(
+                  isUnknownAreaExist ||
+                  !allValid ||
+                  !isValidTaskType ||
+                  !hasAssignees
+                ) ? (
                   <FloatButtonComponent
+                    tooltip={'Confirm'}
                     type="primary"
+                    onClick={handleSubmit}
                     children={undefined}
-                    buttonType="volcano"
-                    tooltip=""
+                    icon={<CheckOutlined />}
                   />
-                </Popover>
-              )}
-              <FloatButtonComponent.BackTop />
-            </FloatButtonComponent.Group>
-          )}
-        </Skeleton>
+                ) : (
+                  <Popover
+                    title={t('Error')}
+                    content={
+                      <div className="flex flex-col gap-2 text-base bg-white">
+                        {isUnknownAreaExist && (
+                          <span className="text-red-500">
+                            -{' '}
+                            {t(
+                              'Please select area for all unknown tasks before submitting'
+                            )}
+                          </span>
+                        )}
+                        {!allValid && (
+                          <span className="text-red-500">
+                            -{' '}
+                            {t(
+                              'Some tasks have invalid dates. Dates must be from tomorrow to 6 days after'
+                            )}
+                          </span>
+                        )}
+                        {!isValidTaskType && (
+                          <span className="text-red-500">
+                            - {t('Some task types are not selected')}
+                          </span>
+                        )}
+                        {!hasAssignees && (
+                          <span className="text-red-500">
+                            - {t('Some tasks do not have assignees selected')}
+                          </span>
+                        )}
+                      </div>
+                    }
+                  >
+                    <FloatButtonComponent
+                      type="primary"
+                      children={undefined}
+                      buttonType="volcano"
+                      tooltip=""
+                      icon={<MdErrorOutline />}
+                    />
+                  </Popover>
+                )}
+                <FloatButtonComponent.BackTop />
+              </FloatButtonComponent.Group>
+            )}
+          </Skeleton>
+        ) : (
+          <EmptyComponent />
+        )}
       </WhiteBackground>
     </AnimationAppear>
   );

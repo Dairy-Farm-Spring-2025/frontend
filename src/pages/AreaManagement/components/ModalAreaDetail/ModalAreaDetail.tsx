@@ -5,9 +5,8 @@ import { useTranslation } from 'react-i18next';
 import ModalComponent from '../../../../components/Modal/ModalComponent';
 import useFetcher from '../../../../hooks/useFetcher';
 import { Area } from '../../../../model/Area/Area';
-import { AreaType } from '../../../../model/Area/AreaType';
 
-const areaTypes: { label: string; value: AreaType }[] = [
+const areaTypes: { label: string; value: any }[] = [
   { label: 'Cow Housing', value: 'cowHousing' },
   { label: 'Milking Parlor', value: 'milkingParlor' },
   { label: 'Warehouse', value: 'warehouse' },

@@ -1,19 +1,18 @@
 import { Form } from 'antd';
+import { useTranslation } from 'react-i18next';
 import FormComponent from '../../../../../components/Form/FormComponent';
 import FormItemComponent from '../../../../../components/Form/Item/FormItemComponent';
 import InputComponent from '../../../../../components/Input/InputComponent';
 import LabelForm from '../../../../../components/LabelForm/LabelForm';
 import ModalComponent from '../../../../../components/Modal/ModalComponent';
+import SelectComponent from '../../../../../components/Select/SelectComponent';
 import useFetcher from '../../../../../hooks/useFetcher';
 import useToast from '../../../../../hooks/useToast';
-import { useTranslation } from 'react-i18next';
-import SelectComponent from '../../../../../components/Select/SelectComponent';
+import { WarehouseType } from '../../../../../model/Warehouse/warehouse';
 import {
   EquipmentStatus,
   equipmentTypeSelect,
 } from '../../../../../service/data/equipment';
-import ReactQuill from 'react-quill';
-import { WarehouseType } from '../../../../../model/Warehouse/warehouse';
 
 interface ModalAddWarehouseProps {
   modal: any;
@@ -57,11 +56,12 @@ const ModalAddEquipment = ({ modal, mutate }: ModalAddWarehouseProps) => {
           rules={[{ required: true }]}
         >
           <SelectComponent
-            options={data?.map((item) => ({
-              label: item.name,
-              value: item.warehouseLocationId,
-            }))}
-            placeholder="Select warehouse"
+            options={data
+              ?.filter((element) => element.type === 'equipment')
+              ?.map((item) => ({
+                label: item.name,
+                value: item.warehouseLocationId,
+              }))}
           />
         </FormItemComponent>
         <FormItemComponent
@@ -97,7 +97,7 @@ const ModalAddEquipment = ({ modal, mutate }: ModalAddWarehouseProps) => {
           label={<LabelForm>{t('Description')}</LabelForm>}
           rules={[{ required: true }]}
         >
-          <ReactQuill />
+          <InputComponent.TextArea />
         </FormItemComponent>
       </FormComponent>
     </ModalComponent>
