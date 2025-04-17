@@ -224,26 +224,28 @@ const HealthRecordCow = ({ cowId, data, mutate }: HealthRecordCowProps) => {
               )) ||
                 (element.type === 'ILLNESS' && (
                   <div className="flex gap-2">
-                    <Tooltip title="Severity">
+                    <Tooltip title={t('Severity')}>
                       <p>
-                        {formatToTitleCase(
-                          (element.health as IllnessCow)?.severity
+                        {t(
+                          formatToTitleCase(
+                            (element.health as IllnessCow)?.severity
+                          )
                         )}
                       </p>
                     </Tooltip>
                     <p>-</p>
-                    <Tooltip title="Veterinarian">
+                    <Tooltip title={t('Veterinarian')}>
                       <p>
                         {(element.health as IllnessCow)?.veterinarian
                           ? (element.health as IllnessCow)?.veterinarian?.name
-                          : 'No veterinarian'}
+                          : t('No veterinarian')}
                       </p>
                     </Tooltip>
                   </div>
                 )) ||
                 (element.type === 'INJECTIONS' && (
                   <div className="flex gap-2">
-                    <Tooltip title="Vaccine">
+                    <Tooltip title={t('Vaccine Cycle Name')}>
                       <p>
                         {
                           (element.health as Injections)?.vaccineCycleDetail
@@ -252,7 +254,7 @@ const HealthRecordCow = ({ cowId, data, mutate }: HealthRecordCowProps) => {
                       </p>
                     </Tooltip>
                     <p>-</p>
-                    <Tooltip title="Administered By">
+                    <Tooltip title={t('Injection By')}>
                       <p>
                         {(element.health as Injections)?.administeredBy?.name}
                       </p>
@@ -365,7 +367,7 @@ const HealthRecordCow = ({ cowId, data, mutate }: HealthRecordCowProps) => {
                 </FormComponent>
               )}
               {type === 'INJECTIONS' && (
-                <div className="w-2/3">
+                <div className="w-full">
                   <InjectionForm form={form} onBack={() => setType(null)} />
                 </div>
               )}

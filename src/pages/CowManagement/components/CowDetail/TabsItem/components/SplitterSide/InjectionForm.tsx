@@ -1,7 +1,10 @@
-import FormItemComponent from '@components/Form/Item/FormItemComponent';
-import LabelForm from '@components/LabelForm/LabelForm';
+import DescriptionComponent, {
+  DescriptionPropsItem,
+} from '@components/Description/DescriptionComponent';
 import Title from '@components/UI/Title';
+import { formatDateHour, formatStatusWithCamel } from '@utils/format';
 import { FormInstance } from 'antd';
+import { t } from 'i18next';
 
 interface InjectionFormProps {
   form: FormInstance;
@@ -9,90 +12,37 @@ interface InjectionFormProps {
 }
 
 const InjectionForm = ({ form }: InjectionFormProps) => {
+  const items: DescriptionPropsItem[] = [
+    {
+      children: form.getFieldValue('vaccineName') || 'N/A',
+      key: 'vaccineName',
+      label: t('Vaccine Cycle Name'),
+    },
+    {
+      children: formatDateHour(form.getFieldValue('date')) || 'N/A',
+      key: 'date',
+      label: t('Injection Date'),
+    },
+    {
+      children: form.getFieldValue('administeredBy'),
+      key: 'administeredBy',
+      label: t('Injection By'),
+    },
+    {
+      children: form.getFieldValue('dosage'),
+      key: 'dosage',
+      label: t('Dosage'),
+    },
+    {
+      children: t(formatStatusWithCamel(form.getFieldValue('injectionSite'))),
+      key: 'injectionSite',
+      label: t('Injection Site'),
+    },
+  ];
   return (
-    <div>
-      <Title className="mb-5">Injection Record:</Title>
-      <div className="flex flex-col gap-2 w-full">
-        <FormItemComponent
-          name="vaccineName"
-          label={
-            <LabelForm>
-              <span className="text-red-500">*</span> Vaccine Name
-            </LabelForm>
-          }
-        >
-          <p
-            className="border border-gray-300 rounded p-2 bg-white text-sm text-gray-800"
-            style={{ fontFamily: 'Roboto, sans-serif' }}
-          >
-            {form.getFieldValue('vaccineName') || 'N/A'}
-          </p>
-        </FormItemComponent>
-
-        <FormItemComponent
-          name="date"
-          label={
-            <LabelForm>
-              <span className="text-red-500">*</span> Injection Date
-            </LabelForm>
-          }
-        >
-          <p
-            className="border border-gray-300 rounded p-2 bg-white text-sm text-gray-800"
-            style={{ fontFamily: 'Roboto, sans-serif' }}
-          >
-            {form.getFieldValue('date')?.format('DD/MM/YYYY') || 'N/A'}
-          </p>
-        </FormItemComponent>
-
-        <FormItemComponent
-          name="administeredBy"
-          label={
-            <LabelForm>
-              <span className="text-red-500">*</span> Injected by
-            </LabelForm>
-          }
-        >
-          <p
-            className="border border-gray-300 rounded p-2 bg-white text-sm text-gray-800"
-            style={{ fontFamily: 'Roboto, sans-serif' }}
-          >
-            {form.getFieldValue('administeredBy') || 'N/A'}
-          </p>
-        </FormItemComponent>
-
-        <FormItemComponent
-          name="dosage"
-          label={
-            <LabelForm>
-              <span className="text-red-500">*</span> Dosage
-            </LabelForm>
-          }
-        >
-          <p
-            className="border border-gray-300 rounded p-2 bg-white text-sm text-gray-800"
-            style={{ fontFamily: 'Roboto, sans-serif' }}
-          >
-            {form.getFieldValue('dosage') || 'N/A'}
-          </p>
-        </FormItemComponent>
-
-        <FormItemComponent
-          name="injectionSite"
-          label={
-            <LabelForm>
-              <span className="text-red-500">*</span> Injection site
-            </LabelForm>
-          }
-        >
-          <p
-            className="border border-gray-300 rounded p-2 bg-white text-sm text-gray-800"
-            style={{ fontFamily: 'Roboto, sans-serif' }}
-          >
-            {form.getFieldValue('injectionSite') || 'N/A'}
-          </p>
-        </FormItemComponent>
-      </div>
+    <div className="!w-full">
+      <Title className="!text-2xl mb-5">{t('Injection Record')}: </Title>
+      <DescriptionComponent items={items} className="!w-full" />
     </div>
   );
 };

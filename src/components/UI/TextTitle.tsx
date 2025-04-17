@@ -3,7 +3,7 @@ const Title = ({ children }: any) => {
 };
 
 const TextChildren = ({ children }: any) => {
-  return <p className="text-xs">{children}</p>;
+  return <p className="text-sm">{children}</p>;
 };
 
 interface TextTitleProps {

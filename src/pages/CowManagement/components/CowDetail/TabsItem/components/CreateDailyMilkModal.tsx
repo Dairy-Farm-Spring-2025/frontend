@@ -1,17 +1,15 @@
+import { DAILY_MILK_PATH } from '@service/api/DailyMilk/dailyMilkApi';
 import { Form } from 'antd';
+import { t } from 'i18next';
+import React, { useCallback } from 'react';
 import FormComponent from '../../../../../../components/Form/FormComponent';
 import FormItemComponent from '../../../../../../components/Form/Item/FormItemComponent';
 import InputComponent from '../../../../../../components/Input/InputComponent';
 import LabelForm from '../../../../../../components/LabelForm/LabelForm';
 import ModalComponent from '../../../../../../components/Modal/ModalComponent';
-import SelectComponent from '../../../../../../components/Select/SelectComponent';
-import { shiftData } from '../../../../../../service/data/shiftData';
-import { DailyMilkRequest } from '../../../../../../model/DailyMilk/DailyMilkRequest';
 import useFetcher from '../../../../../../hooks/useFetcher';
 import useToast from '../../../../../../hooks/useToast';
-import { t } from 'i18next';
-import React, { useCallback, useMemo } from 'react';
-import { DAILY_MILK_PATH } from '@service/api/DailyMilk/dailyMilkApi';
+import { DailyMilkRequest } from '../../../../../../model/DailyMilk/DailyMilkRequest';
 
 interface DailMilkModalProps {
   id: string;
@@ -33,17 +31,17 @@ const CreateDailyMilkModal: React.FC<DailMilkModalProps> = React.memo(
       modal.closeModal();
     }, [form, modal]);
 
-    const getCurrentShift = useCallback(() => {
-      const currentHour = new Date().getHours();
-      const currentMinutes = new Date().getMinutes();
-      return shiftData().map((shift) => ({
-        ...shift,
-        disabled: shift.end <= currentHour,
-        title: `The shift is passed (${currentHour}:${currentMinutes})`,
-      }));
-    }, []);
+    // const getCurrentShift = useCallback(() => {
+    //   const currentHour = new Date().getHours();
+    //   const currentMinutes = new Date().getMinutes();
+    //   return shiftData().map((shift) => ({
+    //     ...shift,
+    //     disabled: shift.end <= currentHour,
+    //     title: `The shift is passed (${currentHour}:${currentMinutes})`,
+    //   }));
+    // }, []);
 
-    const shiftOptions = useMemo(() => getCurrentShift(), [getCurrentShift]);
+    // const shiftOptions = useMemo(() => getCurrentShift(), [getCurrentShift]);
 
     const handleFinish = useCallback(
       async (values: DailyMilkRequest) => {
@@ -73,13 +71,13 @@ const CreateDailyMilkModal: React.FC<DailMilkModalProps> = React.memo(
         title={t('Create daily milk')}
       >
         <FormComponent form={form} onFinish={handleFinish}>
-          <FormItemComponent
+          {/* <FormItemComponent
             label={<LabelForm>{t('Shift')}</LabelForm>}
             name="shift"
             rules={[{ required: true }]}
           >
             <SelectComponent options={shiftOptions} />
-          </FormItemComponent>
+          </FormItemComponent> */}
           <FormItemComponent
             name="volume"
             rules={[{ required: true }]}

@@ -213,6 +213,7 @@ const TaskCreateModal = ({
   useEffect(() => {
     if (fromDate) {
       setIsToDateDisabled(false); // Enable To Date if fromDate is selected
+      form.setFieldsValue({ toDate: undefined });
     } else {
       setIsToDateDisabled(true); // Disable To Date if fromDate is not selected
       form.setFieldsValue({ toDate: undefined }); // Reset toDate when fromDate is cleared

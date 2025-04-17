@@ -5,6 +5,7 @@ import { formatDateHour } from '@utils/format';
 import { Form } from 'antd';
 import LabelForm from '../../../LabelForm/LabelForm';
 import FormItemComponent from '../FormItemComponent';
+import { t } from 'i18next';
 
 interface DateRangeItemProps {
   disable?: boolean;
@@ -34,7 +35,7 @@ const DateRangeItem = ({
   const validateStartDate = (_: any, value: any) => {
     const endDate = form.getFieldValue('endDate');
     if (value && endDate && !endDate.isAfter(value)) {
-      return Promise.reject(new Error('Start date must be before end date'));
+      return Promise.reject(new Error(t('Start date must be before end date')));
     }
     return Promise.resolve();
   };
@@ -47,7 +48,7 @@ const DateRangeItem = ({
     <>
       {/* Start Date */}
       <FormItemComponent
-        label={<LabelForm>Start Date:</LabelForm>}
+        label={<LabelForm>{t('Start Date')}:</LabelForm>}
         name="startDate"
         rules={[
           { required: true },
@@ -63,7 +64,6 @@ const DateRangeItem = ({
         ) : (
           <DatePickerComponent
             disabled={disable}
-            placeholder="Start date"
             className="!w-full"
             disabledDate={disablePastDates}
           />
@@ -72,7 +72,7 @@ const DateRangeItem = ({
 
       {/* End Date */}
       <FormItemComponent
-        label={<LabelForm>End Date:</LabelForm>}
+        label={<LabelForm>{t('End Date')}:</LabelForm>}
         name="endDate"
         dependencies={['startDate']}
         rules={[{ required: true }]}
@@ -84,7 +84,6 @@ const DateRangeItem = ({
         ) : (
           <DatePickerComponent
             disabled={disable}
-            placeholder="End date"
             className="!w-full"
             disabledDate={disablePastDates}
           />

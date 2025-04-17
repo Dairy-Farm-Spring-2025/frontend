@@ -3,15 +3,15 @@ import { t } from 'i18next';
 export const shiftData = () => [
   {
     value: 'shiftOne',
-    label: t('Shift 1 (0h - 6h)'),
-    start: 0,
-    end: 6,
+    label: t('Shift 1 (8h - 12h)'),
+    start: 8,
+    end: 12,
   },
   {
     value: 'shiftTwo',
-    label: t('Shift 2 (6h - 12h)'),
-    start: 6,
-    end: 12,
+    label: t('Shift 2 (13h - 17h)'),
+    start: 13,
+    end: 24,
   },
 ];
 

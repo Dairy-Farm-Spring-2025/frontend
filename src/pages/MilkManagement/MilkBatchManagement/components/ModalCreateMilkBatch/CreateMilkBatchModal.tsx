@@ -1,17 +1,16 @@
 import { ConfigProvider, Table } from 'antd';
 import { TableRowSelection } from 'antd/es/table/interface';
 import { useEffect, useState } from 'react';
-import useToast from '../../../../../hooks/useToast';
-import useFetcher from '../../../../../hooks/useFetcher';
-import { Area } from '../../../../../model/Area';
-import { dailyMilkApi } from '../../../../../service/api/DailyMilk/dailyMilkApi';
-import { Column } from '../../../../../components/Table/TableComponent';
+import { useTranslation } from 'react-i18next';
 import ModalComponent from '../../../../../components/Modal/ModalComponent';
 import SelectComponent from '../../../../../components/Select/SelectComponent';
-import { getLabelByValue } from '../../../../../utils/getLabel';
+import { Column } from '../../../../../components/Table/TableComponent';
+import useFetcher from '../../../../../hooks/useFetcher';
+import useToast from '../../../../../hooks/useToast';
+import { Area } from '../../../../../model/Area';
+import { dailyMilkApi } from '../../../../../service/api/DailyMilk/dailyMilkApi';
 import { cowStatus } from '../../../../../service/data/cowStatus';
-import { shiftData } from '../../../../../service/data/shiftData';
-import { useTranslation } from 'react-i18next';
+import { getLabelByValue } from '../../../../../utils/getLabel';
 
 interface CreateMilkBatchModalProps {
   modal: any;
@@ -106,9 +105,9 @@ const CreateMilkBatchModal = ({ modal, mutate }: CreateMilkBatchModalProps) => {
     setSelectedArea(areaId);
   };
 
-  const onChangeShift = (shiftValue: string) => {
-    setSelectedShift(shiftValue);
-  };
+  // const onChangeShift = (shiftValue: string) => {
+  //   setSelectedShift(shiftValue);
+  // };
 
   const rowSelection: TableRowSelection = {
     selectedRowKeys,
@@ -125,20 +124,20 @@ const CreateMilkBatchModal = ({ modal, mutate }: CreateMilkBatchModalProps) => {
   };
 
   const handleConfirm = async () => {
-    if (selectedArea === '' && selectedShift === '') {
-      toast.showError('Please choose at least 1 select');
+    if (selectedArea === '') {
+      toast.showError(t('Please choose area'));
       return;
     } else if (selectedRowKeys.length === 0) {
-      toast.showError('Please select at least one row');
+      toast.showError(t('Please select at least one daily milk'));
       return;
     } else {
       const queryParams = selectedRowKeys
         .map((key) => `dailyMilkIds=${key}`)
         .join('&');
       try {
-        await trigger({ url: `MilkBatch?${queryParams}` });
+        const response = await trigger({ url: `MilkBatch?${queryParams}` });
         mutate();
-        toast.showSuccess(t('Success'));
+        toast.showSuccess(response.message);
       } catch (error: any) {
         toast.showError(error.message);
       } finally {
@@ -158,14 +157,13 @@ const CreateMilkBatchModal = ({ modal, mutate }: CreateMilkBatchModalProps) => {
       onCancel={handleCancel}
       onOk={handleConfirm}
     >
-      <div className="flex justify-evenly items-center gap-5 w-4/5">
-        <div className="flex flex-col gap-2 w-1/2">
+      <div className="flex justify-evenly items-center gap-5 w-2/5">
+        <div className="flex flex-col gap-2 w-full">
           <label className="text-base font-bold">
             {t('Select Area')}
             <sup className="text-red-500">*</sup>:
           </label>
           <SelectComponent
-            placeholder={selectedArea === '' && 'Select Area...'}
             options={selectArea}
             onChange={onChangeArea}
             loading={isLoadingArea}
@@ -173,8 +171,8 @@ const CreateMilkBatchModal = ({ modal, mutate }: CreateMilkBatchModalProps) => {
             allowClear
           />
         </div>
-        <p className="mt-8">or</p>
-        <div className="flex flex-col gap-2 w-1/2">
+        {/* <p className="mt-8">or</p> */}
+        {/* <div className="flex flex-col gap-2 w-1/2">
           <label className="text-base font-bold">
             {t('Select Shift')}
             <sup className="text-red-500">*</sup>:
@@ -186,7 +184,7 @@ const CreateMilkBatchModal = ({ modal, mutate }: CreateMilkBatchModalProps) => {
             value={selectedShift}
             allowClear
           />
-        </div>
+        </div> */}
       </div>
       <ConfigProvider
         table={{

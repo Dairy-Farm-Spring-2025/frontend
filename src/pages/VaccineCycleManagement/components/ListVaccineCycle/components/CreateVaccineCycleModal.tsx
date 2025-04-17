@@ -173,17 +173,17 @@ const CreateVaccineCycleModal = ({
           initialValues={{
             details: [
               {
-                name: '',
-                itemId: '',
-                vaccineIngredients: '',
-                vaccineType: '',
-                numberPeriodic: '',
-                unitPeriodic: '',
-                dosage: '',
-                dosageUnit: '',
-                injectionSite: '',
-                firstInjectionMonth: '',
-                description: '',
+                name: undefined,
+                itemId: undefined,
+                vaccineIngredients: undefined,
+                vaccineType: undefined,
+                numberPeriodic: undefined,
+                unitPeriodic: undefined,
+                dosage: undefined,
+                dosageUnit: undefined,
+                injectionSite: undefined,
+                firstInjectionMonth: undefined,
+                description: undefined,
               },
             ], // Initial field
           }}
@@ -304,6 +304,7 @@ const CreateVaccineCycleModal = ({
                               <SelectComponent
                                 options={unitOptions()}
                                 open={false}
+                                disabled={true}
                               />
                             </Form.Item>
                           </div>

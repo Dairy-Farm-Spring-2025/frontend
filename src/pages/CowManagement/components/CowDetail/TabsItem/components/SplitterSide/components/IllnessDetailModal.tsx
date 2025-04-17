@@ -8,6 +8,7 @@ import { formatStatusWithCamel } from '../../../../../../../../utils/format';
 import CardComponent from '../../../../../../../../components/Card/CardComponent';
 import QuillRender from '../../../../../../../../components/UI/QuillRender';
 import TagComponents from '../../../../../../../../components/UI/TagComponents';
+import { t } from 'i18next';
 
 interface IllnessDetailModalProps {
   data: IllnessDetail;
@@ -29,7 +30,7 @@ const IllnessDetailModal = ({ data, modal }: IllnessDetailModalProps) => {
   };
   return (
     <ModalComponent
-      title="Illness Detail"
+      title={t('Illness Detail')}
       open={modal.open}
       onCancel={handleCancel}
       footer={[]}
@@ -40,7 +41,7 @@ const IllnessDetailModal = ({ data, modal }: IllnessDetailModalProps) => {
           <div className="flex gap-5">
             <TagComponents color="blue">{detail?.date}</TagComponents>
             <TagComponents color="gold">
-              {formatStatusWithCamel(detail?.status as string)}
+              {t(formatStatusWithCamel(detail?.status as string))}
             </TagComponents>
           </div>
         }
@@ -51,11 +52,11 @@ const IllnessDetailModal = ({ data, modal }: IllnessDetailModalProps) => {
       <div className="p-2 flex gap-5">
         <DescriptionComponent
           layout="horizontal"
-          title={<p className="mx-4">Veterinarian</p>}
+          title={<p className="mx-4">{t('Veterinarian')}</p>}
           className="w-1/2"
           items={[
             {
-              label: 'Avatar',
+              label: t('Avatar'),
               children: (
                 <Avatar
                   size={32}
@@ -65,57 +66,56 @@ const IllnessDetailModal = ({ data, modal }: IllnessDetailModalProps) => {
               span: 3,
             },
             {
-              label: 'Name',
+              label: t('Name'),
               children: detail?.veterinarian?.name,
               span: 3,
             },
             {
-              label: 'Phone number',
+              label: t('Phone number'),
               children: detail?.veterinarian?.phoneNumber,
               span: 3,
             },
             {
-              label: 'Date of birth',
+              label: t('Date Of Birth'),
               children: detail?.veterinarian?.dob,
               span: 3,
             },
             {
-              label: 'Gender',
-              children: detail?.veterinarian?.gender,
+              label: t('Gender'),
+              children: t(
+                formatStatusWithCamel(detail?.veterinarian?.gender as string)
+              ),
               span: 3,
             },
           ]}
         />
         <DescriptionComponent
           layout="horizontal"
-          title={<p className="mx-4">Vaccine</p>}
-          className="w-1/2"
+          title={<p className="mx-4">{t('Vaccine')}</p>}
+          className="w-1/2 !h-fit"
           items={[
             {
-              label: 'Name',
+              label: t('Name'),
               children: detail?.vaccine?.name,
               span: 3,
             },
             {
-              label: 'Unit',
-              children: detail?.vaccine?.unit,
-              span: 3,
-            },
-            {
-              label: 'Status',
-              children: formatStatusWithCamel(
-                detail?.vaccine?.status as string
+              label: t('Unit'),
+              children: t(
+                formatStatusWithCamel(detail?.vaccine?.unit as string)
               ),
               span: 3,
             },
             {
-              label: 'Warehouse',
-              children: detail?.vaccine?.warehouseLocationEntity?.name,
+              label: t('Status'),
+              children: t(
+                formatStatusWithCamel(detail?.vaccine?.status as string)
+              ),
               span: 3,
             },
             {
-              label: 'Quantity',
-              children: detail?.vaccine?.quantity,
+              label: t('Storage'),
+              children: detail?.vaccine?.warehouseLocationEntity?.name,
               span: 3,
             },
           ]}

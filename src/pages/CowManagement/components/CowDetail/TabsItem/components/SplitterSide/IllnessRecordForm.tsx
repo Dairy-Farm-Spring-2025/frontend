@@ -17,6 +17,8 @@ import { formatStatusWithCamel } from '@utils/format';
 import { IllnessDetail } from '@model/Cow/IllnessDetail';
 import IllnessDetailComponent from './IllnessDetailComponent';
 import { Divider, Empty } from 'antd';
+import dayjs from 'dayjs';
+import QuillRender from '@components/UI/QuillRender';
 
 interface IllnessRecordFormProps {
   loading: boolean;
@@ -27,13 +29,13 @@ const IllnessRecordForm = ({ loading, data }: IllnessRecordFormProps) => {
   const { edited, toggleEdit } = useEditToggle();
   return (
     <div>
-      <Title className="!text-2xl mb-5">Illness Record: </Title>
+      <Title className="!text-2xl mb-5">{t('Illness Record')}: </Title>
       <div className="grid grid-cols-3">
-        <TextTitle title="User" description={data?.userEntity?.name} />
+        <TextTitle title={t('Worker')} description={data?.userEntity?.name} />
         <TextTitle
-          title="Veterinarian"
+          title={t('Veterinarian')}
           description={
-            data?.veterinarian ? data?.veterinarian?.name : 'No veterinarian'
+            data?.veterinarian ? data?.veterinarian?.name : t('No veterinarian')
           }
         />
       </div>
@@ -42,11 +44,11 @@ const IllnessRecordForm = ({ loading, data }: IllnessRecordFormProps) => {
           <FormItemComponent
             rules={[{ required: true }]}
             name="severity"
-            label={<LabelForm>Severity</LabelForm>}
+            label={<LabelForm>{t('Severity')}</LabelForm>}
           >
             {!edited ? (
               <TextBorder>
-                <Text>{formatStatusWithCamel(data?.severity)}</Text>
+                <Text>{t(formatStatusWithCamel(data?.severity))}</Text>
               </TextBorder>
             ) : (
               <SelectComponent
@@ -57,7 +59,7 @@ const IllnessRecordForm = ({ loading, data }: IllnessRecordFormProps) => {
           </FormItemComponent>
           <DateRangeItem
             disable={loading}
-            edited={edited}
+            edited={false}
             startDate={data?.startDate}
             endDate={data?.endDate}
           />
@@ -66,18 +68,26 @@ const IllnessRecordForm = ({ loading, data }: IllnessRecordFormProps) => {
           <FormItemComponent
             rules={[{ required: true }]}
             name="symptoms"
-            label={<LabelForm>Symptoms</LabelForm>}
+            label={<LabelForm>{t('Symptoms')}</LabelForm>}
           >
-            <ReactQuillComponent readOnly={!edited} />
+            {edited ? (
+              <ReactQuillComponent readOnly={!edited} />
+            ) : (
+              <QuillRender description={data.symptoms} />
+            )}
           </FormItemComponent>
         </div>
         <div className="w-full">
           <FormItemComponent
             rules={[{ required: true }]}
             name="prognosis"
-            label={<LabelForm>Prognosis</LabelForm>}
+            label={<LabelForm>{t('Prognosis')}</LabelForm>}
           >
-            <ReactQuillComponent readOnly={!edited} />
+            {edited ? (
+              <ReactQuillComponent readOnly={!edited} />
+            ) : (
+              <QuillRender description={data.prognosis} />
+            )}{' '}
           </FormItemComponent>
         </div>
         <FormItemComponent name="cowId" hidden>
@@ -87,7 +97,11 @@ const IllnessRecordForm = ({ loading, data }: IllnessRecordFormProps) => {
           <InputComponent />
         </FormItemComponent>
         <div className="flex gap-5">
-          <ButtonComponent onClick={toggleEdit} danger={edited}>
+          <ButtonComponent
+            onClick={toggleEdit}
+            danger={edited}
+            disabled={dayjs(new Date()).isAfter(data.startDate)}
+          >
             {!edited ? t('Edit') : t('Cancel')}
           </ButtonComponent>
           {edited && (
