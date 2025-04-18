@@ -14,9 +14,12 @@ import useFetcher from '../../../../hooks/useFetcher';
 import useModal from '../../../../hooks/useModal';
 import useToast from '../../../../hooks/useToast';
 import { EquipmentType } from '../../../../model/Warehouse/equipment';
-import { formatAreaType } from '../../../../utils/format';
+import {
+  formatAreaType,
+  formatStatusWithCamel,
+} from '../../../../utils/format';
 import ModalAddEquipment from './components/ModalAddEquipment';
-import ModalDetailEquipment from './components/ModalDeatialEquipment';
+import ModalDetailEquipment from './components/ModalDetailEquipment';
 
 const Equipment = () => {
   const { data, isLoading, mutate } = useFetcher<EquipmentType[]>(
@@ -70,7 +73,7 @@ const Equipment = () => {
       title: t('Status'),
       render: (data) => (
         <TagComponents color={getEquipmentStatusTag(data)}>
-          {t(formatAreaType(data))}
+          {t(formatStatusWithCamel(data))}
         </TagComponents>
       ),
     },

@@ -19,6 +19,9 @@ import {
   equipmentTypeSelect,
 } from '../../../../../service/data/equipment';
 import { WarehouseType } from '../../../../../model/Warehouse/warehouse';
+import { formatStatusWithCamel } from '@utils/format';
+import TagComponents from '@components/UI/TagComponents';
+import { getEquipmentStatusTag } from '@utils/statusRender/equipmentStatusRender';
 
 interface ModalDetailEquipmentProps {
   modal: any;
@@ -38,14 +41,18 @@ const ModalDetailEquipment = ({
     'warehouses',
     'GET'
   );
-  console.log('check data warehouse: ', dataWarehouse);
   const [edit, setEdit] = useState(false);
 
   const {
     data,
     isLoading: isLoadingDetail,
     mutate: mutateEdit,
-  } = useFetcher<EquipmentType>(`equipment/${id}`, 'GET');
+  } = useFetcher<EquipmentType>(
+    `equipment/${id}`,
+    'GET',
+    'application/json',
+    modal.open
+  );
   const { t } = useTranslation();
   useEffect(() => {
     if (data) {
@@ -76,6 +83,7 @@ const ModalDetailEquipment = ({
   const handleClose = () => {
     modal.closeModal();
     form.resetFields();
+    setEdit(false);
   };
 
   const items: DescriptionPropsItem['items'] = [
@@ -83,19 +91,23 @@ const ModalDetailEquipment = ({
       key: 'warehouseLocationEntity', // Sửa key cho đúng với dữ liệu thiết bị
       label: t('Location'),
       children: !edit ? (
-        dataWarehouse?.[0].name || ''
+        data?.warehouseLocationEntity?.name || ''
       ) : (
         <FormItemComponent
           name="warehouseLocationEntity"
           rules={[{ required: true }]}
+          noStyle
         >
           <SelectComponent
             options={
-              dataWarehouse?.map((warehouse) => ({
-                label: warehouse.name,
-                value: warehouse.warehouseLocationId,
-              })) || []
+              dataWarehouse
+                ?.filter((element) => element.type === 'equipment')
+                ?.map((warehouse) => ({
+                  label: warehouse.name,
+                  value: warehouse.warehouseLocationId,
+                })) || []
             }
+            className="!w-full"
           />
         </FormItemComponent>
       ),
@@ -112,7 +124,7 @@ const ModalDetailEquipment = ({
           ''
         )
       ) : (
-        <FormItemComponent name="name" rules={[{ required: true }]}>
+        <FormItemComponent noStyle name="name" rules={[{ required: true }]}>
           <InputComponent />
         </FormItemComponent>
       ),
@@ -123,13 +135,16 @@ const ModalDetailEquipment = ({
       label: t('Type'),
       children: !edit ? (
         data ? (
-          data?.type
+          t(formatStatusWithCamel(data?.type))
         ) : (
           ''
         )
       ) : (
-        <FormItemComponent name="type" rules={[{ required: true }]}>
-          <SelectComponent options={equipmentTypeSelect()} />
+        <FormItemComponent noStyle name="type" rules={[{ required: true }]}>
+          <SelectComponent
+            options={equipmentTypeSelect()}
+            className="!w-full"
+          />
         </FormItemComponent>
       ),
       span: 3,
@@ -139,13 +154,15 @@ const ModalDetailEquipment = ({
       label: t('Status'),
       children: !edit ? (
         data ? (
-          data?.status
+          <TagComponents color={getEquipmentStatusTag(data.status)}>
+            {t(formatStatusWithCamel(data.status as any))}
+          </TagComponents>
         ) : (
           ''
         )
       ) : (
-        <FormItemComponent name="status" rules={[{ required: true }]}>
-          <SelectComponent options={EquipmentStatus()} />
+        <FormItemComponent noStyle name="status" rules={[{ required: true }]}>
+          <SelectComponent options={EquipmentStatus()} className="!w-full" />
         </FormItemComponent>
       ),
       span: 3,
@@ -160,7 +177,7 @@ const ModalDetailEquipment = ({
           ''
         )
       ) : (
-        <FormItemComponent name="quantity" rules={[{ required: true }]}>
+        <FormItemComponent noStyle name="quantity" rules={[{ required: true }]}>
           <InputComponent />
         </FormItemComponent>
       ),
@@ -177,7 +194,11 @@ const ModalDetailEquipment = ({
           ''
         )
       ) : (
-        <FormItemComponent name="description" rules={[{ required: true }]}>
+        <FormItemComponent
+          noStyle
+          name="description"
+          rules={[{ required: true }]}
+        >
           <InputComponent.TextArea />
         </FormItemComponent>
       ),
@@ -188,18 +209,23 @@ const ModalDetailEquipment = ({
     <ModalComponent
       title={t('Detail Equipment')}
       open={modal.open}
+      width={800}
       onCancel={handleClose}
       loading={isLoadingDetail}
       footer={[
         !edit && (
-          <ButtonComponent type="primary" onClick={() => setEdit(true)}>
+          <ButtonComponent
+            type="primary"
+            buttonType="warning"
+            onClick={() => setEdit(true)}
+          >
             {t('Edit')}
           </ButtonComponent>
         ),
         edit && (
           <div className="flex gap-5 justify-end">
             <ButtonComponent onClick={() => setEdit(false)}>
-              Cancel
+              {t('Cancel')}
             </ButtonComponent>
             <ButtonComponent
               loading={isLoading}
@@ -213,7 +239,7 @@ const ModalDetailEquipment = ({
       ]}
     >
       <FormComponent form={form} onFinish={handleFinish}>
-        <DescriptionComponent items={items} />
+        <DescriptionComponent items={items} layout="horizontal" />
       </FormComponent>
     </ModalComponent>
   );

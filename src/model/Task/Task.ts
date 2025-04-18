@@ -1,9 +1,11 @@
 import { Area } from '@model/Area';
-import { TaskType } from './task-type';
+import { StatusIllnessDetail } from '@model/Cow/IllnessDetail';
 import { UserProfileData } from '@model/User';
-import { ReportTaskByDate } from './ReportTask';
-import { IllnessCow } from '@model/Cow/Illness';
+import { InjectionSite } from '@model/Vaccine/VaccineCycle/vaccineCycle';
 import { VaccineInjection } from '@model/Vaccine/VaccineCycle/VaccineInjection';
+import { Item } from '@model/Warehouse/items';
+import { ReportTaskByDate } from './ReportTask';
+import { TaskType } from './task-type';
 
 export interface TaskPayload {
   description: string;
@@ -42,8 +44,19 @@ export interface Task {
   priority: Priority;
   shift: 'dayShift' | 'nightShift';
   completionNotes: string;
-  illness?: IllnessCow;
+  illness?: TaskIllness;
   vaccineInjection?: VaccineInjection;
+}
+
+export interface TaskIllness {
+  date: string;
+  description: string;
+  dosage: number;
+  illnessDetailId: number;
+  injectionSite: InjectionSite;
+  status: StatusIllnessDetail;
+  vaccine: Item;
+  veterinarian: UserProfileData;
 }
 
 export interface TaskDateRange {

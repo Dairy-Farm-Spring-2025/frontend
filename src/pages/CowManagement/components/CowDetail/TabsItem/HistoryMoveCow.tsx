@@ -106,12 +106,6 @@ const HistoryMoveCow = ({ id, isLoadingHistory }: HistoryMoveCowProps) => {
   const columns = useMemo<Column[]>(
     () => [
       {
-        title: t('#'),
-        dataIndex: 'stt',
-        key: 'stt',
-        render: (_: unknown, __: CowPenHistory, index: number) => index + 1,
-      },
-      {
         title: t('In Pen Name'),
         dataIndex: 'penEntity',
         key: 'penName',
@@ -186,28 +180,19 @@ const HistoryMoveCow = ({ id, isLoadingHistory }: HistoryMoveCowProps) => {
                   <FormItemComponent
                     name="areaId"
                     label={<LabelForm>{t('Area')}</LabelForm>}
-                    rules={[
-                      { required: true, message: t('Please select an area') },
-                    ]}
+                    rules={[{ required: true }]}
                     className="w-48"
                   >
-                    <SelectComponent
-                      options={areaOptions}
-                      placeholder={t('Select area')}
-                      size="middle"
-                    />
+                    <SelectComponent options={areaOptions} size="middle" />
                   </FormItemComponent>
 
                   <FormItemComponent
                     name="penId"
                     label={<LabelForm>{t('Pen')}</LabelForm>}
-                    rules={[
-                      { required: true, message: t('Please select a pen') },
-                    ]}
+                    rules={[{ required: true }]}
                     className="w-48"
                   >
                     <SelectComponent
-                      placeholder={t('Select Pen')}
                       options={penOptions}
                       disabled={!areaId || emptyPens.length === 0}
                       size="middle"

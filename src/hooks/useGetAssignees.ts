@@ -2,6 +2,7 @@ import { USER_PATH } from '@service/api/User/userApi';
 import useFetcher from './useFetcher';
 import { t } from 'i18next';
 import useToast from './useToast';
+import { UserProfileData } from '@model/User';
 
 interface Props {
   availableAreas: any;
@@ -48,9 +49,9 @@ export const useGetAssignees = ({ availableAreas }: Props) => {
       }
 
       const response = await trigger({ url });
-      return response.map((user: any) => ({
+      return response.map((user: UserProfileData) => ({
         value: user.id,
-        label: user.name,
+        label: `${user.name} - ${user.employeeNumber}`,
       }));
     } catch {
       toast.showError(t('Failed to fetch assignees'));

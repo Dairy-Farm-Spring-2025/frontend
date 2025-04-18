@@ -14,6 +14,7 @@ import TaskReportDetail from './components/TaskReportDetail';
 import { t } from 'i18next';
 import Title from '@components/UI/Title';
 import VaccineTask from './components/VaccineTask';
+import IllnessTask from './components/IllnessTask';
 
 const DetailTask = () => {
   const { taskId, day } = useParams();
@@ -46,7 +47,9 @@ const DetailTask = () => {
             </div>
             <div className="w-1/2">
               {typeView === '' && <></>}
-              {typeView === 'illness' && <>ILNNESS</>}
+              {typeView === 'illness' && (
+                <IllnessTask dataTask={dataTask as Task} />
+              )}
               {typeView === 'vaccine-injection' && (
                 <VaccineTask data={dataTask as Task} />
               )}

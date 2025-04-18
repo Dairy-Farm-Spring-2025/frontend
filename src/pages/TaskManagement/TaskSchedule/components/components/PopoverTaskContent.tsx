@@ -40,7 +40,9 @@ const PopoverTaskContent = ({
 }: PopoverTaskContent) => {
   const toast = useToast();
   const navigate = useNavigate();
-  const isDeleteDisabled = dayjs().isAfter(dayjs(task.fromDate), 'day');
+  const isDeleteDisabled =
+    dayjs().isAfter(dayjs(task.fromDate), 'day') ||
+    dayjs().isSame(dayjs(task.fromDate), 'day');
   const isEditDisabled =
     dayjs().isAfter(dayjs(day), 'day') || dayjs().isSame(dayjs(day), 'day');
   const { trigger: triggerDelete, isLoading: loadingDelete } = useFetcher(
