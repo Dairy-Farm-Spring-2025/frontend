@@ -5,6 +5,7 @@ import SelectComponent from '@components/Select/SelectComponent';
 import TableComponent, { Column } from '@components/Table/TableComponent';
 import WhiteBackground from '@components/UI/WhiteBackground';
 import useFetcher from '@hooks/useFetcher';
+import useGetRole from '@hooks/useGetRole';
 import useToast from '@hooks/useToast';
 import { Area } from '@model/Area';
 import { PenEntity } from '@model/CowPen/CowPen';
@@ -26,6 +27,7 @@ interface HistoryMoveCowProps {
 
 const HistoryMoveCow = ({ id, isLoadingHistory }: HistoryMoveCowProps) => {
   const { t } = useTranslation();
+  const role = useGetRole();
   const toast = useToast();
   const {
     data,
@@ -168,71 +170,73 @@ const HistoryMoveCow = ({ id, isLoadingHistory }: HistoryMoveCowProps) => {
 
   return (
     <>
-      <Form
-        form={form}
-        layout="vertical"
-        initialValues={{ areaId: null, penId: null }}
-      >
-        <div className="p-6 bg-white rounded-lg shadow-md">
-          <div className="text-2xl font-bold text-primary mb-6">
-            {t('Choose Area & Pen to Move Cow')}
-          </div>
-          <div className="flex flex-col gap-6">
-            <div className="flex  items-center">
-              <div className="flex items-end gap-4">
-                <FormItemComponent
-                  name="areaId"
-                  label={<LabelForm>{t('Area')}</LabelForm>}
-                  rules={[
-                    { required: true, message: t('Please select an area') },
-                  ]}
-                  className="w-48"
-                >
-                  <SelectComponent
-                    options={areaOptions}
-                    placeholder={t('Select area')}
-                    size="middle"
-                  />
-                </FormItemComponent>
-
-                <FormItemComponent
-                  name="penId"
-                  label={<LabelForm>{t('Pen')}</LabelForm>}
-                  rules={[
-                    { required: true, message: t('Please select a pen') },
-                  ]}
-                  className="w-48"
-                >
-                  <SelectComponent
-                    placeholder={t('Select Pen')}
-                    options={penOptions}
-                    disabled={!areaId || emptyPens.length === 0}
-                    size="middle"
-                  />
-                </FormItemComponent>
-              </div>
-
-              <ButtonComponent
-                type="primary"
-                onClick={handleMoveCow}
-                disabled={!isFormValid}
-                loading={isLoading}
-                size="large"
-                className="px-6 ml-5"
-              >
-                {t('Move Cow')}
-              </ButtonComponent>
+      {role !== 'Veterinarians' && (
+        <Form
+          form={form}
+          layout="vertical"
+          initialValues={{ areaId: null, penId: null }}
+        >
+          <div className="p-6 bg-white rounded-lg shadow-md">
+            <div className="text-2xl font-bold text-primary mb-6">
+              {t('Choose Area & Pen to Move Cow')}
             </div>
+            <div className="flex flex-col gap-6">
+              <div className="flex  items-center">
+                <div className="flex items-end gap-4">
+                  <FormItemComponent
+                    name="areaId"
+                    label={<LabelForm>{t('Area')}</LabelForm>}
+                    rules={[
+                      { required: true, message: t('Please select an area') },
+                    ]}
+                    className="w-48"
+                  >
+                    <SelectComponent
+                      options={areaOptions}
+                      placeholder={t('Select area')}
+                      size="middle"
+                    />
+                  </FormItemComponent>
 
-            {/* Thông báo được đưa xuống hàng riêng */}
-            {areaId && emptyPens.length === 0 && (
-              <div className="text-red-500 text-sm ">
-                {t('No empty pens available in this area!')}
+                  <FormItemComponent
+                    name="penId"
+                    label={<LabelForm>{t('Pen')}</LabelForm>}
+                    rules={[
+                      { required: true, message: t('Please select a pen') },
+                    ]}
+                    className="w-48"
+                  >
+                    <SelectComponent
+                      placeholder={t('Select Pen')}
+                      options={penOptions}
+                      disabled={!areaId || emptyPens.length === 0}
+                      size="middle"
+                    />
+                  </FormItemComponent>
+                </div>
+
+                <ButtonComponent
+                  type="primary"
+                  onClick={handleMoveCow}
+                  disabled={!isFormValid}
+                  loading={isLoading}
+                  size="large"
+                  className="px-6 ml-5"
+                >
+                  {t('Move Cow')}
+                </ButtonComponent>
               </div>
-            )}
+
+              {/* Thông báo được đưa xuống hàng riêng */}
+              {areaId && emptyPens.length === 0 && (
+                <div className="text-red-500 text-sm ">
+                  {t('No empty pens available in this area!')}
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-      </Form>
+        </Form>
+      )}
 
       <Divider className="my-4" />
 

@@ -10,6 +10,7 @@ import ModalDetailDailyMilk from './components/ModalDetailDailyMilk';
 import DailyMilkRecord from './DailyMilkRecord';
 import { t } from 'i18next';
 import CreateDailyMilkModal from './components/CreateDailyMilkModal';
+import useGetRole from '@hooks/useGetRole';
 
 interface DailyMilkProps {
   id: string;
@@ -27,6 +28,7 @@ const DailyMilk = ({
   detailCow,
 }: DailyMilkProps) => {
   const modal = useModal();
+  const role = useGetRole();
   const modalDailyMilk = useModal();
   const [dailyMilk, setDailyMilk] = useState(null);
   const events: EventInput[] | any = dataMilk?.map((entry: DailyMilkModel) => {
@@ -80,13 +82,15 @@ const DailyMilk = ({
 
   return (
     <div>
-      <div className="flex gap-5 mb-5">
-        {detailCow?.cowStatus === 'milkingCow' && (
-          <ButtonComponent onClick={openModal} type="primary">
-            {t('Create daily milk')}
-          </ButtonComponent>
-        )}
-      </div>
+      {role !== 'Veterinarians' && (
+        <div className="flex gap-5 mb-5">
+          {detailCow?.cowStatus === 'milkingCow' && (
+            <ButtonComponent onClick={openModal} type="primary">
+              {t('Create daily milk')}
+            </ButtonComponent>
+          )}
+        </div>
+      )}
       <div className="flex flex-col gap-10">
         <div className="">
           <CalendarComponent

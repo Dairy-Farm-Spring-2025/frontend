@@ -711,5 +711,9 @@
   "Phone number": "Số điện thoại",
   "Please choose area": "Hãy chọn khu vực",
   "Please select at least one daily milk": "Hayx chọn ít nhất một lần vắt sữa",
-  "Detail required equipment {{equipment}} for task type {{taskType}}": "Chi tiết thiết bị cần thiết {{equipment}} cho loại công việc {{taskType}}"
+  "Detail required equipment {{equipment}} for task type {{taskType}}": "Chi tiết thiết bị cần thiết {{equipment}} cho loại công việc {{taskType}}",
+  "Edit cow types": "Chỉnh sửa loại bò",
+  "Max height": "Chiều cao tối đa",
+  "Max length": "Chiều dài tối đa",
+  "In Progress": "Đang thực hiện"
 }

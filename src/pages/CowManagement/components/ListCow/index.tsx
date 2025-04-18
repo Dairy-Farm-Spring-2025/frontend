@@ -5,6 +5,7 @@ import AnimationAppear from '@components/UI/AnimationAppear';
 import TextLink from '@components/UI/TextLink';
 import WhiteBackground from '@components/UI/WhiteBackground';
 import useFetcher from '@hooks/useFetcher';
+import useGetRole from '@hooks/useGetRole';
 import useModal from '@hooks/useModal';
 import { Cow } from '@model/Cow/Cow';
 import { CowType } from '@model/Cow/CowType';
@@ -22,6 +23,8 @@ import { IoMdFemale, IoMdMale } from 'react-icons/io';
 
 const ListCow = () => {
   const { t } = useTranslation();
+  const roleName = useGetRole();
+  console.log(roleName);
   const [optionsCowTypes, setOptionCowTypes] = useState<any[]>([]);
   const {
     data,
@@ -172,17 +175,18 @@ const ListCow = () => {
           />
         ) : (
           <>
-            <CreateBulkModal
-              modal={modal}
-              availableCows={filteredCows}
-              mutateCows={mutateCows}
-            />
+            {roleName !== 'Veterinarians' && (
+              <CreateBulkModal
+                modal={modal}
+                availableCows={filteredCows}
+                mutateCows={mutateCows}
+              />
+            )}
             <Divider className="my-4" />
             <TableComponent
               loading={isLoading}
               columns={columns}
               dataSource={data ? formatSTT(data) : []}
-
             />
           </>
         )}

@@ -9,13 +9,9 @@ import {
 } from 'react-router-dom';
 import { SiHappycow } from 'react-icons/si';
 import TaskTypeManagement from '@pages/TaskManagement/TaskType';
-
-const CowPenManagement = lazy(() => import('@pages/CowPenManagement'));
+import ProtectedRoute from './ProtectedRoute/ProtectedRoute';
 const EquipmentRequired = lazy(
   () => import('@pages/TaskManagement/TaskType/EquipmentRequired')
-);
-const MoveCowManagement = lazy(
-  () => import('@pages/CowPenManagement/components/MoveCowManagement')
 );
 const ApplicationType = lazy(
   () => import('@pages/ApplicationManagement/ApplicationType')
@@ -130,7 +126,6 @@ const ItemBatchManagement = lazy(
 );
 const AppDashboard = lazy(() => import('@core/layout/AppDashboard'));
 const CowManagement = lazy(() => import('@pages/CowManagement'));
-const PenManageMent = lazy(() => import('@pages/PenManagement'));
 const ListCow = lazy(() => import('@pages/CowManagement/components/ListCow'));
 const AreaAndPenManagement = lazy(() => import('@pages/AreaManagement'));
 const CowTypeManagement = lazy(
@@ -261,20 +256,41 @@ const AppRouting = () => {
       children: [
         {
           path: '',
-          element: <Navigate to={'dashboard/total'} />,
+          element: (
+            <Navigate
+              to={
+                user.roleName === 'Veterinarian' ? 'profile' : 'dashboard/total'
+              }
+            />
+          ),
         },
         {
           path: 'user-management',
-          element: SuspenseWrapper(<ListUser />),
+          element: (
+            <ProtectedRoute allowedRoles={['Admin']} userRole={user.roleName}>
+              {SuspenseWrapper(<ListUser />)}
+            </ProtectedRoute>
+          ),
         },
         {
           path: 'role-management',
-          element: SuspenseWrapper(<ListRole />),
+          element: (
+            <ProtectedRoute allowedRoles={['Admin']} userRole={user.roleName}>
+              {SuspenseWrapper(<ListRole />)}
+            </ProtectedRoute>
+          ),
         },
 
         {
           path: 'dashboard',
-          element: SuspenseWrapper(<Dashboard />),
+          element: (
+            <ProtectedRoute
+              allowedRoles={['Admin', 'Manager']}
+              userRole={user.roleName}
+            >
+              {SuspenseWrapper(<Dashboard />)}
+            </ProtectedRoute>
+          ),
           children: [
             {
               path: '',
@@ -312,11 +328,25 @@ const AppRouting = () => {
             },
             {
               path: 'create-cow',
-              element: SuspenseWrapper(<CreateCow />),
+              element: (
+                <ProtectedRoute
+                  allowedRoles={['Admin', 'Manager']}
+                  userRole={user.roleName}
+                >
+                  {SuspenseWrapper(<CreateCow />)}
+                </ProtectedRoute>
+              ),
             },
             {
               path: 'import-cow',
-              element: SuspenseWrapper(<ListCowImport />),
+              element: (
+                <ProtectedRoute
+                  allowedRoles={['Admin', 'Manager']}
+                  userRole={user.roleName}
+                >
+                  {SuspenseWrapper(<ListCowImport />)}
+                </ProtectedRoute>
+              ),
             },
             {
               path: 'health-report',
@@ -366,7 +396,11 @@ const AppRouting = () => {
         },
         {
           path: 'warehouse-management',
-          element: SuspenseWrapper(<WarehouseManagement />),
+          element: (
+            <ProtectedRoute allowedRoles={['Manager']} userRole={user.roleName}>
+              {SuspenseWrapper(<WarehouseManagement />)}
+            </ProtectedRoute>
+          ),
           children: [
             {
               path: '',
@@ -436,10 +470,10 @@ const AppRouting = () => {
             },
           ],
         },
-        {
-          path: 'pen-management',
-          element: SuspenseWrapper(<PenManageMent />),
-        },
+        // {
+        //   path: 'pen-management',
+        //   element: SuspenseWrapper(<PenManageMent />),
+        // },
         {
           path: 'vaccine-cycle-management',
           element: SuspenseWrapper(<VaccineCycleManagement />),
@@ -460,16 +494,16 @@ const AppRouting = () => {
             },
           ],
         },
-        {
-          path: 'move-cow-management',
-          element: SuspenseWrapper(<CowPenManagement />),
-          children: [
-            {
-              path: '',
-              element: SuspenseWrapper(<MoveCowManagement />),
-            },
-          ],
-        },
+        // {
+        //   path: 'move-cow-management',
+        //   element: SuspenseWrapper(<CowPenManagement />),
+        //   children: [
+        //     {
+        //       path: '',
+        //       element: SuspenseWrapper(<MoveCowManagement />),
+        //     },
+        //   ],
+        // },
         {
           path: 'milk-management',
           element: SuspenseWrapper(<MilkManagement />),
@@ -487,7 +521,14 @@ const AppRouting = () => {
         },
         {
           path: 'human-management',
-          element: SuspenseWrapper(<HumanManagement />),
+          element: (
+            <ProtectedRoute
+              allowedRoles={['Manager', 'Admin']}
+              userRole={user.roleName}
+            >
+              {SuspenseWrapper(<HumanManagement />)}
+            </ProtectedRoute>
+          ),
           children: [
             {
               path: '',
@@ -514,15 +555,36 @@ const AppRouting = () => {
             },
             {
               path: 'my-task',
-              element: SuspenseWrapper(<MyTaskSchedule />),
+              element: (
+                <ProtectedRoute
+                  allowedRoles={['Veterinarians']}
+                  userRole={user.roleName}
+                >
+                  {SuspenseWrapper(<MyTaskSchedule />)}
+                </ProtectedRoute>
+              ),
             },
             {
               path: 'list',
-              element: SuspenseWrapper(<TaskSchedule />),
+              element: (
+                <ProtectedRoute
+                  allowedRoles={['Manager', 'Admin']}
+                  userRole={user.roleName}
+                >
+                  {SuspenseWrapper(<TaskSchedule />)}
+                </ProtectedRoute>
+              ),
             },
             {
               path: 'task-type',
-              element: SuspenseWrapper(<TaskTypeManagement />),
+              element: (
+                <ProtectedRoute
+                  allowedRoles={['Manager', 'Admin']}
+                  userRole={user.roleName}
+                >
+                  {SuspenseWrapper(<TaskTypeManagement />)}
+                </ProtectedRoute>
+              ),
               children: [
                 {
                   path: '',
@@ -540,29 +602,71 @@ const AppRouting = () => {
             },
             {
               path: 'my-task/:taskId',
-              element: <Navigate to={'../my-task'} />,
+              element: (
+                <ProtectedRoute
+                  allowedRoles={['Veterinarians']}
+                  userRole={user.roleName}
+                >
+                  <Navigate to={'../my-task'} />
+                </ProtectedRoute>
+              ),
             },
             {
               path: 'my-task/:taskId/:day',
-              element: SuspenseWrapper(<DetailTask />),
+              element: (
+                <ProtectedRoute
+                  allowedRoles={['Veterinarians']}
+                  userRole={user.roleName}
+                >
+                  {SuspenseWrapper(<DetailTask />)}
+                </ProtectedRoute>
+              ),
             },
             {
               path: ':taskId/:day',
-              element: SuspenseWrapper(<DetailTask />),
+              element: (
+                <ProtectedRoute
+                  allowedRoles={['Manager', 'Admin']}
+                  userRole={user.roleName}
+                >
+                  {SuspenseWrapper(<DetailTask />)}
+                </ProtectedRoute>
+              ),
             },
             {
               path: ':taskId',
-              element: <Navigate to={'../list'} />,
+              element: (
+                <ProtectedRoute
+                  allowedRoles={['Manager', 'Admin']}
+                  userRole={user.roleName}
+                >
+                  <Navigate to={'../list'} />
+                </ProtectedRoute>
+              ),
             },
             {
               path: 'import',
-              element: SuspenseWrapper(<ImportTask />),
+              element: (
+                <ProtectedRoute
+                  allowedRoles={['Manager', 'Admin']}
+                  userRole={user.roleName}
+                >
+                  {SuspenseWrapper(<ImportTask />)}
+                </ProtectedRoute>
+              ),
             },
           ],
         },
         {
           path: 'application-management',
-          element: SuspenseWrapper(<ApplicationManagement />),
+          element: (
+            <ProtectedRoute
+              allowedRoles={['Manager', 'Admin']}
+              userRole={user.roleName}
+            >
+              {SuspenseWrapper(<ApplicationManagement />)}
+            </ProtectedRoute>
+          ),
           children: [
             {
               path: '',
@@ -581,7 +685,14 @@ const AppRouting = () => {
         },
         {
           path: 'notification-management',
-          element: SuspenseWrapper(<NotificationManagement />),
+          element: (
+            <ProtectedRoute
+              allowedRoles={['Manager', 'Admin']}
+              userRole={user.roleName}
+            >
+              {SuspenseWrapper(<NotificationManagement />)}
+            </ProtectedRoute>
+          ),
           children: [
             {
               path: '',

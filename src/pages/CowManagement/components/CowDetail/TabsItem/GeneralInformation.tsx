@@ -6,24 +6,25 @@ import { Form, SelectProps, Spin, message } from 'antd';
 import dayjs from 'dayjs';
 import { t } from 'i18next';
 import { useEffect, useState } from 'react';
-import ButtonComponent from '../../../../../components/Button/ButtonComponent';
-import CowQRImage from '../../../../../components/CowQrImage/CowQrImage';
-import FormComponent from '../../../../../components/Form/FormComponent';
-import FormItemComponent from '../../../../../components/Form/Item/FormItemComponent';
-import LabelForm from '../../../../../components/LabelForm/LabelForm';
-import ReactQuillComponent from '../../../../../components/ReactQuill/ReactQuillComponent';
-import SelectComponent from '../../../../../components/Select/SelectComponent';
-import Title from '../../../../../components/UI/Title';
-import useFetcher from '../../../../../hooks/useFetcher';
-import useToast from '../../../../../hooks/useToast';
-import { Cow } from '../../../../../model/Cow/Cow';
-import { CowType } from '../../../../../model/Cow/CowType';
-import { cowOrigin } from '../../../../../service/data/cowOrigin';
-import { cowStatus } from '../../../../../service/data/cowStatus';
-import { genderData } from '../../../../../service/data/gender';
+import ButtonComponent from '@components/Button/ButtonComponent';
+import CowQRImage from '@components/CowQrImage/CowQrImage';
+import FormComponent from '@components/Form/FormComponent';
+import FormItemComponent from '@components/Form/Item/FormItemComponent';
+import LabelForm from '@components/LabelForm/LabelForm';
+import ReactQuillComponent from '@components/ReactQuill/ReactQuillComponent';
+import SelectComponent from '@components/Select/SelectComponent';
+import Title from '@components/UI/Title';
+import useFetcher from '@hooks/useFetcher';
+import useToast from '@hooks/useToast';
+import { Cow } from '@model/Cow/Cow';
+import { CowType } from '@model/Cow/CowType';
+import { cowOrigin } from '@service/data/cowOrigin';
+import { cowStatus } from '@service/data/cowStatus';
+import { genderData } from '@service/data/gender';
 import { COW_PATH } from '@service/api/Cow/cowApi';
 import { COW_TYPE_PATH } from '@service/api/CowType/cowType';
 import QuillRender from '@components/UI/QuillRender';
+import useGetRole from '@hooks/useGetRole';
 
 interface CowGeneralInformationProps {
   id: string;
@@ -39,9 +40,12 @@ const CowGeneralInformation = ({
   mutateDetail,
 }: CowGeneralInformationProps) => {
   const [form] = Form.useForm();
+  const role = useGetRole();
   const { trigger, isLoading } = useFetcher(COW_PATH.COW_UPDATE(id), 'PUT');
   const { data } = useFetcher<any[]>(COW_TYPE_PATH.COW_TYPES, 'GET');
-  const [optionsCowType, setOptionsCowType] = useState<SelectProps['options']>([]);
+  const [optionsCowType, setOptionsCowType] = useState<SelectProps['options']>(
+    []
+  );
   const [showEdit, setShowEdit] = useState(false);
   const toast = useToast();
 
@@ -70,10 +74,17 @@ const CowGeneralInformation = ({
   }, [dataDetail, form]);
 
   // Hàm kiểm tra ngày sinh và ngày nhập
-  const validateDates = (dateOfBirth: dayjs.Dayjs, dateOfEnter: dayjs.Dayjs, cowStatus: string) => {
+  const validateDates = (
+    dateOfBirth: dayjs.Dayjs,
+    dateOfEnter: dayjs.Dayjs,
+    cowStatus: string
+  ) => {
     // 1. Kiểm tra dateOfBirth không được muộn hơn dateOfEnter
     if (dateOfBirth.isAfter(dateOfEnter)) {
-      return { valid: false, message: t('Date of birth cannot be later than date of enter') };
+      return {
+        valid: false,
+        message: t('Date of birth cannot be later than date of enter'),
+      };
     }
 
     // 2. Kiểm tra nếu cowStatus là milkingCow, dateOfBirth phải nhỏ hơn dateOfEnter ít nhất 10 tháng
@@ -82,7 +93,9 @@ const CowGeneralInformation = ({
       if (dateOfBirth.isAfter(minAgeForMilking)) {
         return {
           valid: false,
-          message: t('Cow must be at least 10 months old from date of enter to be a milking cow'),
+          message: t(
+            'Cow must be at least 10 months old from date of enter to be a milking cow'
+          ),
         };
       }
     }
@@ -146,7 +159,11 @@ const CowGeneralInformation = ({
                       const dateOfEnter = getFieldValue('dateOfEnter');
                       const cowStatus = getFieldValue('cowStatus');
                       if (dateOfEnter) {
-                        const validation = validateDates(value, dateOfEnter, cowStatus);
+                        const validation = validateDates(
+                          value,
+                          dateOfEnter,
+                          cowStatus
+                        );
                         if (!validation.valid) {
                           return Promise.reject(new Error(validation.message));
                         }
@@ -176,7 +193,11 @@ const CowGeneralInformation = ({
                       const dateOfBirth = getFieldValue('dateOfBirth');
                       const cowStatus = getFieldValue('cowStatus');
                       if (dateOfBirth) {
-                        const validation = validateDates(dateOfBirth, value, cowStatus);
+                        const validation = validateDates(
+                          dateOfBirth,
+                          value,
+                          cowStatus
+                        );
                         if (!validation.valid) {
                           return Promise.reject(new Error(validation.message));
                         }
@@ -228,7 +249,9 @@ const CowGeneralInformation = ({
             >
               {!showEdit ? (
                 <TextBorder>
-                  <Text>{formatStatusWithCamel(dataDetail?.cowType?.name)}</Text>
+                  <Text>
+                    {formatStatusWithCamel(dataDetail?.cowType?.name)}
+                  </Text>
                 </TextBorder>
               ) : (
                 <SelectComponent options={optionsCowType} className="w-full" />
@@ -243,7 +266,11 @@ const CowGeneralInformation = ({
                       const dateOfBirth = getFieldValue('dateOfBirth');
                       const dateOfEnter = getFieldValue('dateOfEnter');
                       if (dateOfBirth && dateOfEnter) {
-                        const validation = validateDates(dateOfBirth, dateOfEnter, value);
+                        const validation = validateDates(
+                          dateOfBirth,
+                          dateOfEnter,
+                          value
+                        );
                         if (!validation.valid) {
                           return Promise.reject(new Error(validation.message));
                         }
@@ -294,33 +321,35 @@ const CowGeneralInformation = ({
           <QuillRender description={form.getFieldValue('description')} />
         )}
       </FormItemComponent>
-      <div className="flex justify-end items-center w-full gap-3">
-        <p className="text-lg text-orange-600 font-semibold">
-          ({t("You can edit cow's information")})
-        </p>
-        {!showEdit ? (
-          <ButtonComponent type="primary" onClick={() => setShowEdit(true)}>
-            {t('Edit')}
-          </ButtonComponent>
-        ) : (
-          <div className="flex gap-5">
-            <ButtonComponent
-              type="primary"
-              danger
-              onClick={() => setShowEdit(false)}
-            >
-              {t('Cancel')}
+      {role !== 'Veterinarians' && (
+        <div className="flex justify-end items-center w-full gap-3">
+          <p className="text-lg text-orange-600 font-semibold">
+            ({t("You can edit cow's information")})
+          </p>
+          {!showEdit ? (
+            <ButtonComponent type="primary" onClick={() => setShowEdit(true)}>
+              {t('Edit')}
             </ButtonComponent>
-            <ButtonComponent
-              loading={isLoading}
-              htmlType="submit"
-              type="primary"
-            >
-              {t('Save')}
-            </ButtonComponent>
-          </div>
-        )}
-      </div>
+          ) : (
+            <div className="flex gap-5">
+              <ButtonComponent
+                type="primary"
+                danger
+                onClick={() => setShowEdit(false)}
+              >
+                {t('Cancel')}
+              </ButtonComponent>
+              <ButtonComponent
+                loading={isLoading}
+                htmlType="submit"
+                type="primary"
+              >
+                {t('Save')}
+              </ButtonComponent>
+            </div>
+          )}
+        </div>
+      )}
     </FormComponent>
   );
 };

@@ -45,10 +45,19 @@ const LineChartComponent = ({
     <ResponsiveContainer height={500}>
       <LineChart data={fullData}>
         <CartesianAxis strokeDasharray="3 3" />
-        <XAxis
+        {/* <XAxis
           name="month"
           tickLine={false}
           tickMargin={10}
+          ticks={Array.from({ length: 12 }, (_, index) => index + 1)}
+          tickFormatter={(value: number) => MONTH_NAMES[value - 1]?.slice(0, 3)}
+        /> */}
+        <XAxis
+          dataKey="month"
+          type="number"
+          tickLine={false}
+          tickMargin={10}
+          domain={[1, 12]}
           ticks={Array.from({ length: 12 }, (_, index) => index + 1)}
           tickFormatter={(value: number) => MONTH_NAMES[value - 1]?.slice(0, 3)}
         />
