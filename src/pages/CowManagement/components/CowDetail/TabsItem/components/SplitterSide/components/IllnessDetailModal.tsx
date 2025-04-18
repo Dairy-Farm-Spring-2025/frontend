@@ -71,7 +71,7 @@ const IllnessDetailModal = ({ data, modal }: IllnessDetailModalProps) => {
               span: 3,
             },
             {
-              label: t('Phone number'),
+              label: t('ww'),
               children: detail?.veterinarian?.phoneNumber,
               span: 3,
             },

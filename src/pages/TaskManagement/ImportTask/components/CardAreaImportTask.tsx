@@ -87,14 +87,6 @@ const CardAreaImportTask = ({
       const isAssigneeInvalid =
         record.assigneeId === null || record.assigneeId === undefined;
 
-      console.log(
-        isFromDateInvalid,
-        isToDateInvalid,
-        isDateRangeInvalid,
-        isTaskTypeInvalid,
-        isAssigneeInvalid
-      );
-
       return (
         isFromDateInvalid ||
         isToDateInvalid ||
@@ -128,10 +120,6 @@ const CardAreaImportTask = ({
       fetchingStatus.current[rowKey] = true;
 
       try {
-        console.log(
-          `Fetching assignees for rowKey: ${rowKey}, taskType: ${taskType}, fromDate: ${fromDate}, toDate: ${toDate}`
-        );
-
         const effectiveToDate =
           toDate && dayjs(toDate).isBefore(dayjs(fromDate)) ? fromDate : toDate;
 
@@ -189,6 +177,8 @@ const CardAreaImportTask = ({
         fromDate: record.fromDate ? dayjs(record.fromDate) : null,
         toDate: record.toDate ? dayjs(record.toDate) : null,
         taskType: record.taskType || null,
+        assigneeId: record.assigneeId,
+        assigneeName: record.assigneeName, // Set assigneeName
       },
     });
     setEditingKeys((prev) => ({ ...prev, [rowKey]: true }));
@@ -213,6 +203,8 @@ const CardAreaImportTask = ({
               ? updatedRow.toDate.format('YYYY-MM-DD')
               : null,
             stripes: updatedRow.stripes || null,
+            assigneeId: updatedRow.assigneeId,
+            assigneeName: updatedRow.assigneeName, // Truyền assigneeName
           }
         );
         setEditingKeys((prev) => ({ ...prev, [rowKey]: false }));
@@ -225,7 +217,6 @@ const CardAreaImportTask = ({
         console.log('Validation failed:', error);
       });
   };
-
   const handleCancel = (rowKey: string) => {
     setEditingKeys((prev) => ({ ...prev, [rowKey]: false }));
     form.resetFields([rowKey]);
@@ -274,6 +265,16 @@ const CardAreaImportTask = ({
     }
   };
 
+  const handleAssigneeChange = (value: number, option: any, rowKey: string) => {
+    form.setFieldsValue({
+      [rowKey]: {
+        ...form.getFieldValue(rowKey),
+        assigneeId: value,
+        assigneeName: option.label, // Lưu assigneeName
+      },
+    });
+  };
+
   const handleValuesChange = (
     changedValues: any,
     allValues: any,
@@ -283,14 +284,15 @@ const CardAreaImportTask = ({
     const value = changedValues[rowKey][changedField];
 
     if (changedField === 'taskType') {
+      const isNightShiftTask = value === 'Trực ca đêm';
       form.setFieldsValue({
         [rowKey]: {
           ...allValues[rowKey],
           taskType: value,
           fromDate: null,
           toDate: null,
-          shift: null,
-          assigneeId: null,
+          shift: isNightShiftTask ? 'nightShift' : null, // Đặt shift thành nightShift nếu task type là "Trực ca đêm"          assigneeId: null,
+          assigneeName: null, // Đặt lại assigneeName
           description: allValues[rowKey]?.description || '',
         },
       });
@@ -312,6 +314,7 @@ const CardAreaImportTask = ({
             ...allValues[rowKey],
             toDate: value,
             assigneeId: null,
+            assigneeName: null, // Đặt lại assigneeName
           },
         });
       } else {
@@ -319,6 +322,7 @@ const CardAreaImportTask = ({
           [rowKey]: {
             ...allValues[rowKey],
             assigneeId: null,
+            assigneeName: null, // Đặt lại assigneeName
             toDate: null,
           },
         });
@@ -437,7 +441,18 @@ const CardAreaImportTask = ({
       render: (_, record) =>
         editingKeys[record.key] ? (
           <Form.Item name={[record.key, 'shift']} noStyle>
-            <SelectComponent options={SHIFT_TASK()} style={{ width: '100%' }} />
+            <SelectComponent
+              options={SHIFT_TASK()}
+              style={{ width: '100%' }}
+              disabled={
+                form.getFieldValue([record.key, 'taskType']) === 'Trực ca đêm'
+              } // Vô hiệu hóa khi task type là "Trực ca đêm"
+              defaultValue={
+                form.getFieldValue([record.key, 'taskType']) === 'Trực ca đêm'
+                  ? 'nightShift'
+                  : undefined
+              }
+            />
           </Form.Item>
         ) : (
           <span
@@ -465,6 +480,9 @@ const CardAreaImportTask = ({
               onDropdownVisibleChange={(open) =>
                 handleAssigneeDropdownVisibleChange(open, record.key)
               }
+              onChange={(value, option) =>
+                handleAssigneeChange(value, option, record.key)
+              }
               loading={fetchingStatus.current[record.key] || false}
             />
           </Form.Item>
@@ -472,11 +490,7 @@ const CardAreaImportTask = ({
           <span
             style={record.deleted ? { textDecoration: 'line-through' } : {}}
           >
-            {record.assigneeName ||
-              (assigneeOptions[record.key] || []).find(
-                (a) => a.value === record.assigneeId
-              )?.label ||
-              '-'}
+            {record.assigneeName || '-'}
           </span>
         ),
     },

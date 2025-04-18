@@ -14,10 +14,11 @@ import { Divider } from 'antd';
 import { t } from 'i18next';
 import ModalCreateEquipmentRequired from './components/ModalCreateEquipmentRequired';
 import { EQUIPMENT_PATH } from '@service/api/Equipment/equipmentApi';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import TagComponents from '@components/UI/TagComponents';
 import { getColorByRole, RoleRender } from '@utils/statusRender/roleRender';
 import useToast from '@hooks/useToast';
+import ModalViewDetailEquipmentRequired from './components/ModalViewDetailEquipmentRequired';
 
 const EquipmentRequired = () => {
   const toast = useToast();
@@ -26,6 +27,8 @@ const EquipmentRequired = () => {
     isLoading: isLoadingDataUseEquipment,
     mutate,
   } = useFetcher<UseEquipmentType[]>(TASK_TYPE_PATH.USE_EQUIPMENTS, 'GET');
+  const [equipmentId, setEquipmentId] = useState<number>(0);
+  const [taskTypeId, setTaskTypeId] = useState<number>(0);
   const { data: dataEquipment } = useFetcher<EquipmentType[]>(
     EQUIPMENT_PATH.GET_ALL_EQUIPMENT,
     'GET'
@@ -39,6 +42,13 @@ const EquipmentRequired = () => {
     'DELETE'
   );
   const modal = useModal();
+  const modalViewDetail = useModal();
+
+  const handleOpenViewDetail = (equipmentId: number, taskTypeId: number) => {
+    setEquipmentId(equipmentId);
+    setTaskTypeId(taskTypeId);
+    modalViewDetail.openModal();
+  };
 
   const optionsEquipment = useMemo(
     () =>
@@ -126,6 +136,7 @@ const EquipmentRequired = () => {
       key: 'note',
       title: t('Note'),
       dataIndex: 'note',
+      width: '30%',
       render: (data) => data,
     },
     {
@@ -134,7 +145,14 @@ const EquipmentRequired = () => {
       dataIndex: 'action',
       render: (_, record: UseEquipmentType) => (
         <div className="flex gap-2">
-          <ButtonComponent type="primary">{t('View detail')}</ButtonComponent>
+          <ButtonComponent
+            type="primary"
+            onClick={() =>
+              handleOpenViewDetail(record.id.equipmentId, record.id.taskTypeId)
+            }
+          >
+            {t('View detail')}
+          </ButtonComponent>
           <PopconfirmComponent
             title={undefined}
             onConfirm={() =>
@@ -168,6 +186,12 @@ const EquipmentRequired = () => {
           modal={modal}
           optionsEquipment={optionsEquipment}
           optionsTaskType={optionTaskType}
+        />
+        <ModalViewDetailEquipmentRequired
+          equipmentId={equipmentId}
+          taskTypeId={taskTypeId}
+          modal={modalViewDetail}
+          mutate={mutate}
         />
       </WhiteBackground>
     </AnimationAppear>
