@@ -710,5 +710,6 @@
   "Illness Detail": "Chi tiết bệnh",
   "Phone number": "Số điện thoại",
   "Please choose area": "Hãy chọn khu vực",
-  "Please select at least one daily milk": "Hayx chọn ít nhất một lần vắt sữa"
+  "Please select at least one daily milk": "Hayx chọn ít nhất một lần vắt sữa",
+  "Detail required equipment {{equipment}} for task type {{taskType}}": "Chi tiết thiết bị cần thiết {{equipment}} cho loại công việc {{taskType}}"
 }
