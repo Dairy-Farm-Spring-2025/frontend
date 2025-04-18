@@ -1,5 +1,3 @@
-
-
 import TableComponent, { Column } from '@components/Table/TableComponent';
 import AnimationAppear from '@components/UI/AnimationAppear';
 import WhiteBackground from '@components/UI/WhiteBackground';
@@ -13,9 +11,11 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ModalTypes from './components/ModalAddTypes/ModalTypes';
 import ModalEditTypes from './components/ModalEditTypes/ModalEditTypes';
+import useGetRole from '@hooks/useGetRole';
 
 const CowTypeManagement = () => {
   const { t } = useTranslation();
+  const role = useGetRole();
   const modal = useModal();
   const modalEdit = useModal();
   const { data, isLoading, mutate } = useFetcher<CowType[]>(
@@ -73,7 +73,7 @@ const CowTypeManagement = () => {
       title: t('Status'),
       render: (status) => (
         <Tag color={status === 'exist' ? 'green' : 'volcano'}>
-          {status === 'exist' ? 'Exist' : 'Not Exist'}
+          {status === 'exist' ? t('Exist') : t('Not Exist')}
         </Tag>
       ),
     },
@@ -81,10 +81,10 @@ const CowTypeManagement = () => {
   return (
     <AnimationAppear duration={0.5}>
       <WhiteBackground>
-        <ModalTypes modal={modal} mutate={mutate} />
-        {modalEdit.open && (
-          <ModalEditTypes id={id} modal={modalEdit} mutate={mutate} />
+        {role !== 'Veterinarians' && (
+          <ModalTypes modal={modal} mutate={mutate} />
         )}
+        <ModalEditTypes id={id} modal={modalEdit} mutate={mutate} />
         <Divider className="my-4" />
         <TableComponent
           columns={columns}

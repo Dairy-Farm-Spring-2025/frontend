@@ -12,6 +12,7 @@ import useFetcher from '../../../../../../hooks/useFetcher';
 import useToast from '../../../../../../hooks/useToast';
 import { t } from 'i18next';
 import { DAILY_MILK_PATH } from '@service/api/DailyMilk/dailyMilkApi';
+import useGetRole from '@hooks/useGetRole';
 
 const classNameStyle = '!text-xs lg:!text-sm !text-center !p-2';
 
@@ -26,6 +27,7 @@ const ModalDetailDailyMilk = ({
   dailyMilk,
   mutateDaily,
 }: ModalDetailDailyMilkProps) => {
+  const role = useGetRole();
   const [form] = Form.useForm();
   const [edit, setEdit] = useState(false);
   const { trigger } = useFetcher('dailymilks', 'DELETE');
@@ -119,13 +121,15 @@ const ModalDetailDailyMilk = ({
             <p>
               {t('Volume')} <span className="text-orange-500">(lit)</span>
             </p>
-            <PiPencil
-              size={20}
-              className="cursor-pointer hover:opacity-50 duration-100"
-              onClick={() =>
-                toggleEdit(dailyMilk?.id, dailyMilk?.extendedProps?.volume)
-              }
-            />
+            {role !== 'Veterinarians' && (
+              <PiPencil
+                size={20}
+                className="cursor-pointer hover:opacity-50 duration-100"
+                onClick={() =>
+                  toggleEdit(dailyMilk?.id, dailyMilk?.extendedProps?.volume)
+                }
+              />
+            )}
           </div>
         ),
         children: !edit ? (
@@ -171,9 +175,11 @@ const ModalDetailDailyMilk = ({
             title={undefined}
             onConfirm={() => onConfirm(dailyMilk?.id)}
           >
-            <ButtonComponent type="primary" danger>
-              {t('Delete')}
-            </ButtonComponent>
+            {role !== 'Veterinarians' && (
+              <ButtonComponent type="primary" danger>
+                {t('Delete')}
+              </ButtonComponent>
+            )}
           </PopconfirmComponent>
         </div>
         <DescriptionComponent

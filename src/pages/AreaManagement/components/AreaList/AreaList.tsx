@@ -9,6 +9,7 @@ import '../../index.scss';
 import ModalCreateArea from '../ModalCreateArea/ModalCreateArea';
 import ModalEditPens from '../ModalEditPen';
 import CardAreaPen from './components/CardAreaPen';
+import useGetRole from '@hooks/useGetRole';
 
 export type DataGroupAreaPen = {
   area: Area;
@@ -24,6 +25,7 @@ interface AreaListProps {
 }
 
 const AreaList = ({ dataGroup, mutate, isLoading }: AreaListProps) => {
+  const role = useGetRole();
   const modalEdit = useModal();
   const modalCreate = useModal();
   const [id, setId] = useState<number>(0);
@@ -59,7 +61,9 @@ const AreaList = ({ dataGroup, mutate, isLoading }: AreaListProps) => {
 
   return (
     <>
-      <ModalCreateArea modal={modalCreate} mutate={mutate} />
+      {role !== 'Veterinarians' && (
+        <ModalCreateArea modal={modalCreate} mutate={mutate} />
+      )}
       <ModalEditPens id={id} modal={modalEdit} mutate={mutate} />
       <Divider className="my-4" />
       <div className="flex flex-col gap-5 mb-5">

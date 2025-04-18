@@ -12,6 +12,7 @@ import TagComponents from '@components/UI/TagComponents';
 import WhiteBackground from '@components/UI/WhiteBackground';
 import { useEditToggle } from '@hooks/useEditToggle';
 import useFetcher from '@hooks/useFetcher';
+import useGetRole from '@hooks/useGetRole';
 import useToast from '@hooks/useToast';
 import { Area } from '@model/Area';
 import { CowStatus } from '@model/Cow/Cow';
@@ -50,6 +51,7 @@ interface CowInPenArea {
 }
 
 const AreaDetail = () => {
+  const role = useGetRole();
   const { id } = useParams();
   const toast = useToast();
   const [form] = Form.useForm();
@@ -247,24 +249,26 @@ const AreaDetail = () => {
                       </FormItemComponent>
                     </div>
                   </div>
-                  <div className="w-full flex justify-end gap-5">
-                    <ButtonComponent
-                      type="primary"
-                      buttonType={!edited ? 'gold' : 'volcano'}
-                      onClick={toggleEdit}
-                    >
-                      {!edited ? t('Edit') : t('Cancel')}
-                    </ButtonComponent>
-                    {edited && (
+                  {role !== 'Veterinarians' && (
+                    <div className="w-full flex justify-end gap-5">
                       <ButtonComponent
                         type="primary"
-                        buttonType="secondary"
-                        htmlType="submit"
+                        buttonType={!edited ? 'gold' : 'volcano'}
+                        onClick={toggleEdit}
                       >
-                        {t('Edit')}
+                        {!edited ? t('Edit') : t('Cancel')}
                       </ButtonComponent>
-                    )}
-                  </div>
+                      {edited && (
+                        <ButtonComponent
+                          type="primary"
+                          buttonType="secondary"
+                          htmlType="submit"
+                        >
+                          {t('Edit')}
+                        </ButtonComponent>
+                      )}
+                    </div>
+                  )}
                 </FormComponent>
               </Skeleton>
             </div>

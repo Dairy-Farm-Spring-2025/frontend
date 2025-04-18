@@ -10,7 +10,10 @@ import AnimationAppear from '../../../../components/UI/AnimationAppear';
 import WhiteBackground from '../../../../components/UI/WhiteBackground';
 import useFetcher from '../../../../hooks/useFetcher';
 import useToast from '../../../../hooks/useToast';
-import { formatDateHour, formatStatusWithCamel } from '../../../../utils/format';
+import {
+  formatDateHour,
+  formatStatusWithCamel,
+} from '../../../../utils/format';
 import { Tag } from 'antd';
 
 const ListVaccineInjection = () => {
@@ -60,7 +63,7 @@ const ListVaccineInjection = () => {
         if (status === 'inProgress') color = 'orange';
         if (status === 'completed') color = 'green';
         if (status === 'cancelled') color = 'red';
-        return <Tag color={color}>{formatStatusWithCamel(status)}</Tag>;
+        return <Tag color={color}>{t(formatStatusWithCamel(status))}</Tag>;
       },
     },
     {
