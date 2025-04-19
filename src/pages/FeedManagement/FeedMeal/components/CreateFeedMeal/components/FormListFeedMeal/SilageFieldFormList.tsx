@@ -18,8 +18,8 @@ const SilageFieldFormList = ({
   const { t } = useTranslation();
   const form = Form.useFormInstance();
   const detailsSilage = Form.useWatch('detailsSilage', form) || [];
-  const minValidate = silageTotal * 0.9;
-  const maxValidate = silageTotal * 1.1;
+  const minValidate = Number((silageTotal * 0.9).toFixed(2));
+  const maxValidate = Number((silageTotal * 1.1).toFixed(2));
   const handleValidation = async () => {
     const details = form.getFieldValue('detailsSilage') || [];
     const totalQuantity = details.reduce(
@@ -103,8 +103,7 @@ const SilageFieldFormList = ({
 
           <div style={{ marginBottom: 16, fontSize: 16 }}>
             {(() => {
-              const details = form.getFieldValue('detailsSilage') || [];
-              const totalQuantity = details.reduce(
+              const totalQuantity = detailsSilage.reduce(
                 (acc: any, field: any) => acc + Number(field?.quantity || 0),
                 0
               );
@@ -112,8 +111,8 @@ const SilageFieldFormList = ({
                 return (
                   <div style={{ color: 'red' }}>
                     {t('total_quantity_range', {
-                      min: minValidate.toFixed(2),
-                      max: maxValidate.toFixed(2),
+                      min: minValidate,
+                      max: maxValidate,
                     })}
                   </div>
                 );
@@ -121,8 +120,8 @@ const SilageFieldFormList = ({
               return (
                 <div style={{ color: 'green' }}>
                   {t('total_quantity_range', {
-                    min: minValidate.toFixed(2),
-                    max: maxValidate.toFixed(2),
+                    min: minValidate,
+                    max: maxValidate,
                   })}
                 </div>
               );

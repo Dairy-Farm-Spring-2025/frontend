@@ -1,9 +1,10 @@
 import { SearchOutlined } from '@ant-design/icons';
 import { PRIMARY_COLORS } from '@common/colors';
+import DatePickerComponent from '@components/DatePicker/DatePickerComponent';
 import EmptyComponent from '@components/Error/EmptyComponent';
 import { cowOriginFiltered } from '@service/data/cowOrigin';
 import { cowStatus } from '@service/data/cowStatus';
-import { Button, ConfigProvider, DatePicker, Input, Select, Table } from 'antd';
+import { Button, ConfigProvider, Input, Select, Table } from 'antd';
 import { ColumnProps, TableProps } from 'antd/es/table';
 import dayjs from 'dayjs';
 import { t } from 'i18next';
@@ -56,8 +57,7 @@ const EditableCell: React.FC<any> = ({
       // Xử lý các kiểu dữ liệu khác nhau
       if (dataIndex === 'dateOfBirth' || dataIndex === 'dateOfEnter') {
         childNode = (
-          <DatePicker
-            format="YYYY-MM-DD"
+          <DatePickerComponent
             onChange={(_date, dateString) => {
               setValue(dateString);
               save(dateString);
@@ -183,15 +183,21 @@ const TableComponent = ({
 
     Object.keys(searchTextFilters).forEach((key) => {
       if (searchTextFilters[key]) {
-        filtered = filtered.filter((item) =>
-          item[key]
+        const col = columns.find((c) => c.dataIndex === key);
+        const objectKey = col?.objectKeyFilter;
+
+        filtered = filtered.filter((item) => {
+          let fieldValue = item[key];
+          if (fieldValue && typeof fieldValue === 'object' && objectKey) {
+            fieldValue = fieldValue[objectKey];
+          }
+          return fieldValue
             ?.toString()
             .toLowerCase()
-            .includes(searchTextFilters[key].toLowerCase())
-        );
+            .includes(searchTextFilters[key].toLowerCase());
+        });
       }
     });
-
     setFilteredData(filtered);
   }, [selectedFilters, selectedDateFilters, searchTextFilters, dataSource]);
 
@@ -324,7 +330,7 @@ const TableComponent = ({
             ? () => (
                 <div style={{ padding: 8, width: 250 }}>
                   <Select
-                    placeholder={`Filter ${col.title}`}
+                    placeholder={`${t('Filter')} ${col.title}`}
                     value={selectedFilters[col.dataIndex] || undefined}
                     onChange={(value) =>
                       handleSelectFilter(value, col.dataIndex)
@@ -344,10 +350,10 @@ const TableComponent = ({
             : col.filteredDate
             ? () => (
                 <div style={{ padding: 8 }}>
-                  <DatePicker
+                  <DatePickerComponent
                     style={{ width: '100%' }}
                     onChange={(date) => handleDateFilter(date, col.dataIndex)}
-                    placeholder={`Select ${col.title}`}
+                    placeholder={`${t('Select')} ${col.title}`}
                     allowClear
                   />
                 </div>

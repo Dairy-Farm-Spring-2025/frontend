@@ -18,8 +18,8 @@ const RefinedFieldFormList = ({
   const { t } = useTranslation();
   const form = Form.useFormInstance();
   const detailsRefined = Form.useWatch('detailsRefined', form) || [];
-  const minValidate = refinedTotal * 0.9;
-  const maxValidate = refinedTotal * 1.1;
+  const minValidate = Number((refinedTotal * 0.9).toFixed(2));
+  const maxValidate = Number((refinedTotal * 1.1).toFixed(2));
   const handleValidation = async () => {
     const details = form.getFieldValue('detailsRefined') || [];
     const totalQuantity = details.reduce(
@@ -31,8 +31,8 @@ const RefinedFieldFormList = ({
       return Promise.reject(
         new Error(
           t('total_quantity_range', {
-            min: minValidate.toFixed(2),
-            max: maxValidate.toFixed(2),
+            min: minValidate,
+            max: maxValidate,
           })
         )
       );
@@ -103,17 +103,17 @@ const RefinedFieldFormList = ({
 
           <div style={{ marginBottom: 16, fontSize: 16 }}>
             {(() => {
-              const details = form.getFieldValue('detailsRefined') || [];
-              const totalQuantity = details.reduce(
+              const totalQuantity = detailsRefined.reduce(
                 (acc: any, field: any) => acc + Number(field?.quantity || 0),
                 0
               );
+              console.log(totalQuantity === minValidate);
               if (totalQuantity < minValidate || totalQuantity > maxValidate) {
                 return (
                   <div style={{ color: 'red' }}>
                     {t('total_quantity_range', {
-                      min: minValidate.toFixed(2),
-                      max: maxValidate.toFixed(2),
+                      min: minValidate,
+                      max: maxValidate,
                     })}
                   </div>
                 );
@@ -121,8 +121,8 @@ const RefinedFieldFormList = ({
               return (
                 <div style={{ color: 'green' }}>
                   {t('total_quantity_range', {
-                    min: minValidate.toFixed(2),
-                    max: maxValidate.toFixed(2),
+                    min: minValidate,
+                    max: maxValidate,
                   })}
                 </div>
               );

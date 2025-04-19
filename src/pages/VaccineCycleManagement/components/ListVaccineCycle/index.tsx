@@ -49,11 +49,13 @@ const ListVaccineCycle = () => {
       key: 'createdAt',
       title: t('Created At'),
       render: (data) => formatDateHour(data),
+      sorter: (a, b) => a.createdAt - b.createdAt,
     },
     {
       dataIndex: 'name',
       key: 'name',
       title: t('Name'),
+      searchable: true,
     },
     {
       dataIndex: 'vaccineCycleId',

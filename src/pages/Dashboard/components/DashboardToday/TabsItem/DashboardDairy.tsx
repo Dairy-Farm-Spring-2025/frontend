@@ -21,7 +21,7 @@ const DashboardDairy = ({
 }: DashboardDairy) => {
   return (
     <div className="flex flex-col gap-5">
-      <div className="grid grid-cols-4 gap-2">
+      <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2">
         <StatisticComponent
           icon={<PiCowBold size={SIZE_ICON} />}
           title={t('Total Cow')}

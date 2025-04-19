@@ -74,36 +74,33 @@ const IllNess = () => {
           title={
             <div className="cowEntity">
               <p>
-                <strong>ID:</strong> {data.cowId}
+                <strong>{t('Status')}:</strong>{' '}
+                {formatAreaType(data?.cowStatus)}
               </p>
               <p>
-                <strong>{t('Status')}:</strong> {formatAreaType(data.cowStatus)}
-              </p>
-              <p>
-                <strong>{t('Gender')}:</strong> {formatAreaType(data.gender)}
+                <strong>{t('Gender')}:</strong> {formatAreaType(data?.gender)}
               </p>
               <p>
                 <strong>{t('Date of Birth')}:</strong>{' '}
-                {formatDateHour(data.dateOfBirth)}
+                {formatDateHour(data?.dateOfBirth)}
               </p>
               <p>
                 <strong>{t('Date of Enter')}:</strong>{' '}
-                {formatDateHour(data.dateOfEnter)}
+                {formatDateHour(data?.dateOfEnter)}
               </p>
               <p>
                 <strong>{t('Origin')}:</strong>{' '}
-                {getLabelByValue(data.cowOrigin, cowOrigin())}
+                {getLabelByValue(data?.cowOrigin, cowOrigin())}
               </p>
               <p>
                 <strong>{t('Description')}:</strong>{' '}
-                {stripHtml(data.description)}
+                {stripHtml(data?.description)}
               </p>
             </div>
           }
         >
-          <span className="text-500 ">{data.name}</span>,
+          <span className="text-500 ">{data?.name}</span>,
         </Tooltip>
-
       ),
       searchText: true,
     },
@@ -111,9 +108,9 @@ const IllNess = () => {
       dataIndex: 'startDate',
       key: 'startDate',
       title: t('Start Date'),
-      render: (data) => formatDateHour(data),
+      render: (data) => (data ? formatDateHour(data) : '-'),
       sorter: (a: any, b: any) =>
-        new Date(a.startDate).getTime() - new Date(b.startDate).getTime(),
+        new Date(a?.startDate).getTime() - new Date(b?.startDate).getTime(),
       filteredDate: true,
     },
     {
@@ -122,7 +119,7 @@ const IllNess = () => {
       title: t('End Date'),
       render: (data) => (data ? formatDateHour(data) : '-'),
       sorter: (a: any, b: any) =>
-        new Date(a.endDate).getTime() - new Date(b.endDate).getTime(),
+        new Date(a?.endDate).getTime() - new Date(b?.endDate).getTime(),
       filteredDate: true,
     },
 
@@ -132,31 +129,27 @@ const IllNess = () => {
       title: t('user'),
       render: (data) => (
         <Tooltip
-
           placement="top"
           title={
             <div className="userEntity">
               <p>
-                <strong>ID:</strong> {data.id}
-              </p>
-              <p>
                 <strong>{t('Employee Number')}:</strong>{' '}
-                {formatAreaType(data.employeeNumber)}
+                {formatAreaType(data?.employeeNumber)}
               </p>
               <p>
-                <strong>{t('Email')}:</strong> {data.email}
+                <strong>{t('Email')}:</strong> {data?.email}
               </p>
               <p>
                 <strong>{t('Date Of Enter')}:</strong>{' '}
-                {formatDateHour(data.dateOfEnter)}
+                {formatDateHour(data?.dateOfEnter)}
               </p>
               <p>
-                <strong>{t('Role')}:</strong> {data.roleId.name}
+                <strong>{t('Role')}:</strong> {data?.roleId?.name}
               </p>
             </div>
           }
         >
-          <span className="text-blue-500 ">{data.name}</span>
+          <span className="text-blue-500 ">{data?.name}</span>
         </Tooltip>
       ),
       searchText: true,
@@ -165,13 +158,16 @@ const IllNess = () => {
       dataIndex: 'illnessStatus',
       key: 'illnessStatus',
       title: t('Status'),
-      render: (status: string) => (
-        <TagComponents
-          color={statusColor[status as keyof typeof statusColor] || 'default'}
-        >
-          {t(formatStatusWithCamel(status))}
-        </TagComponents>
-      ),
+      render: (status: string) =>
+        status ? (
+          <TagComponents
+            color={statusColor[status as keyof typeof statusColor] || 'default'}
+          >
+            {t(formatStatusWithCamel(status))}
+          </TagComponents>
+        ) : (
+          '-'
+        ),
 
       filterable: true,
       filterOptions: IllnessStatus_Filter(),
@@ -205,7 +201,7 @@ const IllNess = () => {
       setHealthReport(data);
     }
     if (error) {
-      toast.showError(error);
+      toast.showError(error.message);
     }
   }, [data, error, toast]);
   return (

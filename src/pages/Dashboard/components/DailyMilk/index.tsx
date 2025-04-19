@@ -12,13 +12,13 @@ const DailyMilkDashboard = () => {
     {
       key: 'dateRecord',
       label: t('Date Record'),
-      children: <DailyMilkTotalMonth />,
+      children: <DailyMilkTotalDate />,
       icon: <CalendarOutlined />,
     },
     {
       key: 'monthRecord',
-      label: t('Monthly Record'),
-      children: <DailyMilkTotalDate />,
+      label: t('Yearly Record'),
+      children: <DailyMilkTotalMonth />,
       icon: <BarChartOutlined />,
     },
   ];

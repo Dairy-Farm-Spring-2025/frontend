@@ -30,7 +30,7 @@ const DashboardTodayStatistic = ({
           date: dayjs(new Date()).format('DD / MM / YYYY'),
         })}
       </Title>
-      <div className="grid grid-cols-4 gap-2">
+      <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2">
         <StatisticComponent
           icon={<BiTask size={SIZE_ICON} />}
           title={t('Daily tasks')}

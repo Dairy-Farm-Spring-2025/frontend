@@ -1,4 +1,5 @@
 import { Skeleton } from 'antd';
+import { t } from 'i18next';
 import {
   CartesianAxis,
   Legend,
@@ -59,12 +60,12 @@ const LineChartComponent = ({
           tickMargin={10}
           domain={[1, 12]}
           ticks={Array.from({ length: 12 }, (_, index) => index + 1)}
-          tickFormatter={(value: number) => MONTH_NAMES[value - 1]?.slice(0, 3)}
+          tickFormatter={(value: number) => t(MONTH_NAMES[value - 1])}
         />
         <YAxis />
         <Tooltip
-          formatter={(value) => `${value}`}
-          labelFormatter={(label) => `Month: ${MONTH_NAMES[label - 1]}`}
+          formatter={(value) => [`${value} (kg)`, textRender || t('Value')]}
+          labelFormatter={(label) => `${t(MONTH_NAMES[label - 1])}`}
         />
         <Legend formatter={() => textRender || 'Custom Legend Text'} />
         <Line type="monotone" dataKey="value" stroke="#8884d8" />

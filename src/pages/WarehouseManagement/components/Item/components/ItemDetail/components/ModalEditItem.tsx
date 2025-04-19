@@ -20,6 +20,7 @@ import {
   unitOptions,
 } from '../../../../../../../service/data/item';
 import { WarehouseType } from '@model/Warehouse/warehouse';
+import { t } from 'i18next';
 
 interface ModalEditItemProps {
   modal: any;
@@ -49,7 +50,6 @@ const ModalEditItem = ({ modal, data, mutate }: ModalEditItemProps) => {
         name: data?.name,
         status: data?.status,
         unit: data?.unit,
-        quantity: data?.quantity,
         categoryId: data?.categoryEntity?.categoryId,
         locationId: data?.warehouseLocationEntity?.warehouseLocationId,
       });
@@ -98,14 +98,14 @@ const ModalEditItem = ({ modal, data, mutate }: ModalEditItemProps) => {
       onOk={handleOk}
       width={800}
       onCancel={handleCancel}
-      title="Edit Item"
+      title={t('Edit Item')}
       open={modal.open}
     >
       <FormComponent onFinish={handleFinish} form={form}>
         <FormItemComponent
           rules={[{ required: true }]}
           name="name"
-          label={<LabelForm>Name</LabelForm>}
+          label={<LabelForm>{t('Name')}</LabelForm>}
         >
           <InputComponent />
         </FormItemComponent>
@@ -113,30 +113,23 @@ const ModalEditItem = ({ modal, data, mutate }: ModalEditItemProps) => {
           <FormItemComponent
             rules={[{ required: true }]}
             name="unit"
-            label={<LabelForm>Unit</LabelForm>}
+            label={<LabelForm>{t('Unit')}</LabelForm>}
           >
             <SelectComponent options={unitOptions()} />
-          </FormItemComponent>
-          <FormItemComponent
-            name="quantity"
-            rules={[{ required: true }]}
-            label={<LabelForm>Quantity</LabelForm>}
-          >
-            <InputComponent.Number />
           </FormItemComponent>
         </div>
         <div className="grid grid-cols-2 gap-5">
           <FormItemComponent
             name="categoryId"
             rules={[{ required: true }]}
-            label={<LabelForm>Category</LabelForm>}
+            label={<LabelForm>{t('Category')}</LabelForm>}
           >
             <SelectComponent options={itemManagementWarehouse.categories} />
           </FormItemComponent>
           <FormItemComponent
             name="status"
             rules={[{ required: true }]}
-            label={<LabelForm>Status</LabelForm>}
+            label={<LabelForm>{t('Status')}</LabelForm>}
           >
             <SelectComponent options={statusOptions()} />
           </FormItemComponent>
@@ -144,7 +137,7 @@ const ModalEditItem = ({ modal, data, mutate }: ModalEditItemProps) => {
         <FormItemComponent
           name="locationId"
           rules={[{ required: true }]}
-          label={<LabelForm>Location</LabelForm>}
+          label={<LabelForm>{t('Location')}</LabelForm>}
         >
           <SelectComponent
             options={itemManagementWarehouse.warehouses}

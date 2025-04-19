@@ -65,7 +65,7 @@ const Warehouse = () => {
     {
       dataIndex: 'description',
       key: 'description',
-      title: t('escription'),
+      title: t('Description'),
     },
     {
       dataIndex: 'warehouseLocationId',
@@ -80,7 +80,7 @@ const Warehouse = () => {
             {t('View Detail')}
           </ButtonComponent>
           <PopconfirmComponent
-            title={t('Delete?')}
+            title={undefined}
             onConfirm={() => onConfirm(data)}
           >
             <ButtonComponent type="primary" danger>

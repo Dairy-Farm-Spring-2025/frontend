@@ -1,11 +1,16 @@
-import { Button, Col, message, Popconfirm, Row, Select, Tooltip } from 'antd';
+import ButtonComponent from '@components/Button/ButtonComponent';
+import PopconfirmComponent from '@components/Popconfirm/PopconfirmComponent';
+import SelectComponent from '@components/Select/SelectComponent';
+import TextTitle from '@components/UI/TextTitle';
+import useToast from '@hooks/useToast';
+import { Col, Row, Tooltip } from 'antd';
+import { t } from 'i18next';
 import type { Key } from 'react';
 import React, { useEffect, useMemo, useState } from 'react';
 import ModalComponent from '../../../../../components/Modal/ModalComponent';
 import TableComponent from '../../../../../components/Table/TableComponent';
 import AnimationAppear from '../../../../../components/UI/AnimationAppear';
 import useFetcher from '../../../../../hooks/useFetcher';
-import { formatAreaType } from '../../../../../utils/format';
 
 interface ModalMilkBatchDetailProps {
   milkBatchId: number;
@@ -50,7 +55,7 @@ const ModalMilkBatchDetail: React.FC<ModalMilkBatchDetailProps> = ({
   const { trigger } = useFetcher<any>(`MilkBatch/${milkBatchId}`, 'PUT');
   const { data: availableDailyMilk, mutate: fetchAvailableDailyMilk } =
     useFetcher<any>(`dailymilks/search_available`, 'GET');
-
+  const toast = useToast();
   const [selectedMilkIds, setSelectedMilkIds] = useState<number[]>([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
   const [tempSelectedMilks, setTempSelectedMilks] = useState<Milk[]>([]);
@@ -70,21 +75,21 @@ const ModalMilkBatchDetail: React.FC<ModalMilkBatchDetailProps> = ({
 
   const handleBatchUpdate = async () => {
     if (!tempSelectedMilks.length && !selectedRowKeys.length) {
-      message.warning(
-        'Please select at least one Daily Milk ID to add or remove.'
+      toast.showWarning(
+        t('Please select at least one Daily Milk ID to add or remove.')
       );
       return;
     }
 
     try {
-      await trigger({
+      const response = await trigger({
         body: {
           dailyMilkIdsToAdd: tempSelectedMilks.map((milk) => milk.dailyMilkId),
           dailyMilkIdsToRemove: selectedRowKeys,
         },
       });
 
-      message.success(`Updated Daily Milk Batch!`);
+      toast.showSuccess(response.message);
 
       // Reset các danh sách đã chọn
       setSelectedMilkIds([]);
@@ -93,8 +98,8 @@ const ModalMilkBatchDetail: React.FC<ModalMilkBatchDetailProps> = ({
 
       // Cập nhật lại dữ liệu
       await refreshData();
-    } catch {
-      message.error('Error updating Daily Milk Batch.');
+    } catch (error: any) {
+      toast.showError(error.message);
     }
   };
   useEffect(() => {
@@ -132,44 +137,37 @@ const ModalMilkBatchDetail: React.FC<ModalMilkBatchDetailProps> = ({
   const columns: any = useMemo(
     () => [
       {
-        title: 'Daily Milk ID',
-        dataIndex: 'dailyMilkId',
-        key: 'dailyMilkId',
-      },
-      {
-        title: 'Volume',
+        title: t('Volume'),
         dataIndex: 'volume',
         key: 'volume',
       },
       {
-        title: 'Shift',
-        dataIndex: 'shift',
-        key: 'shift',
-        render: formatAreaType,
-      },
-      {
-        title: 'Milk Date',
+        title: t('Milk Date'),
         dataIndex: 'milkDate',
         key: 'milkDate',
       },
       {
-        title: 'Worker Name',
+        title: t('Worker'),
         key: 'workerName',
         dataIndex: 'worker',
         render: (worker: Worker) => (
-          <Tooltip title={<>Employee Number: {worker?.employeeNumber}</>}>
+          <Tooltip
+            title={
+              <>
+                {t('Employee Number')}: {worker?.employeeNumber}
+              </>
+            }
+          >
             <span className="text-blue-600">{worker?.name || 'N/A'}</span>
           </Tooltip>
         ),
       },
       {
-        title: 'Cow Name',
+        title: t('Cow Name'),
         key: 'cowName',
         dataIndex: 'cow',
         render: (cow: Cow) => (
-          <Tooltip title={<>Cow ID: {cow?.cowId}</>}>
-            <span className="text-blue-600">{cow?.name || 'N/A'}</span>
-          </Tooltip>
+          <span className="text-blue-600">{cow?.name || 'N/A'}</span>
         ),
       },
     ],
@@ -179,36 +177,38 @@ const ModalMilkBatchDetail: React.FC<ModalMilkBatchDetailProps> = ({
   return (
     <ModalComponent
       footer={
-        <Button onClick={modal.closeModal} type="primary">
-          Close
-        </Button>
+        <ButtonComponent onClick={modal.closeModal} type="primary">
+          {t('Close')}
+        </ButtonComponent>
       }
       open={modal.open}
       onCancel={modal.closeModal}
-      title="MilkBatch Details"
+      title={t('Milk Batch Details')}
       width={1500}
     >
       <Row gutter={16} style={{ marginBottom: 10 }}>
         <Col span={16}>
-          <Select
-            mode="multiple"
-            style={{ width: '100%' }}
-            placeholder="Select Daily Milk ID(s)"
-            value={selectedMilkIds}
-            onChange={handleSelectDailyMilk}
-            options={
-              Array?.isArray(availableDailyMilk ? availableDailyMilk : [])
-                ? availableDailyMilk?.map((milk: Milk) => ({
-                    value: milk.dailyMilkId,
-                    label: `ID: ${milk.dailyMilkId} - Volume: ${
-                      milk.volume
-                    } - Milk Date: ${milk.milkDate} (${formatAreaType(
-                      milk.shift
-                    )})`,
-                  }))
-                : []
+          <TextTitle
+            title={t('Select milk to add to milk batch')}
+            description={
+              <SelectComponent
+                mode="multiple"
+                style={{ width: '100%' }}
+                value={selectedMilkIds}
+                onChange={handleSelectDailyMilk}
+                options={
+                  Array?.isArray(availableDailyMilk ? availableDailyMilk : [])
+                    ? availableDailyMilk?.map((milk: Milk) => ({
+                        value: milk.dailyMilkId,
+                        label: `${t('Volume')}: ${milk.volume} (l) - ${t(
+                          'Milk Date'
+                        )}: ${milk.milkDate}`,
+                      }))
+                    : []
+                }
+                onFocus={fetchAvailableDailyMilk} // Gọi API khi nhấn vào Select
+              />
             }
-            onFocus={fetchAvailableDailyMilk} // Gọi API khi nhấn vào Select
           />
         </Col>
       </Row>
@@ -223,19 +223,32 @@ const ModalMilkBatchDetail: React.FC<ModalMilkBatchDetailProps> = ({
         />
         <Row style={{ margin: 20, textAlign: 'right' }}>
           <Col span={24}>
-            <Popconfirm
-              title="Are you sure you want to update Daily Milk Batch?"
+            <PopconfirmComponent
+              title={undefined}
+              description={
+                <div className="flex flex-col gap-2">
+                  <p className="!text-red-600 font-semibold">
+                    {t(
+                      'With daily milk that is selected in the table, they will be deleted'
+                    )}
+                  </p>
+                  <p className="!text-green-600 font-semibold">
+                    {t(
+                      'With daily milk that is selected in the select, they will be added'
+                    )}
+                  </p>
+                </div>
+              }
               onConfirm={handleBatchUpdate}
-              okText="Yes"
-              cancelText="No"
             >
-              <Button
+              <ButtonComponent
+                buttonType="secondary"
                 type="primary"
                 disabled={!tempSelectedMilks.length && !selectedRowKeys.length}
               >
-                Update Daily Milk
-              </Button>
-            </Popconfirm>
+                {t('Update milk batch')}
+              </ButtonComponent>
+            </PopconfirmComponent>
           </Col>
         </Row>
       </AnimationAppear>

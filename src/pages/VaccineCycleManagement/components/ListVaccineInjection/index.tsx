@@ -46,12 +46,15 @@ const ListVaccineInjection = () => {
       key: 'injectionDate',
       title: t('Injection Date'),
       render: (data) => formatDateHour(data),
+      sorter: (a, b) => a?.injectionDate - b?.injectionDate,
     },
     {
       dataIndex: 'cowEntity',
       key: 'cowEntity',
       title: t('Cow'),
       render: (cowEntity) => cowEntity?.name || 'N/A',
+      searchable: true,
+      objectKeyFilter: 'name',
     },
     {
       dataIndex: 'status',
