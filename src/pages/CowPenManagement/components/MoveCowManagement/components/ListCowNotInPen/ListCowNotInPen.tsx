@@ -11,7 +11,7 @@ import TextLink from '../../../../../../components/UI/TextLink';
 import WhiteBackground from '../../../../../../components/UI/WhiteBackground';
 import useFetcher from '../../../../../../hooks/useFetcher';
 import useModal from '../../../../../../hooks/useModal';
-import { Cow } from '../../../../../../model/Cow/Cow'; // Import the correct Cow type
+import { Cow } from '../../../../../../model/Cow/Cow';
 import { PenEntity } from '../../../../../../model/CowPen/CowPen';
 import { cowOrigin } from '../../../../../../service/data/cowOrigin';
 import { cowStatus } from '../../../../../../service/data/cowStatus';
@@ -30,9 +30,13 @@ const ListCowNotInPen: React.FC<ListCowNotInPenProps> = () => {
     isLoading,
     mutate: mutateCows,
   } = useFetcher<Cow[]>('cows', 'GET');
+  const { trigger: deleteCow } = useFetcher('cows', 'DELETE'); // Hook for DELETE request
   const [cow, setCow] = useState<Cow[]>([]);
   const modal = useModal();
   const { t } = useTranslation();
+
+
+
   const columns: Column[] = [
     {
       dataIndex: 'image',
@@ -106,17 +110,9 @@ const ListCowNotInPen: React.FC<ListCowNotInPenProps> = () => {
       title: t('Cow Status'),
       render: (data) => getLabelByValue(data, cowStatus()),
     },
-    {
-      dataIndex: 'cowId',
-      key: 'action',
-      title: t('Action'),
-      render: () => (
-        <ButtonComponent type="primary" danger>
-          {t('Delete')}
-        </ButtonComponent>
-      ),
-    },
+
   ];
+
   const filteredCows: Cow[] = useMemo(
     () => (data ? data.filter((item) => !item.inPen) : []),
     [data]
@@ -125,6 +121,7 @@ const ListCowNotInPen: React.FC<ListCowNotInPenProps> = () => {
   useEffect(() => {
     setCow(filteredCows);
   }, [filteredCows]);
+
   return (
     <AnimationAppear duration={0.5}>
       <WhiteBackground>
