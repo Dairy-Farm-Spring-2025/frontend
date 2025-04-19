@@ -117,6 +117,13 @@ const ModalEditProfile = ({
     }
   };
 
+  const disabledDOB = (current: dayjs.Dayjs) => {
+    // Ngày hôm nay
+    const today = dayjs();
+    // Chỉ cho phép chọn ngày nhỏ hơn hoặc bằng hôm nay trừ 18 năm
+    return current.isAfter(today.subtract(18, 'year'));
+  };
+
   const handleFinish = async (values: any) => {
     const address = `${values.address}, ${values.ward.label}, ${values.district.label}, ${values.province.label}`;
 
@@ -178,7 +185,10 @@ const ModalEditProfile = ({
               rules={[{ required: true }]}
               label={<LabelForm>{t('date_of_birth')}</LabelForm>}
             >
-              <DatePickerComponent className="!w-full" />
+              <DatePickerComponent
+                className="!w-full"
+                disabledDate={disabledDOB}
+              />
             </FormItemComponent>
             <FormItemComponent
               rules={[{ required: true }]}

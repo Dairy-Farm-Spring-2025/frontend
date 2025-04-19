@@ -740,4 +740,9 @@
   "Cow Type is restricted to match the selected area": "Loại bò được chọn dựa theo khu vực",
   "Date of Enter must be later than Date of Birth": "Ngày sinh phải nhỏ hơn ngày nhập vào",
   "Area updated successfully. ": "Khu vực cập nhật thành công"
+  "Application Detail": "Chi tiết đơn từ",
+  "Request Application": "Yêu cầu đơn từ",
+  "Dashboard dairy": "Thống kê trang trại bò sữa",
+  "Create new user": "Tạo người dùng mới"
 }
+

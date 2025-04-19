@@ -223,7 +223,7 @@ const AppDashboard: React.FC = React.memo(() => {
           ],
           true
         ),
-    checkVeterinarians(roleName)
+    checkVeterinarians(roleName) || roleName === 'Manager'
       ? null
       : getItem(
           t('user_management'),
@@ -561,53 +561,55 @@ const AppDashboard: React.FC = React.memo(() => {
             className="!bg-white flex items-center gap-5 justify-end"
             style={{ padding: 0 }}
           >
-            <div className="flex items-center gap-5 pr-16">
-              <NotificationDropDown />
-              <div>
-                <ConfigProvider
-                  dropdown={{
-                    style: {
-                      minWidth: 200,
-                    },
-                  }}
-                >
-                  <Dropdown
-                    trigger={['click']}
-                    className="cursor-pointer"
-                    menu={{ items }}
-                    dropdownRender={(menu) => (
-                      <div style={contentStyle}>
-                        {React.cloneElement(
-                          menu as React.ReactElement<{
-                            style: React.CSSProperties;
-                          }>,
-                          {
-                            style: menuStyle,
-                          }
-                        )}
-                        <Divider style={{ margin: 0 }} />
-                        <div style={{ padding: 8 }}>
-                          <ButtonComponent
-                            onClick={handleLogout}
-                            type="primary"
-                            danger
-                            className="!w-full font-bold"
-                            icon={<IoIosLogOut size={20} />}
-                          >
-                            {t('Logout')}
-                          </ButtonComponent>
-                        </div>
-                      </div>
-                    )}
+            {roleName !== 'Admin' && (
+              <div className="flex items-center gap-5 pr-16">
+                <NotificationDropDown />
+                <div>
+                  <ConfigProvider
+                    dropdown={{
+                      style: {
+                        minWidth: 200,
+                      },
+                    }}
                   >
-                    <Avatar
-                      size={32}
-                      src={getAvatar(data?.profilePhoto as string)}
-                    />
-                  </Dropdown>
-                </ConfigProvider>
+                    <Dropdown
+                      trigger={['click']}
+                      className="cursor-pointer"
+                      menu={{ items }}
+                      dropdownRender={(menu) => (
+                        <div style={contentStyle}>
+                          {React.cloneElement(
+                            menu as React.ReactElement<{
+                              style: React.CSSProperties;
+                            }>,
+                            {
+                              style: menuStyle,
+                            }
+                          )}
+                          <Divider style={{ margin: 0 }} />
+                          <div style={{ padding: 8 }}>
+                            <ButtonComponent
+                              onClick={handleLogout}
+                              type="primary"
+                              danger
+                              className="!w-full font-bold"
+                              icon={<IoIosLogOut size={20} />}
+                            >
+                              {t('Logout')}
+                            </ButtonComponent>
+                          </div>
+                        </div>
+                      )}
+                    >
+                      <Avatar
+                        size={32}
+                        src={getAvatar(data?.profilePhoto as string)}
+                      />
+                    </Dropdown>
+                  </ConfigProvider>
+                </div>
               </div>
-            </div>
+            )}
           </Header>
           <Content
             style={{ padding: '10px' }}
