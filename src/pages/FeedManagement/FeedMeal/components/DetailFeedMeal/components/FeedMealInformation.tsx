@@ -20,7 +20,7 @@ const FeedMealInformation = ({ data }: FeedMealInformationProps) => {
     },
     {
       label: t('Cow Status'),
-      children: formatStatusWithCamel(data?.cowStatus),
+      children: data?.cowStatus ? formatStatusWithCamel(t(data.cowStatus)) : t('Unknown'),
       span: 3,
     },
 

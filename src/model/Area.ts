@@ -19,5 +19,6 @@ export type Area = {
   cowTypeEntity: {
     cowTypeId: string;
     name: string;
+    description?: string;
   }
 };
