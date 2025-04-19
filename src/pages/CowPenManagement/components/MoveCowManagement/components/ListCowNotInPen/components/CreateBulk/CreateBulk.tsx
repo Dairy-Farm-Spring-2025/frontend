@@ -1,5 +1,17 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Table, Card, Row, Col, message, Button, Divider, Form, Badge, Tooltip, Alert } from 'antd';
+import {
+  Table,
+  Card,
+  Row,
+  Col,
+  message,
+  Button,
+  Divider,
+  Form,
+  Badge,
+  Tooltip,
+  Alert,
+} from 'antd';
 import ModalComponent from '../../../../../../../../components/Modal/ModalComponent';
 import ButtonComponent from '../../../../../../../../components/Button/ButtonComponent';
 import { Cow } from '../../../../../../../../model/Cow/Cow';
@@ -10,7 +22,11 @@ import SelectComponent from '@components/Select/SelectComponent';
 import { Area } from '@model/Area';
 import Title from '@components/UI/Title';
 import { formatAreaType, formatStatusWithCamel } from '@utils/format';
-import { CheckCircleOutlined, EnvironmentOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import {
+  CheckCircleOutlined,
+  EnvironmentOutlined,
+  InfoCircleOutlined,
+} from '@ant-design/icons';
 import { CowType } from '@model/Cow/CowType';
 import { COW_TYPE_PATH } from '@service/api/CowType/cowType';
 import { cowStatus } from '@service/data/cowStatus';
@@ -28,7 +44,10 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
 }) => {
   const { trigger, isLoading } = useFetcher('cow-pens/create-bulk', 'POST');
   const { data: dataArea } = useFetcher<Area[]>('areas', 'GET');
-  const { data: cowTypesData } = useFetcher<CowType[]>(COW_TYPE_PATH.COW_TYPES, 'GET');
+  const { data: cowTypesData } = useFetcher<CowType[]>(
+    COW_TYPE_PATH.COW_TYPES,
+    'GET'
+  );
   const [form] = Form.useForm();
   const selectedAreaId = Form.useWatch('selectedAreaId', form);
   const selectedCowTypeId = Form.useWatch('cowTypeId', form);
@@ -36,14 +55,20 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
   const { t } = useTranslation();
 
   // Convert selectedCowTypeId to number
-  const selectedCowTypeIdAsNumber = selectedCowTypeId ? Number(selectedCowTypeId) : undefined;
+  const selectedCowTypeIdAsNumber = selectedCowTypeId
+    ? Number(selectedCowTypeId)
+    : undefined;
 
   // Find selected area's details
   const selectedArea = useMemo(
-    () => dataArea?.find(area => area.areaId === selectedAreaId),
+    () => dataArea?.find((area) => area.areaId === selectedAreaId),
     [dataArea, selectedAreaId]
   );
-  const selectedAreaType: "cowHousing" | "milkingParlor" | "wareHouse" | undefined = selectedArea?.areaType;
+  const selectedAreaType:
+    | 'cowHousing'
+    | 'milkingParlor'
+    | 'wareHouse'
+    | undefined = selectedArea?.areaType;
   const selectedAreaDescription = selectedArea?.description;
 
   // Filter cowTypeOptions based on selectedArea's cowTypeEntity
@@ -91,7 +116,9 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
   useEffect(() => {
     if (selectedAreaId) {
       if (selectedArea?.cowTypeEntity?.cowTypeId) {
-        form.setFieldsValue({ cowTypeId: Number(selectedArea.cowTypeEntity.cowTypeId) });
+        form.setFieldsValue({
+          cowTypeId: Number(selectedArea.cowTypeEntity.cowTypeId),
+        });
       } else {
         form.setFieldsValue({ cowTypeId: undefined });
       }
@@ -110,7 +137,7 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
   );
 
   const dataPenInArea = useMemo(
-    () => availablePens?.filter(pen => pen.penStatus === 'empty') || [],
+    () => availablePens?.filter((pen) => pen.penStatus === 'empty') || [],
     [availablePens]
   );
 
@@ -118,14 +145,18 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
   const [selectedPens, setSelectedPens] = useState<string[]>([]);
 
   const handleCowSelection = (cowId: number) => {
-    setSelectedCows(prev =>
-      prev.includes(cowId) ? prev.filter(id => id !== cowId) : [...prev, cowId]
+    setSelectedCows((prev) =>
+      prev.includes(cowId)
+        ? prev.filter((id) => id !== cowId)
+        : [...prev, cowId]
     );
   };
 
   const handlePenSelection = (penId: string) => {
-    setSelectedPens(prev =>
-      prev.includes(penId) ? prev.filter(id => id !== penId) : [...prev, penId]
+    setSelectedPens((prev) =>
+      prev.includes(penId)
+        ? prev.filter((id) => id !== penId)
+        : [...prev, penId]
     );
   };
 
@@ -161,11 +192,11 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
     } else {
       const selectedCowIds = filteredCows
         .slice(0, numPens)
-        .map(cow => Number(cow.cowId));
+        .map((cow) => Number(cow.cowId));
       setSelectedCows(selectedCowIds);
-      const selectedPenIds = dataPenInArea
-        .slice(0, selectedCowIds.length)
-        .map(pen => pen.penId) || [];
+      const selectedPenIds =
+        dataPenInArea.slice(0, selectedCowIds.length).map((pen) => pen.penId) ||
+        [];
       setSelectedPens(selectedPenIds);
     }
   };
@@ -177,7 +208,9 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
       key: 'select',
       width: 60,
       render: (cowId: number) => (
-        <Tooltip title={selectedCows.includes(cowId) ? t('Deselect') : t('Select')}>
+        <Tooltip
+          title={selectedCows.includes(cowId) ? t('Deselect') : t('Select')}
+        >
           <input
             type="checkbox"
             checked={selectedCows.includes(cowId)}
@@ -218,7 +251,9 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
       key: 'select',
       width: 60,
       render: (penId: string) => (
-        <Tooltip title={selectedPens.includes(penId) ? t('Deselect') : t('Select')}>
+        <Tooltip
+          title={selectedPens.includes(penId) ? t('Deselect') : t('Select')}
+        >
           <input
             type="checkbox"
             checked={selectedPens.includes(penId)}
@@ -270,7 +305,12 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
         onCancel={onClose}
         footer={
           <div className="flex justify-end space-x-4">
-            <Button key="back" onClick={onClose} disabled={isLoading} size="large">
+            <Button
+              key="back"
+              onClick={onClose}
+              disabled={isLoading}
+              size="large"
+            >
               {t('Cancel')}
             </Button>
             <Button
@@ -278,7 +318,10 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
               type="primary"
               onClick={handleSubmit}
               loading={isLoading}
-              disabled={selectedCows.length !== selectedPens.length || !selectedCows.length}
+              disabled={
+                selectedCows.length !== selectedPens.length ||
+                !selectedCows.length
+              }
               size="large"
             >
               {t('Submit')}
@@ -300,7 +343,9 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
                 <Col xs={24} md={8}>
                   <Form.Item
                     name="selectedAreaId"
-                    rules={[{ required: true, message: t('Please select an area') }]}
+                    rules={[
+                      { required: true, message: t('Please select an area') },
+                    ]}
                   >
                     <SelectComponent
                       style={{ width: '100%' }}
@@ -310,7 +355,9 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
                       showSearch
                       filterOption={(input, option) =>
                         typeof option?.label === 'string'
-                          ? option.label.toLowerCase().includes(input.toLowerCase())
+                          ? option.label
+                              .toLowerCase()
+                              .includes(input.toLowerCase())
                           : false
                       }
                     />
@@ -329,7 +376,9 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
                           <div
                             className="text-sm text-gray-700 flex-1"
                             dangerouslySetInnerHTML={{
-                              __html: selectedAreaDescription || t('No description available'),
+                              __html:
+                                selectedAreaDescription ||
+                                t('No description available'),
                             }}
                           />
                         </div>
@@ -338,7 +387,8 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
                             {t('Area Type')}:
                           </span>
                           <span className="text-sm text-gray-700 flex-1">
-                            {formatAreaType(selectedAreaType) || t('N/A')}
+                            {formatAreaType(selectedAreaType as any) ||
+                              t('N/A')}
                           </span>
                         </div>
                         <div className="flex items-center">
@@ -346,7 +396,12 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
                             {t('Cow Type')}:
                           </span>
                           <span className="text-sm text-gray-700 flex-1">
-                            <Tooltip title={selectedArea?.cowTypeEntity?.description || t('No description')}>
+                            <Tooltip
+                              title={
+                                selectedArea?.cowTypeEntity?.description ||
+                                t('No description')
+                              }
+                            >
                               <span className="font-semibold text-blue-600">
                                 {selectedArea?.cowTypeEntity?.name || t('N/A')}
                               </span>
@@ -358,9 +413,18 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
                             {t('Pen Status')}:
                           </span>
                           <span className="text-sm text-gray-700 flex-1">
-                            {t('Occupied')}: <span className="text-red-600">{selectedArea?.occupiedPens || 0}</span>,{' '}
-                            {t('Empty')}: <span className="text-green-600">{selectedArea?.emptyPens || 0}</span>,{' '}
-                            {t('Damaged')}: <span className="text-yellow-600">{selectedArea?.damagedPens || 0}</span>
+                            {t('Occupied')}:{' '}
+                            <span className="text-red-600">
+                              {selectedArea?.occupiedPens || 0}
+                            </span>
+                            , {t('Empty')}:{' '}
+                            <span className="text-green-600">
+                              {selectedArea?.emptyPens || 0}
+                            </span>
+                            , {t('Damaged')}:{' '}
+                            <span className="text-yellow-600">
+                              {selectedArea?.damagedPens || 0}
+                            </span>
                           </span>
                         </div>
                       </div>
@@ -370,7 +434,12 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
                 <Col xs={24} md={8}>
                   <Form.Item
                     name="cowTypeId"
-                    rules={[{ required: true, message: t('Please select a cow type') }]}
+                    rules={[
+                      {
+                        required: true,
+                        message: t('Please select a cow type'),
+                      },
+                    ]}
                   >
                     <SelectComponent
                       style={{ width: '100%' }}
@@ -380,7 +449,11 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
                       disabled={!selectedAreaId}
                       suffixIcon={
                         selectedArea?.cowTypeEntity?.cowTypeId ? (
-                          <Tooltip title={t('Cow Type is restricted to match the selected area')}>
+                          <Tooltip
+                            title={t(
+                              'Cow Type is restricted to match the selected area'
+                            )}
+                          >
                             <InfoCircleOutlined className="text-gray-500" />
                           </Tooltip>
                         ) : null
@@ -391,7 +464,12 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
                 <Col xs={24} md={8}>
                   <Form.Item
                     name="cowStatus"
-                    rules={[{ required: true, message: t('Please select a cow status') }]}
+                    rules={[
+                      {
+                        required: true,
+                        message: t('Please select a cow status'),
+                      },
+                    ]}
                   >
                     <SelectComponent
                       style={{ width: '100%' }}
@@ -403,22 +481,30 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
                   </Form.Item>
                 </Col>
               </Row>
-              {selectedAreaId && selectedCowTypeIdAsNumber && selectedCowStatus && !filteredCows.length && (
-                <Alert
-                  message={t('No cows available for the selected criteria')}
-                  type="error"
-                  showIcon
-                  className="mt-3 rounded-lg"
-                />
-              )}
-              {selectedAreaId && selectedCowTypeIdAsNumber && selectedCowStatus && !dataPenInArea.length && (
-                <Alert
-                  message={t('No empty pens available for the selected criteria')}
-                  type="error"
-                  showIcon
-                  className="mt-3 rounded-lg"
-                />
-              )}
+              {selectedAreaId &&
+                selectedCowTypeIdAsNumber &&
+                selectedCowStatus &&
+                !filteredCows.length && (
+                  <Alert
+                    message={t('No cows available for the selected criteria')}
+                    type="error"
+                    showIcon
+                    className="mt-3 rounded-lg"
+                  />
+                )}
+              {selectedAreaId &&
+                selectedCowTypeIdAsNumber &&
+                selectedCowStatus &&
+                !dataPenInArea.length && (
+                  <Alert
+                    message={t(
+                      'No empty pens available for the selected criteria'
+                    )}
+                    type="error"
+                    showIcon
+                    className="mt-3 rounded-lg"
+                  />
+                )}
             </div>
 
             <Divider className="my-10 border-gray-300" />
@@ -486,17 +572,18 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
                   </Card>
                 </Col>
               </Row>
-              {selectedCows.length !== selectedPens.length && selectedCows.length > 0 && (
-                <Alert
-                  message={t('Selected cows must match selected pens', {
-                    count0: selectedCows.length,
-                    count1: selectedPens.length,
-                  })}
-                  type="warning"
-                  showIcon
-                  className="mt-4 rounded-lg text-center"
-                />
-              )}
+              {selectedCows.length !== selectedPens.length &&
+                selectedCows.length > 0 && (
+                  <Alert
+                    message={t('Selected cows must match selected pens', {
+                      count0: selectedCows.length,
+                      count1: selectedPens.length,
+                    })}
+                    type="warning"
+                    showIcon
+                    className="mt-4 rounded-lg text-center"
+                  />
+                )}
             </div>
 
             <Divider className="my-10 border-gray-300" />
@@ -521,8 +608,10 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
                 }
                 className="hover:bg-blue-600 transition-colors"
               >
-                {selectedCows.length > 0 ? t('Deselect All') : t('Select All Cows')} (
-                {selectedCows.length}/{dataPenInArea?.length || 0})
+                {selectedCows.length > 0
+                  ? t('Deselect All')
+                  : t('Select All Cows')}{' '}
+                ({selectedCows.length}/{dataPenInArea?.length || 0})
               </ButtonComponent>
             </div>
           </Form>

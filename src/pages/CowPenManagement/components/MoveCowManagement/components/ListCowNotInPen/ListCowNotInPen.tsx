@@ -2,7 +2,6 @@ import { Image } from 'antd';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import cowImage from '../../../../../../assets/cow.jpg';
-import ButtonComponent from '../../../../../../components/Button/ButtonComponent';
 import TableComponent, {
   Column,
 } from '../../../../../../components/Table/TableComponent';
@@ -30,12 +29,10 @@ const ListCowNotInPen: React.FC<ListCowNotInPenProps> = () => {
     isLoading,
     mutate: mutateCows,
   } = useFetcher<Cow[]>('cows', 'GET');
-  const { trigger: deleteCow } = useFetcher('cows', 'DELETE'); // Hook for DELETE request
+  // const { trigger: deleteCow } = useFetcher('cows', 'DELETE'); // Hook for DELETE request
   const [cow, setCow] = useState<Cow[]>([]);
   const modal = useModal();
   const { t } = useTranslation();
-
-
 
   const columns: Column[] = [
     {
@@ -110,7 +107,6 @@ const ListCowNotInPen: React.FC<ListCowNotInPenProps> = () => {
       title: t('Cow Status'),
       render: (data) => getLabelByValue(data, cowStatus()),
     },
-
   ];
 
   const filteredCows: Cow[] = useMemo(
