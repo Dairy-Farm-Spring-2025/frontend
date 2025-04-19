@@ -106,38 +106,40 @@ const EquipmentRequired = () => {
       key: 'equipment-name',
       title: t('Equipment name'),
       dataIndex: 'equipment',
-      render: (data: EquipmentType) => data.name,
+      render: (data: EquipmentType) => (data?.name ? data?.name : '-'),
     },
     {
       key: 'equipment-type',
       title: t('Equipment type'),
       dataIndex: 'equipment',
-      render: (data: EquipmentType) => t(formatStatusWithCamel(data.type)),
+      render: (data: EquipmentType) =>
+        data?.type ? t(formatStatusWithCamel(data?.type)) : '-',
     },
     {
       key: 'equipment-status',
       title: t('Equipment status'),
       dataIndex: 'equipment',
-      render: (data: EquipmentType) => t(formatStatusWithCamel(data.status)),
+      render: (data: EquipmentType) =>
+        data?.status ? t(formatStatusWithCamel(data?.status)) : '-',
     },
     {
       key: 'task-type-name',
       title: t('Task type'),
       dataIndex: 'taskType',
-      render: (data: TaskType) => data.name,
+      render: (data: TaskType) => (data?.name ? data?.name : '-'),
     },
     {
       key: 'required-quantity',
       title: t('Required quantity'),
       dataIndex: 'requiredQuantity',
-      render: (data) => data,
+      render: (data) => (data ? data : '-'),
     },
     {
       key: 'note',
       title: t('Note'),
       dataIndex: 'note',
       width: '30%',
-      render: (data) => data,
+      render: (data) => (data ? data : '-'),
     },
     {
       key: 'action',

@@ -26,9 +26,18 @@ const ModalCreateIllNess = ({ modal, mutate }: ModalCreateIllNessProps) => {
   const [current, setCurrent] = useState(0);
   const [illnessForm] = Form.useForm();
   const [detailsForm] = Form.useForm();
-  const { data: dataCows, isLoading: isLoadingCows } = useFetcher<Cow[]>(COW_PATH.COWS, 'GET');
-  const { data: itemData, isLoading: isLoadingItems } = useFetcher<Item[]>('items', 'GET');
-  const { trigger: triggerIllness, isLoading: isLoadingIllness } = useFetcher(HEALTH_RECORD_PATH.CREATE_ILLNESS, 'POST');
+  const { data: dataCows, isLoading: isLoadingCows } = useFetcher<Cow[]>(
+    COW_PATH.COWS,
+    'GET'
+  );
+  const { data: itemData, isLoading: isLoadingItems } = useFetcher<Item[]>(
+    'items',
+    'GET'
+  );
+  const { trigger: triggerIllness, isLoading: isLoadingIllness } = useFetcher(
+    HEALTH_RECORD_PATH.CREATE_ILLNESS,
+    'POST'
+  );
   const toast = useToast();
 
   const [apiBody, setApiBody] = useState<any>(null);
@@ -37,18 +46,36 @@ const ModalCreateIllNess = ({ modal, mutate }: ModalCreateIllNessProps) => {
   const [treatmentDetails, setTreatmentDetails] = useState<any[]>([]);
   const hasAddedDefaultField = useRef(false);
 
-  const injectionSiteOptions = useMemo(() =>
-    getInjectionSiteOptions().map(option => ({ ...option, label: t(option.label) })),
+  const injectionSiteOptions = useMemo(
+    () =>
+      getInjectionSiteOptions().map((option) => ({
+        ...option,
+        label: t(option.label),
+      })),
     [t]
   );
-  const cowOptions = useMemo(() => dataCows?.map((cow: Cow) => ({ value: cow.cowId, label: cow.name })) || [], [dataCows]);
-  const itemOptions = useMemo(() =>
-    itemData?.map((element: Item) => ({ label: element.name, value: element.itemId, searchLabel: element.name })) || [],
+  const cowOptions = useMemo(
+    () =>
+      dataCows?.map((cow: Cow) => ({ value: cow.cowId, label: cow.name })) ||
+      [],
+    [dataCows]
+  );
+  const itemOptions = useMemo(
+    () =>
+      itemData?.map((element: Item) => ({
+        label: element.name,
+        value: element.itemId,
+        searchLabel: element.name,
+      })) || [],
     [itemData]
   );
 
   useEffect(() => {
-    if (current === 1 && treatmentDetails.length === 0 && !hasAddedDefaultField.current) {
+    if (
+      current === 1 &&
+      treatmentDetails.length === 0 &&
+      !hasAddedDefaultField.current
+    ) {
       hasAddedDefaultField.current = true;
       detailsForm.setFieldsValue({ treatmentDetails: [{}] });
     }
@@ -85,6 +112,7 @@ const ModalCreateIllNess = ({ modal, mutate }: ModalCreateIllNessProps) => {
 
   const handleNextDetails = async () => {
     try {
+      detailsForm.submit();
       const detailValues = detailsForm.getFieldsValue();
       const treatments = detailValues.treatmentDetails || [];
       const validTreatments = treatments.filter((treatment: any) =>
@@ -103,7 +131,9 @@ const ModalCreateIllNess = ({ modal, mutate }: ModalCreateIllNessProps) => {
       const detail = (treatmentDetails || []).map((detail: any) => ({
         dosage: Number(detail.dosage),
         injectionSite: detail.injectionSite,
-        date: detail.treatmentDate ? dayjs(detail.treatmentDate).format('YYYY-MM-DD') : undefined,
+        date: detail.treatmentDate
+          ? dayjs(detail.treatmentDate).format('YYYY-MM-DD')
+          : undefined,
         description: detail.treatmentPlan,
         vaccineId: Number(detail.itemId),
       }));
@@ -117,7 +147,9 @@ const ModalCreateIllNess = ({ modal, mutate }: ModalCreateIllNessProps) => {
       };
 
       const response = await triggerIllness({ body: payload });
-      toast.showSuccess(response.message || t('Illness record created successfully'));
+      toast.showSuccess(
+        response.message || t('Illness record created successfully')
+      );
       mutate();
       handleCancel();
     } catch (error: any) {
@@ -192,7 +224,11 @@ const ModalCreateIllNess = ({ modal, mutate }: ModalCreateIllNessProps) => {
       className="rounded-lg"
     >
       <div className="mt-5">
-        <StepsComponent steps={steps} current={current} setCurrent={setCurrent} />
+        <StepsComponent
+          steps={steps}
+          current={current}
+          setCurrent={setCurrent}
+        />
       </div>
     </ModalComponent>
   );

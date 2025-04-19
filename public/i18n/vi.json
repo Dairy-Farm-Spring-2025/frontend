@@ -715,5 +715,6 @@
   "Edit cow types": "Chỉnh sửa loại bò",
   "Max height": "Chiều cao tối đa",
   "Max length": "Chiều dài tối đa",
-  "In Progress": "Đang thực hiện"
+  "In Progress": "Đang thực hiện",
+  "Each treatment date must be greater than the previous one": "Ngày điều trị phải lớn hơn ngày trước đó"
 }
