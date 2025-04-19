@@ -8,6 +8,7 @@ import ReactQuillComponent from '@components/ReactQuill/ReactQuillComponent';
 import SelectComponent from '@components/Select/SelectComponent';
 import Title from '@components/UI/Title';
 import { Col, Divider, Form, Row } from 'antd';
+import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 
 interface IllnessDetailsFormProps {
@@ -100,10 +101,53 @@ const IllnessDetailsForm = ({
                           rules={[
                             {
                               required: true,
+                              message: t('Treatment Date is required'),
+                            },
+                            {
+                              validator: (_, value) => {
+                                const currentFieldIndex = index;
+                                const allValues =
+                                  form.getFieldValue('treatmentDetails');
+
+                                if (!value) return Promise.resolve();
+                                // Rule 2: Each treatment date must be greater than the previous one
+                                if (currentFieldIndex > 0) {
+                                  const prevDate =
+                                    allValues[currentFieldIndex - 1]
+                                      ?.treatmentDate;
+                                  if (
+                                    (prevDate &&
+                                      dayjs(value).isSame(
+                                        dayjs(prevDate),
+                                        'day'
+                                      )) ||
+                                    dayjs(value).isBefore(
+                                      dayjs(prevDate),
+                                      'day'
+                                    )
+                                  ) {
+                                    return Promise.reject(
+                                      t(
+                                        'Each treatment date must be greater than the previous one'
+                                      )
+                                    );
+                                  }
+                                }
+
+                                return Promise.resolve();
+                              },
                             },
                           ]}
                         >
-                          <DatePickerComponent className="w-full" />
+                          <DatePickerComponent
+                            className="w-full"
+                            disabledDate={(current) => {
+                              return (
+                                current &&
+                                current.isBefore(dayjs().startOf('day'))
+                              );
+                            }}
+                          />
                         </Form.Item>
                       </Col>
                       <Col span={24}>

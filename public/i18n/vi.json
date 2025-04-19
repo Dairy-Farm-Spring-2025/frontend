@@ -715,6 +715,7 @@
   "Max height": "Chiều cao tối đa",
   "Max length": "Chiều dài tối đa",
   "In Progress": "Đang thực hiện",
+  "Each treatment date must be greater than the previous one": "Ngày điều trị phải lớn hơn ngày trước đó",
   "milkingCow": "bò đang vắt sữa",
   "Storage Information": "Thông tin kho",
   "Periodic": "Định kỳ",
