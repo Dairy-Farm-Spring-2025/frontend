@@ -16,6 +16,7 @@ import useGetRole from '@hooks/useGetRole';
 import useToast from '@hooks/useToast';
 import { Area } from '@model/Area';
 import { CowStatus } from '@model/Cow/Cow';
+import { CowType } from '@model/Cow/CowType';
 import { PenStatus } from '@model/Pen';
 import { AREA_PATH } from '@service/api/Area/areaApi';
 import { areaType } from '@service/data/areaType';
@@ -24,6 +25,7 @@ import { penStatusFilter } from '@service/data/pen';
 import { formatStatusWithCamel } from '@utils/format';
 import { getPenColor } from '@utils/statusRender/penStatusRender';
 import { Divider, Form, Skeleton } from 'antd';
+import { SelectProps } from 'antd/lib';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
@@ -57,58 +59,41 @@ const AreaDetail = () => {
   const toast = useToast();
   const [form] = Form.useForm();
   const { edited, toggleEdit } = useEditToggle();
-  const { trigger: triggerEditArea, isLoading: isLoadingUpdateArea } =
-    useFetcher('edit-area', 'PUT');
+  const { trigger: triggerEditArea, isLoading: isLoadingUpdateArea } = useFetcher('edit-area', 'PUT');
+
+  const areaUrl = id ? AREA_PATH.AREA_DETAIL(id) : '';
+  const cowInPenUrl = id ? AREA_PATH.AREA_COW(id) : '';
+
   const {
     data: area,
     isLoading: isLoadingArea,
+    error: areaError,
     mutate,
-  } = useFetcher<Area>(AREA_PATH.AREA_DETAIL(id ? id : ''));
-  const { data: cowInPen, isLoading: isLoadingCowInPen } = useFetcher<
+  } = useFetcher<Area>(areaUrl, 'GET');
+  const { data: cowInPen, isLoading: isLoadingCowInPen, error: cowInPenError } = useFetcher<
     CowInPenArea[]
-  >(AREA_PATH.AREA_COW(id ? id : ''));
-  const { data: cowTypeData, isLoading: isLoadingCowType } = useFetcher<any>(
+  >(cowInPenUrl, 'GET');
+  const { data: cowTypeData, isLoading: isLoadingCowType, error: cowTypeError } = useFetcher<any>(
     'cow-types',
     'GET'
   );
 
   const { t } = useTranslation();
 
-  // State for cowTypeOptions
-  const [cowTypeOptions, setCowTypeOptions] = useState<
-    { label: string; value: string }[]
-  >([]);
+  const [optionsCowType, setOptionsCowType] = useState<SelectProps['options']>([]);
 
-  // Map cowType data to Select options
   useEffect(() => {
-    console.log('cowTypeData:', cowTypeData);
-    if (cowTypeData?.data) {
-      const options = cowTypeData.data.map((type: any) => ({
-        label: type.name,
-        value: String(type.cowTypeId), // Use string for Select
+    if (cowTypeData) {
+      const options = cowTypeData.map((element: CowType) => ({
+        label: element.name,
+        value: element.cowTypeId,
       }));
-      console.log('cowTypeOptions:', options);
-      setCowTypeOptions(options);
-    } else {
-      setCowTypeOptions([]);
+      setOptionsCowType(options);
     }
   }, [cowTypeData]);
 
-  // Set form values
   useEffect(() => {
-    if (area && cowTypeOptions.length > 0) {
-      console.log('area:', area);
-      const cowTypeId = area.cowTypeEntity?.cowTypeId
-        ? String(area.cowTypeEntity.cowTypeId) // Use string
-        : area.cowTypeId
-          ? String(area.cowTypeId)
-          : undefined;
-      // Validate cowTypeId
-      const validCowTypeId = cowTypeOptions.some(
-        (option) => option.value === cowTypeId
-      )
-        ? cowTypeId
-        : undefined;
+    if (area) {
       form.setFieldsValue({
         name: area.name,
         length: area.length,
@@ -119,30 +104,45 @@ const AreaDetail = () => {
         maxPen: area.maxPen,
         numberInRow: area.numberInRow,
         description: area.description,
-        cowTypeId: validCowTypeId,
-        cowStatus: area.cowStatus ?? undefined,
+        cowTypeId: area.cowTypeEntity?.cowTypeId || undefined,
+        cowStatus: area.cowStatus,
       });
-      console.log('Form cowTypeId:', validCowTypeId);
     }
-  }, [area, cowTypeOptions, form]);
+  }, [area, form]);
+
+  useEffect(() => {
+    if (areaError) {
+      toast.showError(t('Failed to load area details'));
+      console.error('Area fetch error:', areaError);
+    }
+    if (cowInPenError) {
+      toast.showError(t('Failed to load cow in pen data'));
+      console.error('CowInPen fetch error:', cowInPenError);
+    }
+    if (cowTypeError) {
+      toast.showError(t('Failed to load cow types'));
+      console.error('CowType fetch error:', cowTypeError);
+    }
+  }, [areaError, cowInPenError, cowTypeError, toast, t]);
 
   const onSubmitEdit = async (values: any) => {
     try {
-      const { maxPen, numberInRow, ...filteredValues } = values;
+      const { maxPen, numberInRow, cowTypeId, ...filteredValues } = values;
       const payload = {
         ...filteredValues,
-        cowTypeId: Number(filteredValues.cowTypeId), // Convert to number for API
+        cowTypeId: area ? area.cowTypeEntity?.cowTypeId || null : null,
       };
       console.log('Submit payload:', payload);
       const response = await triggerEditArea({
         url: AREA_PATH.AREA_EDIT(id as any),
         body: payload,
       });
-      toast.showSuccess(response.message);
+      toast.showSuccess(t(response.message));
       toggleEdit();
       mutate();
     } catch (error: any) {
       toast.showError(error.message);
+      console.error('Edit area error:', error);
     }
   };
 
@@ -170,7 +170,7 @@ const AreaDetail = () => {
       dataIndex: 'cowType',
       key: 'cowType',
       title: t('Cow type'),
-      render: (typeValue: string) => (typeValue ? typeValue : '-'),
+      render: (typeValue: string) => (typeValue ? typeValue : t('No cow type')),
       searchable: true,
     },
     {
@@ -201,158 +201,149 @@ const AreaDetail = () => {
             <div>
               <Skeleton
                 loading={
-                  isLoadingUpdateArea ||
-                  isLoadingArea ||
-                  isLoadingCowInPen ||
-                  isLoadingCowType
+                  (isLoadingUpdateArea || isLoadingArea || isLoadingCowInPen || isLoadingCowType) &&
+                  !area
                 }
               >
-                <FormComponent form={form} onFinish={onSubmitEdit}>
-                  <div className="!max-w-4/5 w-3/5 mx-auto">
-                    <div className="flex w-full justify-center gap-5">
-                      <div className="flex flex-col !w-1/2">
-                        <FormItemComponent
-                          name="name"
-                          label={<LabelForm>{t('Name')}</LabelForm>}
-                          rules={[
-                            { required: true },
-                            { validator: validateInput },
-                          ]}
-                        >
-                          <InputComponent
-                            className="!w-full"
-                            disabled={!edited}
-                          />
-                        </FormItemComponent>
-                        <FormItemComponent
-                          name="areaType"
-                          label={<LabelForm>{t('Area Type')}</LabelForm>}
-                          rules={[{ required: true, message: t('Please select an area type') }]}
-                        >
-                          <SelectComponent
-                            options={areaType()}
-                            disabled={!edited}
-                            className="!w-full"
-                            placeholder={t('Select Area Type')}
-                          />
-                        </FormItemComponent>
-                        <FormItemComponent
-                          name="cowTypeId"
-                          label={<LabelForm>{t('Cow Type')}</LabelForm>}
-                          rules={[{ required: true, message: t('Please select a cow type') }]}
-                        >
-                          <SelectComponent
-                            options={cowTypeOptions}
-                            disabled={!edited || isLoadingCowType}
-                            className="!w-full"
-                            placeholder={
-                              isLoadingCowType
-                                ? t('Loading...')
-                                : t('Select Cow Type')
-                            }
-                            allowClear
-                            onChange={(value) => {
-                              console.log('Selected cowTypeId:', value);
-                              form.setFieldsValue({ cowTypeId: value });
-                            }}
-                          />
-                        </FormItemComponent>
-                        <FormItemComponent
-                          name="cowStatus"
-                          label={<LabelForm>{t('Cow Status')}</LabelForm>}
-                          rules={[{ required: true, message: t('Please select a cow status') }]}
-                        >
-                          <SelectComponent
-                            options={cowStatus()}
-                            disabled={!edited}
-                            className="!w-full"
-                            placeholder={t('Select Cow Status')}
-                            allowClear
-                          />
-                        </FormItemComponent>
-                        <FormItemComponent
-                          name="maxPen"
-                          rules={[{ required: true }]}
-                          label={<LabelForm>{t('Max pen')}</LabelForm>}
-                        >
-                          <InputComponent.Number disabled={true} />
-                        </FormItemComponent>
-                        <FormItemComponent
-                          name="numberInRow"
-                          rules={[{ required: true }]}
-                          label={<LabelForm>{t('Number in row')}</LabelForm>}
-                        >
-                          <InputComponent.Number disabled={true} />
-                        </FormItemComponent>
+                {area && (
+                  <FormComponent form={form} onFinish={onSubmitEdit}>
+                    <div className="max-w-4/5 w-3/5 mx-auto">
+                      <div className="flex w-full justify-center gap-5">
+                        <div className="flex flex-col w-1/2">
+                          <FormItemComponent
+                            name="name"
+                            label={<LabelForm>{t('Name')}</LabelForm>}
+                            rules={[
+                              { required: true },
+                              { validator: validateInput },
+                            ]}
+                          >
+                            <InputComponent
+                              className="w-full"
+                              disabled={!edited}
+                            />
+                          </FormItemComponent>
+                          <FormItemComponent
+                            name="areaType"
+                            label={<LabelForm>{t('Area Type')}</LabelForm>}
+                            rules={[{ required: true, message: t('Please select an area type') }]}
+                          >
+                            <SelectComponent
+                              options={areaType()}
+                              disabled={!edited}
+                              className="w-full"
+                              placeholder={t('Select Area Type')}
+                            />
+                          </FormItemComponent>
+                          <FormItemComponent
+                            name="cowTypeId"
+                            label={<LabelForm>{t('Cow Type')}</LabelForm>}
+                          >
+                            <SelectComponent
+                              options={optionsCowType}
+                              className="w-full"
+                              disabled={true}
+                              placeholder={t('No cow type assigned')}
+                            />
+                          </FormItemComponent>
+                          <FormItemComponent
+                            name="cowStatus"
+                            label={<LabelForm>{t('Cow Status')}</LabelForm>}
+                            rules={[{ required: true, message: t('Please select a cow status') }]}
+                          >
+                            <SelectComponent
+                              options={cowStatus()}
+                              disabled={true}
+                              className="w-full"
+                              placeholder={t('Select Cow Status')}
+                              allowClear
+                            />
+                          </FormItemComponent>
+                          <FormItemComponent
+                            name="maxPen"
+                            rules={[{ required: true }]}
+                            label={<LabelForm>{t('Max pen')}</LabelForm>}
+                          >
+                            <InputComponent.Number disabled={true} />
+                          </FormItemComponent>
+                          <FormItemComponent
+                            name="numberInRow"
+                            rules={[{ required: true }]}
+                            label={<LabelForm>{t('Number in row')}</LabelForm>}
+                          >
+                            <InputComponent.Number disabled={true} />
+                          </FormItemComponent>
+                        </div>
+                        <div className="flex flex-col w-1/2">
+                          <FormItemComponent
+                            name="length"
+                            label={<LabelForm>{t('Length')} (m)</LabelForm>}
+                            rules={[{ required: true }]}
+                          >
+                            <InputComponent.Number disabled={!edited} />
+                          </FormItemComponent>
+                          <FormItemComponent
+                            name="width"
+                            label={<LabelForm>{t('Width')} (m)</LabelForm>}
+                            rules={[{ required: true }]}
+                          >
+                            <InputComponent.Number disabled={!edited} />
+                          </FormItemComponent>
+                          <FormItemComponent
+                            name="penLength"
+                            label={<LabelForm>{t('Pen Length (m)')}</LabelForm>}
+                            rules={[{ required: true }]}
+                          >
+                            <InputComponent.Number disabled={!edited} />
+                          </FormItemComponent>
+                          <FormItemComponent
+                            name="penWidth"
+                            label={<LabelForm>{t('Pen Width (m)')}</LabelForm>}
+                            rules={[{ required: true }]}
+                          >
+                            <InputComponent.Number disabled={!edited} />
+                          </FormItemComponent>
+                        </div>
                       </div>
-                      <div className="flex flex-col !w-1/2">
+                      <div className="w-full mx-auto">
                         <FormItemComponent
-                          name="length"
-                          label={<LabelForm>{t('Length')} (m)</LabelForm>}
+                          name="description"
+                          label={<LabelForm>{t('Description')}</LabelForm>}
                           rules={[{ required: true }]}
                         >
-                          <InputComponent.Number disabled={!edited} />
-                        </FormItemComponent>
-                        <FormItemComponent
-                          name="width"
-                          label={<LabelForm>{t('Width')} (m)</LabelForm>}
-                          rules={[{ required: true }]}
-                        >
-                          <InputComponent.Number disabled={!edited} />
-                        </FormItemComponent>
-                        <FormItemComponent
-                          name="penLength"
-                          label={<LabelForm>{t('Pen Length (m)')}</LabelForm>}
-                          rules={[{ required: true }]}
-                        >
-                          <InputComponent.Number disabled={!edited} />
-                        </FormItemComponent>
-                        <FormItemComponent
-                          name="penWidth"
-                          label={<LabelForm>{t('Pen Width (m)')}</LabelForm>}
-                          rules={[{ required: true }]}
-                        >
-                          <InputComponent.Number disabled={!edited} />
+                          {!edited ? (
+                            <QuillRender
+                              description={area ? area.description : ''}
+                            />
+                          ) : (
+                            <ReactQuillComponent />
+                          )}
                         </FormItemComponent>
                       </div>
                     </div>
-                    <div className="!w-full mx-auto">
-                      <FormItemComponent
-                        name="description"
-                        label={<LabelForm>{t('Description')}</LabelForm>}
-                        rules={[{ required: true }]}
-                      >
-                        {!edited ? (
-                          <QuillRender
-                            description={area ? area.description : ''}
-                          />
-                        ) : (
-                          <ReactQuillComponent />
-                        )}
-                      </FormItemComponent>
-                    </div>
-                  </div>
-                  {role !== 'Veterinarians' && (
-                    <div className="w-full flex justify-end gap-5">
-                      <ButtonComponent
-                        type="primary"
-                        buttonType={!edited ? 'gold' : 'volcano'}
-                        onClick={toggleEdit}
-                      >
-                        {!edited ? t('Edit') : t('Cancel')}
-                      </ButtonComponent>
-                      {edited && (
+                    {role !== 'Veterinarians' && (
+                      <div className="w-full flex justify-end gap-5">
                         <ButtonComponent
                           type="primary"
-                          buttonType="secondary"
-                          htmlType="submit"
+                          buttonType={!edited ? 'gold' : 'volcano'}
+                          onClick={toggleEdit}
                         >
-                          {t('Edit')}
+                          {!edited ? t('Edit') : t('Cancel')}
                         </ButtonComponent>
-                      )}
-                    </div>
-                  )}
-                </FormComponent>
+                        {edited && (
+                          <ButtonComponent
+                            type="primary"
+                            buttonType="secondary"
+                            htmlType="submit"
+                          >
+                            {t('Save')}
+                          </ButtonComponent>
+                        )}
+                      </div>
+                    )}
+                  </FormComponent>
+                )}
+                {!area && <div>{t('No area data available')}</div>}
               </Skeleton>
             </div>
           </div>

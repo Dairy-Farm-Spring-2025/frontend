@@ -239,6 +239,7 @@
   "Calving Cow": "Bò sắp đẻ",
   "Breeding Cow": "Bò đang phối giống",
   "Quarantined cow": "Bò cách ly",
+  "Quarantine": "Khu cách ly",
   "Culling": "Bò loại thải",
   "European": "Châu âu",
   "Indian": "Ấn độ",
@@ -745,6 +746,7 @@
   "Moved cows successfully": "Di chuyển bò thành công",
   "Cow Type is restricted to match the selected area": "Loại bò được chọn dựa theo khu vực",
   "Date of Enter must be later than Date of Birth": "Ngày sinh phải nhỏ hơn ngày nhập vào",
+  "Area updated successfully. ": "Khu vực cập nhật thành công"
   "Application Detail": "Chi tiết đơn từ",
   "Request Application": "Yêu cầu đơn từ",
   "Dashboard dairy": "Thống kê trang trại bò sữa",
@@ -760,3 +762,4 @@
   "Category detail": "Chi tiết loại",
   "Edit Item": "Chỉnh sửa mặt hàng"
 }
+
