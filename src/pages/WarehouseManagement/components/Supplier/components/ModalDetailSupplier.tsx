@@ -93,7 +93,7 @@ const ModalDetailSupplier = ({
         )
       ) : (
         <FormItemComponent name="address" rules={[{ required: true }]}>
-          <InputComponent />
+          <InputComponent.TextArea />
         </FormItemComponent>
       ),
       span: 3,
@@ -113,8 +113,10 @@ const ModalDetailSupplier = ({
           rules={[
             {
               required: true,
-              pattern: /^\d{10}$/,
-              message: t('Must be number and have 10 digits'),
+            },
+            {
+              pattern: /^0\d{9}$/,
+              message: t('Must be a number starting with 0 and have 10 digits'),
             },
           ]}
         >
@@ -133,7 +135,10 @@ const ModalDetailSupplier = ({
           ''
         )
       ) : (
-        <FormItemComponent name="email" rules={[{ required: true }]}>
+        <FormItemComponent
+          name="email"
+          rules={[{ required: true }, { type: 'email' }]}
+        >
           <InputComponent />
         </FormItemComponent>
       ),
@@ -147,6 +152,7 @@ const ModalDetailSupplier = ({
       open={modal.open}
       onCancel={handleClose}
       loading={isLoadingDetail}
+      width={700}
       footer={[
         !edit && (
           <ButtonComponent type="primary" onClick={() => setEdit(true)}>

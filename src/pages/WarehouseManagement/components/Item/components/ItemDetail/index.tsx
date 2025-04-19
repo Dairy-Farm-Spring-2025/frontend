@@ -8,6 +8,7 @@ import useModal from '../../../../../../hooks/useModal';
 import { Item } from '../../../../../../model/Warehouse/items';
 import ItemInformation from './components/ItemInformation';
 import ModalEditItem from './components/ModalEditItem';
+import { t } from 'i18next';
 
 const ItemDetail = () => {
   const { id } = useParams();
@@ -20,7 +21,7 @@ const ItemDetail = () => {
         <div className="flex justify-end flex-wrap gap-5">
           <ItemInformation data={data as Item} />
           <ButtonComponent onClick={modal.openModal} type="primary">
-            Edit
+            {t('Edit')}
           </ButtonComponent>
           <ModalEditItem data={data as Item} modal={modal} mutate={mutate} />
         </div>

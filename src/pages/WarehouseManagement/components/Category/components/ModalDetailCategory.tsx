@@ -12,7 +12,19 @@ import useFetcher from '../../../../../hooks/useFetcher';
 import useToast from '../../../../../hooks/useToast';
 import { CategoryType } from '@model/Warehouse/category';
 import { CATEGORY_PATH } from '@service/api/Storage/categoryApi';
+import { t } from 'i18next';
 
+const validateNameCategory = (name: string) => {
+  const validateCateogryName = [
+    'Cỏ khô',
+    'Thức ăn tinh',
+    'Thức ăn ủ chua',
+    'Khoáng chất',
+    'Vắc-xin',
+  ];
+  if (validateCateogryName.includes(name)) return true;
+  return false;
+};
 interface ModalDetailCategoryProps {
   modal: any;
   mutate: any;
@@ -47,13 +59,13 @@ const ModalDetailCategory = ({
 
   const handleFinish = async (values: any) => {
     try {
-      await trigger({ body: values });
-      toast.showSuccess('Update success');
+      const response = await trigger({ body: values });
+      toast.showSuccess(response.message);
       mutate();
       mutateEdit();
       setEdit(false);
     } catch (error: any) {
-      toast.showSuccess(error.message);
+      toast.showError(error.message);
     }
   };
 
@@ -66,7 +78,7 @@ const ModalDetailCategory = ({
   const items: DescriptionPropsItem['items'] = [
     {
       key: 'name',
-      label: 'Name',
+      label: t('Name'),
       children: !edit ? (
         data ? (
           data?.name
@@ -84,31 +96,38 @@ const ModalDetailCategory = ({
 
   return (
     <ModalComponent
-      title="Edit Category"
+      title={t('Category detail')}
       open={modal.open}
       onCancel={handleClose}
       loading={isLoadingDetail}
-      footer={[
-        !edit && (
-          <ButtonComponent type="primary" onClick={() => setEdit(true)}>
-            Edit
-          </ButtonComponent>
-        ),
-        edit && (
-          <div className="flex gap-5 justify-end">
-            <ButtonComponent onClick={() => setEdit(false)}>
-              Cancel
-            </ButtonComponent>
+      footer={
+        !validateNameCategory(data ? data?.name : '') && [
+          !edit && (
             <ButtonComponent
-              loading={isLoading}
               type="primary"
-              onClick={() => form.submit()}
+              buttonType="warning"
+              onClick={() => setEdit(true)}
             >
-              Save
+              {t('Edit')}
             </ButtonComponent>
-          </div>
-        ),
-      ]}
+          ),
+          edit && (
+            <div className="flex gap-5 justify-end">
+              <ButtonComponent onClick={() => setEdit(false)}>
+                {t('Cancel')}
+              </ButtonComponent>
+              <ButtonComponent
+                loading={isLoading}
+                type="primary"
+                buttonType="secondary"
+                onClick={() => form.submit()}
+              >
+                {t('Save')}
+              </ButtonComponent>
+            </div>
+          ),
+        ]
+      }
     >
       <FormComponent form={form} onFinish={handleFinish}>
         <DescriptionComponent items={items} />

@@ -30,8 +30,8 @@ const Supplier = () => {
   const { t } = useTranslation();
   const onConfirm = async (id: string) => {
     try {
-      await trigger({ url: `suppliers/${id}` });
-      toast.showSuccess('Delete success');
+      const response = await trigger({ url: `suppliers/${id}` });
+      toast.showSuccess(response.message);
       mutate();
     } catch (error: any) {
       toast.showError(error.message);
@@ -86,7 +86,7 @@ const Supplier = () => {
             {t('View Detail')}
           </ButtonComponent>
           <PopconfirmComponent
-            title={'Delete?'}
+            title={undefined}
             onConfirm={() => onConfirm(data)}
           >
             <ButtonComponent type="primary" danger>

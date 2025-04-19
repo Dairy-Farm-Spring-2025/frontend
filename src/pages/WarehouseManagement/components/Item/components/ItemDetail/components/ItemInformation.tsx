@@ -1,6 +1,9 @@
 import { Tag } from 'antd';
 import { Item } from '../../../../../../../model/Warehouse/items';
 import CardComponent from '../../../../../../../components/Card/CardComponent';
+import { formatStatusWithCamel } from '@utils/format';
+import { t } from 'i18next';
+import { getItemStatusColor } from '@utils/statusRender/itemStatusRender';
 
 interface ItemInformationProps {
   data: Item;
@@ -12,17 +15,22 @@ const ItemInformation = ({ data }: ItemInformationProps) => {
         <strong>{data?.name}</strong>
       </p>
       <p className="text-lg">
-        <strong>Quantity: </strong>{' '}
-        <Tag className="!text-base !px-5">
-          {data?.quantity} ({data?.unit})
+        <strong>{t('Status')}: </strong>{' '}
+        <Tag
+          color={getItemStatusColor(data?.status)}
+          className="!text-base !px-5"
+        >
+          {t(formatStatusWithCamel(data?.status))}
         </Tag>
       </p>
       <p className="text-lg">
-        <strong>Status: </strong>{' '}
-        <Tag className="!text-base !px-5">{data?.status}</Tag>
+        <strong>{t('Unit')}: </strong>{' '}
+        <Tag className="!text-base !px-5">
+          {t(formatStatusWithCamel(data?.unit))}
+        </Tag>
       </p>
       <div className="grid grid-cols-3 gap-5">
-        <CardComponent title={'Category'}>
+        <CardComponent title={t('Category')}>
           {data?.categoryEntity?.name}
         </CardComponent>
         <CardComponent

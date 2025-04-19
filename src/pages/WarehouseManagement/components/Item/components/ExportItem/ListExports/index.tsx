@@ -1,34 +1,28 @@
 import { formatDate } from '@fullcalendar/core/index.js';
-import { Divider, Tag } from 'antd';
-import { useState } from 'react';
+import { Divider } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import ButtonComponent from '../../../../../../../components/Button/ButtonComponent';
-import SelectComponent from '../../../../../../../components/Select/SelectComponent';
 import TableComponent, {
   Column,
 } from '../../../../../../../components/Table/TableComponent';
 import useFetcher from '../../../../../../../hooks/useFetcher';
-import useToast from '../../../../../../../hooks/useToast';
 // import PopconfirmComponent from '../../../../../../../components/Popconfirm/PopconfirmComponent';
-import { Key } from 'antd/es/table/interface';
+import TagComponents from '@components/UI/TagComponents';
+import { formatStatusWithCamel } from '@utils/format';
 import { useTranslation } from 'react-i18next';
 import AnimationAppear from '../../../../../../../components/UI/AnimationAppear';
 import WhiteBackground from '../../../../../../../components/UI/WhiteBackground';
-import { EXPORT_STATUS_OPTIONS } from '../../../../../../../service/data/exportStatus';
 
 const ListExports = () => {
   const navigate = useNavigate();
-  const toast = useToast();
-  const { data, isLoading, mutate } = useFetcher<any[] | []>(
-    'export_items',
-    'GET'
-  );
+  // const toast = useToast();
+  const { data, isLoading } = useFetcher<any[] | []>('export_items', 'GET');
   // const { isLoading: deleteLoading, trigger } = useFetcher(`export_items/delete`, 'DELETE');
-  const { isLoading: updateLoading, trigger: triggerUpdate } = useFetcher(
-    'export_items/update',
-    'PUT'
-  );
-  const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
+  // const { isLoading: updateLoading, trigger: triggerUpdate } = useFetcher(
+  //   'export_items/update',
+  //   'PUT'
+  // );
+  // const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
   const { t } = useTranslation();
   // const isBulkActionDisabled =
   //   selectedRowKeys.length === 0 ||
@@ -67,19 +61,6 @@ const ListExports = () => {
   //   }
   // };
 
-  // Handle individual actions
-  const handleAction = async (id: number, action: string) => {
-    try {
-      const response = await triggerUpdate({
-        url: `export_items/${action}/${id}`,
-      });
-      toast.showSuccess(response.message);
-      mutate();
-    } catch (error: any) {
-      toast.showError(error.message);
-    }
-  };
-
   // Bulk action menu
   // const bulkActionMenu = (
   //   <Menu onClick={({ key }) => handleBulkAction(key)}>
@@ -96,7 +77,7 @@ const ListExports = () => {
       dataIndex: 'quantity',
       key: 'quantity',
       title: t('Quantity'),
-      render: (data) => `${data} liters`,
+      render: (data) => `${data}`,
     },
     {
       dataIndex: 'itemBatchEntity',
@@ -134,29 +115,15 @@ const ListExports = () => {
       dataIndex: 'status',
       key: 'status',
       title: t('Status'),
-      render: (data, record) => {
-        // Only show SelectComponent if status is NOT "cancel"
-        if (data == 'pending') {
-          return (
-            <SelectComponent
-              className="w-full"
-              options={EXPORT_STATUS_OPTIONS()}
-              defaultValue={data}
-              onChange={(value) => handleAction(record?.exportItemId, value)}
-              loading={updateLoading}
-            />
-          );
-        }
-
-        // Show simple text when status is "cancel"
-        return <Tag color="red">{data}</Tag>;
-      },
+      render: (data) => (
+        <TagComponents>{t(formatStatusWithCamel(data))}</TagComponents>
+      ),
     },
     {
       dataIndex: 'received',
       key: 'received',
       title: t('Received'),
-      render: (data) => (data ? 'Yes' : 'No'),
+      render: (data) => (data ? t('Yes') : t('No')),
     },
     {
       dataIndex: 'exportItemId',
@@ -165,7 +132,7 @@ const ListExports = () => {
       render: (data) => (
         <div className="flex gap-4">
           <ButtonComponent type="primary" onClick={() => navigate(`${data}`)}>
-            View Detail
+            {t('View Detail')}
           </ButtonComponent>
           {/* <PopconfirmComponent
             title='Are you sure to delete this export?'
@@ -201,10 +168,6 @@ const ListExports = () => {
           columns={column}
           dataSource={data || []}
           loading={isLoading}
-          rowSelection={{
-            selectedRowKeys,
-            onChange: (keys) => setSelectedRowKeys(keys),
-          }}
         />
         {/* <CreateExportModal modal={modal} mutate={mutate} /> */}
       </WhiteBackground>
