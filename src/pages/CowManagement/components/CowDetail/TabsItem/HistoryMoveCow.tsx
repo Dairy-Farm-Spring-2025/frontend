@@ -1,3 +1,8 @@
+import {
+  HomeOutlined,
+  InfoCircleOutlined,
+  TagOutlined,
+} from '@ant-design/icons';
 import ButtonComponent from '@components/Button/ButtonComponent';
 import FormItemComponent from '@components/Form/Item/FormItemComponent';
 import LabelForm from '@components/LabelForm/LabelForm';
@@ -11,9 +16,8 @@ import { Area } from '@model/Area';
 import { PenEntity } from '@model/CowPen/CowPen';
 import { formatDateHour, formatStatusWithCamel } from '@utils/format';
 import { Divider, Form, Tag } from 'antd';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { HomeOutlined, InfoCircleOutlined, TagOutlined } from '@ant-design/icons';
 interface CowPenHistory {
   penEntity: PenEntity;
   fromDate: string;
@@ -83,7 +87,8 @@ const HistoryMoveCow = ({ id, isLoadingHistory }: HistoryMoveCowProps) => {
 
   const areaOptions = useMemo(
     () =>
-      areasData?.map((area) => ({ label: area.name, value: area.areaId })) || [],
+      areasData?.map((area) => ({ label: area.name, value: area.areaId })) ||
+      [],
     [areasData]
   );
 
@@ -127,8 +132,8 @@ const HistoryMoveCow = ({ id, isLoadingHistory }: HistoryMoveCowProps) => {
 
       toast.showSuccess(t('Move cow successfully'));
       form.resetFields();
-    } catch (error) {
-      toast.showError(t('Failed to move cow'));
+    } catch (error: any) {
+      toast.showError(error?.message || t('Failed to move cow'));
     }
   };
 
@@ -215,7 +220,9 @@ const HistoryMoveCow = ({ id, isLoadingHistory }: HistoryMoveCowProps) => {
                   <FormItemComponent
                     name="areaId"
                     label={<LabelForm>{t('Area')}</LabelForm>}
-                    rules={[{ required: true, message: t('Please select an area') }]}
+                    rules={[
+                      { required: true, message: t('Please select an area') },
+                    ]}
                     className="w-48"
                   >
                     <SelectComponent
@@ -228,7 +235,9 @@ const HistoryMoveCow = ({ id, isLoadingHistory }: HistoryMoveCowProps) => {
                   <FormItemComponent
                     name="penId"
                     label={<LabelForm>{t('Pen')}</LabelForm>}
-                    rules={[{ required: true, message: t('Please select a pen') }]}
+                    rules={[
+                      { required: true, message: t('Please select a pen') },
+                    ]}
                     className="w-48"
                   >
                     <SelectComponent
@@ -265,24 +274,38 @@ const HistoryMoveCow = ({ id, isLoadingHistory }: HistoryMoveCowProps) => {
                         <div className="flex items-start gap-2">
                           <InfoCircleOutlined className="text-gray-500 mt-1" />
                           <div>
-                            <span className="font-medium text-gray-700">{t('Description')}:</span>
+                            <span className="font-medium text-gray-700">
+                              {t('Description')}:
+                            </span>
                             <p className="text-gray-600 mt-1">
-                              {areasData?.find((area) => area.areaId === areaId)?.description || t('No description')}
+                              {areasData?.find((area) => area.areaId === areaId)
+                                ?.description || t('No description')}
                             </p>
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
                           <TagOutlined className="text-gray-500" />
-                          <span className="font-medium text-gray-700">{t('Cow Type')}:</span>
+                          <span className="font-medium text-gray-700">
+                            {t('Cow Type')}:
+                          </span>
                           <Tag color="blue">
-                            {areasData?.find((area) => area.areaId === areaId)?.cowTypeEntity?.name || t('Unknown')}
+                            {areasData?.find((area) => area.areaId === areaId)
+                              ?.cowTypeEntity?.name || t('Unknown')}
                           </Tag>
                         </div>
                         <div className="flex items-center gap-2">
                           <TagOutlined className="text-gray-500" />
-                          <span className="font-medium text-gray-700">{t('Cow Status')}:</span>
+                          <span className="font-medium text-gray-700">
+                            {t('Cow Status')}:
+                          </span>
                           <Tag color="green">
-                            {t(formatStatusWithCamel(areasData?.find((area) => area.areaId === areaId)?.cowStatus || 'Unknown'))}
+                            {t(
+                              formatStatusWithCamel(
+                                areasData?.find(
+                                  (area) => area.areaId === areaId
+                                )?.cowStatus || 'Unknown'
+                              )
+                            )}
                           </Tag>
                         </div>
                       </div>
