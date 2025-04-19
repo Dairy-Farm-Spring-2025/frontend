@@ -99,7 +99,7 @@ const StepsComponent = ({
             onClick={() => done()}
             loading={loading}
           >
-            {tww('Confirm')}
+            {t('Confirm')}
           </ButtonComponent>
         )}
       </div>

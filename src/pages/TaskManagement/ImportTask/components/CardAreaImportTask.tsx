@@ -341,6 +341,7 @@ const CardAreaImportTask = ({
       title: t('Task type'),
       dataIndex: 'taskType',
       minWidth: 200,
+      width: 200,
       key: 'taskType',
       render: (_, record) =>
         editingKeys[record.key] ? (
@@ -375,7 +376,7 @@ const CardAreaImportTask = ({
     {
       title: t('From date'),
       dataIndex: 'fromDate',
-      minWidth: 250,
+      width: 100,
       key: 'fromDate',
       render: (_, record) =>
         editingKeys[record.key] ? (
@@ -393,7 +394,8 @@ const CardAreaImportTask = ({
     {
       title: t('To date'),
       dataIndex: 'toDate',
-      minWidth: 250,
+      minWidth: 100,
+      width: 100,
       key: 'toDate',
       render: (_, record) =>
         editingKeys[record.key] ? (
@@ -418,12 +420,13 @@ const CardAreaImportTask = ({
     {
       title: t('Description'),
       dataIndex: 'description',
-      minWidth: 250,
+      minWidth: 300,
+      width: 300,
       key: 'description',
       render: (_, record) =>
         editingKeys[record.key] ? (
           <Form.Item name={[record.key, 'description']} noStyle>
-            <InputComponent />
+            <InputComponent.TextArea />
           </Form.Item>
         ) : (
           <span
@@ -437,7 +440,8 @@ const CardAreaImportTask = ({
       title: t('Shift'),
       dataIndex: 'shift',
       key: 'shift',
-      minWidth: 200,
+      minWidth: 150,
+      width: 150,
       render: (_, record) =>
         editingKeys[record.key] ? (
           <Form.Item name={[record.key, 'shift']} noStyle>
@@ -469,7 +473,8 @@ const CardAreaImportTask = ({
     {
       title: t('Assignee'),
       dataIndex: 'assigneeId',
-      minWidth: 200,
+      minWidth: 300,
+      width: 300,
       key: 'assigneeId',
       render: (_, record) =>
         editingKeys[record.key] ? (
@@ -498,7 +503,8 @@ const CardAreaImportTask = ({
       title: t('Action'),
       key: 'action',
       dataIndex: 'id',
-      minWidth: 100,
+      minWidth: 75,
+      width: 75,
       render: (_, record) => {
         if (record.deleted) {
           return (
