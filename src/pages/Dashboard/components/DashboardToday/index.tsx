@@ -29,18 +29,6 @@ const DashboardToday = () => {
   const items: TabsItemProps[] = [
     {
       children: (
-        <DashboardTodayStatistic
-          dataDashboardToday={dataDashboardToday as DashboardTodayType}
-          SIZE_ICON={SIZE_ICON}
-          totalQuantity={totalQuantity}
-        />
-      ),
-      label: t('Dashboard today'),
-      icon: <StockOutlined />,
-      key: 'dashboard-today',
-    },
-    {
-      children: (
         <DashboardDairy
           dataDashboardToday={dataDashboardToday as DashboardTodayType}
           SIZE_ICON={SIZE_ICON}
@@ -50,6 +38,18 @@ const DashboardToday = () => {
       label: t('Dashboard dairy'),
       icon: <StockOutlined />,
       key: 'dashboard-dairy',
+    },
+    {
+      children: (
+        <DashboardTodayStatistic
+          dataDashboardToday={dataDashboardToday as DashboardTodayType}
+          SIZE_ICON={SIZE_ICON}
+          totalQuantity={totalQuantity}
+        />
+      ),
+      label: t('Dashboard today'),
+      icon: <StockOutlined />,
+      key: 'dashboard-today',
     },
   ];
 

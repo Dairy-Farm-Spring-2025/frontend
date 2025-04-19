@@ -1,4 +1,5 @@
-import { Card, Form, Tag } from 'antd'; // 🆕 Thêm Input
+import { APPLICATION_PATH } from '@service/api/Application/applicationApi';
+import { Form, Tag } from 'antd'; // 🆕 Thêm Input
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import DescriptionComponent, {
@@ -8,8 +9,10 @@ import FormComponent from '../../../../components/Form/FormComponent';
 import ModalComponent from '../../../../components/Modal/ModalComponent';
 import useFetcher from '../../../../hooks/useFetcher';
 import { Application } from '../../../../model/ApplicationType/application';
-import { formatDateHour } from '../../../../utils/format';
-import { APPLICATION_PATH } from '@service/api/Application/applicationApi';
+import {
+  formatDateHour,
+  formatStatusWithCamel,
+} from '../../../../utils/format';
 
 interface ModalDetailMyApplicationProps {
   modal: any;
@@ -114,7 +117,7 @@ const ModalDetailMyApplication = ({
       label: t('Status'),
       children: (
         <Tag color={statusColor[data?.status as keyof typeof statusColor]}>
-          {data?.status || ''}
+          {t(formatStatusWithCamel(data?.status as any)) || ''}
         </Tag>
       ),
       span: 2,
@@ -123,18 +126,16 @@ const ModalDetailMyApplication = ({
 
   return (
     <ModalComponent
-      title={t('Application Details')}
+      title={t('Application Detail')}
       open={modal.open}
       onCancel={handleClose}
       loading={isLoadingDetail}
       width={800}
       footer={[]}
     >
-      <Card>
-        <FormComponent form={form}>
-          <DescriptionComponent items={items} column={2} />
-        </FormComponent>
-      </Card>
+      <FormComponent form={form}>
+        <DescriptionComponent items={items} column={2} />
+      </FormComponent>
     </ModalComponent>
   );
 };

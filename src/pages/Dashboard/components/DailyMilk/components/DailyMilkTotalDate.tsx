@@ -30,7 +30,7 @@ const DailyMilkTotalDate = () => {
       key: 'total',
       label: (
         <p>
-          Total <span className="text-orange-500">(lit)</span>
+          {t('Total')} <span className="text-orange-500">(lit)</span>
         </p>
       ),
       children: (

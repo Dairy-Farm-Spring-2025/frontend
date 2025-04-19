@@ -1,18 +1,32 @@
-import { Col, DatePicker, Form, Input, Row, Spin } from 'antd';
-import dayjs from 'dayjs';
-import { useTranslation } from 'react-i18next';
-import ModalComponent from '../../../../components/Modal/ModalComponent';
-import ReactQuillComponent from '../../../../components/ReactQuill/ReactQuillComponent';
-import SelectComponent from '../../../../components/Select/SelectComponent';
-import useFetcher from '../../../../hooks/useFetcher';
-import useToast from '../../../../hooks/useToast';
-import { typeApplication } from '../../../../service/data/typeApplication';
+import DatePickerComponent from '@components/DatePicker/DatePickerComponent';
+import FormComponent from '@components/Form/FormComponent';
+import FormItemComponent from '@components/Form/Item/FormItemComponent';
+import InputComponent from '@components/Input/InputComponent';
+import { ModalActionProps } from '@hooks/useModal';
+import { ApplicationType } from '@model/ApplicationType/applicationType';
 import { APPLICATION_PATH } from '@service/api/Application/applicationApi';
+import { APPLICATION_TYPE_PATH } from '@service/api/Application/applicationTypeApi';
+import { Col, Form, Row } from 'antd';
+import dayjs from 'dayjs';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import ModalComponent from '@components/Modal/ModalComponent';
+import ReactQuillComponent from '@components/ReactQuill/ReactQuillComponent';
+import SelectComponent from '@components/Select/SelectComponent';
+import useFetcher from '@hooks/useFetcher';
+import useToast from '@hooks/useToast';
 
 interface ModalRequestApplicationProps {
-  modal: any;
+  modal: ModalActionProps;
   mutate: any;
 }
+
+const checkApplicationType = (type: string) => {
+  if (type === 'Đơn xin thôi việc' || type === 'Đơn xin đi trễ ') {
+    return true;
+  }
+  return false;
+};
 
 const ModalRequestMyApplication = ({
   modal,
@@ -20,18 +34,49 @@ const ModalRequestMyApplication = ({
 }: ModalRequestApplicationProps) => {
   const [form] = Form.useForm();
   const { t } = useTranslation();
+  const { data: dataTypeApplication } = useFetcher<ApplicationType[]>(
+    APPLICATION_TYPE_PATH.APPLICATION_TYPE,
+    'GET',
+    'application/json',
+    modal.open
+  );
   const { trigger, isLoading } = useFetcher(
     APPLICATION_PATH.APPLICATION_REQUEST,
     'POST'
   );
   const toast = useToast();
+  const [selectedTypeName, setSelectedTypeName] = useState('');
+  const [fromDateValue, setFromDateValue] = useState<dayjs.Dayjs | null>(null);
+
+  useEffect(() => {
+    if (modal.open) {
+      form.resetFields();
+      setSelectedTypeName('');
+      setFromDateValue(null);
+    }
+  }, [modal.open]);
+  const isLeaveRequest = selectedTypeName === 'Đơn xin nghỉ phép';
+  const disabledToDate = (current: dayjs.Dayjs) => {
+    if (!isLeaveRequest || !fromDateValue) return false;
+
+    const minDate = fromDateValue.startOf('day');
+    const maxDate = fromDateValue.add(6, 'day').endOf('day');
+    return current.isBefore(minDate) || current.isAfter(maxDate);
+  };
+  const disabledFromDate = (current: dayjs.Dayjs) => {
+    return current.isBefore(dayjs().startOf('day'));
+  };
   const handleFinish = async (values: any) => {
     try {
       const payload = {
         title: values.title,
         content: values.content,
-        fromDate: dayjs(values.fromDate).format('YYYY-MM-DD'),
-        toDate: dayjs(values.toDate).format('YYYY-MM-DD'),
+        fromDate: checkApplicationType(selectedTypeName)
+          ? dayjs(values.offDate).format('YYYY-MM-DD')
+          : dayjs(values.fromDate).format('YYYY-MM-DD'),
+        toDate: checkApplicationType(selectedTypeName)
+          ? dayjs(values.offDate).format('YYYY-MM-DD')
+          : dayjs(values.toDate).format('YYYY-MM-DD'),
         typeId: values.typeId,
       };
       console.log('Submitting payload:', payload);
@@ -54,55 +99,103 @@ const ModalRequestMyApplication = ({
     <ModalComponent
       onOk={() => form.submit()}
       loading={isLoading}
-      footer={isLoading ? <Spin tip="Submitting..." /> : null}
-      width={1000}
-      title="Request Application"
+      width={800}
+      title={t('Request Application')}
       open={modal.open}
       onCancel={handleClose}
     >
-      <Form
+      <FormComponent
         form={form}
         layout="vertical"
         onFinish={handleFinish}
         onFinishFailed={(error) => console.log(error)}
       >
-        <Form.Item name="typeId" label={t('Type')} rules={[{ required: true }]}>
-          <SelectComponent options={typeApplication} />
-        </Form.Item>
-
-        <Form.Item name="title" label={t('Title')} rules={[{ required: true }]}>
-          <Input placeholder="Enter your title" />
-        </Form.Item>
-
-        <Form.Item
-          name="content"
-          label={t('Content')}
+        <FormItemComponent
+          name="typeId"
+          label={t('Type')}
           rules={[{ required: true }]}
         >
-          <ReactQuillComponent />
-        </Form.Item>
+          <SelectComponent
+            options={
+              dataTypeApplication
+                ? dataTypeApplication.map((element) => ({
+                    label: element.name,
+                    value: element.applicationId,
+                  }))
+                : []
+            }
+            onChange={(value) => {
+              const selected = dataTypeApplication?.find(
+                (el) => el.applicationId === value
+              );
+              setSelectedTypeName(selected?.name || '');
+            }}
+          />
+        </FormItemComponent>
 
-        <Row gutter={16}>
-          <Col span={12}>
-            <Form.Item
-              name="fromDate"
-              label={t('From Date')}
+        {selectedTypeName !== '' && (
+          <>
+            <FormItemComponent
+              name="title"
+              label={t('Title')}
               rules={[{ required: true }]}
             >
-              <DatePicker />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item
-              name="toDate"
-              label={t('To Date')}
+              <InputComponent />
+            </FormItemComponent>
+
+            <FormItemComponent
+              name="content"
+              label={t('Content')}
               rules={[{ required: true }]}
             >
-              <DatePicker />
-            </Form.Item>
-          </Col>
-        </Row>
-      </Form>
+              <ReactQuillComponent />
+            </FormItemComponent>
+
+            <Row gutter={16}>
+              {checkApplicationType(selectedTypeName) ? (
+                <>
+                  <Col span={24}>
+                    <FormItemComponent
+                      name="offDate"
+                      label={t('Select Date')}
+                      rules={[{ required: true }]}
+                    >
+                      <DatePickerComponent
+                        onChange={(date) => setFromDateValue(date)}
+                        disabledDate={disabledFromDate}
+                      />
+                    </FormItemComponent>
+                  </Col>
+                </>
+              ) : (
+                <>
+                  <Col span={12}>
+                    <FormItemComponent
+                      name="fromDate"
+                      label={t('From Date')}
+                      rules={[{ required: true }]}
+                    >
+                      <DatePickerComponent
+                        onChange={(date) => setFromDateValue(date)}
+                        disabledDate={disabledFromDate}
+                      />
+                    </FormItemComponent>
+                  </Col>
+                  <Col span={12}>
+                    <FormItemComponent
+                      name="toDate"
+                      label={t('To Date')}
+                      rules={[{ required: true }]}
+                    >
+                      <DatePickerComponent disabledDate={disabledToDate} />
+                    </FormItemComponent>
+                  </Col>
+                </>
+              )}
+            </Row>
+          </>
+        )}
+      </FormComponent>
     </ModalComponent>
   );
 };
