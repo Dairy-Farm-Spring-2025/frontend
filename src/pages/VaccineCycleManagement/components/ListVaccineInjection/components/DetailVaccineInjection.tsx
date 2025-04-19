@@ -16,6 +16,7 @@ import {
 //   data?: VaccineInjection;
 // }
 
+import { t } from 'i18next';
 const DetailVaccineInjection = () => {
   const { id } = useParams<{ id: string }>();
   const { data, isLoading } = useFetcher<VaccineInjection>(
@@ -26,7 +27,7 @@ const DetailVaccineInjection = () => {
   if (isLoading || !data) {
     return (
       <div className="flex justify-center items-center h-64">
-        <span className="text-gray-500 text-lg">Loading...</span>
+        <span className="text-gray-500 text-lg">{t('Loading')}...</span>
       </div>
     );
   }
@@ -35,7 +36,7 @@ const DetailVaccineInjection = () => {
     <CardComponent
       title={
         <Title className="!text-2xl">
-          {data?.description || 'Vaccine Cycle'}
+          {data?.description || (t('Vaccine Cycle'))}
         </Title>
       }
       className="shadow-lg border border-gray-200 rounded-xl"
@@ -44,19 +45,19 @@ const DetailVaccineInjection = () => {
         {/* Section 1: Cow Information */}
         <section>
           <Title className="!text-xl text-gray-800 font-semibold mb-6">
-            Cow Information
+            {t('Cow Information')}
           </Title>
           <Row gutter={[32, 32]}>
             <Col xs={24} sm={12} md={8}>
               <TextTitle
                 title={
                   <span className="font-semibold text-gray-600 text-lg">
-                    Cow Name
+                    {t('Cow Name')}
                   </span>
                 }
                 description={
                   <span className="text-gray-600 font-medium text-base">
-                    {data?.cowEntity?.name || 'N/A'}
+                    {(data?.cowEntity?.name || 'N/A')}
                   </span>
                 }
               />
@@ -65,12 +66,12 @@ const DetailVaccineInjection = () => {
               <TextTitle
                 title={
                   <span className="font-semibold text-gray-600 text-lg">
-                    Cow Status
+                    {t('Cow Status')}
                   </span>
                 }
                 description={
                   <span className="text-gray-600 font-medium text-base">
-                    {formatStatusWithCamel(data?.cowEntity?.cowStatus) || 'N/A'}
+                    {t(formatStatusWithCamel(data?.cowEntity?.cowStatus)) || 'N/A'}
                   </span>
                 }
               />
@@ -79,7 +80,7 @@ const DetailVaccineInjection = () => {
               <TextTitle
                 title={
                   <span className="font-semibold text-gray-600 text-lg">
-                    Date of Birth
+                    {t('Date of Birth')}
                   </span>
                 }
                 description={
@@ -95,7 +96,7 @@ const DetailVaccineInjection = () => {
               <TextTitle
                 title={
                   <span className="font-semibold text-gray-600 text-lg">
-                    Date of Entry
+                    {t('Date of Entry')}
                   </span>
                 }
                 description={
@@ -111,12 +112,12 @@ const DetailVaccineInjection = () => {
               <TextTitle
                 title={
                   <span className="font-semibold text-gray-600 text-lg">
-                    Cow Origin
+                    {t('Cow Origin')}
                   </span>
                 }
                 description={
                   <span className="text-gray-600 font-medium text-base">
-                    {formatStatusWithCamel(data?.cowEntity?.cowOrigin) || 'N/A'}
+                    {t(formatStatusWithCamel(data?.cowEntity?.cowOrigin)) || 'N/A'}
                   </span>
                 }
               />
@@ -125,12 +126,12 @@ const DetailVaccineInjection = () => {
               <TextTitle
                 title={
                   <span className="font-semibold text-gray-600 text-lg">
-                    Gender
+                    {t('Gender')}
                   </span>
                 }
                 description={
                   <span className="text-gray-600 font-medium text-base">
-                    {formatStatusWithCamel(data?.cowEntity?.gender) || 'N/A'}
+                    {t(formatStatusWithCamel(data?.cowEntity?.gender)) || 'N/A'}
                   </span>
                 }
               />
@@ -139,7 +140,7 @@ const DetailVaccineInjection = () => {
               <TextTitle
                 title={
                   <span className="font-semibold text-gray-600 text-lg">
-                    Cow Type
+                    {t('Cow Type')}
                   </span>
                 }
                 description={
@@ -158,21 +159,21 @@ const DetailVaccineInjection = () => {
         {/* Section 2: Vaccine Information */}
         <section>
           <Title className="!text-xl text-gray-800 font-semibold mb-6">
-            Vaccine Information
+            {t('Vaccine Information')}
           </Title>
           <Row gutter={[32, 32]}>
             <Col xs={24} sm={12} md={8}>
               <TextTitle
                 title={
                   <span className="font-semibold text-gray-600 text-lg">
-                    Vaccine Type
+                    {t('Vaccine Type')}
                   </span>
                 }
                 description={
                   <span className="text-gray-600 font-medium text-base">
-                    {formatStatusWithCamel(
+                    {t(formatStatusWithCamel(
                       data?.vaccineCycleDetail?.vaccineType
-                    ) || 'N/A'}
+                    )) || 'N/A'}
                   </span>
                 }
               />
@@ -181,7 +182,7 @@ const DetailVaccineInjection = () => {
               <TextTitle
                 title={
                   <span className="font-semibold text-gray-600 text-lg">
-                    Periodic
+                    {t('Periodic')}
                   </span>
                 }
                 description={
@@ -190,7 +191,7 @@ const DetailVaccineInjection = () => {
                       {data?.vaccineCycleDetail?.numberPeriodic || 'N/A'}
                     </span>
                     <span className="text-gray-600 font-medium text-base">
-                      ({data?.vaccineCycleDetail?.unitPeriodic || 'N/A'})
+                      ({t(data?.vaccineCycleDetail?.unitPeriodic) || 'N/A'})
                     </span>
                   </div>
                 }
@@ -200,13 +201,13 @@ const DetailVaccineInjection = () => {
               <TextTitle
                 title={
                   <span className="font-semibold text-gray-600 text-lg">
-                    Dosage
+                    {t('Dosage')}
                   </span>
                 }
                 description={
                   <span className="text-gray-600 font-medium text-base">
                     {data?.vaccineCycleDetail?.dosage || 'N/A'} (
-                    {data?.vaccineCycleDetail?.dosageUnit || 'N/A'})
+                    {t(data?.vaccineCycleDetail?.dosageUnit) || 'N/A'})
                   </span>
                 }
               />
@@ -215,14 +216,14 @@ const DetailVaccineInjection = () => {
               <TextTitle
                 title={
                   <span className="font-semibold text-gray-600 text-lg">
-                    Injection Site
+                    {t('Injection Site')}
                   </span>
                 }
                 description={
                   <span className="text-gray-600 font-medium text-base">
-                    {formatInjectionSite(
+                    {t(formatInjectionSite(
                       data?.vaccineCycleDetail?.injectionSite
-                    ) || 'N/A'}
+                    )) || 'N/A'}
                   </span>
                 }
               />
@@ -231,7 +232,7 @@ const DetailVaccineInjection = () => {
               <TextTitle
                 title={
                   <span className="font-semibold text-gray-600 text-lg">
-                    First Injection Month
+                    {t('First Injection Month')}
                   </span>
                 }
                 description={
@@ -250,13 +251,13 @@ const DetailVaccineInjection = () => {
         {/* Section 3: Item Details */}
         <section>
           <Title className="!text-xl text-gray-800 font-semibold mb-6">
-            Item Details
+            {t('Item Details')}
           </Title>
           <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
             <TextTitle
               title={
                 <span className="font-semibold text-gray-600 text-lg">
-                  Item Name
+                  {t('Item Name')}
                 </span>
               }
               description={
@@ -267,7 +268,7 @@ const DetailVaccineInjection = () => {
                   <TagComponents
                     color={
                       data?.vaccineCycleDetail?.itemEntity?.status ===
-                      'available'
+                        'available'
                         ? 'green'
                         : 'red'
                     }
@@ -285,7 +286,7 @@ const DetailVaccineInjection = () => {
             <TextTitle
               title={
                 <span className="font-semibold text-gray-600 text-lg mt-4">
-                  Description
+                  {t('Description')}
                 </span>
               }
               description={
@@ -304,20 +305,20 @@ const DetailVaccineInjection = () => {
         {/* Section 4: Storage Information */}
         <section>
           <Title className="!text-xl text-gray-800 font-semibold mb-6">
-            Storage Information
+            {t('Storage Information')}
           </Title>
           <Row gutter={[32, 32]}>
             <Col xs={24} md={12}>
               <CardComponent
                 title={
                   <span className="font-semibold text-gray-600 text-lg">
-                    Category
+                    {t('Category')}
                   </span>
                 }
                 className="shadow-sm border border-gray-200 rounded-lg"
               >
                 <p className="text-gray-600 font-medium text-base">
-                  <span className="font-semibold">Name: </span>
+                  <span className="font-semibold">{t('Name')}: </span>
                   {data?.vaccineCycleDetail?.itemEntity?.categoryEntity?.name ||
                     'N/A'}
                 </p>
@@ -327,26 +328,26 @@ const DetailVaccineInjection = () => {
               <CardComponent
                 title={
                   <span className="font-semibold text-gray-600 text-lg">
-                    Warehouse
+                    {t('Warehouse')}
                   </span>
                 }
                 className="shadow-sm border border-gray-200 rounded-lg"
               >
                 <div className="space-y-3">
                   <p className="text-gray-600 font-medium text-base">
-                    <span className="font-semibold">Name: </span>
+                    <span className="font-semibold">{t('Name')}: </span>
                     {data?.vaccineCycleDetail?.itemEntity
                       ?.warehouseLocationEntity?.name || 'N/A'}
                   </p>
                   <p className="text-gray-600 font-medium text-base">
-                    <span className="font-semibold">Type: </span>
-                    {formatStatusWithCamel(
+                    <span className="font-semibold">{t('Type')}: </span>
+                    {t(formatStatusWithCamel(
                       data?.vaccineCycleDetail?.itemEntity
                         ?.warehouseLocationEntity?.type
-                    ) || 'N/A'}
+                    )) || 'N/A'}
                   </p>
                   <p className="text-gray-600 font-medium text-base">
-                    <span className="font-semibold">Description: </span>
+                    <span className="font-semibold">{t('Description')}: </span>
                     {data?.vaccineCycleDetail?.itemEntity
                       ?.warehouseLocationEntity?.description || 'N/A'}
                   </p>
@@ -362,13 +363,13 @@ const DetailVaccineInjection = () => {
         {/* Section 5: Administered By */}
         <section>
           <Title className="!text-xl text-gray-800 font-semibold mb-6">
-            Administered By
+            {t('Administered By')}
           </Title>
           <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
             <TextTitle
               title={
                 <span className="font-semibold text-gray-600 text-lg">
-                  Name
+                  {t('Name')}
                 </span>
               }
               description={
@@ -380,19 +381,19 @@ const DetailVaccineInjection = () => {
             <TextTitle
               title={
                 <span className="font-semibold text-gray-600 text-lg">
-                  Role
+                  {t('Role')}
                 </span>
               }
               description={
                 <span className="text-gray-600 font-medium text-base">
-                  {data?.administeredBy?.roleId?.name || 'N/A'}
+                  {t(formatStatusWithCamel(data?.administeredBy?.roleId?.name)) || 'N/A'}
                 </span>
               }
             />
             <TextTitle
               title={
                 <span className="font-semibold text-gray-600 text-lg">
-                  Email
+                  {t('Email')}
                 </span>
               }
               description={

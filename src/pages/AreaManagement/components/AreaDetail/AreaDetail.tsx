@@ -19,16 +19,17 @@ import { CowStatus } from '@model/Cow/Cow';
 import { PenStatus } from '@model/Pen';
 import { AREA_PATH } from '@service/api/Area/areaApi';
 import { areaType } from '@service/data/areaType';
+import { cowStatus } from '@service/data/cowStatus';
 import { penStatusFilter } from '@service/data/pen';
 import { formatStatusWithCamel } from '@utils/format';
 import { getPenColor } from '@utils/statusRender/penStatusRender';
 import { Divider, Form, Skeleton } from 'antd';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
+
 const validateInput = (_: any, value: string) => {
   const regex = /^[A-Z]+-area-[0-9]+$/;
-
   if (!value) {
     return Promise.reject('Please input the value!');
   }
@@ -41,10 +42,10 @@ const validateInput = (_: any, value: string) => {
 };
 
 interface CowInPenArea {
-  cowId: number;
-  name: string;
-  cowStatus: CowStatus;
-  cowType: string;
+  cowId: number | null;
+  name: string | null;
+  cowStatus: CowStatus | null;
+  cowType: string | null;
   penId: number;
   penName: string;
   penStatus: PenStatus;
@@ -66,11 +67,48 @@ const AreaDetail = () => {
   const { data: cowInPen, isLoading: isLoadingCowInPen } = useFetcher<
     CowInPenArea[]
   >(AREA_PATH.AREA_COW(id ? id : ''));
+  const { data: cowTypeData, isLoading: isLoadingCowType } = useFetcher<any>(
+    'cow-types',
+    'GET'
+  );
 
   const { t } = useTranslation();
 
+  // State for cowTypeOptions
+  const [cowTypeOptions, setCowTypeOptions] = useState<
+    { label: string; value: string }[]
+  >([]);
+
+  // Map cowType data to Select options
   useEffect(() => {
-    if (area) {
+    console.log('cowTypeData:', cowTypeData);
+    if (cowTypeData?.data) {
+      const options = cowTypeData.data.map((type: any) => ({
+        label: type.name,
+        value: String(type.cowTypeId), // Use string for Select
+      }));
+      console.log('cowTypeOptions:', options);
+      setCowTypeOptions(options);
+    } else {
+      setCowTypeOptions([]);
+    }
+  }, [cowTypeData]);
+
+  // Set form values
+  useEffect(() => {
+    if (area && cowTypeOptions.length > 0) {
+      console.log('area:', area);
+      const cowTypeId = area.cowTypeEntity?.cowTypeId
+        ? String(area.cowTypeEntity.cowTypeId) // Use string
+        : area.cowTypeId
+          ? String(area.cowTypeId)
+          : undefined;
+      // Validate cowTypeId
+      const validCowTypeId = cowTypeOptions.some(
+        (option) => option.value === cowTypeId
+      )
+        ? cowTypeId
+        : undefined;
       form.setFieldsValue({
         name: area.name,
         length: area.length,
@@ -81,15 +119,21 @@ const AreaDetail = () => {
         maxPen: area.maxPen,
         numberInRow: area.numberInRow,
         description: area.description,
+        cowTypeId: validCowTypeId,
+        cowStatus: area.cowStatus ?? undefined,
       });
+      console.log('Form cowTypeId:', validCowTypeId);
     }
-  }, [area, form]);
+  }, [area, cowTypeOptions, form]);
 
   const onSubmitEdit = async (values: any) => {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { maxPen, numberInRow, ...filteredValues } = values;
-      const payload = { ...filteredValues };
+      const payload = {
+        ...filteredValues,
+        cowTypeId: Number(filteredValues.cowTypeId), // Convert to number for API
+      };
+      console.log('Submit payload:', payload);
       const response = await triggerEditArea({
         url: AREA_PATH.AREA_EDIT(id as any),
         body: payload,
@@ -148,6 +192,7 @@ const AreaDetail = () => {
       filterOptions: penStatusFilter,
     },
   ];
+
   return (
     <AnimationAppear>
       <WhiteBackground>
@@ -156,13 +201,16 @@ const AreaDetail = () => {
             <div>
               <Skeleton
                 loading={
-                  isLoadingUpdateArea || isLoadingArea || isLoadingCowInPen
+                  isLoadingUpdateArea ||
+                  isLoadingArea ||
+                  isLoadingCowInPen ||
+                  isLoadingCowType
                 }
               >
                 <FormComponent form={form} onFinish={onSubmitEdit}>
                   <div className="!max-w-4/5 w-3/5 mx-auto">
                     <div className="flex w-full justify-center gap-5">
-                      <div className="flex flex-col !w-1/2 ">
+                      <div className="flex flex-col !w-1/2">
                         <FormItemComponent
                           name="name"
                           label={<LabelForm>{t('Name')}</LabelForm>}
@@ -179,25 +227,60 @@ const AreaDetail = () => {
                         <FormItemComponent
                           name="areaType"
                           label={<LabelForm>{t('Area Type')}</LabelForm>}
-                          rules={[{ required: true }]}
+                          rules={[{ required: true, message: t('Please select an area type') }]}
                         >
                           <SelectComponent
                             options={areaType()}
                             disabled={!edited}
                             className="!w-full"
+                            placeholder={t('Select Area Type')}
+                          />
+                        </FormItemComponent>
+                        <FormItemComponent
+                          name="cowTypeId"
+                          label={<LabelForm>{t('Cow Type')}</LabelForm>}
+                          rules={[{ required: true, message: t('Please select a cow type') }]}
+                        >
+                          <SelectComponent
+                            options={cowTypeOptions}
+                            disabled={!edited || isLoadingCowType}
+                            className="!w-full"
+                            placeholder={
+                              isLoadingCowType
+                                ? t('Loading...')
+                                : t('Select Cow Type')
+                            }
+                            allowClear
+                            onChange={(value) => {
+                              console.log('Selected cowTypeId:', value);
+                              form.setFieldsValue({ cowTypeId: value });
+                            }}
+                          />
+                        </FormItemComponent>
+                        <FormItemComponent
+                          name="cowStatus"
+                          label={<LabelForm>{t('Cow Status')}</LabelForm>}
+                          rules={[{ required: true, message: t('Please select a cow status') }]}
+                        >
+                          <SelectComponent
+                            options={cowStatus()}
+                            disabled={!edited}
+                            className="!w-full"
+                            placeholder={t('Select Cow Status')}
+                            allowClear
                           />
                         </FormItemComponent>
                         <FormItemComponent
                           name="maxPen"
                           rules={[{ required: true }]}
-                          label={<LabelForm>{t('Max pen')}:</LabelForm>}
+                          label={<LabelForm>{t('Max pen')}</LabelForm>}
                         >
                           <InputComponent.Number disabled={true} />
                         </FormItemComponent>
                         <FormItemComponent
                           name="numberInRow"
                           rules={[{ required: true }]}
-                          label={<LabelForm>{t('Number in row')}:</LabelForm>}
+                          label={<LabelForm>{t('Number in row')}</LabelForm>}
                         >
                           <InputComponent.Number disabled={true} />
                         </FormItemComponent>
@@ -241,7 +324,7 @@ const AreaDetail = () => {
                       >
                         {!edited ? (
                           <QuillRender
-                            description={area ? area?.description : ''}
+                            description={area ? area.description : ''}
                           />
                         ) : (
                           <ReactQuillComponent />
@@ -272,9 +355,6 @@ const AreaDetail = () => {
                 </FormComponent>
               </Skeleton>
             </div>
-            {/* <div className="h-full">
-              <AreaDimension area={area} pens={pens as Pen[]} />
-            </div>{' '} */}
           </div>
           <Divider />
           <h2 className="text-lg font-semibold mb-4">{t('Pens in Area')}</h2>

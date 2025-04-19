@@ -9,15 +9,25 @@ import useGetRole from '@hooks/useGetRole';
 import useToast from '@hooks/useToast';
 import { Area } from '@model/Area';
 import { PenEntity } from '@model/CowPen/CowPen';
-import { formatDateHour } from '@utils/format';
+import { formatDateHour, formatStatusWithCamel } from '@utils/format';
 import { Divider, Form, Tag } from 'antd';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-
+import { HomeOutlined, InfoCircleOutlined, TagOutlined } from '@ant-design/icons';
 interface CowPenHistory {
   penEntity: PenEntity;
   fromDate: string;
   toDate: string | null;
+  cowStatus: string;
+  cowType: string;
+}
+
+interface CowDetails {
+  cowId: number;
+  name: string;
+  cowStatus: string;
+  cowType: { cowTypeId: number; name: string };
+  penResponse?: { area: { areaType: string } };
 }
 
 interface HistoryMoveCowProps {
@@ -29,6 +39,10 @@ const HistoryMoveCow = ({ id, isLoadingHistory }: HistoryMoveCowProps) => {
   const { t } = useTranslation();
   const role = useGetRole();
   const toast = useToast();
+
+  // Fetch cow details to get cowStatus and cowTypeId
+  const { data: cowDetails } = useFetcher<CowDetails>(`cows/${id}`, 'GET');
+
   const {
     data,
     mutate,
@@ -43,22 +57,36 @@ const HistoryMoveCow = ({ id, isLoadingHistory }: HistoryMoveCowProps) => {
   const penId = Form.useWatch('penId', form);
 
   const { data: areasData } = useFetcher<Area[]>('areas', 'GET');
+
+  // Extract cowStatus and cowTypeId from cow details
+  const cowStatus = cowDetails?.cowStatus || 'milkingCow'; // Default fallback
+  const cowTypeId = cowDetails?.cowType?.cowTypeId || 1; // Default fallback
+
+  // Get areaType from the selected area
+  const selectedArea = areasData?.find((area) => area.areaId === areaId);
+  const areaType = selectedArea?.areaType || '';
+
+  // Fetch pens with areaType, cowStatus, and cowTypeId as query params
   const { data: allPensInArea, mutate: mutatePens } = useFetcher<PenEntity[]>(
-    areaId ? `pens/area/${areaId}` : '',
+    areaId && areaType
+      ? `pens/available/cow?areaType=${areaType}&cowStatus=${cowStatus}&cowTypeId=${cowTypeId}`
+      : '',
     'GET'
   );
+
   const { trigger: moveCow, isLoading } = useFetcher('cow-pens/create', 'POST');
 
   const emptyPens = useMemo(
     () => allPensInArea?.filter((pen) => pen.penStatus === 'empty') || [],
     [allPensInArea]
   );
+
   const areaOptions = useMemo(
     () =>
-      areasData?.map((area) => ({ label: area.name, value: area.areaId })) ||
-      [],
+      areasData?.map((area) => ({ label: area.name, value: area.areaId })) || [],
     [areasData]
   );
+
   const penOptions = useMemo(
     () => emptyPens.map((pen) => ({ value: pen.penId, label: pen.name })),
     [emptyPens]
@@ -89,6 +117,8 @@ const HistoryMoveCow = ({ id, isLoadingHistory }: HistoryMoveCowProps) => {
           penEntity: emptyPens.find((pen) => pen.penId === values.penId)!,
           fromDate: new Date().toISOString(),
           toDate: null,
+          cowStatus,
+          cowType: cowDetails?.cowType?.name || 'adult',
         };
         mutate([newRecord, ...(data || [])]);
       } else {
@@ -98,7 +128,6 @@ const HistoryMoveCow = ({ id, isLoadingHistory }: HistoryMoveCowProps) => {
       toast.showSuccess(t('Move cow successfully'));
       form.resetFields();
     } catch (error) {
-      if (error instanceof Error) return;
       toast.showError(t('Failed to move cow'));
     }
   };
@@ -181,14 +210,12 @@ const HistoryMoveCow = ({ id, isLoadingHistory }: HistoryMoveCowProps) => {
               {t('Choose Area & Pen to Move Cow')}
             </div>
             <div className="flex flex-col gap-6">
-              <div className="flex  items-center">
-                <div className="flex items-end gap-4">
+              <div className="flex flex-col gap-4">
+                <div className="flex items-center gap-4">
                   <FormItemComponent
                     name="areaId"
                     label={<LabelForm>{t('Area')}</LabelForm>}
-                    rules={[
-                      { required: true, message: t('Please select an area') },
-                    ]}
+                    rules={[{ required: true, message: t('Please select an area') }]}
                     className="w-48"
                   >
                     <SelectComponent
@@ -201,9 +228,7 @@ const HistoryMoveCow = ({ id, isLoadingHistory }: HistoryMoveCowProps) => {
                   <FormItemComponent
                     name="penId"
                     label={<LabelForm>{t('Pen')}</LabelForm>}
-                    rules={[
-                      { required: true, message: t('Please select a pen') },
-                    ]}
+                    rules={[{ required: true, message: t('Please select a pen') }]}
                     className="w-48"
                   >
                     <SelectComponent
@@ -213,23 +238,61 @@ const HistoryMoveCow = ({ id, isLoadingHistory }: HistoryMoveCowProps) => {
                       size="middle"
                     />
                   </FormItemComponent>
+
+                  <ButtonComponent
+                    type="primary"
+                    onClick={handleMoveCow}
+                    disabled={!isFormValid}
+                    loading={isLoading}
+                    size="middle"
+                    className="px-6 h-10"
+                  >
+                    {t('Move Cow')}
+                  </ButtonComponent>
                 </div>
 
-                <ButtonComponent
-                  type="primary"
-                  onClick={handleMoveCow}
-                  disabled={!isFormValid}
-                  loading={isLoading}
-                  size="large"
-                  className="px-6 ml-5"
-                >
-                  {t('Move Cow')}
-                </ButtonComponent>
+                {/* Improved Area Description Section */}
+                {areaId && (
+                  <div className="mt-4">
+                    <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-5 max-w-2xl">
+                      <div className="flex items-center gap-2 mb-3">
+                        <HomeOutlined className="text-primary text-lg" />
+                        <h3 className="text-lg font-semibold text-gray-800">
+                          {t('Area Details')}
+                        </h3>
+                      </div>
+                      <div className="space-y-3">
+                        <div className="flex items-start gap-2">
+                          <InfoCircleOutlined className="text-gray-500 mt-1" />
+                          <div>
+                            <span className="font-medium text-gray-700">{t('Description')}:</span>
+                            <p className="text-gray-600 mt-1">
+                              {areasData?.find((area) => area.areaId === areaId)?.description || t('No description')}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <TagOutlined className="text-gray-500" />
+                          <span className="font-medium text-gray-700">{t('Cow Type')}:</span>
+                          <Tag color="blue">
+                            {areasData?.find((area) => area.areaId === areaId)?.cowTypeEntity?.name || t('Unknown')}
+                          </Tag>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <TagOutlined className="text-gray-500" />
+                          <span className="font-medium text-gray-700">{t('Cow Status')}:</span>
+                          <Tag color="green">
+                            {t(formatStatusWithCamel(areasData?.find((area) => area.areaId === areaId)?.cowStatus || 'Unknown'))}
+                          </Tag>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
-              {/* Thông báo được đưa xuống hàng riêng */}
               {areaId && emptyPens.length === 0 && (
-                <div className="text-red-500 text-sm ">
+                <div className="text-red-500 text-sm">
                   {t('No empty pens available in this area!')}
                 </div>
               )}

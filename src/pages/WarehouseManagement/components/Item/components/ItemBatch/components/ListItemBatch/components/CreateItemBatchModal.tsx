@@ -119,10 +119,10 @@ const CreateItemBatchModal = ({ modal, mutate }: CreateItemBatchModalProps) => {
               <div className="w-3 h-3 bg-blue-500 rounded-sm"></div> -{' '}
               <p>{t('Name')}</p>
             </div>
-            <div className="flex gap-2 items-center">
+            {/* <div className="flex gap-2 items-center">
               <div className="w-3 h-3 bg-orange-400 rounded-sm"></div> -{' '}
               <p>{t('Quantity')}</p>
-            </div>
+            </div> */}
             <div className="flex gap-2 items-center">
               <div className="w-3 h-3 bg-cyan-500 rounded-sm"></div> -{' '}
               <p>{t('Status')}</p>
