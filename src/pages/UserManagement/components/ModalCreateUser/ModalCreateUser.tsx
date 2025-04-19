@@ -45,7 +45,7 @@ const ModalCreateUser = ({ mutate, modal }: ModalCreateUserProps) => {
         open={modal.open}
         onOk={() => form.submit()}
         onCancel={modal.closeModal}
-        title="Create new user"
+        title={t('Create new user')}
         loading={isLoading}
       >
         <FormComponent form={form} onFinish={onFinish}>

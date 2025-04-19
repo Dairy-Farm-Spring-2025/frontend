@@ -7,7 +7,11 @@ import TableComponent, {
 } from '../../../components/Table/TableComponent';
 import useFetcher from '../../../hooks/useFetcher';
 import useModal from '../../../hooks/useModal';
-import { formatAreaType, formatDateHour } from '../../../utils/format';
+import {
+  formatAreaType,
+  formatDateHour,
+  formatStatusWithCamel,
+} from '../../../utils/format';
 import ModalDetailMyApplication from './components/ModalDetailMyApplication';
 import ModalRequestMyApplication from './components/ModalRequestApplication';
 import { APPLICATION_PATH } from '@service/api/Application/applicationApi';
@@ -71,7 +75,7 @@ const MyApplication = () => {
           <Tag
             color={statusColor[status as keyof typeof statusColor] || 'default'}
           >
-            {t(status)}
+            {t(formatStatusWithCamel(status))}
           </Tag>
         ),
       },

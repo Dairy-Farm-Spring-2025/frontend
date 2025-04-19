@@ -35,7 +35,7 @@ const DailyMilkTotalMonth = () => {
   return (
     <>
       <div className="flex flex-col gap-2 w-full">
-        <p className="font-bold text-base">Select Year:</p>
+        <p className="font-bold text-base">{t('Select year')}:</p>
         <SelectYear defaultYear={selectedYear} onChange={handleYearChange} />
       </div>
       <LineChartComponent
