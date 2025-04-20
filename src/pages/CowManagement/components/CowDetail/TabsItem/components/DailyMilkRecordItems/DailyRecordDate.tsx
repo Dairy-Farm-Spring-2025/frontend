@@ -45,11 +45,7 @@ const DailyRecordDate = ({ id }: DailyRecordDateProps) => {
       ),
       children: (
         <p>
-          {data?.totalMilk !== null ? (
-            <span>{data?.totalMilk} lit</span>
-          ) : (
-            'No milk'
-          )}
+          {data?.totalMilk !== null ? <span>{data?.totalMilk} lit</span> : '-'}
         </p>
       ),
       className: '!text-base',
