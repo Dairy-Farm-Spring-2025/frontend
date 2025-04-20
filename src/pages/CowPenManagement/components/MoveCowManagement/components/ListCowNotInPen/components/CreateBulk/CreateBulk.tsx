@@ -1,35 +1,37 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import {
-  Table,
-  Card,
-  Row,
-  Col,
-  message,
-  Button,
-  Divider,
-  Form,
-  Badge,
-  Tooltip,
-  Alert,
-} from 'antd';
-import ModalComponent from '../../../../../../../../components/Modal/ModalComponent';
-import ButtonComponent from '../../../../../../../../components/Button/ButtonComponent';
-import { Cow } from '../../../../../../../../model/Cow/Cow';
-import useFetcher from '../../../../../../../../hooks/useFetcher';
-import { Pen } from '../../../../../../../../model/Pen';
-import { useTranslation } from 'react-i18next';
-import SelectComponent from '@components/Select/SelectComponent';
-import { Area } from '@model/Area';
-import Title from '@components/UI/Title';
-import { formatAreaType, formatStatusWithCamel } from '@utils/format';
 import {
   CheckCircleOutlined,
   EnvironmentOutlined,
   InfoCircleOutlined,
 } from '@ant-design/icons';
+import CardComponent from '@components/Card/CardComponent';
+import FormComponent from '@components/Form/FormComponent';
+import SelectComponent from '@components/Select/SelectComponent';
+import Title from '@components/UI/Title';
+import { Area } from '@model/Area';
 import { CowType } from '@model/Cow/CowType';
 import { COW_TYPE_PATH } from '@service/api/CowType/cowType';
 import { cowStatus } from '@service/data/cowStatus';
+import { formatAreaType, formatStatusWithCamel } from '@utils/format';
+import {
+  Alert,
+  Badge,
+  Card,
+  Col,
+  Divider,
+  Form,
+  message,
+  Row,
+  Table,
+  Tooltip,
+} from 'antd';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import ButtonComponent from '../../../../../../../../components/Button/ButtonComponent';
+import ModalComponent from '../../../../../../../../components/Modal/ModalComponent';
+import useFetcher from '../../../../../../../../hooks/useFetcher';
+import { Cow } from '../../../../../../../../model/Cow/Cow';
+import { Pen } from '../../../../../../../../model/Pen';
+import EmptyComponent from '@components/Error/EmptyComponent';
 
 interface CreateBulkModalProps {
   modal: any;
@@ -206,7 +208,8 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
       title: t('Select'),
       dataIndex: 'cowId',
       key: 'select',
-      width: 60,
+      align: 'center',
+      width: 80,
       render: (cowId: number) => (
         <Tooltip
           title={selectedCows.includes(cowId) ? t('Deselect') : t('Select')}
@@ -238,7 +241,7 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
       render: (status: string) => (
         <Badge
           status={status === 'active' ? 'success' : 'default'}
-          text={formatStatusWithCamel(status)}
+          text={t(formatStatusWithCamel(status))}
         />
       ),
     },
@@ -249,7 +252,8 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
       title: t('Select'),
       dataIndex: 'penId',
       key: 'select',
-      width: 60,
+      align: 'center',
+      width: 80,
       render: (penId: string) => (
         <Tooltip
           title={selectedPens.includes(penId) ? t('Deselect') : t('Select')}
@@ -281,7 +285,7 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
       render: (status: string) => (
         <Badge
           status={status === 'empty' ? 'success' : 'default'}
-          text={formatStatusWithCamel(status)}
+          text={t(formatStatusWithCamel(status))}
         />
       ),
     },
@@ -305,15 +309,16 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
         onCancel={onClose}
         footer={
           <div className="flex justify-end space-x-4">
-            <Button
+            <ButtonComponent
               key="back"
               onClick={onClose}
               disabled={isLoading}
               size="large"
+              danger
             >
               {t('Cancel')}
-            </Button>
-            <Button
+            </ButtonComponent>
+            <ButtonComponent
               key="submit"
               type="primary"
               onClick={handleSubmit}
@@ -325,16 +330,16 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
               size="large"
             >
               {t('Submit')}
-            </Button>
+            </ButtonComponent>
           </div>
         }
         className="rounded-xl shadow-2xl"
       >
-        <Card bordered={false} className="p-6 bg-gray-50 rounded-lg">
-          <Form form={form} layout="vertical">
+        <CardComponent bordered={false} className=" bg-gray-50 rounded-lg">
+          <FormComponent form={form} layout="vertical">
             <div className="mb-8">
               <Title className="text-blue-600 mb-6 flex items-center">
-                <span className="inline-block w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mr-2">
+                <span className="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mr-2">
                   1
                 </span>
                 {t('Step 1: Choose Area, Cow Type and Cow Status')}
@@ -363,7 +368,7 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
                     />
                   </Form.Item>
                   {selectedAreaId && (
-                    <div className="mt-4 p-6 bg-white border border-gray-200 rounded-lg shadow-sm transition-all">
+                    <CardComponent className="!w-full">
                       <h4 className="text-base font-semibold text-gray-800 mb-4 flex items-center">
                         <EnvironmentOutlined className="mr-2 text-blue-500" />
                         {t('Area Details')}
@@ -387,7 +392,7 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
                             {t('Area Type')}:
                           </span>
                           <span className="text-sm text-gray-700 flex-1">
-                            {formatAreaType(selectedAreaType as any) ||
+                            {t(formatAreaType(selectedAreaType as any)) ||
                               t('N/A')}
                           </span>
                         </div>
@@ -412,23 +417,29 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
                           <span className="w-32 text-sm font-medium text-gray-600 shrink-0">
                             {t('Pen Status')}:
                           </span>
-                          <span className="text-sm text-gray-700 flex-1">
-                            {t('Occupied')}:{' '}
-                            <span className="text-red-600">
-                              {selectedArea?.occupiedPens || 0}
+                          <span className="text-sm flex flex-col text-gray-700 flex-1">
+                            <span>
+                              {t('Occupied')}:{' '}
+                              <span className="text-red-600">
+                                {selectedArea?.occupiedPens || 0}
+                              </span>
                             </span>
-                            , {t('Empty')}:{' '}
-                            <span className="text-green-600">
-                              {selectedArea?.emptyPens || 0}
+                            <span>
+                              {t('Empty')}:{' '}
+                              <span className="text-green-600">
+                                {selectedArea?.emptyPens || 0}
+                              </span>
                             </span>
-                            , {t('Damaged')}:{' '}
-                            <span className="text-yellow-600">
-                              {selectedArea?.damagedPens || 0}
+                            <span>
+                              {t('Damaged')}:{' '}
+                              <span className="text-yellow-600">
+                                {selectedArea?.damagedPens || 0}
+                              </span>
                             </span>
                           </span>
                         </div>
                       </div>
-                    </div>
+                    </CardComponent>
                   )}
                 </Col>
                 <Col xs={24} md={8}>
@@ -511,7 +522,7 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
 
             <div className="mb-8">
               <Title className="text-blue-600 mb-6 flex items-center">
-                <span className="inline-block w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mr-2">
+                <span className="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mr-2">
                   2
                 </span>
                 {t('Step 2: Select Cows and Pens')}
@@ -534,13 +545,13 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
                   >
                     <Table
                       dataSource={filteredCows}
-                      columns={cowColumns}
+                      columns={cowColumns as any}
                       rowKey="cowId"
                       pagination={{ pageSize: 7 }}
                       size="middle"
                       rowClassName="hover:bg-blue-50 transition-colors"
                       scroll={{ x: 'max-content' }}
-                      locale={{ emptyText: t('No cows available') }}
+                      locale={{ emptyText: <EmptyComponent /> }}
                     />
                   </Card>
                 </Col>
@@ -561,13 +572,13 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
                   >
                     <Table
                       dataSource={dataPenInArea}
-                      columns={penColumns}
+                      columns={penColumns as any}
                       rowKey="penId"
                       pagination={{ pageSize: 7 }}
                       size="middle"
                       rowClassName="hover:bg-blue-50 transition-colors"
                       scroll={{ x: 'max-content' }}
-                      locale={{ emptyText: t('No pens available') }}
+                      locale={{ emptyText: <EmptyComponent /> }}
                     />
                   </Card>
                 </Col>
@@ -590,7 +601,7 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
 
             <div className="text-center">
               <Title className="text-blue-600 mb-6 flex items-center justify-center">
-                <span className="inline-block w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mr-2">
+                <span className="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mr-2">
                   3
                 </span>
                 {t('Confirm Selection')}
@@ -614,8 +625,8 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
                 ({selectedCows.length}/{dataPenInArea?.length || 0})
               </ButtonComponent>
             </div>
-          </Form>
-        </Card>
+          </FormComponent>
+        </CardComponent>
       </ModalComponent>
     </div>
   );
