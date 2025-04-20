@@ -760,5 +760,7 @@
   "With daily milk that is selected in the table, they will be deleted": "Các lần vắt sữa đã chọn trong bảng sẽ bị xóa",
   "With daily milk that is selected in the select, they will be added": "Các lần vắt sữa đã chọn trong ô chọn sẽ được thêm vào",
   "Category detail": "Chi tiết loại",
-  "Edit Item": "Chỉnh sửa mặt hàng"
+  "Edit Item": "Chỉnh sửa mặt hàng",
+  "Add new details": "Thêm chi tiết mới",
+  "Complete update vaccine cycle": "Hoàn thành cập nhật chu kỳ vắc-xin"
 }
