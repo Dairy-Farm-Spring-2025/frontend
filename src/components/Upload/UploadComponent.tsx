@@ -1,6 +1,7 @@
 import { PlusOutlined } from '@ant-design/icons';
 import useToast from '@hooks/useToast';
 import { GetProp, Image, Upload, UploadFile, UploadProps } from 'antd';
+import { t } from 'i18next';
 import { useState } from 'react';
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
@@ -20,6 +21,7 @@ const UploadComponent = ({ file = [], setFile }: UploadComponentProps) => {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState('');
   const toast = useToast();
+
   const handlePreview = async (file: UploadFile) => {
     if (!file.url && !file.preview) {
       file.preview = await getBase64(file.originFileObj as FileType);
@@ -29,15 +31,33 @@ const UploadComponent = ({ file = [], setFile }: UploadComponentProps) => {
     setPreviewOpen(true);
   };
 
-  const handleChange: UploadProps['onChange'] = ({ fileList: newFileList }) =>
-    setFile(newFileList);
+  const handleChange: UploadProps['onChange'] = ({
+    fileList: newFileList,
+    file,
+  }) => {
+    // Kiểm tra khi file upload thành công
+    if (file.status === 'done') {
+      const updatedFileList = newFileList.map((file: any) => {
+        if (file.response && file.response.url) {
+          // Nếu response có url, chúng ta sẽ gán url vào thumbUrl
+          file.thumbUrl = file.response.url;
+        }
+        return file;
+      });
+      setFile(updatedFileList);
+    } else {
+      // Nếu file chưa upload thành công, chỉ đơn giản là cập nhật lại list file
+      setFile(newFileList);
+    }
+  };
 
   const uploadButton = (
     <button style={{ border: 0, background: 'none' }} type="button">
       <PlusOutlined />
-      <div style={{ marginTop: 8 }}>Upload</div>
+      <div style={{ marginTop: 8 }}>{t('Upload')}</div>
     </button>
   );
+
   const beforeUpload = (file: FileType) => {
     const isJpgOrPng =
       file.type === 'image/jpeg' ||
@@ -49,14 +69,15 @@ const UploadComponent = ({ file = [], setFile }: UploadComponentProps) => {
     }
     return false;
   };
+
   return (
     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
       <Upload
-        action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
+        action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload" // Đảm bảo URL API upload trả về đúng thông tin (URL)
         listType="picture-card"
         fileList={file}
         onPreview={handlePreview}
-        onChange={handleChange}
+        onChange={handleChange} // Cập nhật list file khi có thay đổi
         beforeUpload={beforeUpload}
         accept="image/png, image/jpeg, image/jpg"
         style={{ display: 'flex', flexWrap: 'wrap' }} // Thêm CSS để tự động xuống dòng

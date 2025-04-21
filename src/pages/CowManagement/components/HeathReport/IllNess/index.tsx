@@ -185,7 +185,7 @@ const IllNess = () => {
             {t('View Detail')}
           </ButtonComponent>
           <PopconfirmComponent
-            title={'Delete?'}
+            title={undefined}
             onConfirm={() => onConfirm(data)}
           >
             <ButtonComponent type="primary" loading={loadingDelete} danger>

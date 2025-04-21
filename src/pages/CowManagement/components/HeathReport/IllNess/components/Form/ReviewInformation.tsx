@@ -5,10 +5,12 @@ import {
 } from '@ant-design/icons';
 import DescriptionComponent from '@components/Description/DescriptionComponent';
 import Title from '@components/UI/Title';
+import UploadComponent from '@components/Upload/UploadComponent';
 import { healthSeverity } from '@service/data/health';
 import { formatAreaType, formatDateHour } from '@utils/format';
 import { Space } from 'antd';
 import { useTranslation } from 'react-i18next';
+import { BiImage } from 'react-icons/bi';
 
 interface ReviewInformationProps {
   apiBody: any;
@@ -17,6 +19,11 @@ interface ReviewInformationProps {
   treatmentDetails: any[];
   itemOptions: any[];
   injectionSiteOptions: any[];
+  fileState: {
+    file: any;
+    setFile: any;
+  };
+  form: any;
 }
 
 const ReviewInformation = ({
@@ -26,9 +33,9 @@ const ReviewInformation = ({
   treatmentDetails,
   itemOptions,
   injectionSiteOptions,
+  fileState,
 }: ReviewInformationProps) => {
   const { t } = useTranslation();
-
   return (
     <div className="p-6">
       <Title className="!text-2xl mb-6 text-blue-600">
@@ -75,6 +82,16 @@ const ReviewInformation = ({
             },
           ]}
         />
+      </div>
+
+      <div className="mb-8">
+        <Space align="center" className="mb-4">
+          <BiImage style={{ fontSize: '24px', color: '#1890ff' }} />
+          <Title className="!text-xl text-gray-700">{t('Illness Image')}</Title>
+        </Space>
+        <div>
+          <UploadComponent file={fileState.file} setFile={fileState.setFile} />
+        </div>
       </div>
 
       <div className="mb-8">

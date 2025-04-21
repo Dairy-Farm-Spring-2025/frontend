@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
-import { Form } from 'antd';
+import { Form, UploadFile } from 'antd';
 import ModalComponent from '@components/Modal/ModalComponent';
 import { useTranslation } from 'react-i18next';
 import useFetcher from '@hooks/useFetcher';
@@ -22,6 +22,7 @@ interface ModalCreateIllNessProps {
 }
 
 const ModalCreateIllNess = ({ modal, mutate }: ModalCreateIllNessProps) => {
+  const [file, setFile] = useState<UploadFile[]>([]);
   const { t } = useTranslation();
   const [current, setCurrent] = useState(0);
   const [illnessForm] = Form.useForm();
@@ -36,7 +37,8 @@ const ModalCreateIllNess = ({ modal, mutate }: ModalCreateIllNessProps) => {
   );
   const { trigger: triggerIllness, isLoading: isLoadingIllness } = useFetcher(
     HEALTH_RECORD_PATH.CREATE_ILLNESS,
-    'POST'
+    'POST',
+    'multipart/form-data'
   );
   const toast = useToast();
 
@@ -69,6 +71,10 @@ const ModalCreateIllNess = ({ modal, mutate }: ModalCreateIllNessProps) => {
       })) || [],
     [itemData]
   );
+
+  useEffect(() => {
+    console.log(treatmentDetails);
+  }, [treatmentDetails]);
 
   useEffect(() => {
     if (
@@ -138,21 +144,45 @@ const ModalCreateIllNess = ({ modal, mutate }: ModalCreateIllNessProps) => {
         vaccineId: Number(detail.itemId),
       }));
 
-      const payload = {
-        cowId: Number(apiBody.cowId),
-        symptoms: apiBody.symptoms,
-        severity: apiBody.severity,
-        prognosis: apiBody.prognosis,
-        detail,
-      };
+      const formData = new FormData();
 
-      const response = await triggerIllness({ body: payload });
+      // Thêm dữ liệu từ illnessForm vào FormData
+      formData.append('cowId', apiBody.cowId);
+      formData.append('symptoms', apiBody.symptoms);
+      formData.append('severity', apiBody.severity);
+      formData.append('prognosis', apiBody.prognosis);
+      // Thêm từng chi tiết điều trị vào FormData
+      detail.forEach((treatment: any, index: number) => {
+        formData.append(`detail[${index}].dosage`, treatment.dosage.toString());
+        formData.append(
+          `detail[${index}].injectionSite`,
+          treatment.injectionSite
+        );
+        formData.append(`detail[${index}].date`, treatment.date);
+        formData.append(`detail[${index}].description`, treatment.description);
+        formData.append(
+          `detail[${index}].vaccineId`,
+          treatment.vaccineId.toString()
+        );
+      });
+      file.forEach((file: any) => {
+        formData.append('newImages', file.originFileObj);
+      });
+      // Gửi request API với FormData
+      const response = await triggerIllness({ body: formData });
+
+      // Hiển thị thông báo thành công
       toast.showSuccess(
         response.message || t('Illness record created successfully')
       );
+
+      // Cập nhật lại dữ liệu sau khi thành công
       mutate();
+
+      // Đóng modal và reset form
       handleCancel();
     } catch (error: any) {
+      // Hiển thị thông báo lỗi nếu có
       toast.showError(error.message || t('Failed to create illness record'));
       throw error;
     }
@@ -166,6 +196,7 @@ const ModalCreateIllNess = ({ modal, mutate }: ModalCreateIllNessProps) => {
     setSelectedCow(null);
     setTreatmentDetails([]);
     setCurrent(0);
+    setFile([]);
     modal.closeModal();
   };
 
@@ -207,6 +238,11 @@ const ModalCreateIllNess = ({ modal, mutate }: ModalCreateIllNessProps) => {
           treatmentDetails={treatmentDetails}
           itemOptions={itemOptions}
           injectionSiteOptions={injectionSiteOptions}
+          fileState={{
+            file: file,
+            setFile: setFile,
+          }}
+          form={illnessForm}
         />
       ),
       onDone: handleSubmit,
