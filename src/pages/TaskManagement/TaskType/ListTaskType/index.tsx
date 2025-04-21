@@ -16,6 +16,7 @@ import { Divider } from 'antd';
 import CreateTaskType from './components/CreateTaskType';
 import TagComponents from '@components/UI/TagComponents';
 import { getColorByRole } from '@utils/statusRender/roleRender';
+import { validateTaskType } from '@utils/validate/taskTypeValidate';
 
 const TaskType = () => {
   const { data, isLoading, mutate } = useFetcher<any>('task_types', 'GET');
@@ -63,7 +64,7 @@ const TaskType = () => {
       dataIndex: 'taskTypeId',
       key: 'taskTypeId',
       title: t('Action'),
-      render: (data) => (
+      render: (data, record) => (
         <div className="flex gap-5">
           <ButtonComponent
             type="primary"
@@ -71,14 +72,16 @@ const TaskType = () => {
           >
             {t('View Detail')}
           </ButtonComponent>
-          <PopconfirmComponent
-            title={undefined}
-            onConfirm={() => onConfirm(data)}
-          >
-            <ButtonComponent type="primary" danger>
-              {t('Delete')}
-            </ButtonComponent>
-          </PopconfirmComponent>
+          {!validateTaskType(record.name) && (
+            <PopconfirmComponent
+              title={undefined}
+              onConfirm={() => onConfirm(data)}
+            >
+              <ButtonComponent type="primary" danger>
+                {t('Delete')}
+              </ButtonComponent>
+            </PopconfirmComponent>
+          )}
         </div>
       ),
     },

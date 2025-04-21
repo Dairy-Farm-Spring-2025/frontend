@@ -13,6 +13,7 @@ import useToast from '../../../hooks/useToast';
 import { UserProfileData } from '../../../model/User';
 import { profileApi } from '../../../service/api/Profile/profileApi';
 import { genderDataUser } from '../../../service/data/gender';
+import InputComponent from '@components/Input/InputComponent';
 
 interface ModalEditProfileProps {
   modal: any;
@@ -89,32 +90,40 @@ const ModalEditProfile = ({
 
   const onChangeProvince = async (province: any) => {
     try {
+      form.setFieldsValue({ district: undefined, ward: undefined });
+      setDistrict([]);
       const response = await profileApi.getDistrictApi(province.value);
       const data = response.data.map((element: any) => ({
         value: element.id,
         label: element.name_en,
       }));
       setDistrict(data);
-    } catch (error: any) {
-      toast.showError(error.message);
     } finally {
       setIsDistrict(false);
+      setIsWard(true); // 👈 Reset lại ward
     }
   };
 
   const onChangeDistrict = async (district: any) => {
     try {
+      form.setFieldsValue({ ward: undefined }); // 👈 Clear ward
+      setWard([]);
       const response = await profileApi.getWardApi(district.value);
       const data = response.data.map((element: any) => ({
         value: element.id,
         label: element.name_en,
       }));
       setWard(data);
-    } catch (error: any) {
-      toast.showError(error.message);
     } finally {
       setIsWard(false);
     }
+  };
+
+  const disabledDOB = (current: dayjs.Dayjs) => {
+    // Ngày hôm nay
+    const today = dayjs();
+    // Chỉ cho phép chọn ngày nhỏ hơn hoặc bằng hôm nay trừ 18 năm
+    return current.isAfter(today.subtract(18, 'year'));
   };
 
   const handleFinish = async (values: any) => {
@@ -140,6 +149,9 @@ const ModalEditProfile = ({
     modal.closeModal();
     setIsWard(true);
     setIsDistrict(true);
+    setWard([]);
+    setDistrict([]);
+    setProvince([]);
   };
   return (
     <ModalComponent
@@ -154,23 +166,25 @@ const ModalEditProfile = ({
         <div className="flex flex-col gap-5">
           <FormItemComponent
             name="name"
-            label={<LabelForm>Name</LabelForm>}
+            label={<LabelForm>{t('Name')}</LabelForm>}
             rules={[{ required: true }]}
           >
-            <Input />
+            <InputComponent />
           </FormItemComponent>
           <FormItemComponent
             name="phoneNumber"
             rules={[
+              { required: true },
               {
-                required: true,
-                pattern: /^\d{10}$/,
-                message: t('Must be number and have 10 digits'),
+                pattern: /^0\d{9}$/,
+                message: t(
+                  'Must be a number starting with 0 and have 10 digits'
+                ),
               },
             ]}
             label={<LabelForm>{t('phone_number')}</LabelForm>}
           >
-            <Input />
+            <InputComponent />
           </FormItemComponent>
           <div className="grid grid-cols-2 gap-5">
             <FormItemComponent
@@ -178,7 +192,10 @@ const ModalEditProfile = ({
               rules={[{ required: true }]}
               label={<LabelForm>{t('date_of_birth')}</LabelForm>}
             >
-              <DatePickerComponent className="!w-full" />
+              <DatePickerComponent
+                className="!w-full"
+                disabledDate={disabledDOB}
+              />
             </FormItemComponent>
             <FormItemComponent
               rules={[{ required: true }]}
@@ -218,7 +235,7 @@ const ModalEditProfile = ({
               <SelectComponent
                 labelInValue
                 optionFilterProp="children"
-                disabled={isDistrict}
+                disabled={isDistrict || district.length === 0}
                 showSearch
                 allowClear
                 options={district}
@@ -239,7 +256,7 @@ const ModalEditProfile = ({
               <SelectComponent
                 labelInValue
                 optionFilterProp="children"
-                disabled={isWard}
+                disabled={isWard || ward.length === 0}
                 showSearch
                 allowClear
                 options={ward}

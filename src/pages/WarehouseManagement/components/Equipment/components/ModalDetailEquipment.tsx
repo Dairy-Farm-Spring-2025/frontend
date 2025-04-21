@@ -96,7 +96,6 @@ const ModalDetailEquipment = ({
         <FormItemComponent
           name="warehouseLocationEntity"
           rules={[{ required: true }]}
-          noStyle
         >
           <SelectComponent
             options={
@@ -124,7 +123,7 @@ const ModalDetailEquipment = ({
           ''
         )
       ) : (
-        <FormItemComponent noStyle name="name" rules={[{ required: true }]}>
+        <FormItemComponent name="name" rules={[{ required: true }]}>
           <InputComponent />
         </FormItemComponent>
       ),
@@ -140,7 +139,7 @@ const ModalDetailEquipment = ({
           ''
         )
       ) : (
-        <FormItemComponent noStyle name="type" rules={[{ required: true }]}>
+        <FormItemComponent name="type" rules={[{ required: true }]}>
           <SelectComponent
             options={equipmentTypeSelect()}
             className="!w-full"
@@ -161,7 +160,7 @@ const ModalDetailEquipment = ({
           ''
         )
       ) : (
-        <FormItemComponent noStyle name="status" rules={[{ required: true }]}>
+        <FormItemComponent name="status" rules={[{ required: true }]}>
           <SelectComponent options={EquipmentStatus()} className="!w-full" />
         </FormItemComponent>
       ),
@@ -177,7 +176,7 @@ const ModalDetailEquipment = ({
           ''
         )
       ) : (
-        <FormItemComponent noStyle name="quantity" rules={[{ required: true }]}>
+        <FormItemComponent name="quantity" rules={[{ required: true }]}>
           <InputComponent />
         </FormItemComponent>
       ),
@@ -194,11 +193,7 @@ const ModalDetailEquipment = ({
           ''
         )
       ) : (
-        <FormItemComponent
-          noStyle
-          name="description"
-          rules={[{ required: true }]}
-        >
+        <FormItemComponent name="description" rules={[{ required: true }]}>
           <InputComponent.TextArea />
         </FormItemComponent>
       ),

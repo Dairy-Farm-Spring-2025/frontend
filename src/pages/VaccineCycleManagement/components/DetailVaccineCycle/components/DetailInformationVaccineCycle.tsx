@@ -6,6 +6,8 @@ import {
   formatInjectionSite,
   formatStatusWithCamel,
 } from '../../../../../utils/format';
+import TagComponents from '@components/UI/TagComponents';
+import { getItemStatusColor } from '@utils/statusRender/itemStatusRender';
 
 interface DetailInformationVaccineCycleProps {
   data: VaccineCycleDetails;
@@ -84,7 +86,12 @@ const DetailInformationVaccineCycle = ({
                 <div className="flex items-center gap-2">
                   <span className="text-gray-700">
                     {data?.itemEntity?.name || 'N/A'}
-                  </span>
+                  </span>{' '}
+                  <TagComponents
+                    color={getItemStatusColor(data?.itemEntity?.status as any)}
+                  >
+                    {t(formatStatusWithCamel(data?.itemEntity?.status))}
+                  </TagComponents>
                 </div>
               ),
               span: 3,

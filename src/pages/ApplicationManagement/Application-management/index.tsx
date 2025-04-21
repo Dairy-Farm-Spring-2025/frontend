@@ -39,20 +39,16 @@ const ApplicationListing = () => {
       key: 'type',
       title: t('Type'),
       render: (data) => data.name,
+      searchable: true,
+      objectKeyFilter: 'name',
     },
     {
       dataIndex: 'title',
       key: 'title',
       title: t('Title'),
-      render: (data) => (
-        <p
-          className="text-blue-600 cursor-pointer underline underline-offset-2 text-base font-bold"
-          onClick={() => handleOpenModalDetail(data)}
-        >
-          {data}
-        </p>
-      ),
+      render: (data) => data,
       width: '20%',
+      searchable: true,
     },
     {
       dataIndex: 'content',
@@ -66,12 +62,14 @@ const ApplicationListing = () => {
       key: 'fromDate',
       title: t('From Date'),
       render: (data) => formatDateHour(data),
+      filteredDate: true,
     },
     {
       dataIndex: 'toDate',
       key: 'toDate',
       title: t('To Date'),
       render: (data) => formatDateHour(data),
+      filteredDate: true,
     },
     {
       dataIndex: 'status',
@@ -84,6 +82,13 @@ const ApplicationListing = () => {
           {t(formatStatusWithCamel(status))}
         </TagComponents>
       ),
+      filterable: true,
+      filterOptions: [
+        { value: 'processing', text: t('Processing') },
+        { value: 'complete', text: t('Complete') },
+        { value: 'cancel', text: t('Cancel') },
+        { value: 'reject', text: t('Reject') },
+      ],
     },
     {
       dataIndex: 'applicationId',

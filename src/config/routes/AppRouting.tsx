@@ -259,7 +259,9 @@ const AppRouting = () => {
           element: (
             <Navigate
               to={
-                user.roleName === 'Veterinarian' ? 'profile' : 'dashboard/total'
+                user.roleName === 'Veterinarians'
+                  ? 'profile'
+                  : 'dashboard/total'
               }
             />
           ),

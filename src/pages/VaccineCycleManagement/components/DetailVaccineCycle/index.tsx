@@ -21,7 +21,7 @@ import { VACCINE_CYCLE_PATH } from '@service/api/VaccineCycle/vaccineCycleApi';
 import { formatStatusWithCamel } from '@utils/format';
 import { Divider, Form, Spin } from 'antd';
 import { t } from 'i18next';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import AnimationAppear from '../../../../components/UI/AnimationAppear';
 import Title from '../../../../components/UI/Title';
@@ -33,10 +33,19 @@ import {
 } from '../../../../model/Vaccine/VaccineCycle/vaccineCycle';
 import DetailInformationVaccineCycle from './components/DetailInformationVaccineCycle';
 import PopconfirmComponent from '@components/Popconfirm/PopconfirmComponent';
+import EditVaccineCycle from './components/EditVaccineCycle';
+import useModal from '@hooks/useModal';
 
 const DetailVaccineCycle = () => {
   const { id } = useParams();
   const [form] = Form.useForm();
+  const [idDetail, setIdDetail] = useState(null);
+  const [previousInjectionMonth, setPreviousInjectionMonth] =
+    useState<number>(0);
+  const [nextInjectionMonth, setNextInjectionMonth] = useState<number | null>(
+    null
+  );
+  const modal = useModal();
   const toast = useToast();
   const {
     data: vaccineCycleDetailData,
@@ -48,6 +57,10 @@ const DetailVaccineCycle = () => {
   );
   const { trigger: triggerVaccineCycle, isLoading: isLoadingVaccineCycle } =
     useFetcher(VACCINE_CYCLE_PATH.UPDATE_VACCINE_CYCLE(id as any), 'PUT');
+  const { trigger: triggerDelete, isLoading: isLoadingDelete } = useFetcher(
+    'delete',
+    'DELETE'
+  );
   const { edited, toggleEdit } = useEditToggle();
   useEffect(() => {
     if (edited) {
@@ -75,6 +88,47 @@ const DetailVaccineCycle = () => {
   const handleConfirmEdit = () => {
     toggleEdit();
     mutate();
+  };
+
+  const handleOpenEdit = (id?: number) => {
+    const details = vaccineCycleDetailData?.vaccineCycleDetails || [];
+    const sortedDetails = [...details].sort(
+      (a, b) => a.firstInjectionMonth - b.firstInjectionMonth
+    );
+
+    if (id) {
+      // === Edit mode ===
+      const currentIndex = sortedDetails.findIndex(
+        (item) => item.vaccineCycleDetailId === id
+      );
+
+      if (currentIndex !== -1) {
+        const prev = sortedDetails[currentIndex - 1];
+        const next = sortedDetails[currentIndex + 1];
+        setPreviousInjectionMonth(prev?.firstInjectionMonth || 0);
+        setNextInjectionMonth(next?.firstInjectionMonth || null);
+      }
+
+      setIdDetail(id as any);
+    } else {
+      const last = sortedDetails[sortedDetails.length - 1];
+      console.log(last);
+      setPreviousInjectionMonth(last?.firstInjectionMonth || 0);
+    }
+
+    modal.openModal();
+  };
+
+  const handleDelete = async (id: number) => {
+    try {
+      const response = await triggerDelete({
+        url: VACCINE_CYCLE_PATH.DELETE_VACCINE_CYCLE_DETAIL(id),
+      });
+      toast.showSuccess(response.message);
+      mutate();
+    } catch (error: any) {
+      toast.showError(error.message);
+    }
   };
 
   if (isLoadingDetailCycle) return <Spin />;
@@ -208,13 +262,26 @@ const DetailVaccineCycle = () => {
                                       type="primary"
                                       buttonType="warning"
                                       icon={<EditOutlined />}
+                                      onClick={() =>
+                                        handleOpenEdit(
+                                          element.vaccineCycleDetailId
+                                        )
+                                      }
                                     >
                                       {t('Edit')}
                                     </ButtonComponent>
-                                    <PopconfirmComponent title={undefined}>
+                                    <PopconfirmComponent
+                                      title={undefined}
+                                      onConfirm={() =>
+                                        handleDelete(
+                                          element?.vaccineCycleDetailId
+                                        )
+                                      }
+                                    >
                                       <ButtonComponent
                                         type="primary"
                                         buttonType="warning"
+                                        loading={isLoadingDelete}
                                         danger
                                         icon={<DeleteOutlined />}
                                       >
@@ -250,7 +317,7 @@ const DetailVaccineCycle = () => {
                     tooltip={t('Add new details')}
                     type="primary"
                     icon={<PlusOutlined />}
-                    onClick={toggleEdit}
+                    onClick={() => handleOpenEdit()}
                   />
                   <FloatButtonComponent
                     children={undefined}
@@ -266,6 +333,17 @@ const DetailVaccineCycle = () => {
             </FloatButtonComponent.Group>
           </>
         )}
+        <EditVaccineCycle
+          setId={setIdDetail}
+          id={idDetail as any}
+          modal={modal}
+          previousInjectionMonth={previousInjectionMonth}
+          nextInjectionMonth={nextInjectionMonth as any}
+          setNextInjectionMonth={setNextInjectionMonth}
+          setPreviousInjectionMonth={setPreviousInjectionMonth}
+          vaccineCycleId={id as string}
+          mutate={mutate}
+        />
       </WhiteBackground>
     </AnimationAppear>
   );

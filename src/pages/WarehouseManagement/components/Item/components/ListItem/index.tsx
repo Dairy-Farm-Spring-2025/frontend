@@ -3,20 +3,20 @@ import { RootState } from '@core/store/store';
 import { ITEMS_PATH } from '@service/api/Storage/itemApi';
 import { STATUS_ITEM_FILTER, UNIT_FILTER } from '@service/data/item';
 import { formatStatusWithCamel } from '@utils/format';
+import { getItemStatusColor } from '@utils/statusRender/itemStatusRender';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import ButtonComponent from '../../../../../../components/Button/ButtonComponent';
 import PopconfirmComponent from '../../../../../../components/Popconfirm/PopconfirmComponent';
 import { Column } from '../../../../../../components/Table/TableComponent';
 import AnimationAppear from '../../../../../../components/UI/AnimationAppear';
-import TextLink from '../../../../../../components/UI/TextLink';
 import WhiteBackground from '../../../../../../components/UI/WhiteBackground';
 import useFetcher from '../../../../../../hooks/useFetcher';
 import useToast from '../../../../../../hooks/useToast';
 import { Item } from '../../../../../../model/Warehouse/items';
 import ListAllItem from './components/ListAllItem';
-import { getItemStatusColor } from '@utils/statusRender/itemStatusRender';
 
 const ListItemManagement = () => {
   const [optionsWarehouse, setOptionWarehouse] = useState<any[]>([]);
@@ -34,6 +34,7 @@ const ListItemManagement = () => {
     useFetcher(`items/delete`, 'DELETE');
   const { t } = useTranslation();
 
+  const navigate = useNavigate();
   useEffect(() => {
     if (itemManagementWarehouse) {
       setOptionWarehouse(
@@ -49,7 +50,6 @@ const ListItemManagement = () => {
         }))
       );
     }
-    console.log(itemManagementWarehouse.warehouses);
   }, [itemManagementWarehouse]);
 
   const columnsItemByWarehouse: Column[] = [
@@ -58,11 +58,7 @@ const ListItemManagement = () => {
       dataIndex: 'name',
       key: 'name',
       render: (name, data) =>
-        data.children ? (
-          <strong>{name}</strong>
-        ) : (
-          <TextLink to={`../${data.itemId}`}>{name}</TextLink>
-        ),
+        data.children ? <strong>{name}</strong> : <p>{name}</p>,
       searchable: true,
       width: 300,
     },
@@ -115,18 +111,26 @@ const ListItemManagement = () => {
       title: t('Action'),
       render: (data) =>
         data && (
-          <PopconfirmComponent
-            title={undefined}
-            onConfirm={() => handleDelete(data)}
-          >
+          <div className="flex gap-2">
             <ButtonComponent
-              danger
               type="primary"
-              loading={isLoadingDeleteItem}
+              onClick={() => navigate(`../${data.itemId}`)}
             >
-              {t('Delete')}
+              {t('View detail')}
             </ButtonComponent>
-          </PopconfirmComponent>
+            <PopconfirmComponent
+              title={undefined}
+              onConfirm={() => handleDelete(data)}
+            >
+              <ButtonComponent
+                danger
+                type="primary"
+                loading={isLoadingDeleteItem}
+              >
+                {t('Delete')}
+              </ButtonComponent>
+            </PopconfirmComponent>
+          </div>
         ),
     },
   ];

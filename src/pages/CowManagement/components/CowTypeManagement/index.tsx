@@ -64,7 +64,7 @@ const CowTypeManagement = () => {
     {
       dataIndex: 'maxLength',
       key: 'maxLength',
-      title: t('Max Length'),
+      title: t('Max length'),
       render: (data) => <p>{data} (m)</p>,
     },
     {

@@ -1,6 +1,6 @@
 import CardComponent from '@components/Card/CardComponent';
 import Title from '@components/UI/Title';
-import { ConfigProvider, Statistic, StatisticProps } from 'antd';
+import { ConfigProvider, Statistic, StatisticProps, Tooltip } from 'antd';
 import { useEffect, useState } from 'react';
 
 interface StatisticComponentProps extends StatisticProps {
@@ -21,7 +21,7 @@ const StatisticComponent = ({
   useEffect(() => {
     const handleResize = () => {
       const width = window.innerWidth;
-      if (width < 640) setFontSize(12); // mobile
+      if (width < 640) setFontSize(13); // mobile
       else if (width < 1024) setFontSize(14); // tablet
       else if (width < 1440) setFontSize(14); // macbook
       else setFontSize(16); // large screen
@@ -46,19 +46,27 @@ const StatisticComponent = ({
           <div>{icon && icon}</div>
           <Statistic
             title={
-              <div className="flex gap-2 items-center !text-primary">
-                <Title
-                  className="sm:!truncate md:!truncate lg:!truncate 
-                sm:!max-w-[160px] md:!max-w-[190px] lg:!max-w-[180px] xl:!max-w-[220px]"
-                >
-                  {title}
-                </Title>
-              </div>
+              <Tooltip title={title}>
+                <div className="flex gap-2 items-center !text-primary">
+                  <Title>{title}</Title>
+                </div>
+              </Tooltip>
             }
             value={value}
-            suffix={suffix}
+            valueStyle={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+            suffix={
+              suffix ? (
+                <span className="text-[11px] sm:text-[12px] md:text-[13px] lg:text-[14px]">
+                  {suffix}
+                </span>
+              ) : null
+            }
             {...props}
-          />{' '}
+          />
         </div>
       </ConfigProvider>
     </CardComponent>

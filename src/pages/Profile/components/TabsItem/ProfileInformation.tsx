@@ -28,13 +28,13 @@ const ProfileInformation = ({ profile, mutate }: ProfileInformationProps) => {
     {
       key: 'dob',
       label: t('date_of_birth'), // Translation for 'Date of Birth'
-      children: formatDateHour(profile?.dob),
+      children: profile?.dob ? formatDateHour(profile?.dob) : '-',
       span: 3,
     },
     {
       key: 'startedDate',
       label: t('started_date'), // Translation for 'Started Date'
-      children: formatDateHour(profile?.createdAt),
+      children: profile?.createdAt ? formatDateHour(profile?.createdAt) : '-',
       span: 3,
     },
     {
@@ -46,13 +46,13 @@ const ProfileInformation = ({ profile, mutate }: ProfileInformationProps) => {
     {
       key: 'phoneNumber',
       label: t('phone_number'), // Translation for 'Phone Number'
-      children: profile?.phoneNumber,
+      children: profile?.phoneNumber ? profile?.phoneNumber : '-',
       span: 3,
     },
     {
       key: 'address',
       label: t('address'), // Translation for 'Address'
-      children: profile?.address,
+      children: profile?.address ? profile?.address : '-',
       span: 3,
     },
   ];

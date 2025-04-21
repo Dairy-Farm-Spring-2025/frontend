@@ -65,7 +65,7 @@ const ListUser = () => {
       title: t('Status'),
       render: (status) => (
         <Tag color={status === 'active' ? 'green' : 'volcano'}>
-          {formatStatusWithCamel(status)}
+          {t(formatStatusWithCamel(status))}
         </Tag>
       ),
     },

@@ -1,29 +1,32 @@
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
-import { Divider, Form } from 'antd';
-import { useEffect, useState } from 'react';
 import ButtonComponent from '@components/Button/ButtonComponent';
 import FormComponent from '@components/Form/FormComponent';
 import FormItemComponent from '@components/Form/Item/FormItemComponent';
 import InputComponent from '@components/Input/InputComponent';
 import LabelForm from '@components/LabelForm/LabelForm';
 import ModalComponent from '@components/Modal/ModalComponent';
+import ReactQuillComponent from '@components/ReactQuill/ReactQuillComponent';
 import SelectComponent from '@components/Select/SelectComponent';
 import StepsComponent, { StepItem } from '@components/Steps/StepsComponent';
+import TagComponents from '@components/UI/TagComponents';
+import Title from '@components/UI/Title';
 import useFetcher from '@hooks/useFetcher';
+import useToast from '@hooks/useToast';
 import { CowType } from '@model/Cow/CowType';
+import { VaccineCyclePayload } from '@model/Vaccine/VaccineCycle/vaccineCycle';
+import { Item } from '@model/Warehouse/items';
+import { VACCINE_CYCLE_PATH } from '@service/api/VaccineCycle/vaccineCycleApi';
 import { unitOptions } from '@service/data/item';
 import {
   injectionSiteOptions,
   unitPeriodic,
   vaccineType,
 } from '@service/data/vaccine';
-import { Item } from '@model/Warehouse/items';
-import { VaccineCyclePayload } from '@model/Vaccine/VaccineCycle/vaccineCycle';
-import useToast from '@hooks/useToast';
-import ReactQuillComponent from '@components/ReactQuill/ReactQuillComponent';
+import { formatStatusWithCamel } from '@utils/format';
+import { getItemStatusColor } from '@utils/statusRender/itemStatusRender';
+import { Divider, Form } from 'antd';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import Title from '@components/UI/Title';
-import { VACCINE_CYCLE_PATH } from '@service/api/VaccineCycle/vaccineCycleApi';
 
 interface CreateVaccineCycleModalProps {
   modal: any;
@@ -65,7 +68,16 @@ const CreateVaccineCycleModal = ({
               element.categoryEntity.name === 'Vaccine'
           )
           .map((element: Item) => ({
-            label: element.name,
+            label: (
+              <p>
+                <span>{element.name}</span> -{' '}
+                <TagComponents
+                  color={getItemStatusColor(element.status as any)}
+                >
+                  {t(formatStatusWithCamel(element.status))}
+                </TagComponents>
+              </p>
+            ),
             value: element.itemId,
             searchLabel: element.name,
           }))

@@ -223,7 +223,7 @@ const AppDashboard: React.FC = React.memo(() => {
           ],
           true
         ),
-    checkVeterinarians(roleName)
+    checkVeterinarians(roleName) || roleName === 'Manager'
       ? null
       : getItem(
           t('user_management'),

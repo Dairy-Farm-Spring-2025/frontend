@@ -8,9 +8,10 @@ import { DASHBOARD_PATH } from '@service/api/Dashboard/dashboardApi';
 import { t } from 'i18next';
 import DashboardDairy from './TabsItem/DashboardDairy';
 import DashboardTodayStatistic from './TabsItem/DashboardTodayStatistic';
-const SIZE_ICON = 40;
+import { useEffect, useState } from 'react';
 
 const DashboardToday = () => {
+  const [responsiveIconSize, setResponsiveIconSize] = useState(40); // default size
   const { data: dataDashboardToday, isLoading: isLoadingDataToday } =
     useFetcher<DashboardTodayType>(DASHBOARD_PATH.DASHBOARD_TODAY, 'GET');
   const chartData = dataDashboardToday?.cowStatsByType?.map((item) => {
@@ -26,30 +27,44 @@ const DashboardToday = () => {
         0
       )
     : 0;
+  useEffect(() => {
+    const handleResize = () => {
+      const width = window.innerWidth;
+
+      if (width < 640) setResponsiveIconSize(24); // mobile
+      else if (width < 1024) setResponsiveIconSize(28); // tablet
+      else if (width < 1440) setResponsiveIconSize(36); // laptop
+      else setResponsiveIconSize(40); // desktop
+    };
+
+    handleResize(); // set once on mount
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   const items: TabsItemProps[] = [
-    {
-      children: (
-        <DashboardTodayStatistic
-          dataDashboardToday={dataDashboardToday as DashboardTodayType}
-          SIZE_ICON={SIZE_ICON}
-          totalQuantity={totalQuantity}
-        />
-      ),
-      label: t('Dashboard today'),
-      icon: <StockOutlined />,
-      key: 'dashboard-today',
-    },
     {
       children: (
         <DashboardDairy
           dataDashboardToday={dataDashboardToday as DashboardTodayType}
-          SIZE_ICON={SIZE_ICON}
+          SIZE_ICON={responsiveIconSize}
           chartData={chartData}
         />
       ),
       label: t('Dashboard dairy'),
       icon: <StockOutlined />,
       key: 'dashboard-dairy',
+    },
+    {
+      children: (
+        <DashboardTodayStatistic
+          dataDashboardToday={dataDashboardToday as DashboardTodayType}
+          SIZE_ICON={responsiveIconSize}
+          totalQuantity={totalQuantity}
+        />
+      ),
+      label: t('Dashboard today'),
+      icon: <StockOutlined />,
+      key: 'dashboard-today',
     },
   ];
 

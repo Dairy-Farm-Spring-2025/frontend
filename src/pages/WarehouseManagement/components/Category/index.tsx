@@ -12,6 +12,7 @@ import ModalDetailCategory from './components/ModalDetailCategory';
 import { useTranslation } from 'react-i18next';
 import { CategoryType } from '@model/Warehouse/category';
 import { CATEGORY_PATH } from '@service/api/Storage/categoryApi';
+import { validateNameCategory } from '@utils/validate/categoryValidate';
 
 const Category = () => {
   const { data, isLoading, mutate } = useFetcher<CategoryType[]>(
@@ -56,7 +57,7 @@ const Category = () => {
       dataIndex: 'categoryId',
       key: 'action',
       title: t('Action'),
-      render: (data) => (
+      render: (data, record) => (
         <div className="flex gap-5">
           <ButtonComponent
             type="primary"
@@ -64,14 +65,16 @@ const Category = () => {
           >
             {t('View Detail')}
           </ButtonComponent>
-          <PopconfirmComponent
-            title={t('Delete?')}
-            onConfirm={() => onConfirm(data)}
-          >
-            <ButtonComponent type="primary" danger>
-              {t('Delete')}
-            </ButtonComponent>
-          </PopconfirmComponent>
+          {!validateNameCategory(record.name) && (
+            <PopconfirmComponent
+              title={undefined}
+              onConfirm={() => onConfirm(data)}
+            >
+              <ButtonComponent type="primary" danger>
+                {t('Delete')}
+              </ButtonComponent>
+            </PopconfirmComponent>
+          )}
         </div>
       ),
     },

@@ -40,10 +40,15 @@ const ModalDetailWarehouse = ({
     data,
     isLoading: isLoadingDetail,
     mutate: mutateEdit,
-  } = useFetcher<WarehouseType>(STORAGE_PATH.STORAGE_DETAIL(id), 'GET');
+  } = useFetcher<WarehouseType>(
+    STORAGE_PATH.STORAGE_DETAIL(id),
+    'GET',
+    'application/json',
+    modal.open
+  );
   const { t } = useTranslation();
   useEffect(() => {
-    if (data) {
+    if (data && modal.open) {
       form.setFieldsValue({
         name: data?.name,
         description: data?.description,
@@ -98,7 +103,7 @@ const ModalDetailWarehouse = ({
         )
       ) : (
         <FormItemComponent name="type" rules={[{ required: true }]}>
-          <SelectComponent options={warehouseType()} />
+          <SelectComponent options={warehouseType()} className="!w-full" />
         </FormItemComponent>
       ),
       span: 3,
@@ -128,18 +133,23 @@ const ModalDetailWarehouse = ({
       loading={isLoadingDetail}
       footer={[
         !edit && (
-          <ButtonComponent type="primary" onClick={() => setEdit(true)}>
+          <ButtonComponent
+            type="primary"
+            buttonType="warning"
+            onClick={() => setEdit(true)}
+          >
             {t('Edit')}
           </ButtonComponent>
         ),
         edit && (
           <div className="flex gap-5 justify-end">
-            <ButtonComponent onClick={() => setEdit(false)}>
+            <ButtonComponent danger onClick={() => setEdit(false)}>
               {t('Cancel')}
             </ButtonComponent>
             <ButtonComponent
               loading={isLoading}
               type="primary"
+              buttonType="secondary"
               onClick={() => form.submit()}
             >
               {t('Save')}

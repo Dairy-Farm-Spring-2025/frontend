@@ -20,8 +20,8 @@ const HayFieldFormList = ({
   const { t } = useTranslation();
   const form = Form.useFormInstance();
   const detailsHay = Form.useWatch('detailsHay', form) || [];
-  const minValidate = hayTotal * 0.9;
-  const maxValidate = hayTotal * 1.1;
+  const minValidate = Number((hayTotal * 0.9).toFixed(2));
+  const maxValidate = Number((hayTotal * 1.1).toFixed(2));
   const handleValidation = async () => {
     const details = form.getFieldValue('detailsHay') || [];
     const totalQuantity = details.reduce(
@@ -33,8 +33,8 @@ const HayFieldFormList = ({
       return Promise.reject(
         new Error(
           t('total_quantity_range', {
-            min: minValidate.toFixed(2),
-            max: maxValidate.toFixed(2),
+            min: minValidate,
+            max: maxValidate,
           })
         )
       );
@@ -102,8 +102,7 @@ const HayFieldFormList = ({
 
           <div style={{ marginBottom: 16, fontSize: 16 }}>
             {(() => {
-              const details = form.getFieldValue('detailsHay') || [];
-              const totalQuantity = details.reduce(
+              const totalQuantity = detailsHay.reduce(
                 (acc: any, field: any) => acc + Number(field?.quantity || 0),
                 0
               );
@@ -111,8 +110,8 @@ const HayFieldFormList = ({
                 return (
                   <div style={{ color: 'red' }}>
                     {t('total_quantity_range', {
-                      min: minValidate.toFixed(2),
-                      max: maxValidate.toFixed(2),
+                      min: minValidate,
+                      max: maxValidate,
                     })}
                   </div>
                 );
@@ -120,8 +119,8 @@ const HayFieldFormList = ({
               return (
                 <div style={{ color: 'green' }}>
                   {t('total_quantity_range', {
-                    min: minValidate.toFixed(2),
-                    max: maxValidate.toFixed(2),
+                    min: minValidate,
+                    max: maxValidate,
                   })}
                 </div>
               );

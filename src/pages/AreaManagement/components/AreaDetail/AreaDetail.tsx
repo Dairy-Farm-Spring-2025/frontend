@@ -37,9 +37,12 @@ const validateInput = (_: any, value: string) => {
     return Promise.reject(t('Please input the value!'));
   }
   if (!regex.test(value)) {
-    return Promise.reject(t(
-      'Input does not match the required format (A-Z)-area-(1-0), eg: ABC-area-123'
-    ));
+
+    return Promise.reject(
+      t(
+        'Input does not match the required format (A-Z)-area-(1-0), eg: ABC-area-123'
+      )
+    );
   }
   return Promise.resolve();
 };
@@ -60,7 +63,8 @@ const AreaDetail = () => {
   const toast = useToast();
   const [form] = Form.useForm();
   const { edited, toggleEdit } = useEditToggle();
-  const { trigger: triggerEditArea, isLoading: isLoadingUpdateArea } = useFetcher('edit-area', 'PUT');
+  const { trigger: triggerEditArea, isLoading: isLoadingUpdateArea } =
+    useFetcher('edit-area', 'PUT');
 
   const areaUrl = id ? AREA_PATH.AREA_DETAIL(id) : '';
   const cowInPenUrl = id ? AREA_PATH.AREA_COW(id) : '';
@@ -71,17 +75,22 @@ const AreaDetail = () => {
     error: areaError,
     mutate,
   } = useFetcher<Area>(areaUrl, 'GET');
-  const { data: cowInPen, isLoading: isLoadingCowInPen, error: cowInPenError } = useFetcher<
-    CowInPenArea[]
-  >(cowInPenUrl, 'GET');
-  const { data: cowTypeData, isLoading: isLoadingCowType, error: cowTypeError } = useFetcher<any>(
-    'cow-types',
-    'GET'
-  );
+  const {
+    data: cowInPen,
+    isLoading: isLoadingCowInPen,
+    error: cowInPenError,
+  } = useFetcher<CowInPenArea[]>(cowInPenUrl, 'GET');
+  const {
+    data: cowTypeData,
+    isLoading: isLoadingCowType,
+    error: cowTypeError,
+  } = useFetcher<any>('cow-types', 'GET');
 
   const { t } = useTranslation();
 
-  const [optionsCowType, setOptionsCowType] = useState<SelectProps['options']>([]);
+  const [optionsCowType, setOptionsCowType] = useState<SelectProps['options']>(
+    []
+  );
 
   useEffect(() => {
     if (cowTypeData) {
@@ -128,6 +137,7 @@ const AreaDetail = () => {
 
   const onSubmitEdit = async (values: any) => {
     try {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { maxPen, numberInRow, cowTypeId, ...filteredValues } = values;
       const payload = {
         ...filteredValues,
@@ -202,7 +212,10 @@ const AreaDetail = () => {
             <div>
               <Skeleton
                 loading={
-                  (isLoadingUpdateArea || isLoadingArea || isLoadingCowInPen || isLoadingCowType) &&
+                  (isLoadingUpdateArea ||
+                    isLoadingArea ||
+                    isLoadingCowInPen ||
+                    isLoadingCowType) &&
                   !area
                 }
               >
@@ -227,13 +240,16 @@ const AreaDetail = () => {
                           <FormItemComponent
                             name="areaType"
                             label={<LabelForm>{t('Area Type')}</LabelForm>}
-                            rules={[{ required: true, message: t('Please select an area type') }]}
+                            rules={[
+                              {
+                                required: true,
+                              },
+                            ]}
                           >
                             <SelectComponent
                               options={areaType()}
                               disabled={true}
                               className="w-full"
-                              placeholder={t('Select Area Type')}
                             />
                           </FormItemComponent>
                           <FormItemComponent
@@ -244,19 +260,21 @@ const AreaDetail = () => {
                               options={optionsCowType}
                               className="w-full"
                               disabled={true}
-                              placeholder={t('No cow type assigned')}
                             />
                           </FormItemComponent>
                           <FormItemComponent
                             name="cowStatus"
                             label={<LabelForm>{t('Cow Status')}</LabelForm>}
-                            rules={[{ required: true, message: t('Please select a cow status') }]}
+                            rules={[
+                              {
+                                required: true,
+                              },
+                            ]}
                           >
                             <SelectComponent
                               options={cowStatus()}
                               disabled={true}
                               className="w-full"
-                              placeholder={t('Select Cow Status')}
                               allowClear
                             />
                           </FormItemComponent>

@@ -16,6 +16,7 @@ import { useTranslation } from 'react-i18next';
 import GeneralInformation from './GeneralInformation';
 import { Divider } from 'antd';
 import MyApplication from '../../ApplicationManagement/MyApplication';
+import useGetRole from '@hooks/useGetRole';
 
 interface TabsProfileProps {
   profile: UserProfileData;
@@ -24,7 +25,7 @@ interface TabsProfileProps {
 
 const TabsProfile = ({ profile, mutate }: TabsProfileProps) => {
   const { t } = useTranslation();
-
+  const role = useGetRole();
   const items: TabsItemProps['items'] = [
     {
       children: <ProfileInformation profile={profile} mutate={mutate} />,
@@ -38,12 +39,14 @@ const TabsProfile = ({ profile, mutate }: TabsProfileProps) => {
       key: 'changePassword',
       label: t('change_password'), // Translation for 'Change Password'
     },
-    {
-      children: <MyApplication />,
-      icon: <AppstoreOutlined />,
-      key: 'MyApplication',
-      label: t('application'), // Translation for 'Application'
-    },
+    role === 'Veterinarians'
+      ? {
+          children: <MyApplication />,
+          icon: <AppstoreOutlined />,
+          key: 'MyApplication',
+          label: t('application'), // Translation for 'Application'
+        }
+      : ({} as any),
     {
       children: <SettingOptions />,
       key: 'Setting',
