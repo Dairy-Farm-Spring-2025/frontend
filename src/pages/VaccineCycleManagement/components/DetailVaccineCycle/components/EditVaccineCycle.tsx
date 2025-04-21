@@ -156,7 +156,11 @@ const EditVaccineCycle = ({
         return Promise.reject(
           new Error(
             t(
-              `Injection month must be between ${previousInjectionMonth} and ${nextInjectionMonth}`
+              `Injection month must be between {{previousInjectionMonth}} and {{nextInjectionMonth}}`,
+              {
+                previousInjectionMonth,
+                nextInjectionMonth,
+              }
             )
           )
         );
@@ -166,7 +170,12 @@ const EditVaccineCycle = ({
         }
         return Promise.reject(
           new Error(
-            t(`Injection month must be greater than ${previousInjectionMonth}`)
+            t(
+              `Injection month must be greater than {{previousInjectionMonth}}`,
+              {
+                previousInjectionMonth,
+              }
+            )
           )
         );
       }

@@ -766,5 +766,7 @@
   "Input does not match the required format (A-Z)-area-(1-0), eg: ABC-area-123": "Đầu vào không khớp với định dạng yêu cầu (A-Z)-khu vực-(1-0), ví dụ: ABC-khu vực-123",
   "Please choose area type first": "Hãy chọn loại khu vực trước",
   "Equipment status": "Trạng thái thiết bị",
-  "View equipment": "Xem thiết bị"
+  "View equipment": "Xem thiết bị",
+  "Injection month must be between {{previousInjectionMonth}} and {{nextInjectionMonth}}": "Tháng tiêm phải nằm giữa {{previousInjectionMonth}} và {{nextInjectionMonth}}",
+  "Injection month must be greater than {{previousInjectionMonth}}": "Tháng tiêm phải lớn hơn {{previousInjectionMonth}}"
 }
