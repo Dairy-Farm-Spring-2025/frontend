@@ -739,5 +739,8 @@
   "Moved cows successfully": "Di chuyển bò thành công",
   "Cow Type is restricted to match the selected area": "Loại bò được chọn dựa theo khu vực",
   "Date of Enter must be later than Date of Birth": "Ngày sinh phải nhỏ hơn ngày nhập vào",
-  "Area updated successfully. ": "Khu vực cập nhật thành công"
+  "Area updated successfully. ": "Khu vực cập nhật thành công",
+  "Input does not match the required format (A-Z)-area-(1-0), eg: ABC-area-123": "Hãy điền khớp với định dạng bắt buộc (A-Z)-khu vực-(1-0), ví dụ: ABC-khu vực-123",
+  "Pens & Cows in Area": "Chuồng và bò trong khu vực",
+  "No empty pens available in this area!": "Không có chuồng trống phù hợp trong khu vực này",
 }

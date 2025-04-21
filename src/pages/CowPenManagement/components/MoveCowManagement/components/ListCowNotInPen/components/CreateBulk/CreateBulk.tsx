@@ -199,13 +199,19 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
       sorter: (a: Cow, b: Cow) => a.name.localeCompare(b.name),
     },
     {
+      title: t('Cow Type'),
+      dataIndex: 'cowType',
+      key: 'cowType',
+      sorter: (a: Cow, b: Cow) => a.name.localeCompare(b.name),
+    },
+    {
       title: t('Status'),
       dataIndex: 'cowStatus',
       key: 'cowStatus',
       render: (status: string) => (
         <Badge
           status={status === 'active' ? 'success' : 'default'}
-          text={formatStatusWithCamel(status)}
+          text={t(formatStatusWithCamel(status))}
         />
       ),
     },
@@ -246,7 +252,7 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
       render: (status: string) => (
         <Badge
           status={status === 'empty' ? 'success' : 'default'}
-          text={formatStatusWithCamel(status)}
+          text={t(formatStatusWithCamel(status))}
         />
       ),
     },

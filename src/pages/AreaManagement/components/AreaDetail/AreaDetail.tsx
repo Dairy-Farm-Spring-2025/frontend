@@ -26,6 +26,7 @@ import { formatStatusWithCamel } from '@utils/format';
 import { getPenColor } from '@utils/statusRender/penStatusRender';
 import { Divider, Form, Skeleton } from 'antd';
 import { SelectProps } from 'antd/lib';
+import { t } from 'i18next';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
@@ -33,12 +34,12 @@ import { useParams } from 'react-router-dom';
 const validateInput = (_: any, value: string) => {
   const regex = /^[A-Z]+-area-[0-9]+$/;
   if (!value) {
-    return Promise.reject('Please input the value!');
+    return Promise.reject(t('Please input the value!'));
   }
   if (!regex.test(value)) {
-    return Promise.reject(
+    return Promise.reject(t(
       'Input does not match the required format (A-Z)-area-(1-0), eg: ABC-area-123'
-    );
+    ));
   }
   return Promise.resolve();
 };
@@ -170,7 +171,7 @@ const AreaDetail = () => {
       dataIndex: 'cowType',
       key: 'cowType',
       title: t('Cow type'),
-      render: (typeValue: string) => (typeValue ? typeValue : t('No cow type')),
+      render: (typeValue: string) => (typeValue ? typeValue : '-'),
       searchable: true,
     },
     {
@@ -230,7 +231,7 @@ const AreaDetail = () => {
                           >
                             <SelectComponent
                               options={areaType()}
-                              disabled={!edited}
+                              disabled={true}
                               className="w-full"
                               placeholder={t('Select Area Type')}
                             />
@@ -348,7 +349,7 @@ const AreaDetail = () => {
             </div>
           </div>
           <Divider />
-          <h2 className="text-lg font-semibold mb-4">{t('Pens in Area')}</h2>
+          <h2 className="text-lg font-semibold mb-4">{t('Pens & Cows in Area')}</h2>
           <TableComponent
             columns={columns}
             dataSource={cowInPen ? cowInPen : []}
