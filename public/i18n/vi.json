@@ -770,5 +770,6 @@
   "Equipment status": "Trạng thái thiết bị",
   "View equipment": "Xem thiết bị",
   "Injection month must be between {{previousInjectionMonth}} and {{nextInjectionMonth}}": "Tháng tiêm phải nằm giữa {{previousInjectionMonth}} và {{nextInjectionMonth}}",
-  "Injection month must be greater than {{previousInjectionMonth}}": "Tháng tiêm phải lớn hơn {{previousInjectionMonth}}"
+  "Injection month must be greater than {{previousInjectionMonth}}": "Tháng tiêm phải lớn hơn {{previousInjectionMonth}}",
+  "Illness Image": "Hình ảnh bệnh"
 }

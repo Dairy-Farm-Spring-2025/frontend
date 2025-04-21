@@ -26,4 +26,8 @@ export type Health = {
     cowTypeEntity: CowType;
   };
   illnessDetails: IllnessDetail[];
+  mediaList: {
+    illnessImageId: number;
+    url: string;
+  }[];
 };

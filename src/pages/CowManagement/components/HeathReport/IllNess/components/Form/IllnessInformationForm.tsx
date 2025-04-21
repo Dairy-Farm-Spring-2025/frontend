@@ -28,7 +28,6 @@ const IllnessInformationForm = ({
   isLoadingCows,
 }: IllnessInformationFormProps) => {
   const { t } = useTranslation();
-
   return (
     <FormComponent form={form} layout="vertical">
       <div className="p-6">

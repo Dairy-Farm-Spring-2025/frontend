@@ -9,3 +9,7 @@ export const getImage = (imageUrl: string) => {
 export const getQR = (id: string) => {
   return `https://api.dairyfarmfpt.website/api/v1/cows/qr/${id}`;
 };
+
+export const getIllnessImage = (imageUrl: string) => {
+  return `https://api.dairyfarmfpt.website/uploads/illness/${imageUrl}`;
+};

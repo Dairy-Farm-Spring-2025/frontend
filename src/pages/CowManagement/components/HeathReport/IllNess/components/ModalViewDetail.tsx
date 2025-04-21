@@ -1,4 +1,5 @@
 import ButtonComponent from '@components/Button/ButtonComponent';
+import EmptyComponent from '@components/Error/EmptyComponent';
 import FormComponent from '@components/Form/FormComponent';
 import FormItemComponent from '@components/Form/Item/FormItemComponent';
 import LabelForm from '@components/LabelForm/LabelForm';
@@ -13,7 +14,8 @@ import { Health } from '@model/Cow/HealthReport';
 import { HEALTH_RECORD_PATH } from '@service/api/HealthRecord/healthRecordApi';
 import { healthSeverity } from '@service/data/health';
 import { formatAreaType } from '@utils/format';
-import { Card, Col, Divider, Form, Row } from 'antd';
+import { getIllnessImage } from '@utils/getImage';
+import { Card, Col, Divider, Form, Image, Row } from 'antd';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -173,42 +175,42 @@ const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
           <Card>
             <Title className="!text-2xl mb-6">{t('Cow Information')}</Title>
             <Row gutter={[16, 16]}>
-              <Col span={12}>
+              <Col span={6}>
                 <LabelForm>{t('Cow Name')}</LabelForm>
                 <div className="font-medium text-gray-700">
-                  {data?.cowEntity?.name || t('No data')}
+                  {data?.cowEntity?.name || t('N/A')}
                 </div>
               </Col>
-              <Col span={12}>
+              <Col span={6}>
                 <LabelForm>{t('Cow Status')}</LabelForm>
                 <div className="font-medium text-gray-700">
-                  {formatAreaType(data?.cowEntity?.cowStatus ?? t('No data'))}
+                  {t(formatAreaType(data?.cowEntity?.cowStatus ?? t('N/A')))}
                 </div>
               </Col>
-              <Col span={12}>
+              <Col span={6}>
                 <LabelForm>{t('Cow Origin')}</LabelForm>
                 <div className="font-medium text-gray-700">
-                  {formatAreaType(data?.cowEntity?.cowOrigin ?? t('No data'))}
+                  {t(formatAreaType(data?.cowEntity?.cowOrigin ?? t('N/A')))}
                 </div>
               </Col>
-              <Col span={12}>
+              <Col span={6}>
                 <LabelForm>{t('Gender')}</LabelForm>
                 <div className="font-medium text-gray-700">
-                  {formatAreaType(data?.cowEntity?.gender ?? t('No data'))}
+                  {t(formatAreaType(data?.cowEntity?.gender ?? t('N/A')))}
                 </div>
               </Col>
-              <Col span={12}>
+              <Col span={6}>
                 <LabelForm>{t('Cow Type')}</LabelForm>
                 <div className="font-medium text-gray-700">
                   {formatAreaType(
-                    data?.cowEntity?.cowTypeEntity.name ?? t('No data')
+                    data?.cowEntity?.cowTypeEntity.name ?? t('N/A')
                   )}
                 </div>
               </Col>
-              <Col span={12}>
-                <LabelForm>{t('Max Weight')}</LabelForm>
+              <Col span={6}>
+                <LabelForm>{t('Max weight')}</LabelForm>
                 <div className="font-medium text-gray-700">
-                  {data?.cowEntity?.cowTypeEntity.maxWeight ?? t('No data')}
+                  {data?.cowEntity?.cowTypeEntity.maxWeight ?? t('N/A')} (kg)
                 </div>
               </Col>
             </Row>
@@ -221,35 +223,32 @@ const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
             <div
               className="prose mb-6"
               dangerouslySetInnerHTML={{
-                __html: data?.symptoms || t('No data'),
+                __html: data?.symptoms || t('-'),
               }}
             />
 
             <FormItemComponent
               name="severity"
               label={<LabelForm>{t('Severity')}</LabelForm>}
-              rules={[{ required: edit, message: t('Please select severity') }]}
+              rules={[{ required: edit }]}
             >
               {!edit ? (
-                <div className="prose">{data?.severity || t('No data')}</div>
+                <div className="prose">{data?.severity || t('N/A')}</div>
               ) : (
-                <SelectComponent
-                  options={healthSeverity()}
-                  placeholder={t('Select severity level')}
-                />
+                <SelectComponent options={healthSeverity()} />
               )}
             </FormItemComponent>
 
             <FormItemComponent
               name="prognosis"
               label={<LabelForm>{t('Prognosis')}</LabelForm>}
-              rules={[{ required: edit, message: t('Please input prognosis') }]}
+              rules={[{ required: edit }]}
             >
               {!edit ? (
                 <div
                   className="prose mb-6"
                   dangerouslySetInnerHTML={{
-                    __html: data?.prognosis || t('No data'),
+                    __html: data?.prognosis || t('N/A'),
                   }}
                 />
               ) : (
@@ -257,6 +256,22 @@ const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
               )}
             </FormItemComponent>
             {/* Illness Details Section */}
+            <Divider />
+            <div>
+              <Title className="!text-xl mb-4">{t('Illness Image')}</Title>
+              {data?.mediaList ? (
+                <div className="flex gap-4 flex-wrap">
+                  {data?.mediaList?.map((element) => (
+                    <Image
+                      width={150}
+                      src={getIllnessImage(element?.url as any)}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <EmptyComponent />
+              )}
+            </div>
             <Divider />
             <Title className="!text-xl mb-4">{t('Illness Details')}</Title>
             {data?.illnessDetails && data.illnessDetails.length > 0 ? (
@@ -268,7 +283,7 @@ const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
                       <div className="font-medium text-gray-700">
                         {detail.date
                           ? dayjs(detail.date).format('DD/MM/YYYY')
-                          : t('No data')}
+                          : t('N/A')}
                       </div>
                     </Col>
                     <Col span={12}>
@@ -276,38 +291,38 @@ const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
                       <div
                         className="prose mb-6"
                         dangerouslySetInnerHTML={{
-                          __html: detail.description || t('No data'),
+                          __html: detail.description || t('N/A'),
                         }}
                       />
                     </Col>
                     <Col span={12}>
                       <LabelForm>{t('Dosage')}</LabelForm>
                       <div className="font-medium text-gray-700">
-                        {detail.dosage ? `${detail.dosage}` : t('No data')}
+                        {detail.dosage ? `${detail.dosage}` : t('N/A')}
                       </div>
                     </Col>
                     <Col span={12}>
                       <LabelForm>{t('Injection Site')}</LabelForm>
                       <div className="font-medium text-gray-700">
-                        {formatAreaType(detail.injectionSite ?? t('No data'))}
+                        {formatAreaType(detail.injectionSite ?? t('N/A'))}
                       </div>
                     </Col>
                     <Col span={12}>
                       <LabelForm>{t('Status')}</LabelForm>
                       <div className="font-medium text-gray-700">
-                        {formatAreaType(detail.status ?? t('No data'))}
+                        {formatAreaType(detail.status ?? t('N/A'))}
                       </div>
                     </Col>
                     <Col span={12}>
                       <LabelForm>{t('Vaccine Name')}</LabelForm>
                       <div className="font-medium text-gray-700">
-                        {detail.vaccine?.name || t('No data')}
+                        {detail.vaccine?.name || t('N/A')}
                       </div>
                     </Col>
                     <Col span={12}>
                       <LabelForm>{t('Veterinarian')}</LabelForm>
                       <div className="font-medium text-gray-700">
-                        {detail.veterinarian?.name || t('No data')}
+                        {detail.veterinarian?.name || t('N/A')}
                       </div>
                     </Col>
                   </Row>
@@ -315,9 +330,7 @@ const ModalViewDetail = ({ modal, mutate, id }: ModalViewDetailProps) => {
                 </div>
               ))
             ) : (
-              <div className="text-gray-500 text-center">
-                {t('No illness details available')}
-              </div>
+              <EmptyComponent />
             )}
           </Card>
 
