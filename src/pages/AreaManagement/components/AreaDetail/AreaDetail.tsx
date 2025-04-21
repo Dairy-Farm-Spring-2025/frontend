@@ -34,9 +34,10 @@ import { useParams } from 'react-router-dom';
 const validateInput = (_: any, value: string) => {
   const regex = /^[A-Z]+-area-[0-9]+$/;
   if (!value) {
-    return Promise.reject('Please input the value!');
+    return Promise.reject(t('Please input the value!'));
   }
   if (!regex.test(value)) {
+
     return Promise.reject(
       t(
         'Input does not match the required format (A-Z)-area-(1-0), eg: ABC-area-123'
@@ -247,7 +248,7 @@ const AreaDetail = () => {
                           >
                             <SelectComponent
                               options={areaType()}
-                              disabled={!edited}
+                              disabled={true}
                               className="w-full"
                             />
                           </FormItemComponent>
@@ -366,7 +367,7 @@ const AreaDetail = () => {
             </div>
           </div>
           <Divider />
-          <h2 className="text-lg font-semibold mb-4">{t('Pens in Area')}</h2>
+          <h2 className="text-lg font-semibold mb-4">{t('Pens & Cows in Area')}</h2>
           <TableComponent
             columns={columns}
             dataSource={cowInPen ? cowInPen : []}
