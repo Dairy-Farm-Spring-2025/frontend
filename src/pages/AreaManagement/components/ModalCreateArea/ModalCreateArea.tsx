@@ -23,12 +23,11 @@ interface ModalCreateAreaProps {
 
 const validateInput = (_: any, value: string) => {
   const regex = /^[A-Z]+-area-[0-9]+$/;
-  if (!value) {
-    return Promise.reject('Please input the value!');
-  }
   if (!regex.test(value)) {
     return Promise.reject(
-      'Input does not match the required format (A-Z)-area-(1-0), eg: ABC-area-123'
+      t(
+        'Input does not match the required format (A-Z)-area-(1-0), eg: ABC-area-123'
+      )
     );
   }
   return Promise.resolve();
@@ -42,7 +41,7 @@ const areaTypes: { label: string; value: AreaType }[] = [
 
 const minDimensions: Record<AreaType, { length: number; width: number }> = {
   cowHousing: { length: 20, width: 10 },
-  quarantine: { length: 20, width: 10 }
+  quarantine: { length: 20, width: 10 },
 };
 
 const ModalCreateArea = ({ mutate, modal }: ModalCreateAreaProps) => {
@@ -51,15 +50,25 @@ const ModalCreateArea = ({ mutate, modal }: ModalCreateAreaProps) => {
   const [form] = Form.useForm();
   const formValues = Form.useWatch([], form);
   const [disabledButton, setDisabledButton] = useState(true);
-  const [areaTypeSelected, setAreaTypeSelected] = useState<AreaType | null>(null);
-  const { data: cowTypesData } = useFetcher<CowType[]>(COW_TYPE_PATH.COW_TYPES, 'GET');
+  const [areaTypeSelected, setAreaTypeSelected] = useState<AreaType | null>(
+    null
+  );
+  const { data: cowTypesData } = useFetcher<CowType[]>(
+    COW_TYPE_PATH.COW_TYPES,
+    'GET'
+  );
 
-  const cowTypeOptions = cowTypesData?.map((cowType) => ({
-    label: cowType.name,
-    value: cowType.cowTypeId,
-  })) || [];
+  const cowTypeOptions =
+    cowTypesData?.map((cowType) => ({
+      label: cowType.name,
+      value: cowType.cowTypeId,
+    })) || [];
 
-  const validateDimensions = (areaType: AreaType, length: number, width: number) => {
+  const validateDimensions = (
+    areaType: AreaType,
+    length: number,
+    width: number
+  ) => {
     const { length: minLength, width: minWidth } = minDimensions[areaType];
     return length >= minLength && width >= minWidth;
   };
@@ -74,7 +83,8 @@ const ModalCreateArea = ({ mutate, modal }: ModalCreateAreaProps) => {
   }, [modal.open, form]);
 
   useEffect(() => {
-    const isButtonDisabled = !formValues || Object.values(formValues).some((value) => !value);
+    const isButtonDisabled =
+      !formValues || Object.values(formValues).some((value) => !value);
     setDisabledButton(isButtonDisabled);
   }, [formValues]);
 
@@ -86,46 +96,34 @@ const ModalCreateArea = ({ mutate, modal }: ModalCreateAreaProps) => {
   }, [areaTypeSelected, form]);
 
   const onFinish = async (values: any) => {
-    console.log('onFinish called with values:', values); // Debug log
     try {
       const response = await trigger({ body: values }); // Send payload as-is
-      console.log('API Response:', response); // Debug log
       // Updated success condition
-      if (response.message === 'Create successfully!' || response.code === 200) {
-        toast.showSuccess(response.message || 'Area created successfully');
-        console.log('Mutating data'); // Debug log
+      if (
+        response.message === 'Create successfully!' ||
+        response.code === 200
+      ) {
+        toast.showSuccess(response.message || t('Area created successfully'));
         mutate();
-        console.log('Calling modal.closeModal()'); // Debug log
         modal.closeModal();
-        console.log('Modal open state after closeModal:', modal.open); // Debug log
       } else {
-        console.log('API response not successful:', response); // Debug log
         toast.showWarning(response.message || 'Failed to create area');
       }
     } catch (error: any) {
-      console.error('Error creating area:', error); // Debug log
-      if (error.response?.status === 400) {
-        const errorMessage = error.response?.data?.message || 'Invalid request format';
-        toast.showError(`Failed to create area: ${errorMessage}`);
-      } else {
-        toast.showError(error.message || 'An error occurred');
-      }
+      toast.showError(error.message);
     }
   };
 
   const onCancel = () => {
-    console.log('Cancel modal'); // Debug log
     form.resetFields();
     setAreaTypeSelected(null);
     modal.closeModal();
-    console.log('Modal open state after cancel:', modal.open); // Debug log
   };
 
   return (
     <div>
       <ButtonComponent
         onClick={() => {
-          console.log('Opening modal'); // Debug log
           modal.openModal();
         }}
         type="primary"
@@ -135,7 +133,6 @@ const ModalCreateArea = ({ mutate, modal }: ModalCreateAreaProps) => {
       <ModalComponent
         open={modal.open}
         onOk={() => {
-          console.log('Submitting form'); // Debug log
           form.submit();
         }}
         onCancel={onCancel}
@@ -143,18 +140,16 @@ const ModalCreateArea = ({ mutate, modal }: ModalCreateAreaProps) => {
         loading={isLoading}
         disabledButtonOk={disabledButton}
         width={800}
-        style={{ overflow: 'none' }}
       >
         <FormComponent form={form} onFinish={onFinish}>
           <FormItemComponent
-            rules={[{ required: true, message: t('Area Type is required') }]}
+            rules={[{ required: true }]}
             name="areaType"
             label={<LabelForm>{t('Area Type')}:</LabelForm>}
           >
             <Select
               options={areaTypes}
               onChange={(value) => setAreaTypeSelected(value)}
-              placeholder={t('Select Area Type')}
             />
           </FormItemComponent>
           {areaTypeSelected ? (
@@ -163,12 +158,16 @@ const ModalCreateArea = ({ mutate, modal }: ModalCreateAreaProps) => {
                 <div className="flex flex-col w-1/2">
                   <FormItemComponent
                     rules={[
-                      { required: true, message: t('Length is required') },
+                      { required: true },
                       ({ getFieldValue }) => ({
                         validator(_, value) {
                           const areaType: AreaType = getFieldValue('areaType');
                           const width = getFieldValue('width');
-                          if (!areaType || !width || validateDimensions(areaType, value, width)) {
+                          if (
+                            !areaType ||
+                            !width ||
+                            validateDimensions(areaType, value, width)
+                          ) {
                             return Promise.resolve();
                           }
                           return Promise.reject(
@@ -191,12 +190,16 @@ const ModalCreateArea = ({ mutate, modal }: ModalCreateAreaProps) => {
                   </FormItemComponent>
                   <FormItemComponent
                     rules={[
-                      { required: true, message: t('Width is required') },
+                      { required: true },
                       ({ getFieldValue }) => ({
                         validator(_, value) {
                           const areaType: AreaType = getFieldValue('areaType');
                           const length = getFieldValue('length');
-                          if (!areaType || !length || validateDimensions(areaType, length, value)) {
+                          if (
+                            !areaType ||
+                            !length ||
+                            validateDimensions(areaType, length, value)
+                          ) {
                             return Promise.resolve();
                           }
                           return Promise.reject(
@@ -221,7 +224,7 @@ const ModalCreateArea = ({ mutate, modal }: ModalCreateAreaProps) => {
                     dependencies={['length']}
                     hasFeedback
                     rules={[
-                      { required: true, message: t('Pen Length is required') },
+                      { required: true },
                       ({ getFieldValue }) => ({
                         validator(_, value) {
                           const penWidth = getFieldValue('penWidth');
@@ -230,7 +233,9 @@ const ModalCreateArea = ({ mutate, modal }: ModalCreateAreaProps) => {
                           }
                           return Promise.reject(
                             new Error(
-                              t('Pen Length must be greater than or equal to the Pen Width')
+                              t(
+                                'Pen Length must be greater than or equal to the Pen Width'
+                              )
                             )
                           );
                         },
@@ -260,7 +265,7 @@ const ModalCreateArea = ({ mutate, modal }: ModalCreateAreaProps) => {
                     dependencies={['width']}
                     hasFeedback
                     rules={[
-                      { required: true, message: t('Pen Width is required') },
+                      { required: true },
                       ({ getFieldValue }) => ({
                         validator(_, value) {
                           const penLength = getFieldValue('penLength');
@@ -269,7 +274,9 @@ const ModalCreateArea = ({ mutate, modal }: ModalCreateAreaProps) => {
                           }
                           return Promise.reject(
                             new Error(
-                              t('Pen Width must be smaller than or equal to the Pen Length')
+                              t(
+                                'Pen Width must be smaller than or equal to the Pen Length'
+                              )
                             )
                           );
                         },
@@ -299,14 +306,18 @@ const ModalCreateArea = ({ mutate, modal }: ModalCreateAreaProps) => {
                 <div className="flex flex-col w-1/2">
                   <FormItemComponent
                     name="maxPen"
-                    rules={[{ required: true, message: t('Max pen is required') }]}
+                    rules={[{ required: true }]}
                     label={<LabelForm>{t('Max pen')}:</LabelForm>}
                   >
                     <InputComponent.Number min={1} />
                   </FormItemComponent>
                   <FormItemComponent
                     name="numberInRow"
-                    rules={[{ required: true, message: t('Number in row is required') }]}
+                    rules={[
+                      {
+                        required: true,
+                      },
+                    ]}
                     label={<LabelForm>{t('Number in row')}:</LabelForm>}
                   >
                     <InputComponent.Number min={1} />
@@ -314,43 +325,40 @@ const ModalCreateArea = ({ mutate, modal }: ModalCreateAreaProps) => {
                   {areaTypeSelected !== 'quarantine' && (
                     <>
                       <FormItemComponent
-                        rules={[{ required: true, message: t('Cow Status is required') }]}
+                        rules={[
+                          {
+                            required: true,
+                          },
+                        ]}
                         name="cowStatus"
                         label={<LabelForm>{t('Cow Status')}:</LabelForm>}
                       >
-                        <Select
-                          options={cowStatus()}
-                          placeholder={t('Select Cow Status')}
-                        />
+                        <Select options={cowStatus()} />
                       </FormItemComponent>
                       <FormItemComponent
-                        rules={[{ required: true, message: t('Cow Type is required') }]}
+                        rules={[
+                          {
+                            required: true,
+                          },
+                        ]}
                         name="cowTypeId"
                         label={<LabelForm>{t('Cow Type')}:</LabelForm>}
                       >
-                        <Select
-                          options={cowTypeOptions}
-                          placeholder={t('Select Cow Type')}
-                        />
+                        <Select options={cowTypeOptions} />
                       </FormItemComponent>
                     </>
                   )}
                 </div>
               </div>
               <FormItemComponent
-                rules={[
-                  { required: true, message: t('Name is required') },
-                  { validator: validateInput },
-                ]}
+                rules={[{ required: true }, { validator: validateInput }]}
                 name="name"
                 label={<LabelForm>{t('Name')}:</LabelForm>}
               >
                 <Input />
               </FormItemComponent>
               <FormItemComponent
-                rules={[
-                  { required: true, message: t('Description is required') },
-                ]}
+                rules={[{ required: true }]}
                 name="description"
                 label={<LabelForm>{t('Description')}:</LabelForm>}
               >
@@ -366,7 +374,12 @@ const ModalCreateArea = ({ mutate, modal }: ModalCreateAreaProps) => {
         <Divider />
         <div className="mb-4 text-sm text-gray-700">
           <p className="font-semibold">{t('Note')}:</p>
-          <p>{t('The minimum dimensions required for each area type are as follows')}:</p>
+          <p>
+            {t(
+              'The minimum dimensions required for each area type are as follows'
+            )}
+            :
+          </p>
           <ul className="list-disc pl-5">
             <li>
               <span className="font-medium">{t('Cow Housing')}:</span>{' '}
@@ -385,7 +398,9 @@ const ModalCreateArea = ({ mutate, modal }: ModalCreateAreaProps) => {
           </p>
           <p className="mt-2 text-blue-600">
             <strong>{t('Tip')}:</strong>{' '}
-            {t('You can refer to the required dimensions when filling in the length and width.')}
+            {t(
+              'You can refer to the required dimensions when filling in the length and width.'
+            )}
           </p>
         </div>
       </ModalComponent>

@@ -15,11 +15,13 @@ import { t } from 'i18next';
 import Title from '@components/UI/Title';
 import VaccineTask from './components/VaccineTask';
 import IllnessTask from './components/IllnessTask';
+import UseEquipmentTask from './components/UseEquipmentTask';
+import { UseEquipmentType } from '@model/UseEquipment/UseEquipment';
 
 const DetailTask = () => {
   const { taskId, day } = useParams();
   const [typeView, setTypeView] = useState<
-    'illness' | 'report' | 'vaccine-injection' | ''
+    'illness' | 'report' | 'vaccine-injection' | 'use-equipment' | ''
   >('');
   const { data: dataTaskReport } = useFetcher<ReportTaskByDate>(
     REPORT_TASK_PATH.REPORT_TASK_DATE(taskId as any, day as any),
@@ -61,6 +63,13 @@ const DetailTask = () => {
                 ) : (
                   <Title>{t('Not have report')}</Title>
                 ))}
+              {typeView === 'use-equipment' && (
+                <UseEquipmentTask
+                  equipmentTask={
+                    dataTask?.taskTypeId?.useEquipments as UseEquipmentType[]
+                  }
+                />
+              )}
             </div>
           </div>
         </Skeleton>
