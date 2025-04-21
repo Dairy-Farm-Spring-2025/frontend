@@ -53,19 +53,23 @@ const MyTaskGeneralDetail = ({
             ),
             span: 3,
           },
-          {
-            key: 'area',
-            label: t('Area'),
-            children: (
-              <div className="flex items-center gap-2 ">
-                <p className="text-black">{dataTask?.areaId?.name}</p>
-                <TagComponents color="blue">
-                  {formatStatusWithCamel(dataTask?.areaId?.areaType)}
-                </TagComponents>
-              </div>
-            ),
-            span: 3,
-          },
+          ...(dataTask?.areaId
+            ? [
+                {
+                  key: 'area',
+                  label: t('Area'),
+                  children: (
+                    <div className="flex items-center gap-2 ">
+                      <p className="text-black">{dataTask?.areaId?.name}</p>
+                      <TagComponents color="blue">
+                        {formatStatusWithCamel(dataTask?.areaId?.areaType)}
+                      </TagComponents>
+                    </div>
+                  ),
+                  span: 3,
+                },
+              ]
+            : []),
           {
             key: 'assignee',
             label: t('Assignee'),
@@ -136,6 +140,13 @@ const MyTaskGeneralDetail = ({
         )}
         <ButtonComponent onClick={() => setType('report')} type="primary">
           {t('View report')}
+        </ButtonComponent>
+        <ButtonComponent
+          onClick={() => setType('use-equipment')}
+          type="primary"
+          buttonType="thirdly"
+        >
+          {t('View equipment')}
         </ButtonComponent>
       </div>
     </div>

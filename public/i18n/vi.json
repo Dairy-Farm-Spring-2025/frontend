@@ -762,5 +762,9 @@
   "Category detail": "Chi tiết loại",
   "Edit Item": "Chỉnh sửa mặt hàng",
   "Add new details": "Thêm chi tiết mới",
-  "Complete update vaccine cycle": "Hoàn thành cập nhật chu kỳ vắc-xin"
+  "Complete update vaccine cycle": "Hoàn thành cập nhật chu kỳ vắc-xin",
+  "Input does not match the required format (A-Z)-area-(1-0), eg: ABC-area-123": "Đầu vào không khớp với định dạng yêu cầu (A-Z)-khu vực-(1-0), ví dụ: ABC-khu vực-123",
+  "Please choose area type first": "Hãy chọn loại khu vực trước",
+  "Equipment status": "Trạng thái thiết bị",
+  "View equipment": "Xem thiết bị"
 }

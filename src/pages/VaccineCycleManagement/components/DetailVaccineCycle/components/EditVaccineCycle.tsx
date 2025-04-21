@@ -5,6 +5,7 @@ import LabelForm from '@components/LabelForm/LabelForm';
 import ModalComponent from '@components/Modal/ModalComponent';
 import ReactQuillComponent from '@components/ReactQuill/ReactQuillComponent';
 import SelectComponent from '@components/Select/SelectComponent';
+import TagComponents from '@components/UI/TagComponents';
 import useFetcher from '@hooks/useFetcher';
 import { ModalActionProps } from '@hooks/useModal';
 import useToast from '@hooks/useToast';
@@ -17,6 +18,8 @@ import {
   unitPeriodic,
   vaccineType,
 } from '@service/data/vaccine';
+import { formatStatusWithCamel } from '@utils/format';
+import { getItemStatusColor } from '@utils/statusRender/itemStatusRender';
 import { Form } from 'antd';
 import { t } from 'i18next';
 import { useEffect, useState } from 'react';
@@ -81,7 +84,16 @@ const EditVaccineCycle = ({
               element.categoryEntity.name === 'Vaccine'
           )
           .map((element: Item) => ({
-            label: element.name,
+            label: (
+              <p>
+                <span>{element.name}</span> -{' '}
+                <TagComponents
+                  color={getItemStatusColor(element.status as any)}
+                >
+                  {t(formatStatusWithCamel(element.status))}
+                </TagComponents>
+              </p>
+            ),
             value: element.itemId,
             searchLabel: element.name,
           }))
