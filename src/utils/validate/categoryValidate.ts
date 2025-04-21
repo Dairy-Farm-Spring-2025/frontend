@@ -1,6 +1,6 @@
 export const validateNameCategory = (name: string) => {
   const validateCateogryName = [
-    'Cỏ khô',
+    'Cỏ Khô',
     'Thức ăn tinh',
     'Thức ăn ủ chua',
     'Khoáng chất',
