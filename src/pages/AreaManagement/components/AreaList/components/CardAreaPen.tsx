@@ -49,7 +49,7 @@ const CardAreaPen = ({ element }: CardAreaPenProps) => {
               />
             </Tooltip>
           </div>
-          <div className="grid grid-cols-4 gap-y-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-y-5">
             <TextTitle
               title={t('Area dimension')}
               description={
@@ -68,45 +68,31 @@ const CardAreaPen = ({ element }: CardAreaPenProps) => {
             />
             <TextTitle
               title={t('Max pen')}
-              description={
-                <p>{element?.area?.maxPen ?? 0}</p>
-              }
+              description={<p>{element?.area?.maxPen ?? 0}</p>}
             />
             <TextTitle
               title={t('Number in row')}
-              description={
-                <p>{element?.area?.numberInRow ?? 0}</p>
-              }
+              description={<p>{element?.area?.numberInRow ?? 0}</p>}
             />
             <TextTitle
               title={t('Occupied pens')}
-              description={
-                <p>{element?.area?.occupiedPens ?? 0}</p>
-              }
+              description={<p>{element?.area?.occupiedPens ?? 0}</p>}
             />
             <TextTitle
               title={t('Empty pens')}
-              description={
-                <p>{element?.area?.emptyPens ?? 0}</p>
-              }
+              description={<p>{element?.area?.emptyPens ?? 0}</p>}
             />
             <TextTitle
               title={t('Damaged pens')}
-              description={
-                <p>{element?.area?.damagedPens ?? 0}</p>
-              }
+              description={<p>{element?.area?.damagedPens ?? 0}</p>}
             />
             <TextTitle
               title={t('Cow Status')}
-              description={
-                <p>{getCowStatusLabel(element?.area?.cowStatus)}</p>
-              }
+              description={<p>{getCowStatusLabel(element?.area?.cowStatus)}</p>}
             />
             <TextTitle
               title={t('Cow Type')}
-              description={
-                <p>{element?.area?.cowTypeEntity?.name ?? 'N/A'}</p>
-              }
+              description={<p>{element?.area?.cowTypeEntity?.name ?? 'N/A'}</p>}
             />
           </div>
         </div>

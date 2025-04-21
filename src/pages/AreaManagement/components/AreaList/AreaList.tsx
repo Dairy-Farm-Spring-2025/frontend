@@ -80,7 +80,7 @@ const AreaList = ({ dataGroup, mutate, isLoading }: AreaListProps) => {
         )}
       </div>
       <div>
-        <div className="grid grid-cols-2 gap-10">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-10">
           {paginatedData.map((element) => (
             <CardAreaPen element={element} handleEdit={handleEdit} />
           ))}
