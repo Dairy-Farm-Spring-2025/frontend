@@ -2,7 +2,6 @@ import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import ButtonComponent from '@components/Button/ButtonComponent';
 import AnimationAppear from '@components/UI/AnimationAppear';
 import TagComponents from '@components/UI/TagComponents';
-import Title from '@components/UI/Title';
 import WhiteBackground from '@components/UI/WhiteBackground';
 import useFetcher from '@hooks/useFetcher';
 import useModal, { ModalActionProps } from '@hooks/useModal';
@@ -17,10 +16,10 @@ import { t } from 'i18next';
 import React, { useEffect, useMemo, useState } from 'react';
 import ShiftTitle from '../components/ShiftTitle';
 import StatusTask from '../components/StatusTask';
+import WeekSelectorDropdown from '../components/WeekSelectorDropdown';
 import '../index.scss';
 import CreateReportModal from './components/CreateReportModal/CreateReportModal';
 import PopoverMyTaskContent from './components/PopoverMyTaskContent';
-import WeekSelectorDropdown from '../components/WeekSelectorDropdown';
 
 const { Option } = Select;
 
@@ -246,6 +245,7 @@ const MyTaskSchedule: React.FC = () => {
       key: 'shift',
       width: 80,
       render: (data) => <ShiftTitle data={data} />,
+      align: 'center',
     },
     ...weekDays.map((day) => ({
       title: (
@@ -271,59 +271,84 @@ const MyTaskSchedule: React.FC = () => {
     <AnimationAppear>
       <WhiteBackground>
         <div>
-          <div style={{ display: 'flex', gap: '10px', marginBottom: 16 }}>
-            <Select
-              value={selectedYear}
-              onChange={handleYearChange}
-              style={{ width: 120 }}
-            >
-              {Array.from({ length: 5 }, (_, i) => dayjs().year() - 2 + i).map(
-                (year) => (
-                  <Option key={year} value={year}>
-                    {year}
-                  </Option>
-                )
-              )}
-            </Select>
-            <WeekSelectorDropdown
-              selectedYear={selectedYear}
-              currentWeekStart={currentWeekStart}
-              setCurrentWeekStart={setCurrentWeekStart}
-            />
-
-            <ButtonComponent onClick={jumpToToday}>
-              {t('Today')}
-            </ButtonComponent>
-          </div>
           <StatusTask />
           <div
             style={{
               display: 'flex',
+              marginTop: 10,
+              marginBottom: 10,
               justifyContent: 'space-between',
               alignItems: 'center',
-              marginBottom: 16,
+              position: 'relative',
             }}
           >
-            <ButtonComponent
-              shape="round"
-              icon={<LeftOutlined />}
-              onClick={() =>
-                setCurrentWeekStart(currentWeekStart.subtract(1, 'week'))
-              }
-            />
+            <div className="flex gap-3">
+              <Select
+                value={selectedYear}
+                className="!w-[120px]"
+                onChange={handleYearChange}
+              >
+                {Array.from(
+                  { length: 5 },
+                  (_, i) => dayjs().year() - 2 + i
+                ).map((year) => (
+                  <Option key={year} value={year}>
+                    {year}
+                  </Option>
+                ))}
+              </Select>
 
-            <Title>
+              <WeekSelectorDropdown
+                selectedYear={selectedYear}
+                currentWeekStart={currentWeekStart}
+                setCurrentWeekStart={setCurrentWeekStart}
+              />
+
+              <ButtonComponent
+                className="shadow-md"
+                type="primary"
+                buttonType="amber"
+                onClick={jumpToToday}
+              >
+                {t('Today')}
+              </ButtonComponent>
+            </div>
+
+            <p
+              className="text-primary font-bold text-xl"
+              style={{
+                position: 'absolute',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                whiteSpace: 'nowrap',
+              }}
+            >
               {selectedYear} | {currentWeekStart.format('DD / MM')} -{' '}
               {weekDays[6].format('DD / MM')}
-            </Title>
+            </p>
 
-            <ButtonComponent
-              shape="round"
-              icon={<RightOutlined />}
-              onClick={() =>
-                setCurrentWeekStart(currentWeekStart.add(1, 'week'))
-              }
-            />
+            <div className="flex gap-2">
+              <ButtonComponent
+                shape="round"
+                icon={<LeftOutlined />}
+                className="!shadow-none"
+                onClick={() =>
+                  setCurrentWeekStart(currentWeekStart.subtract(1, 'week'))
+                }
+                type="primary"
+                buttonType="geekblue"
+              />
+              <ButtonComponent
+                shape="round"
+                icon={<RightOutlined />}
+                className="!shadow-none"
+                type="primary"
+                buttonType="geekblue"
+                onClick={() =>
+                  setCurrentWeekStart(currentWeekStart.add(1, 'week'))
+                }
+              />
+            </div>
           </div>
           <Table
             className="shadow-xl schedule-table"
@@ -333,6 +358,9 @@ const MyTaskSchedule: React.FC = () => {
             dataSource={tableData}
             pagination={false}
             rowKey="key"
+            rowClassName={(_, index) =>
+              index === 0 ? 'first-row' : index === 1 ? 'second-row' : ''
+            }
           />
         </div>
         <CreateReportModal

@@ -1,8 +1,11 @@
-import React from 'react';
-import { Popover } from 'antd';
-import PopoverTaskContent from '../components/PopoverTaskContent';
 import TagComponents from '@components/UI/TagComponents';
-import { statusColors } from '@utils/statusRender/taskStatusRender';
+import {
+  statusColors,
+  statusTaskBorder,
+} from '@utils/statusRender/taskStatusRender';
+import { Popover, Tooltip } from 'antd';
+import React from 'react';
+import PopoverTaskContent from '../components/PopoverTaskContent';
 
 interface PopoverTaskProps {
   uniqueTag: string;
@@ -30,7 +33,6 @@ const PopoverTask: React.FC<PopoverTaskProps> = ({
   mutate,
   handleOpenReportModal,
   handleOpenPopover,
-  tagColor,
   taskIndex,
   setDate,
 }) => {
@@ -57,7 +59,7 @@ const PopoverTask: React.FC<PopoverTaskProps> = ({
       }
     >
       <div
-        className="border-2 rounded-lg border-none"
+        className={`border-[1px] rounded-lg`}
         style={{
           position: 'relative',
           width: 'auto',
@@ -68,6 +70,9 @@ const PopoverTask: React.FC<PopoverTaskProps> = ({
           fontWeight: 'bold',
           zIndex: 1 + taskIndex,
           fontSize: 12,
+          borderColor: task.reportTask
+            ? statusTaskBorder[task.reportTask.status]
+            : '#808080',
         }}
       >
         <div className="overflow-y-auto text-clip max-w-full">
@@ -75,14 +80,16 @@ const PopoverTask: React.FC<PopoverTaskProps> = ({
             {task?.taskTypeId ? task?.taskTypeId?.name : 'N/A'}
           </p>
         </div>
-        <TagComponents
-          className="text-xs !font-bold overflow-y-auto text-clip max-w-full !py-[2px] rounded-lg !px-2"
-          style={{ backgroundColor: tagColor }}
-        >
-          <p className="truncate text-white">
-            🧑‍🦱 {task.assigneeName ? task.assigneeName : 'N/A'}
-          </p>
-        </TagComponents>
+        <Tooltip title={task.assigneeName ? task.assigneeName : 'N/A'}>
+          <TagComponents
+            className="text-xs !font-bold overflow-y-auto text-clip max-w-full !py-[2px] rounded-lg !px-2"
+            color="cyan"
+          >
+            <p className="truncate">
+              🧑‍🦱 {task.assigneeName ? task.assigneeName : 'N/A'}
+            </p>
+          </TagComponents>
+        </Tooltip>
       </div>
     </Popover>
   );

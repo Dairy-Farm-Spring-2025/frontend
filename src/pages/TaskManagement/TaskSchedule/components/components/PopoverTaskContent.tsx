@@ -146,7 +146,10 @@ const PopoverTaskContent = ({
             type="primary"
             buttonType="secondary"
             onClick={handleOpenEdit}
-            disabled={disabledUpdateButton || isEditDisabled}
+            disabled={
+              (disabledUpdateButton || isEditDisabled) &&
+              task.assigneeName !== null
+            }
           />
         </Tooltip>
       </div>
