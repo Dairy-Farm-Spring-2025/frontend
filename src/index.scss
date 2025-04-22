@@ -56,3 +56,35 @@ tr.ant-table-measure-row {
   background-color: rgba(200, 200, 200, 0.2); /* Nền xám nhạt cho hàng bị xóa */
   text-decoration: line-through; /* Giữ gạch ngang */
 }
+
+.schedule-table .first-row > td {
+  border-bottom: 1px solid black !important;
+}
+
+.schedule-table .first-row > td:first-child {
+  border-bottom: 1px solid black !important;
+}
+
+.schedule-table .first-row > td:first-child {
+  padding: 10px 0px;
+  background: linear-gradient(
+    to bottom,
+    #ffdd54,
+    #f6e598,
+    #fffbcd,
+    #f6e598,
+    #ffdd54
+  ) !important;
+}
+
+.schedule-table .second-row > td:first-child {
+  padding: 10px 0px;
+  background: linear-gradient(
+    to bottom,
+    #74a8fb,
+    #9dc8ff,
+    #add1ff,
+    #9dc8ff,
+    #74a8fb
+  ) !important;
+}

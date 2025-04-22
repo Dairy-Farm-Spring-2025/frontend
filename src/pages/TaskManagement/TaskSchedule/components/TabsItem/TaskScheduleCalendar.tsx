@@ -6,7 +6,6 @@ import {
 import ButtonComponent from '@components/Button/ButtonComponent';
 import SelectComponent from '@components/Select/SelectComponent';
 import TagComponents from '@components/UI/TagComponents';
-import Title from '@components/UI/Title';
 import useFetcher from '@hooks/useFetcher';
 import useModal, { ModalActionProps } from '@hooks/useModal';
 import { Area } from '@model/Area';
@@ -21,7 +20,7 @@ import { AREA_PATH } from '@service/api/Area/areaApi';
 import { HEALTH_RECORD_PATH } from '@service/api/HealthRecord/healthRecordApi';
 import { TASK_PATH } from '@service/api/Task/taskApi';
 import { getColorByRole } from '@utils/statusRender/roleRender';
-import { Select, Skeleton, Table } from 'antd';
+import { Divider, Select, Skeleton, Table } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import { t } from 'i18next';
@@ -216,7 +215,7 @@ const TaskScheduleCalendar: React.FC = () => {
               .filter((task: TaskDateRange) => task.shift === shift)
               .forEach((task: TaskDateRange, taskIndex: number) => {
                 const uniqueTag = `${task.taskId}-${date}`;
-                const tagColor = stringToDarkColor(uniqueTag); // Generate color based on uniqueTag
+                const tagColor = 'green'; // Generate color based on uniqueTag
                 const content = (
                   <PopoverTask
                     day={dayjs(day).format('YYYY-MM-DD')}
@@ -304,7 +303,8 @@ const TaskScheduleCalendar: React.FC = () => {
             style={{
               maxHeight: 500, // Set maximum height
               overflowY: 'auto', // Enable vertical scrolling
-              minHeight: 40 + (dayContents[dayKey].length - 1) * 65,
+              minHeight: 40 + (dayContents[dayKey].length - 1) * 60,
+              height: 140,
             }}
             className="h-full custom-scrollbar"
           >
@@ -394,8 +394,6 @@ const TaskScheduleCalendar: React.FC = () => {
     [dataIllness]
   );
 
-  console.log(tableData);
-
   return (
     <div className="flex flex-col gap-2">
       <div className="flex gap-5 items-center">
@@ -420,58 +418,79 @@ const TaskScheduleCalendar: React.FC = () => {
         </ButtonComponent>
         <StatusTask />
       </div>
-      <div className="flex gap-5">
-        <Select
-          value={selectedYear}
-          className="!w-[120px]"
-          onChange={handleYearChange}
-        >
-          {Array.from({ length: 5 }, (_, i) => dayjs().year() - 2 + i).map(
-            (year) => (
-              <Option key={year} value={year}>
-                {year}
-              </Option>
-            )
-          )}
-        </Select>
-
-        <WeekSelectorDropdown
-          selectedYear={selectedYear}
-          currentWeekStart={currentWeekStart}
-          setCurrentWeekStart={setCurrentWeekStart}
-        />
-
-        <ButtonComponent className="shadow-md" onClick={jumpToToday}>
-          {t('Today')}
-        </ButtonComponent>
-      </div>
+      <Divider className="!my-2" />
       <div
         style={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
+          position: 'relative', // 👈 container có position
         }}
       >
-        <ButtonComponent
-          shape="round"
-          icon={<LeftOutlined />}
-          className="!shadow-none"
-          onClick={() =>
-            setCurrentWeekStart(currentWeekStart.subtract(1, 'week'))
-          }
-        />
+        <div className="flex gap-3">
+          <Select
+            value={selectedYear}
+            className="!w-[120px]"
+            onChange={handleYearChange}
+          >
+            {Array.from({ length: 5 }, (_, i) => dayjs().year() - 2 + i).map(
+              (year) => (
+                <Option key={year} value={year}>
+                  {year}
+                </Option>
+              )
+            )}
+          </Select>
 
-        <Title>
+          <WeekSelectorDropdown
+            selectedYear={selectedYear}
+            currentWeekStart={currentWeekStart}
+            setCurrentWeekStart={setCurrentWeekStart}
+          />
+
+          <ButtonComponent
+            className="shadow-md"
+            type="primary"
+            buttonType="amber"
+            onClick={jumpToToday}
+          >
+            {t('Today')}
+          </ButtonComponent>
+        </div>
+
+        <p
+          className="text-primary font-bold text-xl"
+          style={{
+            position: 'absolute',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            whiteSpace: 'nowrap',
+          }}
+        >
           {selectedYear} | {currentWeekStart.format('DD / MM')} -{' '}
           {weekDays[6].format('DD / MM')}
-        </Title>
+        </p>
 
-        <ButtonComponent
-          shape="round"
-          icon={<RightOutlined />}
-          className="!shadow-none"
-          onClick={() => setCurrentWeekStart(currentWeekStart.add(1, 'week'))}
-        />
+        <div className="flex gap-2">
+          <ButtonComponent
+            shape="round"
+            icon={<LeftOutlined />}
+            className="!shadow-none"
+            onClick={() =>
+              setCurrentWeekStart(currentWeekStart.subtract(1, 'week'))
+            }
+            type="primary"
+            buttonType="geekblue"
+          />
+          <ButtonComponent
+            shape="round"
+            icon={<RightOutlined />}
+            className="!shadow-none"
+            type="primary"
+            buttonType="geekblue"
+            onClick={() => setCurrentWeekStart(currentWeekStart.add(1, 'week'))}
+          />
+        </div>
       </div>
       <Skeleton loading={isLoading}>
         <Table
@@ -481,7 +500,10 @@ const TaskScheduleCalendar: React.FC = () => {
           dataSource={tableData}
           pagination={false}
           rowKey="key"
-          scroll={{ x: 'max-content', y: 530 }} // Enable scrolling
+          scroll={{ x: 'max-content', y: 550 }} // Enable scrolling
+          rowClassName={(_, index) =>
+            index === 0 ? 'first-row' : index === 1 ? 'second-row' : ''
+          }
         />
       </Skeleton>
       <TaskCreateModal

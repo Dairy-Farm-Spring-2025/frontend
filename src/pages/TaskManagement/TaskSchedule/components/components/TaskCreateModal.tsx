@@ -88,7 +88,7 @@ const TaskCreateModal = ({
   const [assignees, setAssignees] = useState<any[]>([]);
   const createModal = useSelector((state: RootState) => state.taskModal);
   const dispatch = useDispatch();
-
+  const [taskName, setTaskName] = useState<string>('');
   const requiredFields = [
     'taskTypeId',
     'assigneeIds',
@@ -249,7 +249,7 @@ const TaskCreateModal = ({
     const role = taskType?.roleId;
     setSelectedRole(role);
     setSelectedTaskTypes(taskType);
-
+    setTaskName(taskType?.name as string);
     const shouldSetNightShift = taskType?.name === 'Trực ca đêm';
 
     form.setFieldsValue({
@@ -297,7 +297,7 @@ const TaskCreateModal = ({
   return (
     <ModalComponent
       open={modal.open}
-      title={t('Add Task')}
+      title={`${t('Add Task')} ${taskName !== '' ? `- ${taskName}` : ''}`}
       onCancel={handleCancel}
       disabledButtonOk={disabledButton}
       width={800}

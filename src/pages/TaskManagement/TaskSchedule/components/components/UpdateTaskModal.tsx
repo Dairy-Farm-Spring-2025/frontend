@@ -394,7 +394,7 @@ const UpdateTaskModal = ({
   );
   return (
     <ModalComponent
-      title={`${t('Edit task {{taskName}}', {
+      title={`${t('Edit task - {{taskName}}', {
         taskName: dataTaskDetail?.taskTypeId?.name,
       })} - ${formatDateHour(day)}`}
       open={modal.open}
@@ -412,7 +412,7 @@ const UpdateTaskModal = ({
           <>
             <p className="text-base mb-2 !text-red-600">
               {t(
-                'Because of the assignee leaves of absence or busy, you need to re-assign to another assignee'
+                'This task is currently unassigned and needs to be reassigned to someone else'
               )}
             </p>
             <Divider className="!my-2" />

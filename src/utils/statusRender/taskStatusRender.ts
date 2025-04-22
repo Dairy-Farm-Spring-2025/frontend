@@ -15,3 +15,12 @@ export const statusColors: Record<any, string> = {
   processing: '#DBEAFE',
   closed: '#D1FAE5',
 };
+
+export const statusTaskBorder: Record<any, string> = {
+  pending: '#FACC15', // Vàng đậm hơn
+  inProgress: '#3B82F6', // Xanh dương đậm
+  completed: '#10B981', // Xanh lá đậm
+  reviewed: '#A855F7', // Tím đậm
+  processing: '#2563EB', // Xanh dương trung bình
+  closed: '#059669', // Xanh lá trung bình
+};

@@ -25,7 +25,9 @@ import { useTranslation } from 'react-i18next';
 import ModalCreateIllNess from './components/ModalCreateIllNess';
 import ModalViewDetail from './components/ModalViewDetail';
 import { IllnessStatus_Filter } from '@service/data/healthRecordStatus';
+import useGetRole from '@hooks/useGetRole';
 const IllNess = () => {
+  const roleName = useGetRole();
   const [healthReport, setHealthReport] = useState<Health[]>([]);
   const { data, error, isLoading, mutate } = useFetch<Health[]>(
     HEALTH_RECORD_PATH.ILLNESS,
@@ -207,9 +209,11 @@ const IllNess = () => {
   return (
     <AnimationAppear duration={0.5}>
       <WhiteBackground>
-        <ButtonComponent type="primary" onClick={() => setModalOpen(true)}>
-          {t('Create Illness')}
-        </ButtonComponent>
+        {roleName === 'Veterinarians' && (
+          <ButtonComponent type="primary" onClick={() => setModalOpen(true)}>
+            {t('Create Illness')}
+          </ButtonComponent>
+        )}
         <Divider className="my-4" />
         <TableComponent
           loading={isLoading}
