@@ -10,18 +10,18 @@ interface FloatButtonProps extends FloatButtonGroupProps {
   shape?: 'circle' | 'square';
   tooltip?: React.ReactNode | string;
   buttonType?:
-    | 'primary'
-    | 'secondary'
-    | 'warning'
-    | 'thirdly'
-    | 'amber'
-    | 'cyan'
-    | 'geekblue'
-    | 'magenta'
-    | 'volcano'
-    | 'lime'
-    | 'gold'
-    | 'purple';
+  | 'primary'
+  | 'secondary'
+  | 'warning'
+  | 'thirdly'
+  | 'amber'
+  | 'cyan'
+  | 'geekblue'
+  | 'magenta'
+  | 'volcano'
+  | 'lime'
+  | 'gold'
+  | 'purple';
 }
 
 interface FloatButtonGroupProps {

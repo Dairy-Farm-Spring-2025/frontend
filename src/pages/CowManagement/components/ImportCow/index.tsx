@@ -4,6 +4,7 @@ import {
     DownloadOutlined,
     EditOutlined,
     SaveOutlined,
+    CheckOutlined,
 } from '@ant-design/icons';
 import TableComponent, { Column } from '@components/Table/TableComponent';
 import AnimationAppear from '@components/UI/AnimationAppear';
@@ -21,14 +22,16 @@ import { CowType } from '@model/Cow/CowType';
 import CreateBulkModal from '@pages/CowPenManagement/components/MoveCowManagement/components/ListCowNotInPen/components/CreateBulk/CreateBulk';
 import { COW_TYPE_PATH } from '@service/api/CowType/cowType';
 import { HEALTH_RECORD_STATUS } from '@service/data/healthRecordStatus';
-import { Divider, InputNumber, message, Modal } from 'antd';
+import { Divider, InputNumber, message, Modal, Popover } from 'antd';
 import dayjs from 'dayjs';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IoMdFemale, IoMdMale } from 'react-icons/io';
+import { MdErrorOutline } from 'react-icons/md';
 import ConfirmImport from './components/ConfirmImport';
 import ReviewImportCow from './components/ReviewImportCow';
 import ModalListError from './components/ModalListErrors';
+import FloatButtonComponent from '@components/FloatButton/FloatButtonComponent';
 
 const ListCowImport = () => {
     const { t } = useTranslation();
@@ -72,7 +75,42 @@ const ListCowImport = () => {
         onFetchImportTimes: fetchImportTimes,
     });
 
-    // Only include relevant changes for brevity
+    // Validation functions
+    const validateCows = useMemo(() => {
+        if (reviewData.length === 0) return false;
+        const validCowOrigins = cowOrigin().map((origin: any) => origin.value);
+        const validCowStatuses = cowStatus().map((status: any) => status.value);
+        const validCowTypes = dataCowType?.map((type: any) => type.name) || [];
+
+        return reviewData.every((cow) => {
+            return (
+                cow.name?.trim() &&
+                cow.cowStatus &&
+                validCowStatuses.includes(cow.cowStatus) &&
+                cow.gender &&
+                ['male', 'female'].includes(cow.gender) &&
+                cow.cowOrigin &&
+                validCowOrigins.includes(cow.cowOrigin) &&
+                cow.cowTypeName &&
+                validCowTypes.includes(cow.cowTypeName)
+            );
+        });
+    }, [reviewData, dataCowType]);
+
+    const validateHealthRecords = useMemo(() => {
+        if (reviewData.length === 0) return false;
+        return reviewData.every((cow) => {
+            return (
+                cow.healthInfoResponses[0]?.health?.status &&
+                ['good', 'poor', 'critical', 'fair', 'recovering'].includes(cow.healthInfoResponses[0]?.health?.status)
+            );
+        });
+    }, [reviewData]);
+
+    const hasReviewErrors = useMemo(() => {
+        return reviewErrors.length === 0;
+    }, [reviewErrors]);
+
     const handleReviewData = (data: Cow[], errors: { source: string; message: string }[]) => {
         const dataWithKeys = data.map((item, index) => ({
             ...item,
@@ -82,7 +120,7 @@ const ListCowImport = () => {
             dateOfEnter: item.dateOfEnter || '',
             cowOrigin: item.cowOrigin || '',
             gender: item.gender || '',
-            cowTypeName: item.cowTypeName || item.cowType?.name || '', // Ensure cowTypeName is preserved
+            cowTypeName: item.cowTypeName || item.cowType?.name || '',
             cowStatus: item.cowStatus || '',
             healthInfoResponses: item.healthInfoResponses || [],
             description: item.description || '',
@@ -94,9 +132,8 @@ const ListCowImport = () => {
         setReviewErrors(errors);
         setImportSuccess(false);
 
-        if (errors.length > 0) {
-            setIsErrorModalVisible(true);
-        }
+        // Only open ModalListError if there are errors
+        setIsErrorModalVisible(errors.length > 0);
     };
 
     const handleCloseErrorModal = () => {
@@ -115,8 +152,6 @@ const ListCowImport = () => {
         message.success('Đã lưu dữ liệu sửa lỗi!');
     };
 
-    // Rest of the component remains unchanged
-    // Include columns, handleEdit, handleSave, handleDelete, handleCancel, handleChange, handleDataChange, mutateCows, and JSX as in the previous version
     const columns: Column[] = [
         {
             dataIndex: 'name',
@@ -208,10 +243,7 @@ const ListCowImport = () => {
             title: t('Cow Type'),
             render: (data) => data || '-',
             filterable: true,
-            filterOptions: [
-                { text: 'Ayrshire', value: 'Ayrshire' },
-                // Add more as needed
-            ],
+            filterOptions: dataCowType?.map((type) => ({ text: type.name, value: type.name })) || [],
         },
         {
             dataIndex: 'cowStatus',
@@ -543,18 +575,6 @@ const ListCowImport = () => {
                             {t('Số lần đã import:')} {importTimes ?? 0}
                         </span>
                     </div>
-                    {reviewData.length > 0 && (
-                        <div style={{ textAlign: 'right', marginTop: 16 }}>
-                            <ButtonComponent
-                                type="primary"
-                                onClick={handleConfirmImport}
-                                loading={isImporting}
-                                disabled={isImporting || reviewErrors.length > 0}
-                            >
-                                {isImporting ? 'Đang lưu...' : 'Confirm Import'}
-                            </ButtonComponent>
-                        </div>
-                    )}
                 </div>
 
                 <Divider className="my-4" />
@@ -566,6 +586,50 @@ const ListCowImport = () => {
                     scroll={{ x: 'max-content' }}
                     pagination={{ pageSize: 10, position: ['bottomCenter'] }}
                 />
+                {reviewData.length > 0 && (
+                    <FloatButtonComponent.Group>
+                        {validateCows && validateHealthRecords && hasReviewErrors ? (
+                            <FloatButtonComponent
+                                tooltip={t('Confirm')}
+                                type="primary"
+                                onClick={handleConfirmImport}
+                                icon={<CheckOutlined />}
+                            />
+                        ) : (
+                            <Popover
+                                title={t('Error')}
+                                content={
+                                    <div className="flex flex-col gap-2 text-base bg-white">
+                                        {!validateCows && (
+                                            <span className="text-red-500">
+                                                - {t('Some cows have invalid or missing fields (name, status, gender, origin, type)')}
+                                            </span>
+                                        )}
+                                        {!validateHealthRecords && (
+                                            <span className="text-red-500">
+                                                - {t('Some health records have invalid or missing statuses')}
+                                            </span>
+                                        )}
+                                        {!hasReviewErrors && (
+                                            <span className="text-red-500">
+                                                - {t('Please resolve review errors before submitting')}
+                                            </span>
+                                        )}
+                                    </div>
+                                }
+                            >
+                                <FloatButtonComponent
+                                    type="primary"
+                                    buttonType="volcano"
+                                    tooltip=""
+                                    icon={<MdErrorOutline />}
+                                    children={undefined}
+                                />
+                            </Popover>
+                        )}
+                        <FloatButtonComponent.BackTop />
+                    </FloatButtonComponent.Group>
+                )}
                 {importSuccess && (
                     <CreateBulkModal modal={modalControl} availableCows={availableCows as any} mutateCows={mutateCows} />
                 )}

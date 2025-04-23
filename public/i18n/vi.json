@@ -414,7 +414,7 @@
   "pagination": {
     "total_page": "Tổng {{items}} thành phần"
   },
-  "Step 1: Choose Area, Cow Type and Cow Status": " Hãy chọn loại khu vực, loại bò và trạng thái bò",
+  "Step 1: Choose Cow Type and Cow Status": " Hãy chọn loại khu vực, loại bò và trạng thái bò",
   "Join task": "Tham gia công việc",
   "View report": "Xem báo cáo",
   "Task is expired": "Công việc đã quá hạn",
@@ -773,5 +773,6 @@
   "View equipment": "Xem thiết bị",
   "Injection month must be between {{previousInjectionMonth}} and {{nextInjectionMonth}}": "Tháng tiêm phải nằm giữa {{previousInjectionMonth}} và {{nextInjectionMonth}}",
   "Injection month must be greater than {{previousInjectionMonth}}": "Tháng tiêm phải lớn hơn {{previousInjectionMonth}}",
-  "Illness Image": "Hình ảnh bệnh"
+  "Illness Image": "Hình ảnh bệnh",
+  "Create Bulk Cow": "Di chuyển bò hàng loạt"
 }
