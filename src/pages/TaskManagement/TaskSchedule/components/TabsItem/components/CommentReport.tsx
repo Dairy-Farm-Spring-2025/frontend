@@ -74,7 +74,24 @@ const CommentReport = ({ selectedTask, mutate }: CommentReportProps) => {
       </div>
       <Divider className="my-2" />
       <Title>{t('Review')}</Title>
-      {selectedTask?.status !== 'closed' ? (
+      {selectedTask?.status === 'closed' ? (
+        <TextTitle
+          title={t('Review')}
+          description={
+            <QuillRender
+              description={
+                selectedTask?.comment ? selectedTask?.comment : 'N/A'
+              }
+            />
+          }
+        />
+      ) : selectedTask?.status === 'pending' ? (
+        <Title className="!text-orange-600">
+          {t('Task do not processing')}
+        </Title>
+      ) : selectedTask?.status === 'missing' ? (
+        <Title className="!text-red-600">{t('Task is missing')}</Title>
+      ) : (
         <FormComponent form={form} onFinish={handleFinish}>
           <FormItemComponent
             name="comment"
@@ -93,17 +110,6 @@ const CommentReport = ({ selectedTask, mutate }: CommentReportProps) => {
             </ButtonComponent>
           </div>
         </FormComponent>
-      ) : (
-        <TextTitle
-          title={t('Review')}
-          description={
-            <QuillRender
-              description={
-                selectedTask?.comment ? selectedTask?.comment : 'N/A'
-              }
-            />
-          }
-        />
       )}
     </div>
   );

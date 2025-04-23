@@ -774,5 +774,11 @@
   "Injection month must be between {{previousInjectionMonth}} and {{nextInjectionMonth}}": "Tháng tiêm phải nằm giữa {{previousInjectionMonth}} và {{nextInjectionMonth}}",
   "Injection month must be greater than {{previousInjectionMonth}}": "Tháng tiêm phải lớn hơn {{previousInjectionMonth}}",
   "Illness Image": "Hình ảnh bệnh",
+  "Feed meals and total cow type": "Bữa ăn và tổng loại bò",
+  "Total cows": "Tổng bò",
+  "Quantity needed": "Số lượng cần thiết",
+  "This area do not have feed meal for cow type": "Khu vực không có bữa nào cho loại bò",
+  "Task do not processing": "Công việc chưa được tiến hành",
+  "Task is missing": "Công việc đã quá hạn",
   "Create Bulk Cow": "Di chuyển bò hàng loạt"
 }

@@ -39,4 +39,4 @@ type ImageReport = {
   url: string;
 };
 
-export type StatusReportTask = 'pending' | 'processing' | 'closed';
+export type StatusReportTask = 'pending' | 'processing' | 'closed' | 'missing';
