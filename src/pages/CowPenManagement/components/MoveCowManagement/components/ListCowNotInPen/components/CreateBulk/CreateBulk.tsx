@@ -1,4 +1,4 @@
-import { CheckCircleOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import { CheckCircleOutlined } from '@ant-design/icons';
 import CardComponent from '@components/Card/CardComponent';
 import FormComponent from '@components/Form/FormComponent';
 import SelectComponent from '@components/Select/SelectComponent';
