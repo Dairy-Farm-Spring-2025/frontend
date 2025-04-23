@@ -19,6 +19,16 @@ export const formatSTT = (data: any[]) => {
   );
 };
 
+export const formatFollowTime = (data: any[], dataIndex: string) => {
+  if (!Array.isArray(data) || data.length === 0 || !dataIndex) return [];
+
+  return [...data].sort((a, b) => {
+    const timeA = new Date(a?.[dataIndex] ?? 0).getTime();
+    const timeB = new Date(b?.[dataIndex] ?? 0).getTime();
+    return timeB - timeA;
+  });
+};
+
 export const formatDate = ({
   data,
   type = 'render',

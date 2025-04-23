@@ -9,6 +9,8 @@ import TableComponent, { Column } from '@components/Table/TableComponent';
 import AnimationAppear from '@components/UI/AnimationAppear';
 import QuillRender from '@components/UI/QuillRender';
 import TagComponents from '@components/UI/TagComponents';
+import TextTitle from '@components/UI/TextTitle';
+import Title from '@components/UI/Title';
 import WhiteBackground from '@components/UI/WhiteBackground';
 import { useEditToggle } from '@hooks/useEditToggle';
 import useFetcher from '@hooks/useFetcher';
@@ -17,6 +19,7 @@ import useToast from '@hooks/useToast';
 import { Area } from '@model/Area';
 import { CowStatus } from '@model/Cow/Cow';
 import { CowType } from '@model/Cow/CowType';
+import { FeedPlan } from '@model/Feed/FeedArea';
 import { PenStatus } from '@model/Pen';
 import { AREA_PATH } from '@service/api/Area/areaApi';
 import { areaType } from '@service/data/areaType';
@@ -24,10 +27,9 @@ import { cowStatus } from '@service/data/cowStatus';
 import { penStatusFilter } from '@service/data/pen';
 import { formatStatusWithCamel } from '@utils/format';
 import { getPenColor } from '@utils/statusRender/penStatusRender';
-import { Divider, Form, Skeleton } from 'antd';
-import { SelectProps } from 'antd/lib';
+import { Divider, Form, Skeleton, Tooltip } from 'antd';
 import { t } from 'i18next';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
@@ -37,7 +39,6 @@ const validateInput = (_: any, value: string) => {
     return Promise.reject(t('Please input the value!'));
   }
   if (!regex.test(value)) {
-
     return Promise.reject(
       t(
         'Input does not match the required format (A-Z)-area-(1-0), eg: ABC-area-123'
@@ -85,22 +86,33 @@ const AreaDetail = () => {
     isLoading: isLoadingCowType,
     error: cowTypeError,
   } = useFetcher<any>('cow-types', 'GET');
-
+  const {
+    data: dataFeedMeals,
+    isLoading: isLoadingFeedMeal,
+    error: errorFeedMeals,
+  } = useFetcher<FeedPlan>(AREA_PATH.AREA_FEED_MEALS(id ? id : ''), 'GET');
   const { t } = useTranslation();
 
-  const [optionsCowType, setOptionsCowType] = useState<SelectProps['options']>(
-    []
-  );
-
-  useEffect(() => {
-    if (cowTypeData) {
-      const options = cowTypeData.map((element: CowType) => ({
+  const optionsCowType = useMemo(
+    () =>
+      (cowTypeData || []).map((element: CowType) => ({
         label: element.name,
         value: element.cowTypeId,
-      }));
-      setOptionsCowType(options);
-    }
-  }, [cowTypeData]);
+      })),
+    [cowTypeData]
+  );
+
+  const cowTypeArea = useMemo(
+    () =>
+      dataFeedMeals &&
+      Object.entries((dataFeedMeals || ([] as any)).cowTypeCount)?.map(
+        ([key, value]) => ({
+          title: key,
+          content: value,
+        })
+      ),
+    [dataFeedMeals]
+  );
 
   useEffect(() => {
     if (area) {
@@ -204,6 +216,26 @@ const AreaDetail = () => {
     },
   ];
 
+  const columnsFeedMeals: Column[] = [
+    {
+      dataIndex: 'name',
+      title: t('Name'),
+      key: 'name',
+      searchable: true,
+    },
+    {
+      dataIndex: 'quantityNeeded',
+      title: t('Quantity needed'),
+      key: 'quantityNeeded',
+      sorter: (a, b) => a.quantityNeeded - b.quantityNeeded,
+    },
+    {
+      dataIndex: 'unit',
+      title: t('Unit'),
+      key: 'unit',
+    },
+  ];
+
   return (
     <AnimationAppear>
       <WhiteBackground>
@@ -257,7 +289,7 @@ const AreaDetail = () => {
                             label={<LabelForm>{t('Cow Type')}</LabelForm>}
                           >
                             <SelectComponent
-                              options={optionsCowType}
+                              options={optionsCowType || []}
                               className="w-full"
                               disabled={true}
                             />
@@ -367,13 +399,58 @@ const AreaDetail = () => {
             </div>
           </div>
           <Divider />
-          <h2 className="text-lg font-semibold mb-4">{t('Pens & Cows in Area')}</h2>
+          <Title className="font-semibold mb-4">
+            {t('Pens & Cows in Area')}
+          </Title>
           <TableComponent
             columns={columns}
             dataSource={cowInPen ? cowInPen : []}
             loading={isLoadingCowInPen}
             pagination={{ pageSize: 5, position: ['bottomCenter'] }}
           />
+          <Divider />
+          <div>
+            <Title className="font-semibold mb-4">
+              {t('Feed meals and total cow type')}
+            </Title>
+            <Skeleton loading={isLoadingFeedMeal}>
+              <div className="flex flex-col gap-5 mb-5">
+                <div className="flex gap-10">
+                  {cowTypeArea && cowTypeArea?.length > 0 ? (
+                    cowTypeArea?.map((element) => (
+                      <TextTitle
+                        layout="horizontal"
+                        title={
+                          <Tooltip title={t('Cow type')}>
+                            {element.title}
+                          </Tooltip>
+                        }
+                        description={`${element.content} (${t('cows')})`}
+                      />
+                    ))
+                  ) : (
+                    <p className="text-base text-orange-500">
+                      {errorFeedMeals?.message
+                        ? errorFeedMeals?.message
+                        : t('This area do not have feed meal for cow type')}
+                    </p>
+                  )}
+                </div>
+                <TextTitle
+                  layout="horizontal"
+                  title={t('Total cows')}
+                  description={`${
+                    dataFeedMeals?.totalCow ? dataFeedMeals?.totalCow : 0
+                  } (${t('cows')})`}
+                />
+              </div>
+              <TableComponent
+                columns={columnsFeedMeals}
+                dataSource={dataFeedMeals?.foodList as any}
+                pagination={{ pageSize: 5, position: ['bottomCenter'] }}
+              />
+            </Skeleton>
+          </div>
         </div>
       </WhiteBackground>
     </AnimationAppear>

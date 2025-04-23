@@ -11,8 +11,8 @@ import { cowOrigin } from '@service/data/cowOrigin';
 import {
   formatAreaType,
   formatDateHour,
+  formatFollowTime,
   formatStatusWithCamel,
-  formatSTT,
 } from '@utils/format';
 import { getLabelByValue } from '@utils/getLabel';
 import { Divider, Tooltip } from 'antd';
@@ -20,12 +20,12 @@ import { useEffect, useState } from 'react';
 
 import TagComponents from '@components/UI/TagComponents';
 import useFetch from '@hooks/useFetcher';
+import useGetRole from '@hooks/useGetRole';
 import { HEALTH_RECORD_PATH } from '@service/api/HealthRecord/healthRecordApi';
+import { IllnessStatus_Filter } from '@service/data/healthRecordStatus';
 import { useTranslation } from 'react-i18next';
 import ModalCreateIllNess from './components/ModalCreateIllNess';
 import ModalViewDetail from './components/ModalViewDetail';
-import { IllnessStatus_Filter } from '@service/data/healthRecordStatus';
-import useGetRole from '@hooks/useGetRole';
 const IllNess = () => {
   const roleName = useGetRole();
   const [healthReport, setHealthReport] = useState<Health[]>([]);
@@ -218,7 +218,7 @@ const IllNess = () => {
         <TableComponent
           loading={isLoading}
           columns={columns}
-          dataSource={formatSTT(healthReport)}
+          dataSource={formatFollowTime(healthReport, 'startDate')}
         />
         {/* Modal Create Health Report */}
         <ModalCreateIllNess

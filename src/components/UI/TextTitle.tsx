@@ -1,21 +1,30 @@
 const Title = ({ children }: any) => {
   return (
-    <p className="text-xs lg:text-sm 2xl:text-base font-bold">{children}</p>
+    <p className="text-sm lg:text-sm 2xl:text-base font-bold">{children}</p>
   );
 };
 
 const TextChildren = ({ children }: any) => {
-  return <p className="text-xs 2xl:text-sm">{children}</p>;
+  return <p className="text-sm 2xl:text-base">{children}</p>;
 };
 
 interface TextTitleProps {
   title: string | React.ReactNode;
   description: string | React.ReactNode | any;
+  layout?: 'vertical' | 'horizontal';
 }
 
-const TextTitle = ({ title, description }: TextTitleProps) => {
+const TextTitle = ({
+  title,
+  description,
+  layout = 'vertical',
+}: TextTitleProps) => {
   return (
-    <div className="flex flex-col gap-2">
+    <div
+      className={`flex ${
+        layout === 'vertical' ? 'flex-col' : 'flex-row items-center'
+      } gap-2`}
+    >
       <Title>{title}: </Title>
       <TextChildren>{description}</TextChildren>
     </div>
