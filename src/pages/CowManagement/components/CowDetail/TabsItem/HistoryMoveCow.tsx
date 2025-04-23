@@ -337,11 +337,8 @@
 // };
 
 // export default HistoryMoveCow;
-import {
-  HomeOutlined,
-  InfoCircleOutlined,
-  TagOutlined,
-} from '@ant-design/icons';
+
+
 import ButtonComponent from '@components/Button/ButtonComponent';
 import FormItemComponent from '@components/Form/Item/FormItemComponent';
 import LabelForm from '@components/LabelForm/LabelForm';
@@ -351,9 +348,8 @@ import WhiteBackground from '@components/UI/WhiteBackground';
 import useFetcher from '@hooks/useFetcher';
 import useGetRole from '@hooks/useGetRole';
 import useToast from '@hooks/useToast';
-import { Area } from '@model/Area';
 import { PenEntity } from '@model/CowPen/CowPen';
-import { formatDateHour, formatStatusWithCamel } from '@utils/format';
+import { formatDateHour } from '@utils/format';
 import { Divider, Form, Tag } from 'antd';
 import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -413,8 +409,6 @@ const HistoryMoveCow = ({ id, isLoadingHistory }: HistoryMoveCowProps) => {
   }>();
   const areaId = Form.useWatch('areaId', form);
   const penId = Form.useWatch('penId', form);
-
-  const { data: areasData } = useFetcher<Area[]>('areas', 'GET');
 
   // Extract cowStatus and cowTypeId from cow details
   const cowStatus = cowDetails?.cowStatus || 'milkingCow';

@@ -57,7 +57,7 @@ const ListCowImport = () => {
         cowStatus: reviewData[index]?.cowStatus || 'active',
     }));
 
-    const { handleConfirmImport, isImporting } = ConfirmImport({
+    const { handleConfirmImport } = ConfirmImport({
         reviewData,
         dataCowType,
         onImportSuccess: (cowIds, success) => {
@@ -594,6 +594,7 @@ const ListCowImport = () => {
                                 type="primary"
                                 onClick={handleConfirmImport}
                                 icon={<CheckOutlined />}
+                                children={undefined}
                             />
                         ) : (
                             <Popover
