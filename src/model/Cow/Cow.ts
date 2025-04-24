@@ -3,25 +3,25 @@ import { HealthRecord, Injections } from './HealthRecord';
 import { IllnessCow } from './Illness';
 
 export type Cow = {
-  cowId: string;
+  cowId: number;
   name: string;
   cowStatus: CowStatus;
-  dateOfBirth: string;
-  dateOfEnter: string;
-  dateOfOut: string;
-  description: string;
-  cowOrigin: string;
-  gender: 'male' | 'female';
   cowType: CowType;
-  cowTypeEntity: CowType;
+  dateOfBirth: string;
+  dateOfEnter: string | null;
+  dateOfOut: string | null;
+  description: string;
+  gender: 'male' | 'female';
+  cowOrigin: string;
+  healthInfoResponses: HealthResponse[];
+  cowTypeName?: string;
+  cowTypeEntity?: any;
+  errorStrings?: string[];
   createdAt: string;
   updatedAt: string;
   inPen: boolean;
-  healthInfoResponses: HealthResponse[];
   penResponse: any;
-  key: any;
-  errorStrings?: string[];
-  cowTypeName?: string; // Explicitly include cowTypeName
+  key: string;
 
 };
 
