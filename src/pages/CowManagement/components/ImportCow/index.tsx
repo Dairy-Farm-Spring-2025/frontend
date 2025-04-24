@@ -10,7 +10,7 @@ import TableComponent, { Column } from '@components/Table/TableComponent';
 import AnimationAppear from '@components/UI/AnimationAppear';
 import WhiteBackground from '@components/UI/WhiteBackground';
 import useFetcher from '@hooks/useFetcher';
-import { Cow, HealthResponse } from '@model/Cow/Cow';
+import { Cow, HealthResponse, CowStatus } from '@model/Cow/Cow';
 import { cowOrigin, cowOriginFiltered } from '@service/data/cowOrigin';
 import { cowStatus } from '@service/data/cowStatus';
 import { formatDateHour, formatStatusWithCamel, formatSTT } from '@utils/format';
@@ -51,11 +51,54 @@ const ListCowImport = () => {
         closeModal: () => setIsBulkModalOpen(false),
     };
 
-    const availableCows = importedCowIds.map((id, index) => ({
-        cowId: id,
-        name: reviewData[index]?.name || `Cow ${id}`,
-        cowStatus: reviewData[index]?.cowStatus || 'active',
-    }));
+    // Tạo availableCows với cấu trúc đầy đủ theo Cow type
+    const availableCows = useMemo((): Cow[] => {
+        return importedCowIds.map((id, index) => {
+            const reviewCow = reviewData[index] || {};
+            // Tìm cowType từ dataCowType dựa trên cowTypeName hoặc cowType.name
+            const cowType = dataCowType?.find(
+                (type) => type.name === (reviewCow.cowTypeName || reviewCow.cowType?.name)
+            ) || {
+                cowTypeId: 0,
+                name: reviewCow.cowTypeName || 'Unknown',
+                description: '',
+                status: 'exist',
+                createdAt: dayjs().toISOString(),
+                updatedAt: dayjs().toISOString(),
+            };
+
+            return {
+                cowId: id,
+                name: reviewCow.name || `Cow ${id}`,
+                cowStatus: (reviewCow.cowStatus || 'active') as CowStatus,
+                cowType: {
+                    cowTypeId: cowType.cowTypeId,
+                    name: cowType.name,
+                    description: cowType.description,
+                    status: cowType.status,
+                    createdAt: cowType.createdAt,
+                    updatedAt: cowType.updatedAt,
+                },
+                // Các thuộc tính bắt buộc khác của Cow
+                dateOfBirth: reviewCow.dateOfBirth || '2000-01-01', // Giá trị mặc định
+                dateOfEnter: reviewCow.dateOfEnter || dayjs().format('YYYY-MM-DD'), // Ngày hiện tại
+                dateOfOut: reviewCow.dateOfOut || null,
+                description: reviewCow.description || '',
+                gender: reviewCow.gender || 'male',
+                cowOrigin: reviewCow.cowOrigin || 'local',
+                healthInfoResponses: reviewCow.healthInfoResponses || [],
+                cowTypeName: reviewCow.cowTypeName || cowType.name,
+                cowTypeEntity: reviewCow.cowTypeEntity || null,
+                errorStrings: reviewCow.errorStrings || [],
+                // Thuộc tính bị thiếu từ lỗi TypeScript trước đó
+                createdAt: reviewCow.createdAt || dayjs().toISOString(),
+                updatedAt: reviewCow.updatedAt || dayjs().toISOString(),
+                inPen: reviewCow.inPen || false, // Mặc định false vì bò mới nhập chưa ở chuồng
+                penResponse: reviewCow.penResponse || null, // Mặc định null vì chưa có chuồng
+                key: reviewCow.key || id.toString(), // Sử dụng cowId làm key
+            };
+        });
+    }, [importedCowIds, reviewData, dataCowType]);
 
     const { handleConfirmImport } = ConfirmImport({
         reviewData,
@@ -554,6 +597,9 @@ const ListCowImport = () => {
     };
 
     const mutateCows = () => {
+        setReviewData([]);
+        setImportedCowIds([]);
+        setImportSuccess(false);
         console.log('Cows data mutated');
     };
 
@@ -632,7 +678,11 @@ const ListCowImport = () => {
                     </FloatButtonComponent.Group>
                 )}
                 {importSuccess && (
-                    <CreateBulkModal modal={modalControl} availableCows={availableCows as any} mutateCows={mutateCows} />
+                    <CreateBulkModal
+                        modal={modalControl}
+                        availableCows={availableCows}
+                        mutateCows={mutateCows}
+                    />
                 )}
                 <ModalListError
                     visible={isErrorModalVisible}
