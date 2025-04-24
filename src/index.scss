@@ -88,3 +88,10 @@ tr.ant-table-measure-row {
     #74a8fb
   ) !important;
 }
+
+.table-milk-batch {
+  .row-disabled .ant-checkbox-inner {
+    background-color: #e0e0e0 !important;
+    border-color: #bfbfbf !important;
+  }
+}

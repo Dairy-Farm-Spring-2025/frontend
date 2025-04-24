@@ -89,10 +89,11 @@ export const formatToTitleCase = (value: string) => {
 export const formatStatusWithCamel = (type: string) =>
   type
     ? type
-        ?.replace(/([a-z])([A-Z])/g, '$1 $2')
-        ?.replace(/^\w/, (c) => c.toUpperCase())
+        .replace(/_/g, ' ') // Chuyển snake_case -> space
+        .replace(/([a-z])([A-Z])/g, '$1 $2') // Chuyển camelCase -> space
+        .replace(/\b\w/g, (c) => c.toUpperCase()) // Viết hoa từng chữ
     : '';
-
+  
 export const formatDateRangeImportTask = (dateRange: string): string => {
   const [start, end] = dateRange.split('~');
 
