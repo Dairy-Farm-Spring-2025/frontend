@@ -11,6 +11,7 @@ import ModalComponent from '../../../../../components/Modal/ModalComponent';
 import TableComponent from '../../../../../components/Table/TableComponent';
 import AnimationAppear from '../../../../../components/UI/AnimationAppear';
 import useFetcher from '../../../../../hooks/useFetcher';
+import { MilkBatch } from '@model/DailyMilk/MilkBatch';
 
 interface ModalMilkBatchDetailProps {
   milkBatchId: number;
@@ -20,7 +21,7 @@ interface ModalMilkBatchDetailProps {
 
 interface Worker {
   name: string;
-  phoneNumber: string;
+  phoneNumber: number; // Adjusted to match DailyMilkModel
   roleId: { name: string };
   employeeNumber: string;
 }
@@ -46,12 +47,13 @@ interface Milk {
 const ModalMilkBatchDetail: React.FC<ModalMilkBatchDetailProps> = ({
   modal,
   milkBatchId,
+  mutate,
 }) => {
   const {
     data,
     isLoading,
     mutate: refreshData,
-  } = useFetcher<any>(`MilkBatch/${milkBatchId}`, 'GET');
+  } = useFetcher<MilkBatch>(`MilkBatch/${milkBatchId}`, 'GET');
   const { trigger } = useFetcher<any>(`MilkBatch/${milkBatchId}`, 'PUT');
   const { data: availableDailyMilk, mutate: fetchAvailableDailyMilk } =
     useFetcher<any>(`dailymilks/search_available`, 'GET');
@@ -98,6 +100,7 @@ const ModalMilkBatchDetail: React.FC<ModalMilkBatchDetailProps> = ({
 
       // Cập nhật lại dữ liệu
       await refreshData();
+      mutate();
     } catch (error: any) {
       toast.showError(error.message);
     }
@@ -106,6 +109,7 @@ const ModalMilkBatchDetail: React.FC<ModalMilkBatchDetailProps> = ({
     if (!modal.open) {
       setTempSelectedMilks([]);
       setSelectedMilkIds([]);
+      setSelectedRowKeys([]);
     }
   }, [modal.open]);
   /** Cấu hình chọn hàng trong bảng */
@@ -115,14 +119,15 @@ const ModalMilkBatchDetail: React.FC<ModalMilkBatchDetailProps> = ({
       onChange: (keys: Key[]) => {
         // Lọc các dòng chỉ thuộc danh sách API (không phải tạm thời)
         const validKeys = keys.filter((key) =>
-          data?.dailyMilks?.some((milk: Milk) => milk.dailyMilkId === key)
+          data?.dailyMilks?.some((milk: any) => milk.dailyMilkId === key)
         );
         setSelectedRowKeys(validKeys);
       },
       getCheckboxProps: (record: Milk) => ({
-        disabled: !data?.dailyMilks?.some(
-          (milk: Milk) => milk.dailyMilkId === record.dailyMilkId
-        ),
+        disabled:
+          !data?.dailyMilks?.some(
+            (milk: any) => milk.dailyMilkId === record.dailyMilkId
+          ) || data?.status === 'out_of_stock',
       }),
     }),
     [selectedRowKeys, data]
@@ -184,34 +189,36 @@ const ModalMilkBatchDetail: React.FC<ModalMilkBatchDetailProps> = ({
       open={modal.open}
       onCancel={modal.closeModal}
       title={t('Milk Batch Details')}
-      width={1500}
+      width={1000}
     >
-      <Row gutter={16} style={{ marginBottom: 10 }}>
-        <Col span={16}>
-          <TextTitle
-            title={t('Select milk to add to milk batch')}
-            description={
-              <SelectComponent
-                mode="multiple"
-                style={{ width: '100%' }}
-                value={selectedMilkIds}
-                onChange={handleSelectDailyMilk}
-                options={
-                  Array?.isArray(availableDailyMilk ? availableDailyMilk : [])
-                    ? availableDailyMilk?.map((milk: Milk) => ({
-                        value: milk.dailyMilkId,
-                        label: `${t('Volume')}: ${milk.volume} (l) - ${t(
-                          'Milk Date'
-                        )}: ${milk.milkDate}`,
-                      }))
-                    : []
-                }
-                onFocus={fetchAvailableDailyMilk} // Gọi API khi nhấn vào Select
-              />
-            }
-          />
-        </Col>
-      </Row>
+      {data?.status !== 'out_of_stock' && (
+        <Row gutter={16} style={{ marginBottom: 10 }}>
+          <Col span={16}>
+            <TextTitle
+              title={t('Select milk to add to milk batch')}
+              description={
+                <SelectComponent
+                  mode="multiple"
+                  style={{ width: '100%' }}
+                  value={selectedMilkIds}
+                  onChange={handleSelectDailyMilk}
+                  options={
+                    Array?.isArray(availableDailyMilk ? availableDailyMilk : [])
+                      ? availableDailyMilk?.map((milk: Milk) => ({
+                          value: milk.dailyMilkId,
+                          label: `${t('Volume')}: ${milk.volume} (l) - ${t(
+                            'Milk Date'
+                          )}: ${milk.milkDate}`,
+                        }))
+                      : []
+                  }
+                  onFocus={fetchAvailableDailyMilk} // Gọi API khi nhấn vào Select
+                />
+              }
+            />
+          </Col>
+        </Row>
+      )}
 
       <AnimationAppear duration={0.5}>
         <TableComponent
@@ -221,36 +228,40 @@ const ModalMilkBatchDetail: React.FC<ModalMilkBatchDetailProps> = ({
           rowKey="dailyMilkId"
           loading={isLoading}
         />
-        <Row style={{ margin: 20, textAlign: 'right' }}>
-          <Col span={24}>
-            <PopconfirmComponent
-              title={undefined}
-              description={
-                <div className="flex flex-col gap-2">
-                  <p className="!text-red-600 font-semibold">
-                    {t(
-                      'With daily milk that is selected in the table, they will be deleted'
-                    )}
-                  </p>
-                  <p className="!text-green-600 font-semibold">
-                    {t(
-                      'With daily milk that is selected in the select, they will be added'
-                    )}
-                  </p>
-                </div>
-              }
-              onConfirm={handleBatchUpdate}
-            >
-              <ButtonComponent
-                buttonType="secondary"
-                type="primary"
-                disabled={!tempSelectedMilks.length && !selectedRowKeys.length}
+        {data?.status !== 'out_of_stock' && (
+          <Row style={{ margin: 20, textAlign: 'right' }}>
+            <Col span={24}>
+              <PopconfirmComponent
+                title={undefined}
+                description={
+                  <div className="flex flex-col gap-2">
+                    <p className="!text-red-600 font-semibold">
+                      {t(
+                        'With daily milk that is selected in the table, they will be deleted'
+                      )}
+                    </p>
+                    <p className="!text-green-600 font-semibold">
+                      {t(
+                        'With daily milk that is selected in the select, they will be added'
+                      )}
+                    </p>
+                  </div>
+                }
+                onConfirm={handleBatchUpdate}
               >
-                {t('Update milk batch')}
-              </ButtonComponent>
-            </PopconfirmComponent>
-          </Col>
-        </Row>
+                <ButtonComponent
+                  buttonType="secondary"
+                  type="primary"
+                  disabled={
+                    !tempSelectedMilks.length && !selectedRowKeys.length
+                  }
+                >
+                  {t('Update milk batch')}
+                </ButtonComponent>
+              </PopconfirmComponent>
+            </Col>
+          </Row>
+        )}
       </AnimationAppear>
     </ModalComponent>
   );

@@ -782,5 +782,15 @@
   "Task is missing": "Công việc đã quá hạn",
   "Create Bulk Cow": "Di chuyển bò hàng loạt",
   "You are using web of this app as mobile, do you want to redirect to mobile app?": "Bạn đang sử dụng trình duyệt trên thiết bị di động, bạn có di chuyển tới ứng dụng không?",
-  "Open dairy farm mobile app": "Mở ứng dụng quản lý trang trại bò sữa"
+  "Open dairy farm mobile app": "Mở ứng dụng quản lý trang trại bò sữa",
+  "Out Of Stock": "Hết hàng",
+  "Only inventory milk batches can be selected": "Chỉ các lô sữa tồn kho có thể được chọn",
+  "Set out of stock": "Đặt hết hàng",
+  "Milk batches day {{date}}": "Các lô sữa ngày {{date}}",
+  "Total volume": "Tổng lượng sữa",
+  "Daily milk of milk batch": "Lượng sữa hằng ngày của lô sữa",
+  "Milking day {{date}}": "Vắt sữa ngày {{date}}",
+  "for {{milkBatch}} selected milk batches": "cho {{milkBatch}} lô sữa được chọn",
+  "Just \"Inventory\" milk batches can be set out of stock": "Chỉ lô sữa \"tồn kho\" có thể được đặt hết hàng",
+  "Are you sure to set out of stock for selected milk batches?": "Bạn có chắc việc đặt là hết hàng cho các lô sữa được chọn"
 }
