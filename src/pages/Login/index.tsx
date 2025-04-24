@@ -1,9 +1,9 @@
-import { Outlet, useLocation } from "react-router-dom";
-import { motion } from "framer-motion";
+import { Outlet, useLocation } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
-import backgroundImage from "../../assets/background.webp";
-import { pageVariants } from "../../service/data/framer/framerLogin";
-import { useEffect, useState } from "react";
+import backgroundImage from '../../assets/background.webp';
+import { pageVariants } from '../../service/data/framer/framerLogin';
+import { useEffect, useState } from 'react';
 
 const LoginPage = () => {
   const location = useLocation();
@@ -29,7 +29,7 @@ const LoginPage = () => {
         animate="visible"
         exit="exit"
         transition={{ duration: 0.5 }}
-        className="w-[450px] p-10 bg-white shadow-2xl rounded-lg border border-gray-200"
+        className="w-full sm:w-[full] lg:w-[450px] md:w-[450px] xl:w-[450px] 2xl:w-[450px] p-10 bg-white shadow-2xl rounded-lg border border-gray-200"
       >
         <Outlet />
       </motion.div>
