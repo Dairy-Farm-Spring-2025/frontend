@@ -17,6 +17,7 @@
  import { Cow } from '../../../../../../../../model/Cow/Cow';
  import { Pen } from '../../../../../../../../model/Pen';
  import EmptyComponent from '@components/Error/EmptyComponent';
+import TableComponent from '@components/Table/TableComponent';
  
  interface CreateBulkModalProps {
    modal: any;
@@ -334,7 +335,7 @@
                      bordered={false}
                      className="shadow-md h-full bg-white rounded-lg"
                    >
-                     <Table
+                     <TableComponent
                        dataSource={filteredCows}
                        columns={cowColumns}
                        rowKey="cowId"
