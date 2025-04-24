@@ -90,6 +90,13 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
             toast.error(t('Ruminate Activity is required'));
             return;
         }
+        if (
+            !record.healthInfoResponses[0]?.health?.chestCircumference &&
+            errorData.some((item) => item.errorMessage.includes('Chest Circumference is required'))
+        ) {
+            toast.error(t('Chest Circumference is required'));
+            return;
+        }
         setEditingKey(null);
     };
 
@@ -111,6 +118,14 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
                                         : value,
                         cowType: field === 'cowTypeName' ? { ...item.cowType, name: value } : item.cowType,
                         cowTypeEntity: field === 'cowTypeName' ? { ...item.cowTypeEntity, name: value } : item.cowTypeEntity,
+                        // Cập nhật errorStrings để xóa lỗi đã sửa
+                        errorStrings: field === 'cowOrigin' && value
+                            ? item.errorStrings?.filter((err) => err !== 'Cow Origin is required') || []
+                            : field === 'cowTypeName' && value
+                                ? item.errorStrings?.filter((err) => err !== 'Cow Type is required') || []
+                                : field === 'healthInfoResponses' && value[0]?.health?.chestCircumference
+                                    ? item.errorStrings?.filter((err) => err !== 'Chest Circumference is required') || []
+                                    : item.errorStrings || [],
                     }
                     : item
             )
@@ -137,6 +152,12 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
             ) {
                 return true;
             }
+            if (
+                !record.healthInfoResponses[0]?.health?.chestCircumference &&
+                errorData.some((item) => item.errorMessage.includes('Chest Circumference is required'))
+            ) {
+                return true;
+            }
             return false;
         });
 
@@ -151,9 +172,9 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
     };
 
     // Dynamically generate filter options for cowTypeName based on available cow types
-    const cowTypeFilterOptions = COW_TYPE_FILTER().length > 0 ? COW_TYPE_FILTER() : [
-        { text: 'Ayrshire', value: 'Ayrshire' },
-    ];
+    const cowTypeFilterOptions = COW_TYPE_FILTER().length > 0
+        ? COW_TYPE_FILTER()
+        : [{ text: 'Ayrshire', value: 'Ayrshire' }];
 
     const columns: Column[] = [
         {
@@ -303,7 +324,7 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
             key: 'healthRecordSize',
             title: t('Size (m)'),
             render: (data: HealthResponse[], record) => {
-                const hasError = record.errorMessage?.includes('Size');
+                const hasError = record.errorMessage?.includes('Size is required');
                 return editingKey === record.key ? (
                     <InputNumber
                         min={0}
@@ -329,7 +350,7 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
             key: 'bodyTemperature',
             title: t('Body Temperature (°C)'),
             render: (data: HealthResponse[], record) => {
-                const hasError = record.errorMessage?.includes('Body Temperature');
+                const hasError = record.errorMessage?.includes('Body Temperature is required');
                 return editingKey === record.key ? (
                     <InputNumber
                         min={0}
@@ -383,7 +404,7 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
             key: 'respiratoryRate',
             title: t('Respiratory Rate (breaths/min)'),
             render: (data: HealthResponse[], record) => {
-                const hasError = record.errorMessage?.includes('Respiratory Rate');
+                const hasError = record.errorMessage?.includes('Respiratory Rate is required');
                 return editingKey === record.key ? (
                     <InputNumber
                         min={0}
@@ -439,7 +460,7 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
             key: 'chestCircumference',
             title: t('Chest Circumference (m)'),
             render: (data: HealthResponse[], record) => {
-                const hasError = record.errorMessage?.includes('Chest Circumference');
+                const hasError = record.errorMessage?.includes('Chest Circumference is required');
                 return editingKey === record.key ? (
                     <InputNumber
                         min={0}
@@ -467,7 +488,7 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
             key: 'bodyLength',
             title: t('Body Length (m)'),
             render: (data: HealthResponse[], record) => {
-                const hasError = record.errorMessage?.includes('Body Length');
+                const hasError = record.errorMessage?.includes('Body Length is required');
                 return editingKey === record.key ? (
                     <InputNumber
                         min={0}
