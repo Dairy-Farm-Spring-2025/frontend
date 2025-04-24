@@ -100,7 +100,7 @@ const ModalCreateIllNess = ({ modal, mutate }: ModalCreateIllNessProps) => {
     }
   }, [modal.open, illnessForm, detailsForm]);
 
-  const handleCowChange = (value: string) => {
+  const handleCowChange = (value: number) => {
     const cow = dataCows?.find((c: Cow) => c.cowId === value);
     setIsCowSelected(!!value);
     setSelectedCow(cow || null);
