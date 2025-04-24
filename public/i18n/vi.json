@@ -780,5 +780,7 @@
   "This area do not have feed meal for cow type": "Khu vực không có bữa nào cho loại bò",
   "Task do not processing": "Công việc chưa được tiến hành",
   "Task is missing": "Công việc đã quá hạn",
-  "Create Bulk Cow": "Di chuyển bò hàng loạt"
+  "Create Bulk Cow": "Di chuyển bò hàng loạt",
+  "You are using web of this app as mobile, do you want to redirect to mobile app?": "Bạn đang sử dụng trình duyệt trên thiết bị di động, bạn có di chuyển tới ứng dụng không?",
+  "Open dairy farm mobile app": "Mở ứng dụng quản lý trang trại bò sữa"
 }
