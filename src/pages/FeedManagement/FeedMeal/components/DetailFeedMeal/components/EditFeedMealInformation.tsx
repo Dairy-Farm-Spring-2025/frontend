@@ -33,10 +33,11 @@ const EditFeedMealInformation = ({
         cowType: data.cowTypeEntity
           ? `${data.cowTypeEntity.name} - ${data.cowTypeEntity.maxWeight}`
           : '',
-        cowStatus: data.cowStatus ?? '',
+        // Translate cowStatus using the t function
+        cowStatus: data.cowStatus ? t(data.cowStatus) : '',
       });
     }
-  }, [data, form]);
+  }, [data, form, t]); // Add t to dependencies since we're using it
 
   const handleOk = async () => {
     try {
@@ -52,7 +53,6 @@ const EditFeedMealInformation = ({
         description: values.description,
         status: values.status,
       };
-
 
       const response = await api.put(`/feedmeals/${feedMealId}`, payload);
 
