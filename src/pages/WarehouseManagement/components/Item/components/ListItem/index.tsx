@@ -8,14 +8,14 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import ButtonComponent from '../../../../../../components/Button/ButtonComponent';
-import PopconfirmComponent from '../../../../../../components/Popconfirm/PopconfirmComponent';
-import { Column } from '../../../../../../components/Table/TableComponent';
-import AnimationAppear from '../../../../../../components/UI/AnimationAppear';
-import WhiteBackground from '../../../../../../components/UI/WhiteBackground';
-import useFetcher from '../../../../../../hooks/useFetcher';
-import useToast from '../../../../../../hooks/useToast';
-import { Item } from '../../../../../../model/Warehouse/items';
+import ButtonComponent from '@components/Button/ButtonComponent';
+import PopconfirmComponent from '@components/Popconfirm/PopconfirmComponent';
+import { Column } from '@components/Table/TableComponent';
+import AnimationAppear from '@components/UI/AnimationAppear';
+import WhiteBackground from '@components/UI/WhiteBackground';
+import useFetcher from '@hooks/useFetcher';
+import useToast from '@hooks/useToast';
+import { Item } from '@model/Warehouse/items';
 import ListAllItem from './components/ListAllItem';
 
 const ListItemManagement = () => {
@@ -114,7 +114,7 @@ const ListItemManagement = () => {
           <div className="flex gap-2">
             <ButtonComponent
               type="primary"
-              onClick={() => navigate(`../${data.itemId}`)}
+              onClick={() => navigate(`../${data}`)}
             >
               {t('View detail')}
             </ButtonComponent>

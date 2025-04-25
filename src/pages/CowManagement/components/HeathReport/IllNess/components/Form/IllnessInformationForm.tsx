@@ -15,7 +15,7 @@ interface IllnessInformationFormProps {
   cowOptions: any[];
   isCowSelected: boolean;
   selectedCow: Cow | null;
-  handleCowChange: (value: string) => void;
+  handleCowChange: (value: number) => void;
   isLoadingCows: boolean;
 }
 

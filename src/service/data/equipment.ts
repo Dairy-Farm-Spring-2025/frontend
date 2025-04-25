@@ -18,8 +18,8 @@ export const equipmentTypeSelect = () => [
     value: 'housing',
   },
   {
-    label: t('HealthCare'),
-    value: 'healthcare',
+    label: t('Health Care'),
+    value: 'heathcare',
   },
   {
     label: t('Energy'),

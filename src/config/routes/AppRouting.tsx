@@ -472,10 +472,6 @@ const AppRouting = () => {
             },
           ],
         },
-        // {
-        //   path: 'pen-management',
-        //   element: SuspenseWrapper(<PenManageMent />),
-        // },
         {
           path: 'vaccine-cycle-management',
           element: SuspenseWrapper(<VaccineCycleManagement />),
@@ -496,16 +492,6 @@ const AppRouting = () => {
             },
           ],
         },
-        // {
-        //   path: 'move-cow-management',
-        //   element: SuspenseWrapper(<CowPenManagement />),
-        //   children: [
-        //     {
-        //       path: '',
-        //       element: SuspenseWrapper(<MoveCowManagement />),
-        //     },
-        //   ],
-        // },
         {
           path: 'milk-management',
           element: SuspenseWrapper(<MilkManagement />),

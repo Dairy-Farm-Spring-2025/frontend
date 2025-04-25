@@ -12,7 +12,6 @@ import { cowStatus } from '@service/data/cowStatus'; // Import cowStatus
 
 interface CardAreaPenProps {
   element: DataGroupAreaPen;
-  handleEdit: any;
 }
 
 const CardAreaPen = ({ element }: CardAreaPenProps) => {

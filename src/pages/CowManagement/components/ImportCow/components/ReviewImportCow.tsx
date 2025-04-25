@@ -50,23 +50,23 @@ const ReviewImportCow = ({ onReviewData }: ReviewImportCowProps) => {
             inPen: false,
             healthInfoResponses: healthRecord
               ? [
-                {
-                  date: cow.dateOfBirth || dayjs().format('YYYY-MM-DD'),
-                  health: {
-                    status: healthRecord.status || healthRecord.healthRecordStatus || '',
-                    size: healthRecord.size || null,
-                    bodyTemperature: healthRecord.bodyTemperature || null,
-                    heartRate: healthRecord.heartRate || null,
-                    respiratoryRate: healthRecord.respiratoryRate || null,
-                    ruminateActivity: healthRecord.ruminateActivity || null,
-                    chestCircumference: healthRecord.chestCircumference || null,
-                    bodyLength: healthRecord.bodyLength || null,
-                    description: healthRecord.description || null,
+                  {
+                    date: cow.dateOfBirth || dayjs().format('YYYY-MM-DD'),
+                    health: {
+                      status: healthRecord.status || healthRecord.healthRecordStatus || '',
+                      size: healthRecord.size || null,
+                      bodyTemperature: healthRecord.bodyTemperature || null,
+                      heartRate: healthRecord.heartRate || null,
+                      respiratoryRate: healthRecord.respiratoryRate || null,
+                      ruminateActivity: healthRecord.ruminateActivity || null,
+                      chestCircumference: healthRecord.chestCircumference || null,
+                      bodyLength: healthRecord.bodyLength || null,
+                      description: healthRecord.description || null,
+                    },
+                    id: index,
+                    type: 'HEALTH_RECORD' as const,
                   },
-                  id: index,
-                  type: 'HEALTH_RECORD' as const,
-                },
-              ]
+                ]
               : [],
             penResponse: null,
             key: index.toString(),
@@ -93,23 +93,23 @@ const ReviewImportCow = ({ onReviewData }: ReviewImportCowProps) => {
             inPen: false,
             healthInfoResponses: healthRecord
               ? [
-                {
-                  date: err.dateOfBirth || dayjs().format('YYYY-MM-DD'),
-                  health: {
-                    status: healthRecord.status || healthRecord.healthRecordStatus || '',
-                    size: healthRecord.size || null,
-                    bodyTemperature: healthRecord.bodyTemperature || null,
-                    heartRate: healthRecord.heartRate || null,
-                    respiratoryRate: healthRecord.respiratoryRate || null,
-                    ruminateActivity: healthRecord.ruminateActivity || null,
-                    chestCircumference: healthRecord.chestCircumference || null,
-                    bodyLength: healthRecord.bodyLength || null,
-                    description: healthRecord.description || null,
+                  {
+                    date: err.dateOfBirth || dayjs().format('YYYY-MM-DD'),
+                    health: {
+                      status: healthRecord.status || healthRecord.healthRecordStatus || '',
+                      size: healthRecord.size || null,
+                      bodyTemperature: healthRecord.bodyTemperature || null,
+                      heartRate: healthRecord.heartRate || null,
+                      respiratoryRate: healthRecord.respiratoryRate || null,
+                      ruminateActivity: healthRecord.ruminateActivity || null,
+                      chestCircumference: healthRecord.chestCircumference || null,
+                      bodyLength: healthRecord.bodyLength || null,
+                      description: healthRecord.description || null,
+                    },
+                    id: index,
+                    type: 'HEALTH_RECORD' as const,
                   },
-                  id: index,
-                  type: 'HEALTH_RECORD' as const,
-                },
-              ]
+                ]
               : [],
             penResponse: null,
             key: (cowSuccesses.length + index).toString(),
@@ -125,7 +125,7 @@ const ReviewImportCow = ({ onReviewData }: ReviewImportCowProps) => {
         })),
         ...healthErrors.map((err: any) => ({
           source: 'health',
-          message: `${err.cowName}: ${err.errorString?.join(', ') || 'Unknown error'}`,
+          message: `${err.cowName}: ${err.errorStrings?.join(', ') || 'Unknown error'}`,
         })),
       ];
 
@@ -178,23 +178,23 @@ const ReviewImportCow = ({ onReviewData }: ReviewImportCowProps) => {
               inPen: false,
               healthInfoResponses: healthRecord
                 ? [
-                  {
-                    date: cow.dateOfBirth || dayjs().format('YYYY-MM-DD'),
-                    health: {
-                      status: healthRecord.status || healthRecord.healthRecordStatus || '',
-                      size: healthRecord.size || null,
-                      bodyTemperature: healthRecord.bodyTemperature || null,
-                      heartRate: healthRecord.heartRate || null,
-                      respiratoryRate: healthRecord.respiratoryRate || null,
-                      ruminateActivity: healthRecord.ruminateActivity || null,
-                      chestCircumference: healthRecord.chestCircumference || null,
-                      bodyLength: healthRecord.bodyLength || null,
-                      description: healthRecord.description || null,
+                    {
+                      date: cow.dateOfBirth || dayjs().format('YYYY-MM-DD'),
+                      health: {
+                        status: healthRecord.status || healthRecord.healthRecordStatus || '',
+                        size: healthRecord.size || null,
+                        bodyTemperature: healthRecord.bodyTemperature || null,
+                        heartRate: healthRecord.heartRate || null,
+                        respiratoryRate: healthRecord.respiratoryRate || null,
+                        ruminateActivity: healthRecord.ruminateActivity || null,
+                        chestCircumference: healthRecord.chestCircumference || null,
+                        bodyLength: healthRecord.bodyLength || null,
+                        description: healthRecord.description || null,
+                      },
+                      id: index,
+                      type: 'HEALTH_RECORD' as const,
                     },
-                    id: index,
-                    type: 'HEALTH_RECORD' as const,
-                  },
-                ]
+                  ]
                 : [],
               penResponse: null,
               key: index.toString(),
@@ -221,23 +221,23 @@ const ReviewImportCow = ({ onReviewData }: ReviewImportCowProps) => {
               inPen: false,
               healthInfoResponses: healthRecord
                 ? [
-                  {
-                    date: err.dateOfBirth || dayjs().format('YYYY-MM-DD'),
-                    health: {
-                      status: healthRecord.status || healthRecord.healthRecordStatus || '',
-                      size: healthRecord.size || null,
-                      bodyTemperature: healthRecord.bodyTemperature || null,
-                      heartRate: healthRecord.heartRate || null,
-                      respiratoryRate: healthRecord.respiratoryRate || null,
-                      ruminateActivity: healthRecord.ruminateActivity || null,
-                      chestCircumference: healthRecord.chestCircumference || null,
-                      bodyLength: healthRecord.bodyLength || null,
-                      description: healthRecord.description || null,
+                    {
+                      date: err.dateOfBirth || dayjs().format('YYYY-MM-DD'),
+                      health: {
+                        status: healthRecord.status || healthRecord.healthRecordStatus || '',
+                        size: healthRecord.size || null,
+                        bodyTemperature: healthRecord.bodyTemperature || null,
+                        heartRate: healthRecord.heartRate || null,
+                        respiratoryRate: healthRecord.respiratoryRate || null,
+                        ruminateActivity: healthRecord.ruminateActivity || null,
+                        chestCircumference: healthRecord.chestCircumference || null,
+                        bodyLength: healthRecord.bodyLength || null,
+                        description: healthRecord.description || null,
+                      },
+                      id: index,
+                      type: 'HEALTH_RECORD' as const,
                     },
-                    id: index,
-                    type: 'HEALTH_RECORD' as const,
-                  },
-                ]
+                  ]
                 : [],
               penResponse: null,
               key: (cowSuccesses.length + index).toString(),
@@ -253,7 +253,7 @@ const ReviewImportCow = ({ onReviewData }: ReviewImportCowProps) => {
           })),
           ...healthErrors.map((err: any) => ({
             source: 'health',
-            message: `${err.cowName}: ${err.errorString?.join(', ') || 'Unknown error'}`,
+            message: `${err.cowName}: ${err.errorStrings?.join(', ') || 'Unknown error'}`,
           })),
         ];
 
