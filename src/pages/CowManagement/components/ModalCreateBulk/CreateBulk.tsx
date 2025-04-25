@@ -1,3 +1,4 @@
+
 import { CheckCircleOutlined } from '@ant-design/icons';
 import CardComponent from '@components/Card/CardComponent';
 import FormComponent from '@components/Form/FormComponent';
@@ -7,26 +8,16 @@ import { CowType } from '@model/Cow/CowType';
 import { COW_TYPE_PATH } from '@service/api/CowType/cowType';
 import { cowStatus } from '@service/data/cowStatus';
 import { formatStatusWithCamel } from '@utils/format';
-import {
-  Alert,
-  Badge,
-  Card,
-  Col,
-  Divider,
-  Form,
-  message,
-  Row,
-  Table,
-  Tooltip,
-} from 'antd';
+import { Alert, Badge, Card, Col, Divider, Form, message, Row, Table, Tooltip } from 'antd';
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import ButtonComponent from '../../../../components/Button/ButtonComponent';
-import ModalComponent from '../../../../components/Modal/ModalComponent';
-import useFetcher from '../../../../hooks/useFetcher';
-import { Cow } from '../../../../model/Cow/Cow';
-import { Pen } from '../../../../model/Pen';
+import ButtonComponent from '@components/Button/ButtonComponent';
+import ModalComponent from '@components/Modal/ModalComponent';
+import useFetcher from '@hooks/useFetcher';
+import { Cow } from '@model/Cow/Cow';
+import { Pen } from '@model/Pen';
 import EmptyComponent from '@components/Error/EmptyComponent';
+
 
 interface CreateBulkModalProps {
   modal: any;
@@ -34,25 +25,16 @@ interface CreateBulkModalProps {
   mutateCows: any;
 }
 
-const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
-  modal,
-  availableCows,
-  mutateCows,
-}) => {
+const CreateBulkModal: React.FC<CreateBulkModalProps> = ({ modal, availableCows, mutateCows }) => {
   const { trigger, isLoading } = useFetcher('cow-pens/create-bulk', 'POST');
-  const { data: cowTypesData } = useFetcher<CowType[]>(
-    COW_TYPE_PATH.COW_TYPES,
-    'GET'
-  );
+  const { data: cowTypesData } = useFetcher<CowType[]>(COW_TYPE_PATH.COW_TYPES, 'GET');
   const [form] = Form.useForm();
   const selectedCowTypeId = Form.useWatch('cowTypeId', form);
   const selectedCowStatus = Form.useWatch('cowStatus', form);
   const { t } = useTranslation();
 
   // Convert selectedCowTypeId to number
-  const selectedCowTypeIdAsNumber = selectedCowTypeId
-    ? Number(selectedCowTypeId)
-    : undefined;
+  const selectedCowTypeIdAsNumber = selectedCowTypeId ? Number(selectedCowTypeId) : undefined;
 
   // Filter cowTypeOptions
   const cowTypeOptions = useMemo(() => {
@@ -68,8 +50,7 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
     if (!selectedCowTypeIdAsNumber || !selectedCowStatus) return [];
     return availableCows.filter(
       (cow) =>
-        cow.cowType.cowTypeId === selectedCowTypeIdAsNumber &&
-        cow.cowStatus === selectedCowStatus
+        cow.cowType.cowTypeId === selectedCowTypeIdAsNumber && cow.cowStatus === selectedCowStatus
     );
   }, [availableCows, selectedCowTypeIdAsNumber, selectedCowStatus]);
 
@@ -93,17 +74,13 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
 
   const handleCowSelection = (cowId: number) => {
     setSelectedCows((prev) =>
-      prev.includes(cowId)
-        ? prev.filter((id) => id !== cowId)
-        : [...prev, cowId]
+      prev.includes(cowId) ? prev.filter((id) => id !== cowId) : [...prev, cowId]
     );
   };
 
   const handlePenSelection = (penId: string) => {
     setSelectedPens((prev) =>
-      prev.includes(penId)
-        ? prev.filter((id) => id !== penId)
-        : [...prev, penId]
+      prev.includes(penId) ? prev.filter((id) => id !== penId) : [...prev, penId]
     );
   };
 
@@ -142,8 +119,7 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
         .map((cow) => Number(cow.cowId));
       setSelectedCows(selectedCowIds);
       const selectedPenIds =
-        dataPenInArea.slice(0, selectedCowIds.length).map((pen) => pen.penId) ||
-        [];
+        dataPenInArea.slice(0, selectedCowIds.length).map((pen) => pen.penId) || [];
       setSelectedPens(selectedPenIds);
     }
   };
@@ -156,18 +132,12 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
       align: 'center' as const,
       width: 80,
       render: (cowId: number) => (
-        <Tooltip
-          title={selectedCows.includes(cowId) ? t('Deselect') : t('Select')}
-        >
+        <Tooltip title={selectedCows.includes(cowId) ? t('Deselect') : t('Select')}>
           <input
             type="checkbox"
             checked={selectedCows.includes(cowId)}
             onChange={() => handleCowSelection(cowId)}
-            disabled={
-              !selectedCowTypeIdAsNumber ||
-              !selectedCowStatus ||
-              !dataPenInArea.length
-            }
+            disabled={!selectedCowTypeIdAsNumber || !selectedCowStatus || !dataPenInArea.length}
           />
         </Tooltip>
       ),
@@ -205,29 +175,23 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
       align: 'center' as const,
       width: 80,
       render: (penId: string) => (
-        <Tooltip
-          title={selectedPens.includes(penId) ? t('Deselect') : t('Select')}
-        >
+        <Tooltip title={selectedPens.includes(penId) ? t('Deselect') : t('Select')}>
           <input
             type="checkbox"
             checked={selectedPens.includes(penId)}
             onChange={() => handlePenSelection(penId)}
-            disabled={
-              !selectedCowTypeIdAsNumber ||
-              !selectedCowStatus ||
-              !dataPenInArea.length
-            }
+            disabled={!selectedCowTypeIdAsNumber || !selectedCowStatus || !dataPenInArea.length}
           />
         </Tooltip>
       ),
     },
-
+  
     {
-      title: t('Area'),
-      dataIndex: ['area', 'name'],
-      key: 'name',
-      sorter: (a: Pen, b: Pen) => a.name.localeCompare(b.name),
-    },
+     title: t('Area'),
+     dataIndex: ['area','name'],
+     key: 'name',
+     sorter: (a: Pen, b: Pen) => a.name.localeCompare(b.name),
+   },
     {
       title: t('Pen Name'),
       dataIndex: 'name',
@@ -281,10 +245,7 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
               type="primary"
               onClick={handleSubmit}
               loading={isLoading}
-              disabled={
-                selectedCows.length !== selectedPens.length ||
-                !selectedCows.length
-              }
+              disabled={selectedCows.length !== selectedPens.length || !selectedCows.length}
               size="large"
             >
               {t('Submit')}
@@ -306,12 +267,7 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
                 <Col xs={24} md={12}>
                   <Form.Item
                     name="cowTypeId"
-                    rules={[
-                      {
-                        required: true,
-                        message: t('Please select a cow type'),
-                      },
-                    ]}
+                    rules={[{ required: true, message: t('Please select a cow type') }]}
                   >
                     <SelectComponent
                       style={{ width: '100%' }}
@@ -324,12 +280,7 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
                 <Col xs={24} md={12}>
                   <Form.Item
                     name="cowStatus"
-                    rules={[
-                      {
-                        required: true,
-                        message: t('Please select a cow status'),
-                      },
-                    ]}
+                    rules={[{ required: true, message: t('Please select a cow status') }]}
                   >
                     <SelectComponent
                       style={{ width: '100%' }}
@@ -341,28 +292,22 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
                   </Form.Item>
                 </Col>
               </Row>
-              {selectedCowTypeIdAsNumber &&
-                selectedCowStatus &&
-                !filteredCows.length && (
-                  <Alert
-                    message={t('No cows available for the selected criteria')}
-                    type="error"
-                    showIcon
-                    className="mt-3 rounded-lg"
-                  />
-                )}
-              {selectedCowTypeIdAsNumber &&
-                selectedCowStatus &&
-                !dataPenInArea.length && (
-                  <Alert
-                    message={t(
-                      'No empty pens available for the selected criteria'
-                    )}
-                    type="error"
-                    showIcon
-                    className="mt-3 rounded-lg"
-                  />
-                )}
+              {selectedCowTypeIdAsNumber && selectedCowStatus && !filteredCows.length && (
+                <Alert
+                  message={t('No cows available for the selected criteria')}
+                  type="error"
+                  showIcon
+                  className="mt-3 rounded-lg"
+                />
+              )}
+              {selectedCowTypeIdAsNumber && selectedCowStatus && !dataPenInArea.length && (
+                <Alert
+                  message={t('No empty pens available for the selected criteria')}
+                  type="error"
+                  showIcon
+                  className="mt-3 rounded-lg"
+                />
+              )}
             </div>
 
             <Divider className="my-10 border-gray-300" />
@@ -430,23 +375,23 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
                   </Card>
                 </Col>
               </Row>
-              {selectedCows.length !== selectedPens.length &&
-                selectedCows.length > 0 && (
-                  <Alert
-                    message={t('Selected cows must match selected pens', {
-                      count0: selectedCows.length,
-                      count1: selectedPens.length,
-                    })}
-                    type="warning"
-                    showIcon
-                    className="mt-4 rounded-lg text-center"
-                  />
-                )}
+              {selectedCows.length !== selectedPens.length && selectedCows.length > 0 && (
+                <Alert
+                  message={t('Selected cows must match selected pens', {
+                    count0: selectedCows.length,
+                    count1: selectedPens.length,
+                  })}
+                  type="warning"
+                  showIcon
+                  className="mt-4 rounded-lg text-center"
+                />
+              )}
             </div>
 
             <Divider className="my-10 border-gray-300" />
 
             <div className="text-center">
+
               <ButtonComponent
                 onClick={handleSelectAllCows}
                 type="primary"
@@ -459,9 +404,7 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
                 }
                 className="hover:bg-blue-600 transition-colors"
               >
-                {selectedCows.length > 0
-                  ? t('Deselect All')
-                  : t('Select All Cows')}{' '}
+                {selectedCows.length > 0 ? t('Deselect All') : t('Select All Cows')}{' '}
                 ({selectedCows.length}/{dataPenInArea?.length || 0})
               </ButtonComponent>
             </div>
@@ -469,6 +412,6 @@ const CreateBulkModal: React.FC<CreateBulkModalProps> = ({
         </CardComponent>
       </ModalComponent>
     </div>
-  );
+  ); 
 };
-export default CreateBulkModal;
+export default CreateBulkModal; 
