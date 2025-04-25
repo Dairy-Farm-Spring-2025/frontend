@@ -335,7 +335,7 @@ import TableComponent from '@components/Table/TableComponent';
                      bordered={false}
                      className="shadow-md h-full bg-white rounded-lg"
                    >
-                     <TableComponent
+                     <Table
                        dataSource={filteredCows}
                        columns={cowColumns}
                        rowKey="cowId"
