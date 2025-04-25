@@ -796,5 +796,6 @@
   "Are you sure to set out of stock for selected milk batches?": "Bạn có chắc việc đặt là hết hàng cho các lô sữa được chọn", 
   "Edit Feed Meal Information":"Chỉnh sửa thông tin bữa ăn", 
   "inUse" : "Đang sử dụng", 
-  "noUse":"Đang không sử dụng"
+  "noUse":"Đang không sử dụng", 
+  "Updated successfully":"Cập nhật thành công"
 }
