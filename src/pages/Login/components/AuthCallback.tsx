@@ -46,7 +46,7 @@ const AuthCallback = () => {
             userId
           )}&userName=${encodeURIComponent(userName)}&roleName=${encodeURIComponent(roleName)}`;
           window.location.href = redirectUrl;
-        } else if (['Manager', 'Admin'].includes(roleName)) {
+        } else if (['Manager', 'Admin', 'Veterinarians'].includes(roleName)) {
           dispatch(login(data));
           toast.showSuccess(t('Login success'));
           navigate('/dairy');
