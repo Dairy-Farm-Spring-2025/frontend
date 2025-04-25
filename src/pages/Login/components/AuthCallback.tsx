@@ -27,13 +27,21 @@ const AuthCallback = () => {
           roleName: roleName,
           userId: userId,
         };
-        if (
-          roleName !== 'Manager' &&
-          roleName !== 'Admin' &&
-          roleName !== 'Veterinarians'
-        ) {
-          toast.showError(t('You do not permission to access'));
-          navigate('/login');
+        if (roleName !== 'Manager' && roleName !== 'Admin' && roleName !== 'Veterinarians') {
+          // TEST
+          const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
+          const isAndroid = /android/i.test(userAgent);
+          const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !(window as any).MSStream;
+          if (isAndroid || isIOS) {
+            navigate(
+              `exp://b_cbp6g-yusers-8081.exp.direct?access_token=${accessToken}&refresh_token=${refreshToken}&userId=${userId}&userName=${userName}&roleName=${roleName}`
+            );
+            console.log('navigate');
+          } else {
+            toast.showError(t('You do not permission to access'));
+            navigate('/login');
+          }
+          // Test End
         } else {
           dispatch(login(data));
           toast.showSuccess(t('Login success'));
@@ -55,7 +63,7 @@ const AuthCallback = () => {
   }, [dispatch]);
 
   return (
-    <div className="w-full flex justify-center">
+    <div className='w-full flex justify-center'>
       <Spin />
     </div>
   );

@@ -18,10 +18,7 @@ import { useNavigate } from 'react-router-dom';
 const GOOGLE_AUTH_URL = `https://api.dairyfarmfpt.website/oauth2/authorize/google`;
 const LoginForm = () => {
   const navigate = useNavigate();
-  const { trigger, isLoading } = useFetcher<UserResponse>(
-    USER_PATH.SIGN_IN,
-    'POST'
-  );
+  const { trigger, isLoading } = useFetcher<UserResponse>(USER_PATH.SIGN_IN, 'POST');
   const user = useSelector((state: RootState) => state.user); // Lấy userId từ Redux
   const dispatch = useDispatch();
   const toast = useToast();
@@ -38,11 +35,7 @@ const LoginForm = () => {
       const response: UserResponse = await trigger({ body: data });
       if (response.message && response.data) {
         const role = response.data.roleName;
-        if (
-          role !== 'Manager' &&
-          role !== 'Admin' &&
-          role !== 'Veterinarians'
-        ) {
+        if (role !== 'Manager' && role !== 'Admin' && role !== 'Veterinarians') {
           toast.showError(t('You do not permission to access'));
         } else {
           await dispatch(login(response.data));
@@ -65,68 +58,66 @@ const LoginForm = () => {
   }, [user, navigate]);
   return (
     <div>
-      <div className="text-center">
-        <h2 className="text-3xl font-bold text-darkGreen">{t('Welcome')}</h2>
+      <div className='text-center'>
+        <h2 className='text-3xl font-bold text-darkGreen'>{t('Welcome')}</h2>
       </div>
-      <Divider className="my-5" />
-      <div className="w-full">
+      <Divider className='my-5' />
+      <div className='w-full'>
         <FormComponent
           onFinish={handleFinish}
           form={form}
           labelCol={{ span: 24 }}
-          className="flex flex-col gap-2"
+          className='flex flex-col gap-2'
         >
           <FormItemComponent
-            label={<span className="text-base font-semibold">Email</span>}
-            name="email"
+            label={<span className='text-base font-semibold'>Email</span>}
+            name='email'
             rules={[{ required: true, type: 'email' }]}
           >
             <Input
-              prefix={<UserOutlined className="text-gray-500" />}
-              placeholder="Email..."
-              className="py-3 px-5 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              prefix={<UserOutlined className='text-gray-500' />}
+              placeholder='Email...'
+              className='py-3 px-5 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500'
             />
           </FormItemComponent>
 
           <FormItemComponent
-            label={
-              <span className="text-base font-semibold">{t('Password')}</span>
-            }
-            name="password"
+            label={<span className='text-base font-semibold'>{t('Password')}</span>}
+            name='password'
             rules={[{ required: true }]}
           >
             <Input.Password
-              prefix={<LockOutlined className="text-gray-500" />}
+              prefix={<LockOutlined className='text-gray-500' />}
               placeholder={`${t('Password')}...`}
-              className="py-3 px-5 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              className='py-3 px-5 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500'
             />
           </FormItemComponent>
           <p
             onClick={handleForgetPassword}
-            className="text-blue-500 hover:text-blue-700 cursor-pointer forgot-password-btn"
+            className='text-blue-500 hover:text-blue-700 cursor-pointer forgot-password-btn'
           >
             {t('Forgot Password?')}
           </p>
           <ButtonComponent
             loading={isLoading}
-            htmlType="submit"
-            type="primary"
-            className="!w-full "
+            htmlType='submit'
+            type='primary'
+            className='!w-full '
           >
             {t('Login')}
           </ButtonComponent>
-          <Divider className="!border-gray-400">{t('or sign in with')}</Divider>
+          <Divider className='!border-gray-400'>{t('or sign in with')}</Divider>
           <ButtonComponent
-            type="primary"
+            type='primary'
             onClick={handleGoogleLogin}
-            className="!w-full !h-full flex items-center justify-center gap-2"
-            buttonType="geekblue"
+            className='!w-full !h-full flex items-center justify-center gap-2'
+            buttonType='geekblue'
           >
             <Image
               width={25}
               height={25}
               preview={false}
-              src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/768px-Google_%22G%22_logo.svg.png"
+              src='https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/768px-Google_%22G%22_logo.svg.png'
             />
             <p> {t('Login with Google')}</p>
           </ButtonComponent>
