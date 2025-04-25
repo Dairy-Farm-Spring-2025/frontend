@@ -47,6 +47,9 @@ const validateCow = (cow: Cow): ValidationError[] => {
   if (!cow.healthInfoResponses[0]?.health?.bodyLength) {
     errors.push({ field: 'bodyLength', message: 'Body Length is required' });
   }
+  if (!cow.healthInfoResponses[0]?.health?.respiratoryRate) {
+    errors.push({ field: 'respiratoryRate', message: 'Respiratory Rate is required' });
+  }
   return errors;
 };
 
@@ -64,10 +67,15 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
           .filter((err) => err.source === 'health' && err.message.startsWith(`${item.name}:`))
           .map((err) => err.message.split(':').slice(1).join(':').trim());
 
+        // Extract cow errors for this cow from the errors prop
+        const cowErrors = errors
+          .filter((err) => err.source === 'cow' && err.message.startsWith(`${item.name}:`))
+          .map((err) => err.message.split(':').slice(1).join(':').trim());
+
         return {
           ...item,
           key: item.key || index.toString(),
-          errorStrings: [...(item.errorStrings || []), ...healthErrors], // Combine cow and health errors
+          errorStrings: [...(item.errorStrings || []), ...cowErrors, ...healthErrors], // Combine cow and health errors
           healthInfoResponses: item.healthInfoResponses || [],
           cowTypeName: item.cowTypeName || item.cowType?.name || '',
         };
@@ -137,6 +145,9 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
                 }
                 if (field === 'healthInfoResponses' && value[0]?.health?.bodyLength) {
                   return err !== 'Body Length is required';
+                }
+                if (field === 'healthInfoResponses' && value[0]?.health?.respiratoryRate) {
+                  return err !== 'Respiratory Rate is required';
                 }
                 return true;
               }),
