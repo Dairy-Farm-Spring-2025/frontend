@@ -33,9 +33,7 @@ const AuthCallback = () => {
           const isAndroid = /android/i.test(userAgent);
           const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !(window as any).MSStream;
           if (isAndroid || isIOS) {
-            navigate(
-              `exp://b_cbp6g-yusers-8081.exp.direct?access_token=${accessToken}&refresh_token=${refreshToken}&userId=${userId}&userName=${userName}&roleName=${roleName}`
-            );
+            window.location.href = `exp://b_cbp6g-yusers-8081.exp.direct?access_token=${accessToken}&refresh_token=${refreshToken}&userId=${userId}&userName=${userName}&roleName=${roleName}`;
             console.log('navigate');
           } else {
             toast.showError(t('You do not permission to access'));
