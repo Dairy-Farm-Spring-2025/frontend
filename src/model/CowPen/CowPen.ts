@@ -30,6 +30,9 @@ export type PenEntity = {
   penStatus: string;
   areaBelongto: AreaBelongto;
   areaId: string;
+  area: {
+    name:string
+  }; 
 };
 
 interface CowEntity {

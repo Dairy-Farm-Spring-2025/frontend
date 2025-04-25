@@ -433,7 +433,7 @@ const HistoryMoveCow = ({ id, isLoadingHistory }: HistoryMoveCowProps) => {
   );
 
   const penOptions = useMemo(
-    () => emptyPens.map((pen) => ({ value: pen.penId, label: pen.name })),
+    () => emptyPens.map((pen) => ({ value: pen.penId, label: `${pen.name} (${pen.area?.name || 'N/A'})`,})),
     [emptyPens]
   );
 
@@ -584,6 +584,7 @@ const HistoryMoveCow = ({ id, isLoadingHistory }: HistoryMoveCowProps) => {
                       placeholder={t('Select Pen')}
                       options={penOptions}
                       disabled={!areaId || emptyPens.length === 0}
+                      
                       size="middle"
                     />
                   </FormItemComponent>
