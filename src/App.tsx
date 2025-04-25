@@ -14,11 +14,9 @@ function App() {
   const { t } = useTranslation();
 
   useEffect(() => {
-    const userAgent =
-      navigator.userAgent || navigator.vendor || (window as any).opera;
+    const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
     const isAndroid = /android/i.test(userAgent);
-    const isIOS =
-      /iPad|iPhone|iPod/.test(userAgent) && !(window as any).MSStream;
+    const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !(window as any).MSStream;
 
     if (isAndroid || isIOS) {
       // Gợi ý mở app
@@ -32,6 +30,7 @@ function App() {
         cancelText: t('No'),
         onOk: () => {
           toast.showSuccess('Mobile tới đây');
+          window.location.href = 'exp://b_cbp6g-yusers-8081.exp.direct?userId=123&token=abc';
         },
         onCancel: () => {
           toast.showSuccess('Bạn đã chọn ở lại trình duyệt.');
@@ -44,9 +43,7 @@ function App() {
     requestFCMToken();
     onMessage(messaging, (payload) => {
       console.log('Message received:', payload);
-      toast.showNotification(
-        `${payload.notification?.title}\n${payload.notification?.body}`
-      );
+      toast.showNotification(`${payload.notification?.title}\n${payload.notification?.body}`);
     });
   }, [toast]);
 
@@ -76,7 +73,7 @@ function App() {
   }
 
   return (
-    <AnimatePresence mode="wait">
+    <AnimatePresence mode='wait'>
       <AppRouting />
     </AnimatePresence>
   );
