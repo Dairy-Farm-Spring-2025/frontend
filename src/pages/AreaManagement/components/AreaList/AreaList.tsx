@@ -1,4 +1,5 @@
 import InputComponent from '@components/Input/InputComponent';
+import useGetRole from '@hooks/useGetRole';
 import useModal from '@hooks/useModal';
 import { Area } from '@model/Area';
 import { Pen } from '@model/Pen';
@@ -7,9 +8,7 @@ import { t } from 'i18next';
 import { useState } from 'react';
 import '../../index.scss';
 import ModalCreateArea from '../ModalCreateArea/ModalCreateArea';
-import ModalEditPens from '../ModalEditPen';
 import CardAreaPen from './components/CardAreaPen';
-import useGetRole from '@hooks/useGetRole';
 
 export type DataGroupAreaPen = {
   area: Area;
@@ -26,17 +25,9 @@ interface AreaListProps {
 
 const AreaList = ({ dataGroup, mutate, isLoading }: AreaListProps) => {
   const role = useGetRole();
-  const modalEdit = useModal();
   const modalCreate = useModal();
-  const [id, setId] = useState<number>(0);
   const [searchText, setSearchText] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-
-  const handleEdit = (id: number) => {
-    setId(id);
-    modalEdit.openModal();
-  };
-
   //Handle filter
   const filteredData = dataGroup.filter(({ area }) =>
     area.name.toLowerCase().includes(searchText.toLowerCase())
@@ -64,7 +55,6 @@ const AreaList = ({ dataGroup, mutate, isLoading }: AreaListProps) => {
       {role !== 'Veterinarians' && (
         <ModalCreateArea modal={modalCreate} mutate={mutate} />
       )}
-      <ModalEditPens id={id} modal={modalEdit} mutate={mutate} />
       <Divider className="my-4" />
       <div className="flex flex-col gap-5 mb-5">
         <InputComponent.Search
@@ -82,7 +72,7 @@ const AreaList = ({ dataGroup, mutate, isLoading }: AreaListProps) => {
       <div>
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-10">
           {paginatedData.map((element) => (
-            <CardAreaPen element={element} handleEdit={handleEdit} />
+            <CardAreaPen element={element} />
           ))}
         </div>
       </div>

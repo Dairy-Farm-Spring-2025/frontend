@@ -9,7 +9,7 @@ import useGetRole from '@hooks/useGetRole';
 import useModal from '@hooks/useModal';
 import { Cow } from '@model/Cow/Cow';
 import { CowType } from '@model/Cow/CowType';
-import CreateBulkModal from '@pages/CowPenManagement/components/MoveCowManagement/components/ListCowNotInPen/components/CreateBulk/CreateBulk';
+import CreateBulkModal from '@pages/CowManagement/components/ModalCreateBulk/CreateBulk';
 import { COW_PATH } from '@service/api/Cow/cowApi';
 import { COW_TYPE_PATH } from '@service/api/CowType/cowType';
 import { cowOrigin, cowOriginFiltered } from '@service/data/cowOrigin';
