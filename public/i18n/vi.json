@@ -538,6 +538,7 @@
   "Sick Cow": "Bò bị bệnh",
   "In use": "Đang sử dụng",
   "No use": "Không sử dụng",
+  "No Use":"Không sử dụng", 
   "Feed meal status": "Trạng thái bữa ăn",
   "Inventory": "Tồn kho",
   "Out of stock": "Hết hàng",
@@ -792,5 +793,8 @@
   "Milking day {{date}}": "Vắt sữa ngày {{date}}",
   "for {{milkBatch}} selected milk batches": "cho {{milkBatch}} lô sữa được chọn",
   "Just \"Inventory\" milk batches can be set out of stock": "Chỉ lô sữa \"tồn kho\" có thể được đặt hết hàng",
-  "Are you sure to set out of stock for selected milk batches?": "Bạn có chắc việc đặt là hết hàng cho các lô sữa được chọn"
+  "Are you sure to set out of stock for selected milk batches?": "Bạn có chắc việc đặt là hết hàng cho các lô sữa được chọn", 
+  "Edit Feed Meal Information":"Chỉnh sửa thông tin bữa ăn", 
+  "inUse" : "Đang sử dụng", 
+  "noUse":"Đang không sử dụng"
 }
