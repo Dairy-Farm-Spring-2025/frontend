@@ -27,14 +27,15 @@ const AuthCallback = () => {
           roleName: roleName,
           userId: userId,
         };
-        if (roleName !== 'Manager' && roleName !== 'Admin' && roleName !== 'Veterinarians') {
+        if (roleName !== 'Manager' && roleName !== 'Admin' && roleName === 'Veterinarians') {
           // TEST
           const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
           const isAndroid = /android/i.test(userAgent);
           const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !(window as any).MSStream;
-          if (isAndroid || isIOS) {
+          if ((isAndroid || isIOS) && roleName === 'Veterinarians') {
             window.location.href = `exp://b_cbp6g-yusers-8081.exp.direct?access_token=${accessToken}&refresh_token=${refreshToken}&userId=${userId}&userName=${userName}&roleName=${roleName}`;
-            console.log('navigate');
+          } else if ((isAndroid || isIOS) && roleName !== 'Veterinarians') {
+            window.location.href = `exp://b_cbp6g-yusers-8081.exp.direct?access_token=${accessToken}&refresh_token=${refreshToken}&userId=${userId}&userName=${userName}&roleName=${roleName}`;
           } else {
             toast.showError(t('You do not permission to access'));
             navigate('/login');
