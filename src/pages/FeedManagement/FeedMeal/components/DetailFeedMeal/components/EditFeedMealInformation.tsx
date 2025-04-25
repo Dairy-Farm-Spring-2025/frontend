@@ -1,7 +1,6 @@
 import ModalComponent from '@components/Modal/ModalComponent';
 import ReactQuillComponent from '@components/ReactQuill/ReactQuillComponent';
 import api from '@config/axios/axios';
-import useFetcher from '@hooks/useFetcher';
 import { FeedMeals } from '@model/Feed/Feed';
 import { Form, Input, message, Select } from 'antd';
 import { useEffect } from 'react';
@@ -24,10 +23,7 @@ const EditFeedMealInformation = ({
 }: EditFeedMealInformationProps) => {
   const { t } = useTranslation();
   const [form] = Form.useForm();
-  const { trigger } = useFetcher<any>(
-    `feedmeals/${feedMealId}`,
-    'PUT'
-  );
+
   useEffect(() => {
     if (data) {
       form.setFieldsValue({
@@ -57,8 +53,9 @@ const EditFeedMealInformation = ({
         status: values.status,
       };
 
-    //   const response = await api.put(`/feedmeals/${feedMealId}`, payload);
-  
+
+      const response = await api.put(`/feedmeals/${feedMealId}`, payload);
+
       if (response.status === 200) {
         message.success(t('Updated successfully'));
         onSuccess();
