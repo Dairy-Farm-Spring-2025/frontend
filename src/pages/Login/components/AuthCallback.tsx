@@ -6,6 +6,18 @@ import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
+// Environment variable for redirect URL (configure in .env or similar)
+const MOBILE_REDIRECT_URL =
+  process.env.REACT_APP_MOBILE_REDIRECT_URL || 'exp://b_cbp6g-yusers-8081.exp.direct';
+
+// Function to detect mobile devices
+const isMobileDevice = (): boolean => {
+  const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
+  return (
+    /android/i.test(userAgent) || (/iPad|iPhone|iPod/.test(userAgent) && !(window as any).MSStream)
+  );
+};
+
 const AuthCallback = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -27,24 +39,20 @@ const AuthCallback = () => {
           roleName: roleName,
           userId: userId,
         };
-        if (roleName !== 'Manager' && roleName !== 'Admin' && roleName === 'Veterinarians') {
-          // TEST
-          const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
-          const isAndroid = /android/i.test(userAgent);
-          const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !(window as any).MSStream;
-          if ((isAndroid || isIOS) && roleName === 'Veterinarians') {
-            window.location.href = `exp://b_cbp6g-yusers-8081.exp.direct?access_token=${accessToken}&refresh_token=${refreshToken}&userId=${userId}&userName=${userName}&roleName=${roleName}`;
-          } else if ((isAndroid || isIOS) && roleName !== 'Veterinarians') {
-            window.location.href = `exp://b_cbp6g-yusers-8081.exp.direct?access_token=${accessToken}&refresh_token=${refreshToken}&userId=${userId}&userName=${userName}&roleName=${roleName}`;
-          } else {
-            toast.showError(t('You do not permission to access'));
-            navigate('/login');
-          }
-          // Test End
-        } else {
+        if (['Veterinarians', 'Worker'].includes(roleName) && isMobileDevice()) {
+          const redirectUrl = `${MOBILE_REDIRECT_URL}?access_token=${encodeURIComponent(
+            accessToken
+          )}&refresh_token=${encodeURIComponent(refreshToken)}&userId=${encodeURIComponent(
+            userId
+          )}&userName=${encodeURIComponent(userName)}&roleName=${encodeURIComponent(roleName)}`;
+          window.location.href = redirectUrl;
+        } else if (['Manager', 'Admin'].includes(roleName)) {
           dispatch(login(data));
           toast.showSuccess(t('Login success'));
           navigate('/dairy');
+        } else {
+          toast.showError(t('You do not have permission to access'));
+          navigate('/login');
         }
       } else {
         toast.showError(t('Login failed'));
