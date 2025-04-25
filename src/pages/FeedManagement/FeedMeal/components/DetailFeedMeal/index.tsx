@@ -4,7 +4,7 @@ import AnimationAppear from '@components/UI/AnimationAppear';
 import WhiteBackground from '@components/UI/WhiteBackground';
 import { Divider, Spin, message } from 'antd';
 import FeedMealInformation from './components/FeedMealInformation';
-import { FeedMealDetails, FeedMeals } from '@model/Feed/Feed';
+import {  FeedMeals } from '@model/Feed/Feed';
 import Title from '@components/UI/Title';
 import FeedMealDetailsInformation from './components/FeedMealDetailsInformation';
 import { FEED_PATH } from '@service/api/Feed/feedApi';
