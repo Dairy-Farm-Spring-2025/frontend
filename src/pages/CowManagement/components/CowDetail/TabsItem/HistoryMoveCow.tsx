@@ -338,7 +338,6 @@
 
 // export default HistoryMoveCow;
 
-
 import ButtonComponent from '@components/Button/ButtonComponent';
 import FormItemComponent from '@components/Form/Item/FormItemComponent';
 import LabelForm from '@components/LabelForm/LabelForm';
@@ -433,7 +432,11 @@ const HistoryMoveCow = ({ id, isLoadingHistory }: HistoryMoveCowProps) => {
   );
 
   const penOptions = useMemo(
-    () => emptyPens.map((pen) => ({ value: pen.penId, label: `${pen.name} (${pen.area?.name || 'N/A'})`,})),
+    () =>
+      emptyPens.map((pen) => ({
+        value: pen.penId,
+        label: `${pen.name} (${pen.area?.name || 'N/A'})`,
+      })),
     [emptyPens]
   );
 
@@ -479,12 +482,6 @@ const HistoryMoveCow = ({ id, isLoadingHistory }: HistoryMoveCowProps) => {
 
   const columns = useMemo<Column[]>(
     () => [
-      {
-        title: t('#'),
-        dataIndex: 'stt',
-        key: 'stt',
-        render: (_: unknown, __: CowPenHistory, index: number) => index + 1,
-      },
       {
         title: t('In Pen Name'),
         dataIndex: 'penEntity',
@@ -584,7 +581,6 @@ const HistoryMoveCow = ({ id, isLoadingHistory }: HistoryMoveCowProps) => {
                       placeholder={t('Select Pen')}
                       options={penOptions}
                       disabled={!areaId || emptyPens.length === 0}
-                      
                       size="middle"
                     />
                   </FormItemComponent>
@@ -600,7 +596,6 @@ const HistoryMoveCow = ({ id, isLoadingHistory }: HistoryMoveCowProps) => {
                     {t('Move Cow')}
                   </ButtonComponent>
                 </div>
-
               </div>
 
               {areaId && emptyPens.length === 0 && (

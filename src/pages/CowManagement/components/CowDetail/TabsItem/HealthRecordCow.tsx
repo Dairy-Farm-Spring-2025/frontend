@@ -324,7 +324,7 @@ const HealthRecordCow = ({ cowId, data, mutate }: HealthRecordCowProps) => {
           />
         </FormComponent>
       ) : (
-        <Splitter className="flex w-full h-[70vh] !min-h-[500px]">
+        <Splitter className="flex w-full h-[70vh] !min-h-[500px] ">
           <Splitter.Panel
             className="w-fit"
             defaultSize={'40%'}

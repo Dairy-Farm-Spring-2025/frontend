@@ -125,7 +125,6 @@ const HealthRecordForm = ({
           labelStyle={{
             fontSize: 15,
             fontWeight: 'bold',
-            width: 230,
           }}
           items={[
             {
@@ -377,9 +376,7 @@ const HealthRecordForm = ({
         {!edited ? (
           <QuillRender
             description={
-              data?.description
-                ? (data?.description as string)
-                : t('No content')
+              data?.description ? (data?.description as string) : t('N/A')
             }
           />
         ) : (
