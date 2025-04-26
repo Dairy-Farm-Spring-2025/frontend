@@ -1,3 +1,4 @@
+
 import { UploadOutlined } from '@ant-design/icons';
 import ButtonComponent from '@components/Button/ButtonComponent';
 import useFetcher from '@hooks/useFetcher';
@@ -5,6 +6,7 @@ import { COW_PATH } from '@service/api/Cow/cowApi';
 import { message, Upload } from 'antd';
 import { Cow } from '@model/Cow/Cow';
 import dayjs from 'dayjs';
+import toast from 'react-hot-toast';
 
 interface ReviewImportCowProps {
   onReviewData: (data: Cow[], errors: { source: string; message: string }[]) => void;
@@ -31,7 +33,12 @@ const ReviewImportCow = ({ onReviewData }: ReviewImportCowProps) => {
 
       const combinedSuccesses: Cow[] = [
         ...cowSuccesses.map((cow: any, index: number) => {
-          const healthRecord = healthSuccesses.find((health: any) => health.cowName === cow.name) || null;
+          // Check both healthSuccesses and healthErrors for a matching health record
+          const healthRecord =
+            healthSuccesses.find((health: any) => health.cowName === cow.name) ||
+            healthErrors.find((health: any) => health.cowName === cow.name) ||
+            null;
+
           return {
             cowId: '',
             name: cow.name || '',
@@ -44,7 +51,7 @@ const ReviewImportCow = ({ onReviewData }: ReviewImportCowProps) => {
             gender: cow.gender || '',
             cowType: { name: cow.cowTypeName || '' },
             cowTypeEntity: { name: cow.cowTypeName || '' },
-            cowTypeName: cow.cowTypeName || '', // Explicitly include cowTypeName
+            cowTypeName: cow.cowTypeName || '',
             createdAt: '',
             updatedAt: '',
             inPen: false,
@@ -74,7 +81,11 @@ const ReviewImportCow = ({ onReviewData }: ReviewImportCowProps) => {
           };
         }),
         ...cowErrors.map((err: any, index: number) => {
-          const healthRecord = healthErrors.find((health: any) => health.cowName === err.name) || null;
+          const healthRecord =
+            healthSuccesses.find((health: any) => health.cowName === err.name) ||
+            healthErrors.find((health: any) => health.cowName === err.name) ||
+            null;
+
           return {
             cowId: '',
             name: err.name || '',
@@ -87,7 +98,7 @@ const ReviewImportCow = ({ onReviewData }: ReviewImportCowProps) => {
             gender: err.gender || '',
             cowType: { name: err.cowTypeName || '' },
             cowTypeEntity: { name: err.cowTypeName || '' },
-            cowTypeName: err.cowTypeName || '', // Explicitly include cowTypeName
+            cowTypeName: err.cowTypeName || '',
             createdAt: '',
             updatedAt: '',
             inPen: false,
@@ -144,6 +155,13 @@ const ReviewImportCow = ({ onReviewData }: ReviewImportCowProps) => {
       }
     } catch (error: any) {
       console.error('Lỗi khi review:', error);
+
+      if (error?.code === 400 && error?.message === 'Invalid import times') {
+        toast.error('Số lần import không hợp lệ. Hãy tải file Excel mới nhất!');
+        onReviewData([], []);
+        return;
+      }
+
       let combinedSuccesses: Cow[] = [];
       let combinedErrors: { source: string; message: string }[] = [];
       let errorMessage = 'Có lỗi xảy ra khi xử lý file excel. Vui lòng kiểm tra lại.';
@@ -159,7 +177,11 @@ const ReviewImportCow = ({ onReviewData }: ReviewImportCowProps) => {
 
         combinedSuccesses = [
           ...cowSuccesses.map((cow: any, index: number) => {
-            const healthRecord = healthSuccesses.find((health: any) => health.cowName === cow.name) || null;
+            const healthRecord =
+              healthSuccesses.find((health: any) => health.cowName === cow.name) ||
+              healthErrors.find((health: any) => health.cowName === cow.name) ||
+              null;
+
             return {
               cowId: '',
               name: cow.name || '',
@@ -202,7 +224,11 @@ const ReviewImportCow = ({ onReviewData }: ReviewImportCowProps) => {
             };
           }),
           ...cowErrors.map((err: any, index: number) => {
-            const healthRecord = healthErrors.find((health: any) => health.cowName === err.name) || null;
+            const healthRecord =
+              healthSuccesses.find((health: any) => health.cowName === err.name) ||
+              healthErrors.find((health: any) => health.cowName === err.name) ||
+              null;
+
             return {
               cowId: '',
               name: err.name || '',
