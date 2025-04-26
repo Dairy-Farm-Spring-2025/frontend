@@ -538,7 +538,7 @@
   "Sick Cow": "Bò bị bệnh",
   "In use": "Đang sử dụng",
   "No use": "Không sử dụng",
-  "No Use":"Không sử dụng", 
+  "No Use": "Không sử dụng",
   "Feed meal status": "Trạng thái bữa ăn",
   "Inventory": "Tồn kho",
   "Out of stock": "Hết hàng",
@@ -795,8 +795,10 @@
   "Just \"Inventory\" milk batches can be set out of stock": "Chỉ lô sữa \"tồn kho\" có thể được đặt hết hàng",
   "Are you sure to set out of stock for selected milk batches?": "Bạn có chắc việc đặt là hết hàng cho các lô sữa được chọn",
   "Heathcare": "Chăm sóc sức khỏe",
-  "Edit Feed Meal Information":"Chỉnh sửa thông tin bữa ăn", 
-  "inUse" : "Đang sử dụng", 
-  "noUse":"Đang không sử dụng", 
-  "Updated successfully":"Cập nhật thành công"
+  "Edit Feed Meal Information": "Chỉnh sửa thông tin bữa ăn",
+  "inUse": "Đang sử dụng",
+  "noUse": "Đang không sử dụng",
+  "Updated successfully": "Cập nhật thành công",
+  "Date of Birth must be at least 10 months before today for \"Milking Cow\"": "Ngày sinh bắt buộc phải trước 10 tháng kể từ hôm nay cho \"Bò Lấy Sữa\"",
+  "Date of Birth must be earlier than Date of Enter": "Ngày sinh buộc phải trước ngày nhập vào"
 }
