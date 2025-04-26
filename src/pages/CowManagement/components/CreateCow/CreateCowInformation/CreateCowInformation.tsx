@@ -12,11 +12,13 @@ import { CowType } from '@model/Cow/CowType';
 import { cowOrigin } from '@service/data/cowOrigin';
 import { cowStatus } from '@service/data/cowStatus';
 import { genderData } from '@service/data/gender';
-
+import dayjs from 'dayjs';
 
 const CreateCowInformation = () => {
   const { data } = useFetcher<any[]>('cow-types', 'GET');
-  const [optionsCowType, setOptionsCowType] = useState<SelectProps['options']>([]);
+  const [optionsCowType, setOptionsCowType] = useState<SelectProps['options']>(
+    []
+  );
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -36,17 +38,40 @@ const CreateCowInformation = () => {
           <Title className="!text-2xl w-1/2">{t('Date Information')}</Title>
           <div className="flex flex-col gap-5 w-full">
             <FormItemComponent
+              dependencies={['cowStatus', 'dateOfEnter']}
               rules={[
                 { required: true, message: t('Date of Birth is required') },
                 ({ getFieldValue }) => ({
                   validator(_, value: any) {
                     const dateOfEnter = getFieldValue('dateOfEnter');
-                    if (!value || !dateOfEnter || value.isBefore(dateOfEnter)) {
+                    const cowStatus = getFieldValue('cowStatus');
+
+                    if (!value) {
                       return Promise.resolve();
                     }
-                    return Promise.reject(
-                      new Error(t('Date of Birth must be earlier than Date of Enter'))
-                    );
+
+                    if (dateOfEnter && !value.isBefore(dateOfEnter)) {
+                      return Promise.reject(
+                        new Error(
+                          t('Date of Birth must be earlier than Date of Enter')
+                        )
+                      );
+                    }
+
+                    if (cowStatus === 'milkingCow') {
+                      const today = value.clone().add(10, 'month');
+                      if (today.isAfter()) {
+                        return Promise.reject(
+                          new Error(
+                            t(
+                              'Date of Birth must be at least 10 months before today for "Milking Cow"'
+                            )
+                          )
+                        );
+                      }
+                    }
+
+                    return Promise.resolve();
                   },
                 }),
               ]}
@@ -54,7 +79,12 @@ const CreateCowInformation = () => {
               name="dateOfBirth"
               label={<LabelForm>{t('Date Of Birth')}</LabelForm>}
             >
-              <DatePickerComponent className="w-full !text-[18px]" />
+              <DatePickerComponent
+                className="w-full !text-[18px]"
+                disabledDate={(current) => {
+                  return current && current.isAfter(dayjs().startOf('day'));
+                }}
+              />
             </FormItemComponent>
             <FormItemComponent
               rules={[
@@ -66,7 +96,9 @@ const CreateCowInformation = () => {
                       return Promise.resolve();
                     }
                     return Promise.reject(
-                      new Error(t('Date of Enter must be later than Date of Birth'))
+                      new Error(
+                        t('Date of Birth must be earlier than Date of Enter')
+                      )
                     );
                   },
                 }),
@@ -75,7 +107,12 @@ const CreateCowInformation = () => {
               name="dateOfEnter"
               label={<LabelForm>{t('Date Of Enter')}</LabelForm>}
             >
-              <DatePickerComponent className="w-full" />
+              <DatePickerComponent
+                className="w-full"
+                disabledDate={(current) => {
+                  return current && current.isBefore(dayjs().startOf('day'));
+                }}
+              />
             </FormItemComponent>
           </div>
         </div>
@@ -99,28 +136,7 @@ const CreateCowInformation = () => {
               <SelectComponent options={optionsCowType} className="w-full" />
             </FormItemComponent>
             <FormItemComponent
-              rules={[
-                { required: true, message: t('Cow Status is required') },
-                ({ getFieldValue }) => ({
-                  validator(_, value: string) {
-                    if (value === 'milkingCow') {
-                      const dateOfBirth = getFieldValue('dateOfBirth');
-                      const dateOfEnter = getFieldValue('dateOfEnter');
-                      if (dateOfBirth && dateOfEnter) {
-                        const monthsDiff = dateOfEnter.diff(dateOfBirth, 'month');
-                        if (monthsDiff < 10) {
-                          return Promise.reject(
-                            new Error(
-                              t('Date of Birth must be at least 10 months before Date of Enter for Milking Cow')
-                            )
-                          );
-                        }
-                      }
-                    }
-                    return Promise.resolve();
-                  },
-                }),
-              ]}
+              rules={[{ required: true, message: t('Cow Status is required') }]}
               className="w-full"
               name="cowStatus"
               label={<LabelForm>{t('Cow Status')}</LabelForm>}
