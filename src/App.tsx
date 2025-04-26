@@ -5,48 +5,45 @@ import { AnimatePresence } from 'framer-motion';
 import { useEffect } from 'react';
 import AppRouting from './config/routes/AppRouting';
 import { messaging, requestFCMToken } from '@utils/firebase';
-import { Modal } from 'antd';
-import { useTranslation } from 'react-i18next';
+// import { Modal } from 'antd';
+// import { useTranslation } from 'react-i18next';
 
 function App() {
   const toast = useToast();
   useNetworkStatus();
-  const { t } = useTranslation();
+  // const { t } = useTranslation();
 
-  useEffect(() => {
-    const userAgent =
-      navigator.userAgent || navigator.vendor || (window as any).opera;
-    const isAndroid = /android/i.test(userAgent);
-    const isIOS =
-      /iPad|iPhone|iPod/.test(userAgent) && !(window as any).MSStream;
+  // useEffect(() => {
+  //   const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
+  //   const isAndroid = /android/i.test(userAgent);
+  //   const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !(window as any).MSStream;
 
-    if (isAndroid || isIOS) {
-      // Gợi ý mở app
-      Modal.confirm({
-        title: t('Open dairy farm mobile app'),
-        content: t(
-          'You are using web of this app as mobile, do you want to redirect to mobile app?'
-        ),
-        centered: true,
-        okText: t('Yes'),
-        cancelText: t('No'),
-        onOk: () => {
-          toast.showSuccess('Mobile tới đây');
-        },
-        onCancel: () => {
-          toast.showSuccess('Bạn đã chọn ở lại trình duyệt.');
-        },
-      });
-    }
-  }, [t]);
+  //   if (isAndroid || isIOS) {
+  //     // Gợi ý mở app
+  //     Modal.confirm({
+  //       title: t('Open dairy farm mobile app'),
+  //       content: t(
+  //         'You are using web of this app as mobile, do you want to redirect to mobile app?'
+  //       ),
+  //       centered: true,
+  //       okText: t('Yes'),
+  //       cancelText: t('No'),
+  //       onOk: () => {
+  //         toast.showSuccess('Mobile tới đây');
+  //         window.location.href = `exp://b_cbp6g-yusers-8081.exp.direct`;
+  //       },
+  //       onCancel: () => {
+  //         toast.showSuccess('Bạn đã chọn ở lại trình duyệt.');
+  //       },
+  //     });
+  //   }
+  // }, [t]);
 
   useEffect(() => {
     requestFCMToken();
     onMessage(messaging, (payload) => {
       console.log('Message received:', payload);
-      toast.showNotification(
-        `${payload.notification?.title}\n${payload.notification?.body}`
-      );
+      toast.showNotification(`${payload.notification?.title}\n${payload.notification?.body}`);
     });
   }, [toast]);
 
@@ -76,7 +73,7 @@ function App() {
   }
 
   return (
-    <AnimatePresence mode="wait">
+    <AnimatePresence mode='wait'>
       <AppRouting />
     </AnimatePresence>
   );

@@ -19,7 +19,7 @@ import {
   import InputComponent from '@components/Input/InputComponent';
   import SelectComponent from '@components/Select/SelectComponent';
   import { CowType } from '@model/Cow/CowType';
-  import CreateBulkModal from '@pages/CowPenManagement/components/MoveCowManagement/components/ListCowNotInPen/components/CreateBulk/CreateBulk';
+
   import { COW_TYPE_PATH } from '@service/api/CowType/cowType';
   import { HEALTH_RECORD_STATUS } from '@service/data/healthRecordStatus';
   import { Divider, InputNumber, message, Modal, Popover } from 'antd';
@@ -32,6 +32,7 @@ import {
   import ReviewImportCow from './components/ReviewImportCow';
   import ModalListError from './components/ModalListErrors';
   import FloatButtonComponent from '@components/FloatButton/FloatButtonComponent';
+import CreateBulkModal from '../ModalCreateBulk/CreateBulk';
   
   const ListCowImport = () => {
     const { t } = useTranslation();
