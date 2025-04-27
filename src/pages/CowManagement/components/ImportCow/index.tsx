@@ -108,6 +108,10 @@ const ListCowImport = () => {
       Modal.success({
         title: t('Đã nhập bò thành công'),
         okText: t('Tiếp theo'),
+        okButtonProps: {
+          style: { backgroundColor: '#15803D', borderColor: '#15803D' },
+          className: 'shadow-lg text-base px-5 !w-fit duration-300', // Green color to match other buttons
+        },
         onOk: () => {
           setIsBulkModalOpen(true);
         },
