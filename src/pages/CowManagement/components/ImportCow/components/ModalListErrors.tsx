@@ -217,7 +217,7 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
             style={hasError ? { borderColor: 'red', minWidth: '120px' } : { minWidth: '120px' }}
           />
         ) : (
-          <span style={hasError ? { color: 'red' } : {}}>{formatStatusWithCamel(data) || '-'}</span>
+          <span style={hasError ? { color: 'red' } : {}}>{t(formatStatusWithCamel(data)) || '-'}</span>
         );
       },
     },
