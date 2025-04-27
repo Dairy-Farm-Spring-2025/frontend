@@ -7,7 +7,7 @@ export type Area = {
   width: number;
   penLength: number;
   penWidth: number;
-  areaType: 'cowHousing' | 'milkingParlor' | 'wareHouse';
+  areaType: 'cowHousing' | 'quarantine';
   numberInRow: number;
   maxPen: number;
   areaId: number;
@@ -20,5 +20,5 @@ export type Area = {
     cowTypeId: string;
     name: string;
     description?: string;
-  }
+  };
 };

@@ -2,13 +2,14 @@ import { ArrowRightOutlined } from '@ant-design/icons';
 import CardComponent from '@components/Card/CardComponent';
 import TextTitle from '@components/UI/TextTitle';
 import Title from '@components/UI/Title';
-import { formatDateHour } from '@utils/format';
+import { formatAreaType, formatDateHour } from '@utils/format';
 import { Button, Tooltip } from 'antd';
 import { t } from 'i18next';
 import { LiaChartAreaSolid } from 'react-icons/lia';
 import { useNavigate } from 'react-router-dom';
 import { DataGroupAreaPen } from '../AreaList';
 import { cowStatus } from '@service/data/cowStatus'; // Import cowStatus
+import TagComponents from '@components/UI/TagComponents';
 
 interface CardAreaPenProps {
   element: DataGroupAreaPen;
@@ -32,7 +33,17 @@ const CardAreaPen = ({ element }: CardAreaPenProps) => {
             <div className="flex gap-2 items-center">
               <LiaChartAreaSolid size={50} />
               <div className="flex flex-col">
-                <Title>{element.area?.name}</Title>
+                <div className="flex gap-3">
+                  <Title>{element.area?.name}</Title>
+                  <TagComponents
+                    color={
+                      element?.area?.areaType === 'quarantine' ? 'red' : 'blue'
+                    }
+                  >
+                    {element?.area?.areaType === 'quarantine' ? '🏥' : '🏡'}{' '}
+                    {t(formatAreaType(element?.area?.areaType))}
+                  </TagComponents>
+                </div>
                 <p className="text-gray-400">
                   {t('Created At')}: {formatDateHour(element?.area?.createdAt)}
                 </p>

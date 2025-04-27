@@ -2,7 +2,6 @@ import InputComponent from '@components/Input/InputComponent';
 import useGetRole from '@hooks/useGetRole';
 import useModal from '@hooks/useModal';
 import { Area } from '@model/Area';
-import { Pen } from '@model/Pen';
 import { Divider, Pagination, PaginationProps, Spin } from 'antd';
 import { t } from 'i18next';
 import { useState } from 'react';
@@ -12,7 +11,6 @@ import CardAreaPen from './components/CardAreaPen';
 
 export type DataGroupAreaPen = {
   area: Area;
-  pens: Pen[];
 };
 
 const ITEMS_PER_PAGE = 6;
