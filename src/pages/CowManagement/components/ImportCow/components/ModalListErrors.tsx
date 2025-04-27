@@ -12,7 +12,7 @@ import DatePicker from 'antd/es/date-picker';
 import dayjs from 'dayjs';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IoMdFemale, IoMdMale } from 'react-icons/io';
+import { IoMdFemale } from 'react-icons/io';
 import { COW_TYPE_FILTER } from '@service/data/cowType';
 import toast from 'react-hot-toast';
 import { Cow, HealthResponse } from '@model/Cow/Cow';
@@ -30,25 +30,26 @@ interface ModalListErrorProps {
   onSave: (updatedData: Cow[]) => void;
 }
 
-const validateCow = (cow: Cow): ValidationError[] => {
+const validateCow = (cow: Cow, t: (key: string) => string): ValidationError[] => {
   const errors: ValidationError[] = [];
-  if (!cow.cowOrigin) errors.push({ field: 'cowOrigin', message: 'Cow Origin is required' });
-  if (!cow.cowTypeName) errors.push({ field: 'cowTypeName', message: 'Cow Type is required' });
-  if (!cow.gender) errors.push({ field: 'gender', message: 'Gender is required' });
+  if (!cow.cowOrigin) errors.push({ field: 'cowOrigin', message: t('Cow Origin is required') });
+  if (!cow.cowTypeName) errors.push({ field: 'cowTypeName', message: t('Cow Type is required') });
+  if (!cow.gender) errors.push({ field: 'gender', message: t('Gender is required') });
+  if (!cow.dateOfEnter) errors.push({ field: 'dateOfEnter', message: t('Date of Enter is required') });
   if (!cow.healthInfoResponses[0]?.health?.heartRate) {
-    errors.push({ field: 'heartRate', message: 'Heart Rate is required' });
+    errors.push({ field: 'heartRate', message: t('Heart Rate is required') });
   }
   if (!cow.healthInfoResponses[0]?.health?.ruminateActivity) {
-    errors.push({ field: 'ruminateActivity', message: 'Ruminate Activity is required' });
+    errors.push({ field: 'ruminateActivity', message: t('Ruminate Activity is required') });
   }
   if (!cow.healthInfoResponses[0]?.health?.chestCircumference) {
-    errors.push({ field: 'chestCircumference', message: 'Chest Circumference is required' });
+    errors.push({ field: 'chestCircumference', message: t('Chest Circumference is required') });
   }
   if (!cow.healthInfoResponses[0]?.health?.bodyLength) {
-    errors.push({ field: 'bodyLength', message: 'Body Length is required' });
+    errors.push({ field: 'bodyLength', message: t('Body Length is required') });
   }
   if (!cow.healthInfoResponses[0]?.health?.respiratoryRate) {
-    errors.push({ field: 'respiratoryRate', message: 'Respiratory Rate is required' });
+    errors.push({ field: 'respiratoryRate', message: t('Respiratory Rate is required') });
   }
   return errors;
 };
@@ -65,17 +66,31 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
         // Extract health errors for this cow from the errors prop
         const healthErrors = errors
           .filter((err) => err.source === 'health' && err.message.startsWith(`${item.name}:`))
-          .map((err) => err.message.split(':').slice(1).join(':').trim());
+          .flatMap((err) => {
+            const errorMessage = err.message.split(':').slice(1).join(':').trim();
+            // Split the concatenated error messages into individual messages
+            return errorMessage.split(',').map((msg) => {
+              const trimmedMsg = msg.trim();
+              return t(trimmedMsg, trimmedMsg); // Translate each individual error message
+            });
+          });
 
         // Extract cow errors for this cow from the errors prop
         const cowErrors = errors
           .filter((err) => err.source === 'cow' && err.message.startsWith(`${item.name}:`))
-          .map((err) => err.message.split(':').slice(1).join(':').trim());
+          .flatMap((err) => {
+            const errorMessage = err.message.split(':').slice(1).join(':').trim();
+            // Split the concatenated error messages into individual messages
+            return errorMessage.split(',').map((msg) => {
+              const trimmedMsg = msg.trim();
+              return t(trimmedMsg, trimmedMsg); // Translate each individual error message
+            });
+          });
 
         return {
           ...item,
           key: item.key || index.toString(),
-          errorStrings: [...(item.errorStrings || []), ...cowErrors, ...healthErrors], // Combine cow and health errors
+          errorStrings: [...cowErrors, ...healthErrors], // Combine translated errors
           healthInfoResponses: item.healthInfoResponses || [],
           cowTypeName: item.cowTypeName || item.cowType?.name || '',
         };
@@ -84,7 +99,7 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
       console.log('Initialized localData:', formattedData);
       console.log('Errors:', errors);
     }
-  }, [visible, data, errors]);
+  }, [visible, data, errors, t]);
 
   const errorData = useMemo(() => {
     const errorCowNames = errors
@@ -96,7 +111,7 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
       .filter((item) => errorCowNames.includes(item.name) || (item.errorStrings && item.errorStrings.length > 0))
       .map((item) => ({
         ...item,
-        errorMessage: item.errorStrings?.join('; ') || '-', // Use combined errorStrings
+        errorMessage: [...new Set(item.errorStrings || [])].join('; ') || '-', // Use Set to remove duplicates
       }));
   }, [localData, errors]);
 
@@ -105,9 +120,9 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
   const handleCancel = () => setEditingKey(null);
 
   const handleSave = (record: Cow) => {
-    const errors = validateCow(record);
+    const errors = validateCow(record, t);
     if (errors.length > 0) {
-      toast.error(t(errors[0].message));
+      toast.error(errors[0].message); // The message is already translated via t in validateCow
       return;
     }
     setEditingKey(null);
@@ -131,23 +146,24 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
               cowType: field === 'cowTypeName' ? { ...item.cowType, name: value } : item.cowType,
               cowTypeEntity: field === 'cowTypeName' ? { ...item.cowTypeEntity, name: value } : item.cowTypeEntity,
               errorStrings: (item.errorStrings || []).filter((err) => {
-                if (field === 'cowOrigin' && value) return err !== 'Cow Origin is required';
-                if (field === 'cowTypeName' && value) return err !== 'Cow Type is required';
-                if (field === 'gender' && value) return err !== 'Gender is required';
+                if (field === 'cowOrigin' && value) return err !== t('Cow Origin is required');
+                if (field === 'cowTypeName' && value) return err !== t('Cow Type is required');
+                if (field === 'gender' && value) return err !== t('Gender is required');
+                if (field === 'dateOfEnter' && value) return err !== t('Date of Enter is required');
                 if (field === 'healthInfoResponses' && value[0]?.health?.heartRate) {
-                  return err !== 'Heart Rate is required';
+                  return err !== t('Heart Rate is required');
                 }
                 if (field === 'healthInfoResponses' && value[0]?.health?.ruminateActivity) {
-                  return err !== 'Ruminate Activity is required';
+                  return err !== t('Ruminate Activity is required');
                 }
                 if (field === 'healthInfoResponses' && value[0]?.health?.chestCircumference) {
-                  return err !== 'Chest Circumference is required';
+                  return err !== t('Chest Circumference is required');
                 }
                 if (field === 'healthInfoResponses' && value[0]?.health?.bodyLength) {
-                  return err !== 'Body Length is required';
+                  return err !== t('Body Length is required');
                 }
                 if (field === 'healthInfoResponses' && value[0]?.health?.respiratoryRate) {
-                  return err !== 'Respiratory Rate is required';
+                  return err !== t('Respiratory Rate is required');
                 }
                 return true;
               }),
@@ -160,7 +176,7 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
   const handleSaveAll = async () => {
     setIsSaving(true);
     try {
-      const invalidCows = localData.filter((record) => validateCow(record).length > 0);
+      const invalidCows = localData.filter((record) => validateCow(record, t).length > 0);
       if (invalidCows.length > 0) {
         toast.error(t('Please fix all errors before saving.'));
         return;
@@ -192,16 +208,16 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
       filterOptions: cowOriginFiltered(),
       editable: true,
       render: (data, record) => {
-        const hasError = record.errorMessage?.includes('Cow Origin is required');
+        const hasError = record.errorMessage?.includes(t('Cow Origin is required'));
         return editingKey === record.key ? (
           <SelectComponent
-            value={formatStatusWithCamel(data)}
+            value={t(formatStatusWithCamel(data))}
             options={cowOrigin()}
             onChange={(value) => handleChange(record.key, 'cowOrigin', value)}
             style={hasError ? { borderColor: 'red', minWidth: '120px' } : { minWidth: '120px' }}
           />
         ) : (
-          <span style={hasError ? { color: 'red' } : {}}>{formatStatusWithCamel(data) || '-'}</span>
+          <span style={hasError ? { color: 'red' } : {}}>{t(formatStatusWithCamel(data)) || '-'}</span>
         );
       },
     },
@@ -211,25 +227,23 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
       title: t('Gender'),
       filterable: true,
       filterOptions: [
-        { text: 'Đực', value: 'male' },
-        { text: 'Cái', value: 'female' },
+        { text: t('Cái'), value: 'female' },
       ],
       editable: true,
       render: (data, record) => {
-        const hasError = record.errorMessage?.includes('Gender is required');
+        const hasError = record.errorMessage?.includes(t('Gender is required'));
         return editingKey === record.key ? (
           <SelectComponent
-            value={data}
+            value={t(data)}
             options={[
-              { value: 'male', label: 'Đực' },
-              { value: 'female', label: 'Cái' },
+          
+              { value: 'female', label: t('Cái') },
             ]}
             onChange={(value) => handleChange(record.key, 'gender', value)}
             style={hasError ? { borderColor: 'red', minWidth: '120px' } : { minWidth: '120px' }}
           />
-        ) : data === 'male' ? (
-          <IoMdMale className="text-blue-600" size={20} />
-        ) : data === 'female' ? (
+        ) 
+         : data === 'female' ? (
           <IoMdFemale className="text-pink-600" size={20} />
         ) : (
           <span style={hasError ? { color: 'red' } : {}}>-</span>
@@ -244,7 +258,7 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
       filterOptions: cowTypeFilterOptions,
       editable: true,
       render: (data, record) => {
-        const hasError = record.errorMessage?.includes('Cow Type is required');
+        const hasError = record.errorMessage?.includes(t('Cow Type is required'));
         return editingKey === record.key ? (
           <SelectComponent
             value={data || ''}
@@ -263,16 +277,16 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
       title: t('Cow Status'),
       editable: true,
       render: (data, record) => {
-        const hasError = record.errorMessage?.includes('Cow Status is required');
+        const hasError = record.errorMessage?.includes(t('Cow Status is required'));
         return editingKey === record.key ? (
           <SelectComponent
-            value={formatStatusWithCamel(data)}
+            value={t(formatStatusWithCamel(data))}
             options={cowStatus()}
             onChange={(value) => handleChange(record.key, 'cowStatus', value)}
             style={hasError ? { borderColor: 'red', minWidth: '120px' } : { minWidth: '120px' }}
           />
         ) : (
-          <span style={hasError ? { color: 'red' } : {}}>{formatStatusWithCamel(data) || '-'}</span>
+          <span style={hasError ? { color: 'red' } : {}}>{t(formatStatusWithCamel(data))|| '-'}</span>
         );
       },
     },
@@ -293,14 +307,34 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
         ),
     },
     {
+      dataIndex: 'dateOfEnter',
+      key: 'dateOfEnter',
+      title: t('Date Of Enter'),
+      editable: true,
+      render: (data, record) => {
+        const hasError = record.errorMessage?.includes(t('Date of Enter is required'));
+        return editingKey === record.key ? (
+          <DatePicker
+            value={data ? dayjs(data) : null}
+            onChange={(value) => handleChange(record.key, 'dateOfEnter', value)}
+            format="YYYY-MM-DD"
+          />
+        ) : (
+          <span style={hasError ? { color: 'red' } : {}}>
+            {data ? dayjs(data).format('YYYY-MM-DD') : '-'}
+          </span>
+        );
+      },
+    },
+    {
       dataIndex: 'healthInfoResponses',
       key: 'healthRecordStatus',
       title: t('Health Status'),
       render: (data: HealthResponse[], record) => {
-        const hasError = record.errorMessage?.includes('Health Status');
+        const hasError = record.errorMessage?.includes(t('Health Status'));
         return editingKey === record.key ? (
           <SelectComponent
-            value={formatStatusWithCamel(data[0]?.health?.status)}
+            value={t(formatStatusWithCamel(data[0]?.health?.status))}
             options={HEALTH_RECORD_STATUS()}
             onChange={(value) =>
               handleChange(record.key, 'healthInfoResponses', [
@@ -315,7 +349,7 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
           />
         ) : (
           <span style={hasError ? { color: 'red' } : {}}>
-            {formatStatusWithCamel(data[0]?.health?.status) || '-'}
+            {t(formatStatusWithCamel(data[0]?.health?.status)) || '-'}
           </span>
         );
       },
@@ -325,7 +359,7 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
       key: 'healthRecordSize',
       title: t('Size (m)'),
       render: (data: HealthResponse[], record) => {
-        const hasError = record.errorMessage?.includes('Size is required');
+        const hasError = record.errorMessage?.includes(t('Size is required'));
         return editingKey === record.key ? (
           <InputNumber
             min={0}
@@ -351,7 +385,7 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
       key: 'bodyTemperature',
       title: t('Body Temperature (°C)'),
       render: (data: HealthResponse[], record) => {
-        const hasError = record.errorMessage?.includes('Body Temperature is required');
+        const hasError = record.errorMessage?.includes(t('Body Temperature is required'));
         return editingKey === record.key ? (
           <InputNumber
             min={0}
@@ -379,7 +413,7 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
       key: 'heartRate',
       title: t('Heart Rate (bpm)'),
       render: (data: HealthResponse[], record) => {
-        const hasError = record.errorMessage?.includes('Heart Rate is required');
+        const hasError = record.errorMessage?.includes(t('Heart Rate is required'));
         return editingKey === record.key ? (
           <InputNumber
             min={0}
@@ -405,7 +439,7 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
       key: 'respiratoryRate',
       title: t('Respiratory Rate (breaths/min)'),
       render: (data: HealthResponse[], record) => {
-        const hasError = record.errorMessage?.includes('Respiratory Rate is required');
+        const hasError = record.errorMessage?.includes(t('Respiratory Rate is required'));
         return editingKey === record.key ? (
           <InputNumber
             min={0}
@@ -433,7 +467,7 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
       key: 'ruminateActivity',
       title: t('Ruminate Activity (min/day)'),
       render: (data: HealthResponse[], record) => {
-        const hasError = record.errorMessage?.includes('Ruminate Activity is required');
+        const hasError = record.errorMessage?.includes(t('Ruminate Activity is required'));
         return editingKey === record.key ? (
           <InputNumber
             min={0}
@@ -461,7 +495,7 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
       key: 'chestCircumference',
       title: t('Chest Circumference (m)'),
       render: (data: HealthResponse[], record) => {
-        const hasError = record.errorMessage?.includes('Chest Circumference is required');
+        const hasError = record.errorMessage?.includes(t('Chest Circumference is required'));
         return editingKey === record.key ? (
           <InputNumber
             min={0}
@@ -489,7 +523,7 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
       key: 'bodyLength',
       title: t('Body Length (m)'),
       render: (data: HealthResponse[], record) => {
-        const hasError = record.errorMessage?.includes('Body Length is required');
+        const hasError = record.errorMessage?.includes(t('Body Length is required'));
         return editingKey === record.key ? (
           <InputNumber
             min={0}
