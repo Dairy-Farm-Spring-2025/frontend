@@ -80,7 +80,6 @@ const ModalRequestMyApplication = ({
         typeId: values.typeId,
       };
       const response = await trigger({ body: payload });
-      // mutate();
       toast.showSuccess(response.message);
       handleClose();
     } catch (error: any) {

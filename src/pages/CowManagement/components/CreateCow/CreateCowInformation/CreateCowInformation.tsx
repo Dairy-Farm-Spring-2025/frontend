@@ -122,14 +122,15 @@ const CreateCowInformation = () => {
               name="gender"
               className="w-full"
               label={<LabelForm>{t('Gender')}</LabelForm>}
-              initialValue={t('cow.female')} 
-
+              initialValue='female' 
             >
-              <InputComponent
+              <SelectComponent
                 className="w-full"
                 disabled
-                value={t('Female')} // Display translated text ("Cái" in Vietnamese)
-                key={t('Female')} // Force re-render when translation changes
+                options={[
+                  { label: t('cow.female'), value: 'female' }
+                ]}
+                defaultValue="female"
               />
             </FormItemComponent>
             <FormItemComponent
