@@ -44,7 +44,6 @@ const ConfirmImport = ({ reviewData, dataCowType, onImportSuccess, onFetchImport
             });
 
             if (invalidCows.length > 0) {
-                console.error('Invalid cows:', invalidCows);
                 toast.error(t('Một số con bò có thông tin không hợp lệ (name, cowStatus, gender, cowOrigin, cowTypeName)!'));
                 return;
             }
@@ -57,7 +56,7 @@ const ConfirmImport = ({ reviewData, dataCowType, onImportSuccess, onFetchImport
             });
 
             if (invalidHealthRecords.length > 0) {
-                console.error('Invalid health records:', invalidHealthRecords);
+             
                 toast.error(t('Một số hồ sơ sức khỏe có thông tin không hợp lệ (status)!'));
                 return;
             }
@@ -90,7 +89,6 @@ const ConfirmImport = ({ reviewData, dataCowType, onImportSuccess, onFetchImport
 
             const payload = { cows, healthRecords };
             const response = await importTrigger({ body: JSON.stringify(payload) });
-            console.log('API Response:', response);
 
             if (response?.data?.cowsResponse?.successes?.length > 0) {
                 toast.success(t(`Đã nhập thành công ${response.data.cowsResponse.successes.length} con bò!`));
@@ -106,16 +104,13 @@ const ConfirmImport = ({ reviewData, dataCowType, onImportSuccess, onFetchImport
             const allErrors = [...cowErrors, ...healthRecordErrors];
 
             if (allErrors.length > 0) {
-                console.warn('Danh sách lỗi import:', allErrors);
+              
                 toast.error(t(`Có ${allErrors.length} lỗi xảy ra. Kiểm tra console để biết thêm chi tiết.`));
             }
         } catch (error: any) {
-            console.error('Lỗi khi import:', error);
-            console.error('Error details:', error.response?.data || error.message);
 
             // Check for 400 "Invalid import times" error
             if (error.response?.data?.code === 400 && error.response?.data?.message === 'Invalid import times') {
-                console.log('Caught 400 Invalid import times error:', error.response.data);
                 toast.error(error.response.data.message); // Use raw message to avoid translation issues
                 return; // Stop further error handling
             }

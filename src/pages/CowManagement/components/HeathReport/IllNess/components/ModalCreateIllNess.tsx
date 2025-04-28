@@ -73,7 +73,6 @@ const ModalCreateIllNess = ({ modal, mutate }: ModalCreateIllNessProps) => {
   );
 
   useEffect(() => {
-    console.log(treatmentDetails);
   }, [treatmentDetails]);
 
   useEffect(() => {
@@ -111,7 +110,6 @@ const ModalCreateIllNess = ({ modal, mutate }: ModalCreateIllNessProps) => {
       const illnessValues = await illnessForm.validateFields();
       setApiBody((prevState: any) => ({ ...prevState, ...illnessValues }));
     } catch (error) {
-      console.error('Validation failed in Step 1:', error);
       throw error;
     }
   };
@@ -127,7 +125,6 @@ const ModalCreateIllNess = ({ modal, mutate }: ModalCreateIllNessProps) => {
       setTreatmentDetails(validTreatments);
       await detailsForm.validateFields();
     } catch (error) {
-      console.error('Validation failed in Step 2:', error);
       throw error;
     }
   };
