@@ -30,7 +30,24 @@ export const cowStatus = () => {
     },
   ];
 };
+export const cowStatusCreateCow = () => {
+  return [
+    {
+      value: 'milkingCow',
+      label: i18n.t('Milking cow', { defaultValue: 'Milking cow' }),
+    },
+    {
+      value: 'dryCow',
+      label: i18n.t('Dry cow', { defaultValue: 'Dry cow' }),
+    },
+    {
+      value: 'youngCow',
+      label: i18n.t('Young cow', { defaultValue: 'Young cow' }),
+    },
 
+
+  ];
+};
 export const COW_STATUS_FILTER = () => {
   return [
     {

@@ -752,7 +752,7 @@
   "Area updated successfully. ": "Khu vực cập nhật thành công",
   "Input does not match the required format (A-Z)-area-(1-0), eg: ABC-area-123": "Hãy điền khớp với định dạng bắt buộc (A-Z)-khu vực-(1-0), ví dụ: ABC-khu vực-123",
   "Pens & Cows in Area": "Chuồng và bò trong khu vực",
-  "No empty pens available in this area!": "Không có chuồng trống phù hợp trong khu vực này",
+  "No empty pens available in this area!": "Không có chuồng trống phù hợp đối với loại bò và trạng thái bò trong khu vực này",
   "Application Detail": "Chi tiết đơn từ",
   "Request Application": "Yêu cầu đơn từ",
   "Dashboard dairy": "Thống kê trang trại bò sữa",
@@ -815,8 +815,10 @@
   "Body Temperature is required": "Nhiệt độ cơ thể bị thiếu",
   "Status is required": "Trạng thái bị thiếu",
   "Đực": "Đực",
-  "Cái": "Cái",
-  "Date of Enter is required": "Ngày nhập bị thiếu",
-  "Date of Birth is required": "Ngày sinh bị thiếu",
-  "Cow Status is required": "Trạng thái bò bị thiếu"
+  "Cái": "Cái", 
+  "Date of Enter is required": "Ngày nhập bị thiếu", 
+  "Date of Birth is required":"Ngày sinh bị thiếu", 
+  "Cow Status is required":"Trạng thái bò bị thiếu",
+  "Area and Pen will be based on Cow Type and Cow Status": "Khu vực và chuồng sẽ dựa vào Loại bò và Trạng thái bò"
+
 }

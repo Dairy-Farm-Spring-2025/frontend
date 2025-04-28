@@ -18,6 +18,7 @@ import DailyMilk from './TabsItem/DailyMilk';
 import CowGeneralInformation from './TabsItem/GeneralInformation';
 import HealthRecordCow from './TabsItem/HealthRecordCow';
 import HistoryMoveCow from './TabsItem/HistoryMoveCow';
+import { formatStatusWithCamel } from '@utils/format';
 const CowDetail = () => {
   const { t } = useTranslation();
   const { id } = useParams();
@@ -93,8 +94,9 @@ const CowDetail = () => {
     <AnimationAppear>
       <WhiteBackground className="min-h-[70vh]">
         <div className="flex items-center justify-between my-4">
-          <p className="text-4xl font-bold text-primary">{dataDetail?.name}</p>
+          <p className="text-4xl font-bold text-primary">{dataDetail?.name} </p>
         </div>
+      
         <TabsComponent
           items={items}
           destroyInactiveTabPane
