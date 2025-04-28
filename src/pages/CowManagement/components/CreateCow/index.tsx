@@ -41,6 +41,10 @@ const CreateCow = () => {
     form.resetFields();
   };
 
+  const handleBack = () => {
+    setCurrentStep(0); // Go back to Step 1
+  };
+
   const handleFinish = async (values: any) => {
     if (currentStep < steps.length - 1) {
       // Step 1: Store General Information and proceed to the next step
@@ -83,7 +87,6 @@ const CreateCow = () => {
           },
           healthRecord: healthData,
         };
-
 
         // Call the import-single API
         const response = await trigger({ body: payload });
@@ -131,13 +134,21 @@ const CreateCow = () => {
               </ButtonComponent>
             )}
             {currentStep === 1 && (
-              <ButtonComponent
-                type="primary"
-                htmlType="submit"
-                loading={isLoading}
-              >
-                {t('Done')}
-              </ButtonComponent>
+              <>
+                <ButtonComponent
+                  onClick={handleBack}
+                  type="default"
+                >
+                  {t('Back')}
+                </ButtonComponent>
+                <ButtonComponent
+                  type="primary"
+                  htmlType="submit"
+                  loading={isLoading}
+                >
+                  {t('Done')}
+                </ButtonComponent>
+              </>
             )}
           </div>
         </FormComponent>
