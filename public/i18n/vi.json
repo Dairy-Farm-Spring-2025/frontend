@@ -471,7 +471,10 @@
   "Filter": "Lọc",
   "Reject": "Từ chối",
   "Male": "Đực",
-  "Female": "Cái",
+  "cow": {
+    "female": "Cái"
+  },
+
   "male": "Nam",
   "Reset": "Đặt lại",
   "female": "Nữ",

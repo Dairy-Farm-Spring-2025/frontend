@@ -11,15 +11,12 @@ import useFetcher from '@hooks/useFetcher';
 import { CowType } from '@model/Cow/CowType';
 import { cowOrigin } from '@service/data/cowOrigin';
 import { cowStatusCreateCow } from '@service/data/cowStatus';
-import { genderData } from '@service/data/gender';
 import dayjs from 'dayjs';
 import InputComponent from '@components/Input/InputComponent';
 
 const CreateCowInformation = () => {
   const { data } = useFetcher<any[]>('cow-types', 'GET');
-  const [optionsCowType, setOptionsCowType] = useState<SelectProps['options']>(
-    []
-  );
+  const [optionsCowType, setOptionsCowType] = useState<SelectProps['options']>([]);
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -61,7 +58,7 @@ const CreateCowInformation = () => {
 
                     if (cowStatus === 'milkingCow') {
                       const today = value.clone().add(10, 'month');
-                      if (today.isAfter()) {
+                      if (today.isAfter(dayjs())) {
                         return Promise.reject(
                           new Error(
                             t(
@@ -125,12 +122,14 @@ const CreateCowInformation = () => {
               name="gender"
               className="w-full"
               label={<LabelForm>{t('Gender')}</LabelForm>}
-              initialValue={t("Female")} // Set the form value to 'female' for submission
+              initialValue={t('cow.female')} 
+
             >
               <InputComponent
                 className="w-full"
                 disabled
-                value='female' // Display translated text
+                value={t('Female')} // Display translated text ("Cái" in Vietnamese)
+                key={t('Female')} // Force re-render when translation changes
               />
             </FormItemComponent>
             <FormItemComponent

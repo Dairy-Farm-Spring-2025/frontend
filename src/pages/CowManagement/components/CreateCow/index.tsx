@@ -4,10 +4,7 @@ import AnimationAppear from '@components/UI/AnimationAppear';
 import WhiteBackground from '@components/UI/WhiteBackground';
 import useFetcher from '@hooks/useFetcher';
 import useToast from '@hooks/useToast';
-import { Cow } from '@model/Cow/Cow';
-import { HealthRecordPayload } from '@model/Cow/HealthRecord';
 import { COW_PATH } from '@service/api/Cow/cowApi';
-import { HEALTH_RECORD_PATH } from '@service/api/HealthRecord/healthRecordApi';
 import { Form, Steps } from 'antd';
 import dayjs from 'dayjs';
 import { useState } from 'react';
@@ -15,14 +12,18 @@ import { useTranslation } from 'react-i18next';
 import CreateCowInformation from './CreateCowInformation/CreateCowInformation';
 import HealthRecordInformation from './CreateCowInformation/HealthRecordInformation';
 
+// Utility to strip HTML tags from a string
+const stripHtml = (html: string): string => {
+  if (!html) return '';
+  return html.replace(/<[^>]+>/g, '').trim();
+};
+
 const CreateCow = () => {
   const [form] = Form.useForm();
   const [currentStep, setCurrentStep] = useState(0);
-  const [inforData, setInforData] = useState<Cow>();
-  const { trigger, isLoading } = useFetcher(COW_PATH.COW_CREATE, 'POST');
+  const [generalInfo, setGeneralInfo] = useState<any>(null); // Store General Information data
+  const { trigger, isLoading } = useFetcher(COW_PATH.COW_CREATE_SINGLE, 'POST'); // Use the import-single endpoint
   const { t } = useTranslation();
-  const { isLoading: isLoadingHealthRecord, trigger: triggerHealthRecord } =
-    useFetcher(HEALTH_RECORD_PATH.CREATE_HEALTH_RECORD, 'POST');
   const toast = useToast();
 
   const steps = [
@@ -42,46 +43,56 @@ const CreateCow = () => {
 
   const handleFinish = async (values: any) => {
     if (currentStep < steps.length - 1) {
-      if (currentStep === 0) {
-        const data = {
-          cowStatus: values.cowStatus,
-          dateOfBirth: dayjs(values.dateOfBirth).format('YYYY-MM-DD'),
-          dateOfEnter: dayjs(values.dateOfEnter).format('YYYY-MM-DD'),
-          cowOrigin: values.cowOrigin,
-          gender: values.gender,
-          cowTypeId: values.cowTypeId,
-          description: values.description,
-        };
-        try {
-          const response = await trigger({ body: data });
-          setInforData(response.data);
-          toast.showSuccess(response.message);
-          handleClear();
-          setCurrentStep((prev) => prev + 1);
-        } catch (error: any) {
-          toast.showError(error.message);
-        }
-      }
-    }
-    if (currentStep === 1) {
+      // Step 1: Store General Information and proceed to the next step
+      const generalData = {
+        cowStatus: values.cowStatus,
+        dateOfBirth: dayjs(values.dateOfBirth).format('YYYY-MM-DD'),
+        dateOfEnter: dayjs(values.dateOfEnter).format('YYYY-MM-DD'),
+        cowOrigin: values.cowOrigin,
+        gender: values.gender,
+        cowTypeId: parseInt(values.cowTypeId, 10), // Ensure cowTypeId is a number
+        description: stripHtml(values.description), // Strip HTML from description
+      };
+      setGeneralInfo(generalData); // Store the data from the first step
+      setCurrentStep((prev) => prev + 1); // Move to the next step
+    } else {
+      // Step 2: Combine General Information and Health Information, then call the API
       try {
-        const payload: HealthRecordPayload = {
+        const healthData = {
           status: values.status,
-          period: values.period,
-          size: values.size,
-          cowId: inforData?.cowId as any,
-          description: values.description,
-          bodyLength: values.bodyLength,
-          bodyTemperature: values.bodyTemperature,
-          chestCircumference: values.chestCircumference,
-          heartRate: values.heartRate,
-          respiratoryRate: values.respiratoryRate,
-          ruminateActivity: values.ruminateActivity,
+          description: stripHtml(values.description), // Strip HTML from description
+          size: parseFloat(values.size) || 0, // Ensure number
+          bodyLength: parseFloat(values.bodyLength) || 0, // Ensure number
+          bodyTemperature: parseFloat(values.bodyTemperature) || 0, // Ensure number
+          chestCircumference: parseFloat(values.chestCircumference) || 0, // Ensure number
+          heartRate: parseFloat(values.heartRate) || 0, // Ensure number
+          respiratoryRate: parseFloat(values.respiratoryRate) || 0, // Ensure number
+          ruminateActivity: parseFloat(values.ruminateActivity) || 0, // Ensure number
         };
-        const response = await triggerHealthRecord({ body: payload });
+
+        // Combine the data into the payload expected by the API
+        const payload = {
+          cow: {
+            cowStatus: generalInfo.cowStatus,
+            dateOfBirth: generalInfo.dateOfBirth,
+            dateOfEnter: generalInfo.dateOfEnter,
+            cowOrigin: generalInfo.cowOrigin,
+            gender: generalInfo.gender,
+            cowTypeId: generalInfo.cowTypeId,
+            description: generalInfo.description,
+          },
+          healthRecord: healthData,
+        };
+
+        // Log the payload for debugging
+        console.log('Payload:', payload);
+
+        // Call the import-single API
+        const response = await trigger({ body: payload });
         toast.showSuccess(response.message);
-        setCurrentStep(0);
-        handleClear();
+        setCurrentStep(0); // Reset to the first step
+        setGeneralInfo(null); // Clear stored General Information
+        handleClear(); // Clear the form
       } catch (error: any) {
         toast.showError(error.message);
       }
@@ -116,7 +127,7 @@ const CreateCow = () => {
               <ButtonComponent
                 type="primary"
                 htmlType="submit"
-                loading={isLoading}
+                disabled={isLoading}
               >
                 {t('Next')}
               </ButtonComponent>
@@ -125,7 +136,7 @@ const CreateCow = () => {
               <ButtonComponent
                 type="primary"
                 htmlType="submit"
-                loading={isLoadingHealthRecord}
+                loading={isLoading}
               >
                 {t('Done')}
               </ButtonComponent>
