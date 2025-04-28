@@ -49,7 +49,7 @@ const HealthRecordInformation = () => {
             {
               label: (
                 <div>
-                  <LabelDescription>🐄 {t('Status')}</LabelDescription>
+                  <LabelDescription>🐄 {t('Health Status')}</LabelDescription>
                 </div>
               ),
               children: (
@@ -99,23 +99,24 @@ const HealthRecordInformation = () => {
             },
             {
               label: (
-                <div className="flex gap-2 items-center">
+                <div>
                   <LabelDescription>
-                    🫁 {t('Respiratory Rate')}
+                    🎯 {t('Chest Circumference')}
                   </LabelDescription>
                 </div>
               ),
               children: (
                 <FormItemComponent
                   rules={[{ required: true }]}
-                  name="respiratoryRate"
+                  name="chestCircumference"
                   className=" !mb-0"
                 >
-                  <InputComponent.Number addonAfter={` / ${t('minutes')}`} />
+                  <InputComponent.Number addonAfter={`m`} />
                 </FormItemComponent>
               ),
               span: 2,
             },
+     
             {
               label: (
                 <div className="flex gap-2 items-center">
@@ -139,6 +140,42 @@ const HealthRecordInformation = () => {
             },
             {
               label: (
+                <div>
+                  <LabelDescription>📐 {t('Body Length')}</LabelDescription>
+                </div>
+              ),
+              children: (
+                <FormItemComponent
+                  name="bodyLength"
+                  className=" !mb-0"
+                  rules={[{ required: true }]}
+                >
+                  <InputComponent.Number addonAfter={`m`} />
+                </FormItemComponent>
+              ),
+              span: 3,
+            },
+            {
+              label: (
+                <div className="flex gap-2 items-center">
+                  <LabelDescription>
+                    🫁 {t('Respiratory Rate')}
+                  </LabelDescription>
+                </div>
+              ),
+              children: (
+                <FormItemComponent
+                  rules={[{ required: true }]}
+                  name="respiratoryRate"
+                  className=" !mb-0"
+                >
+                  <InputComponent.Number addonAfter={` / ${t('minutes')}`} />
+                </FormItemComponent>
+              ),
+              span: 2,
+            },
+            {
+              label: (
                 <div className="flex items-center gap-2">
                   <LabelDescription>
                     🌡️ {t('Body Temperature')}
@@ -156,42 +193,7 @@ const HealthRecordInformation = () => {
               ),
               span: 2,
             },
-            {
-              label: (
-                <div>
-                  <LabelDescription>
-                    🎯 {t('Chest Circumference')}
-                  </LabelDescription>
-                </div>
-              ),
-              children: (
-                <FormItemComponent
-                  rules={[{ required: true }]}
-                  name="chestCircumference"
-                  className=" !mb-0"
-                >
-                  <InputComponent.Number addonAfter={`m`} />
-                </FormItemComponent>
-              ),
-              span: 2,
-            },
-            {
-              label: (
-                <div>
-                  <LabelDescription>📐 {t('Body Length')}</LabelDescription>
-                </div>
-              ),
-              children: (
-                <FormItemComponent
-                  name="bodyLength"
-                  className=" !mb-0"
-                  rules={[{ required: true }]}
-                >
-                  <InputComponent.Number addonAfter={`m`} />
-                </FormItemComponent>
-              ),
-              span: 3,
-            },
+            
           ]}
         />
       </div>
