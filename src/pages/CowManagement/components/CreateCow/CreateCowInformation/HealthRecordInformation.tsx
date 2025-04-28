@@ -5,9 +5,9 @@ import LabelForm from '@components/LabelForm/LabelForm';
 import ReactQuillComponent from '@components/ReactQuill/ReactQuillComponent';
 import SelectComponent from '@components/Select/SelectComponent';
 import Title from '@components/UI/Title';
-import { cowStatus } from '@service/data/cowStatus';
 import { HEALTH_RECORD_STATUS } from '@service/data/healthRecordStatus';
 import { useTranslation } from 'react-i18next';
+
 const LabelDescription = ({ children }: any) => {
   return (
     <p>
@@ -15,6 +15,7 @@ const LabelDescription = ({ children }: any) => {
     </p>
   );
 };
+
 const HealthRecordInformation = () => {
   const { t } = useTranslation();
   return (
@@ -29,23 +30,6 @@ const HealthRecordInformation = () => {
             width: 230,
           }}
           items={[
-            {
-              label: (
-                <div>
-                  <LabelDescription>🕰️ {t('Period')}</LabelDescription>
-                </div>
-              ),
-              children: (
-                <FormItemComponent
-                  rules={[{ required: true }]}
-                  name="period"
-                  className=" !mb-0"
-                >
-                  <SelectComponent options={cowStatus()} />
-                </FormItemComponent>
-              ),
-              span: 3,
-            },
             {
               label: (
                 <div>
@@ -116,7 +100,6 @@ const HealthRecordInformation = () => {
               ),
               span: 2,
             },
-     
             {
               label: (
                 <div className="flex gap-2 items-center">
@@ -193,7 +176,6 @@ const HealthRecordInformation = () => {
               ),
               span: 2,
             },
-            
           ]}
         />
       </div>
