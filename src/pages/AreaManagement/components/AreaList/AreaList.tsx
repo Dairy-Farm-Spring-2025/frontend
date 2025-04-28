@@ -2,13 +2,13 @@ import InputComponent from '@components/Input/InputComponent';
 import useGetRole from '@hooks/useGetRole';
 import useModal from '@hooks/useModal';
 import { Area } from '@model/Area';
-import { Pen } from '@model/Pen';
 import { Divider, Pagination, PaginationProps, Spin } from 'antd';
 import { t } from 'i18next';
 import { useState } from 'react';
 import '../../index.scss';
 import ModalCreateArea from '../ModalCreateArea/ModalCreateArea';
 import CardAreaPen from './components/CardAreaPen';
+import { Pen } from '@model/Pen';
 
 export type DataGroupAreaPen = {
   area: Area;

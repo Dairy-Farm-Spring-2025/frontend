@@ -19,12 +19,12 @@ import { useTranslation } from 'react-i18next';
 import { IoMdArrowRoundBack } from 'react-icons/io';
 import FeedMealForm from './components/FeedMealForm';
 import FeedMealReview from './components/FeedMealReview';
+import useRequiredForm from '@hooks/useRequiredForm';
 
 const CreateFeedMeal = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [form] = Form.useForm();
   const [formFeedMeal] = Form.useForm();
-  const formValues = Form.useWatch([], form);
   const { t } = useTranslation();
   const toast = useToast();
   const [cowTypes, setCowTypes] = useState<SelectProps['options']>([]);
@@ -37,18 +37,12 @@ const CreateFeedMeal = () => {
     COW_TYPE_PATH.COW_TYPES,
     'GET'
   );
-  const [disabledButton, setDisabledButton] = useState(true);
+  const buttonDisabled = useRequiredForm(form, ['cowTypeId', 'cowStatus']);
 
   const { trigger: triggerDryMatter, isLoading: loadingDryMatter } = useFetcher(
     FEED_PATH.FEED_MEAL_DRY_MATTER,
     'POST'
   );
-
-  useEffect(() => {
-    const isButtonDisabled =
-      !formValues || Object.values(formValues).some((value) => !value);
-    setDisabledButton(isButtonDisabled);
-  }, [formValues]);
 
   useEffect(() => {
     if (cowType) {
@@ -69,7 +63,6 @@ const CreateFeedMeal = () => {
     setCurrentStep((prev) => prev - 1);
     form.resetFields();
     setCheckDryMatter(false);
-    setDisabledButton(true);
     setDry(0);
   };
 
@@ -126,7 +119,7 @@ const CreateFeedMeal = () => {
               />
             </FormItemComponent>
             <ButtonComponent
-              disabled={disabledButton}
+              disabled={buttonDisabled}
               loading={loadingDryMatter}
               className="mt-10"
               htmlType="submit"

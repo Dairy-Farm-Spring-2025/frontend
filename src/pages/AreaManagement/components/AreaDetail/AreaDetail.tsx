@@ -17,6 +17,7 @@ import useFetcher from '@hooks/useFetcher';
 import useGetRole from '@hooks/useGetRole';
 import useToast from '@hooks/useToast';
 import { Area } from '@model/Area';
+import { AreaType } from '@model/Area/AreaType';
 import { CowStatus } from '@model/Cow/Cow';
 import { CowType } from '@model/Cow/CowType';
 import { FeedPlan } from '@model/Feed/FeedArea';
@@ -27,9 +28,11 @@ import { cowStatus } from '@service/data/cowStatus';
 import { penStatusFilter } from '@service/data/pen';
 import { formatStatusWithCamel } from '@utils/format';
 import { getPenColor } from '@utils/statusRender/penStatusRender';
+import { minDimensions } from '@utils/validate/minDimesionArea';
 import { Divider, Form, Skeleton, Tooltip } from 'antd';
+import dayjs from 'dayjs';
 import { t } from 'i18next';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
@@ -66,10 +69,9 @@ const AreaDetail = () => {
   const { edited, toggleEdit } = useEditToggle();
   const { trigger: triggerEditArea, isLoading: isLoadingUpdateArea } =
     useFetcher('edit-area', 'PUT');
-
   const areaUrl = id ? AREA_PATH.AREA_DETAIL(id) : '';
   const cowInPenUrl = id ? AREA_PATH.AREA_COW(id) : '';
-
+  const [numberInRowSuggested, setNumberInRowSuggested] = useState<number>(0);
   const {
     data: area,
     isLoading: isLoadingArea,
@@ -115,7 +117,7 @@ const AreaDetail = () => {
   );
 
   useEffect(() => {
-    if (area) {
+    if (area && !edited) {
       form.setFieldsValue({
         name: area.name,
         length: area.length,
@@ -130,29 +132,44 @@ const AreaDetail = () => {
         cowStatus: area.cowStatus,
       });
     }
-  }, [area, form]);
+  }, [area, edited, form]);
+
+  const formAreaLength = Form.useWatch(['length'], form);
+  const formAreaWidth = Form.useWatch(['width'], form);
+  const formAreaPenLength = Form.useWatch(['penLength'], form);
+  const formAreaPenWidth = Form.useWatch(['penWidth'], form);
+
+  useEffect(() => {
+    if (
+      formAreaLength > 0 &&
+      formAreaPenWidth > 0 &&
+      formAreaPenLength > 0 &&
+      formAreaWidth > 0
+    ) {
+      const numberInRow = Math.floor(formAreaLength / formAreaPenLength);
+      setNumberInRowSuggested(numberInRow);
+    }
+  }, [formAreaLength, formAreaPenLength, formAreaPenWidth, formAreaWidth]);
 
   useEffect(() => {
     if (areaError) {
       toast.showError(t('Failed to load area details'));
-      console.error('Area fetch error:', areaError);
     }
     if (cowInPenError) {
       toast.showError(t('Failed to load cow in pen data'));
-      console.error('CowInPen fetch error:', cowInPenError);
     }
     if (cowTypeError) {
       toast.showError(t('Failed to load cow types'));
-      console.error('CowType fetch error:', cowTypeError);
     }
   }, [areaError, cowInPenError, cowTypeError, toast, t]);
 
   const onSubmitEdit = async (values: any) => {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { maxPen, numberInRow, cowTypeId, ...filteredValues } = values;
+      const { maxPen, numberInRow, ...filteredValues } = values;
       const payload = {
         ...filteredValues,
+        maxPen,
+        numberInRow,
         cowTypeId: area ? area.cowTypeEntity?.cowTypeId || null : null,
       };
       console.log('Submit payload:', payload);
@@ -161,12 +178,21 @@ const AreaDetail = () => {
         body: payload,
       });
       toast.showSuccess(t(response.message));
+      await mutate();
       toggleEdit();
-      mutate();
     } catch (error: any) {
       toast.showError(error.message);
       console.error('Edit area error:', error);
     }
+  };
+
+  const validateDimensions = (
+    areaType: AreaType,
+    length: number,
+    width: number
+  ) => {
+    const { length: minLength, width: minWidth } = minDimensions[areaType];
+    return length >= minLength && width >= minWidth;
   };
 
   const columns: Column[] = [
@@ -236,6 +262,34 @@ const AreaDetail = () => {
     },
   ];
 
+  const handleValuesChange = (changedValues: any, allValues: any) => {
+    if (
+      changedValues.length ||
+      changedValues.width ||
+      changedValues.penLength ||
+      changedValues.penWidth
+    ) {
+      // Ví dụ: nếu bạn muốn tính toán maxPen, numberInRow tự động
+      const { length, width, penLength, penWidth } = allValues;
+
+      if (length && width && penLength && penWidth) {
+        const maxPen = Math.floor(
+          (width * length - 4 * length) / (penLength * penWidth)
+        );
+        const numberInRow = Math.floor(length / penLength);
+        setNumberInRowSuggested(numberInRow);
+        form.setFieldsValue({
+          maxPen,
+          numberInRow,
+        });
+      }
+    }
+  };
+
+  const disabledEditedField = () =>
+    (cowInPen?.length ?? 0) < 0 ||
+    dayjs(area?.createdAt).isBefore(dayjs().subtract(3, 'day'));
+
   return (
     <AnimationAppear>
       <WhiteBackground>
@@ -252,8 +306,12 @@ const AreaDetail = () => {
                 }
               >
                 {area && (
-                  <FormComponent form={form} onFinish={onSubmitEdit}>
-                    <div className="max-w-4/5 w-3/5 mx-auto">
+                  <FormComponent
+                    form={form}
+                    onFinish={onSubmitEdit}
+                    onValuesChange={handleValuesChange}
+                  >
+                    <div className="w-full 2xl:w-3/5 2xl:mx-auto">
                       <div className="flex w-full justify-center gap-5">
                         <div className="flex flex-col w-1/2">
                           <FormItemComponent
@@ -287,6 +345,7 @@ const AreaDetail = () => {
                           <FormItemComponent
                             name="cowTypeId"
                             label={<LabelForm>{t('Cow Type')}</LabelForm>}
+                            hidden={area?.areaType === 'quarantine'}
                           >
                             <SelectComponent
                               options={optionsCowType || []}
@@ -297,11 +356,7 @@ const AreaDetail = () => {
                           <FormItemComponent
                             name="cowStatus"
                             label={<LabelForm>{t('Cow Status')}</LabelForm>}
-                            rules={[
-                              {
-                                required: true,
-                              },
-                            ]}
+                            hidden={area?.areaType === 'quarantine'}
                           >
                             <SelectComponent
                               options={cowStatus()}
@@ -319,40 +374,208 @@ const AreaDetail = () => {
                           </FormItemComponent>
                           <FormItemComponent
                             name="numberInRow"
-                            rules={[{ required: true }]}
-                            label={<LabelForm>{t('Number in row')}</LabelForm>}
+                            rules={[
+                              {
+                                required: true,
+                              },
+                              {
+                                validator: (_, value) => {
+                                  if (!numberInRowSuggested) {
+                                    return Promise.resolve(); // No suggestion yet, allow anything
+                                  }
+                                  if (
+                                    value === numberInRowSuggested ||
+                                    value === numberInRowSuggested - 1 ||
+                                    value === numberInRowSuggested - 2
+                                  ) {
+                                    return Promise.resolve();
+                                  }
+                                  return Promise.reject(
+                                    new Error(
+                                      t(
+                                        'Please enter a value equal to suggested number or lower by at most 2'
+                                      )
+                                    )
+                                  );
+                                },
+                              },
+                            ]}
+                            label={
+                              <LabelForm>
+                                {t('Number in row')}{' '}
+                                {numberInRowSuggested > 0 &&
+                                  t('(Suggested: ~{{number}})', {
+                                    number: numberInRowSuggested,
+                                  })}
+                                :
+                              </LabelForm>
+                            }
                           >
-                            <InputComponent.Number disabled={true} />
+                            <InputComponent.Number
+                              disabled={!edited || disabledEditedField()}
+                            />
                           </FormItemComponent>
                         </div>
                         <div className="flex flex-col w-1/2">
                           <FormItemComponent
                             name="length"
                             label={<LabelForm>{t('Length')} (m)</LabelForm>}
-                            rules={[{ required: true }]}
+                            rules={[
+                              { required: true },
+                              ({ getFieldValue }) => ({
+                                validator(_, value) {
+                                  const areaType: AreaType =
+                                    getFieldValue('areaType');
+                                  const width = getFieldValue('width');
+                                  if (
+                                    !areaType ||
+                                    !width ||
+                                    validateDimensions(areaType, value, width)
+                                  ) {
+                                    return Promise.resolve();
+                                  }
+                                  return Promise.reject(
+                                    new Error(
+                                      t(`area_modal.minimum_length_area`, {
+                                        length: minDimensions[areaType].length,
+                                      })
+                                    )
+                                  );
+                                },
+                              }),
+                            ]}
                           >
-                            <InputComponent.Number disabled={!edited} />
+                            <InputComponent.Number
+                              disabled={!edited || disabledEditedField()}
+                            />
                           </FormItemComponent>
                           <FormItemComponent
                             name="width"
                             label={<LabelForm>{t('Width')} (m)</LabelForm>}
-                            rules={[{ required: true }]}
+                            rules={[
+                              { required: true },
+                              ({ getFieldValue }) => ({
+                                validator(_, value) {
+                                  const areaType: AreaType =
+                                    getFieldValue('areaType');
+                                  const length = getFieldValue('length');
+                                  if (
+                                    !areaType ||
+                                    !length ||
+                                    validateDimensions(areaType, length, value)
+                                  ) {
+                                    return Promise.resolve();
+                                  }
+                                  return Promise.reject(
+                                    new Error(
+                                      t(`area_modal.minimun_width_area`, {
+                                        width: minDimensions[areaType].width,
+                                      })
+                                    )
+                                  );
+                                },
+                              }),
+                            ]}
                           >
-                            <InputComponent.Number disabled={!edited} />
+                            <InputComponent.Number
+                              disabled={!edited || disabledEditedField()}
+                            />
                           </FormItemComponent>
                           <FormItemComponent
                             name="penLength"
                             label={<LabelForm>{t('Pen Length (m)')}</LabelForm>}
-                            rules={[{ required: true }]}
+                            dependencies={['length']}
+                            rules={[
+                              { required: true },
+                              ({ getFieldValue }) => ({
+                                validator(_, value) {
+                                  const penWidth = getFieldValue('penWidth');
+                                  if (
+                                    !value ||
+                                    !penWidth ||
+                                    value >= penWidth
+                                  ) {
+                                    return Promise.resolve();
+                                  }
+                                  return Promise.reject(
+                                    new Error(
+                                      t(
+                                        'Pen Length must be greater than or equal to the Pen Width'
+                                      )
+                                    )
+                                  );
+                                },
+                              }),
+                              ({ getFieldValue }) => ({
+                                validator(_, value) {
+                                  if (
+                                    !value ||
+                                    value <= getFieldValue('length')
+                                  ) {
+                                    return Promise.resolve();
+                                  }
+                                  return Promise.reject(
+                                    new Error(
+                                      t(
+                                        'Pen length must be smaller than area length'
+                                      )
+                                    )
+                                  );
+                                },
+                              }),
+                            ]}
                           >
-                            <InputComponent.Number disabled={!edited} />
+                            <InputComponent.Number
+                              disabled={!edited || disabledEditedField()}
+                            />
                           </FormItemComponent>
                           <FormItemComponent
                             name="penWidth"
                             label={<LabelForm>{t('Pen Width (m)')}</LabelForm>}
-                            rules={[{ required: true }]}
+                            dependencies={['width']}
+                            rules={[
+                              { required: true },
+                              ({ getFieldValue }) => ({
+                                validator(_, value) {
+                                  const penLength = getFieldValue('penLength');
+                                  if (
+                                    !value ||
+                                    !penLength ||
+                                    value <= penLength
+                                  ) {
+                                    return Promise.resolve();
+                                  }
+                                  return Promise.reject(
+                                    new Error(
+                                      t(
+                                        'Pen Width must be smaller than or equal to the Pen Length'
+                                      )
+                                    )
+                                  );
+                                },
+                              }),
+                              ({ getFieldValue }) => ({
+                                validator(_, value) {
+                                  if (
+                                    !value ||
+                                    value <= getFieldValue('width')
+                                  ) {
+                                    return Promise.resolve();
+                                  }
+                                  return Promise.reject(
+                                    new Error(
+                                      t(
+                                        'Pen width must be smaller than area width'
+                                      )
+                                    )
+                                  );
+                                },
+                              }),
+                            ]}
                           >
-                            <InputComponent.Number disabled={!edited} />
+                            <InputComponent.Number
+                              disabled={!edited || disabledEditedField()}
+                            />
                           </FormItemComponent>
                         </div>
                       </div>

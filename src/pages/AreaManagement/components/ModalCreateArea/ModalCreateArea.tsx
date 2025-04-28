@@ -15,6 +15,7 @@ import ReactQuillComponent from '@components/ReactQuill/ReactQuillComponent';
 import { cowStatus } from '@service/data/cowStatus';
 import { COW_TYPE_PATH } from '@service/api/CowType/cowType';
 import { CowType } from '@model/Cow/CowType';
+import { minDimensions } from '@utils/validate/minDimesionArea';
 
 interface ModalCreateAreaProps {
   mutate: any;
@@ -39,16 +40,16 @@ const areaTypes: { label: string; value: AreaType }[] = [
   { label: t('Quarantine'), value: 'quarantine' },
 ];
 
-const minDimensions: Record<AreaType, { length: number; width: number }> = {
-  cowHousing: { length: 20, width: 10 },
-  quarantine: { length: 20, width: 10 },
-};
-
 const ModalCreateArea = ({ mutate, modal }: ModalCreateAreaProps) => {
   const toast = useToast();
   const { trigger, isLoading } = useFetcher(AREA_PATH.AREA_CREATE, 'POST');
   const [form] = Form.useForm();
   const formValues = Form.useWatch([], form);
+  const formAreaLength = Form.useWatch(['length'], form);
+  const formAreaWidth = Form.useWatch(['width'], form);
+  const formAreaPenLength = Form.useWatch(['penLength'], form);
+  const formAreaPenWidth = Form.useWatch(['penWidth'], form);
+  const [numberInRowSuggested, setNumberInRowSuggested] = useState<number>(0);
   const [disabledButton, setDisabledButton] = useState(true);
   const [areaTypeSelected, setAreaTypeSelected] = useState<AreaType | null>(
     null
@@ -74,11 +75,11 @@ const ModalCreateArea = ({ mutate, modal }: ModalCreateAreaProps) => {
   };
 
   useEffect(() => {
-    console.log('Modal open state:', modal.open); // Debug log
     if (modal.open) {
       form.resetFields();
       setAreaTypeSelected(null);
       setDisabledButton(true);
+      setNumberInRowSuggested(0);
     }
   }, [modal.open, form]);
 
@@ -120,6 +121,30 @@ const ModalCreateArea = ({ mutate, modal }: ModalCreateAreaProps) => {
     modal.closeModal();
   };
 
+  const handleValuesChange = (changedValues: any, allValues: any) => {
+    if (
+      changedValues.length ||
+      changedValues.width ||
+      changedValues.penLength ||
+      changedValues.penWidth
+    ) {
+      // Ví dụ: nếu bạn muốn tính toán maxPen, numberInRow tự động
+      const { length, width, penLength, penWidth } = allValues;
+
+      if (length && width && penLength && penWidth) {
+        const maxPen = Math.floor(
+          (width * length - 4 * length) / (penLength * penWidth)
+        );
+        const numberInRow = Math.floor(length / penLength);
+        setNumberInRowSuggested(numberInRow);
+        form.setFieldsValue({
+          maxPen,
+          numberInRow,
+        });
+      }
+    }
+  };
+
   return (
     <div>
       <ButtonComponent
@@ -141,7 +166,43 @@ const ModalCreateArea = ({ mutate, modal }: ModalCreateAreaProps) => {
         disabledButtonOk={disabledButton}
         width={800}
       >
-        <FormComponent form={form} onFinish={onFinish}>
+        <div className="mb-4 text-sm text-gray-700">
+          <p className="font-semibold">{t('Note')}:</p>
+          <p>
+            {t(
+              'The minimum dimensions required for each area type are as follows'
+            )}
+            :
+          </p>
+          <ul className="list-disc pl-5">
+            <li>
+              <span className="font-medium">{t('Cow Housing')}:</span>{' '}
+              {t('Minimum length 20m, minimum width 10m')}
+            </li>
+
+            <li>
+              <span className="font-medium">{t('Quarantine')}:</span>{' '}
+              {t('Minimum length 20m, minimum width 10m')}
+            </li>
+          </ul>
+          <p>
+            {t(
+              'Ensure that the dimensions you enter meet or exceed the minimum requirements for the selected area type.'
+            )}
+          </p>
+          <p className="mt-2 text-blue-600">
+            <strong>{t('Tip')}:</strong>{' '}
+            {t(
+              'You can refer to the required dimensions when filling in the length and width.'
+            )}
+          </p>
+        </div>
+        <Divider className="!my-3" />
+        <FormComponent
+          form={form}
+          onFinish={onFinish}
+          onValuesChange={handleValuesChange}
+        >
           <FormItemComponent
             rules={[{ required: true }]}
             name="areaType"
@@ -156,38 +217,6 @@ const ModalCreateArea = ({ mutate, modal }: ModalCreateAreaProps) => {
             <>
               <div className="flex gap-5">
                 <div className="flex flex-col w-1/2">
-                  <FormItemComponent
-                    rules={[
-                      { required: true },
-                      ({ getFieldValue }) => ({
-                        validator(_, value) {
-                          const areaType: AreaType = getFieldValue('areaType');
-                          const width = getFieldValue('width');
-                          if (
-                            !areaType ||
-                            !width ||
-                            validateDimensions(areaType, value, width)
-                          ) {
-                            return Promise.resolve();
-                          }
-                          return Promise.reject(
-                            new Error(
-                              t(`area_modal.minimum_length_area`, {
-                                length: minDimensions[areaType].length,
-                              })
-                            )
-                          );
-                        },
-                      }),
-                    ]}
-                    name="length"
-                    label={<LabelForm>{t('Length (m)')}:</LabelForm>}
-                  >
-                    <InputComponent.Number
-                      min={1}
-                      disabled={!areaTypeSelected}
-                    />
-                  </FormItemComponent>
                   <FormItemComponent
                     rules={[
                       { required: true },
@@ -221,40 +250,31 @@ const ModalCreateArea = ({ mutate, modal }: ModalCreateAreaProps) => {
                     />
                   </FormItemComponent>
                   <FormItemComponent
-                    dependencies={['length']}
-                    hasFeedback
                     rules={[
                       { required: true },
                       ({ getFieldValue }) => ({
                         validator(_, value) {
-                          const penWidth = getFieldValue('penWidth');
-                          if (!value || !penWidth || value >= penWidth) {
+                          const areaType: AreaType = getFieldValue('areaType');
+                          const width = getFieldValue('width');
+                          if (
+                            !areaType ||
+                            !width ||
+                            validateDimensions(areaType, value, width)
+                          ) {
                             return Promise.resolve();
                           }
                           return Promise.reject(
                             new Error(
-                              t(
-                                'Pen Length must be greater than or equal to the Pen Width'
-                              )
-                            )
-                          );
-                        },
-                      }),
-                      ({ getFieldValue }) => ({
-                        validator(_, value) {
-                          if (!value || value <= getFieldValue('length')) {
-                            return Promise.resolve();
-                          }
-                          return Promise.reject(
-                            new Error(
-                              t('Pen length must be smaller than area length')
+                              t(`area_modal.minimum_length_area`, {
+                                length: minDimensions[areaType].length,
+                              })
                             )
                           );
                         },
                       }),
                     ]}
-                    name="penLength"
-                    label={<LabelForm>{t('Pen Length (m)')}:</LabelForm>}
+                    name="length"
+                    label={<LabelForm>{t('Length (m)')}:</LabelForm>}
                   >
                     <InputComponent.Number
                       min={1}
@@ -302,58 +322,135 @@ const ModalCreateArea = ({ mutate, modal }: ModalCreateAreaProps) => {
                       disabled={!areaTypeSelected}
                     />
                   </FormItemComponent>
-                </div>
-                <div className="flex flex-col w-1/2">
                   <FormItemComponent
-                    name="maxPen"
-                    rules={[{ required: true }]}
-                    label={<LabelForm>{t('Max pen')}:</LabelForm>}
-                  >
-                    <InputComponent.Number min={1} />
-                  </FormItemComponent>
-                  <FormItemComponent
-                    name="numberInRow"
+                    dependencies={['length']}
+                    hasFeedback
                     rules={[
-                      {
-                        required: true,
-                      },
+                      { required: true },
+                      ({ getFieldValue }) => ({
+                        validator(_, value) {
+                          const penWidth = getFieldValue('penWidth');
+                          if (!value || !penWidth || value >= penWidth) {
+                            return Promise.resolve();
+                          }
+                          return Promise.reject(
+                            new Error(
+                              t(
+                                'Pen Length must be greater than or equal to the Pen Width'
+                              )
+                            )
+                          );
+                        },
+                      }),
+                      ({ getFieldValue }) => ({
+                        validator(_, value) {
+                          if (!value || value <= getFieldValue('length')) {
+                            return Promise.resolve();
+                          }
+                          return Promise.reject(
+                            new Error(
+                              t('Pen length must be smaller than area length')
+                            )
+                          );
+                        },
+                      }),
                     ]}
-                    label={<LabelForm>{t('Number in row')}:</LabelForm>}
+                    name="penLength"
+                    label={<LabelForm>{t('Pen Length (m)')}:</LabelForm>}
                   >
-                    <InputComponent.Number min={1} />
+                    <InputComponent.Number
+                      min={1}
+                      disabled={!areaTypeSelected}
+                    />
                   </FormItemComponent>
-                  {areaTypeSelected !== 'quarantine' && (
-                    <>
-                      <FormItemComponent
-                        rules={[
-                          {
-                            required: true,
-                          },
-                        ]}
-                        name="cowStatus"
-                        label={<LabelForm>{t('Cow Status')}:</LabelForm>}
-                      >
-                        <Select options={cowStatus()} />
-                      </FormItemComponent>
-                      <FormItemComponent
-                        rules={[
-                          {
-                            required: true,
-                          },
-                        ]}
-                        name="cowTypeId"
-                        label={<LabelForm>{t('Cow Type')}:</LabelForm>}
-                      >
-                        <Select options={cowTypeOptions} />
-                      </FormItemComponent>
-                    </>
-                  )}
                 </div>
+                {formAreaLength > 0 &&
+                  formAreaPenLength > 0 &&
+                  formAreaPenWidth > 0 &&
+                  formAreaWidth > 0 && (
+                    <div className="flex flex-col w-1/2">
+                      <FormItemComponent
+                        name="maxPen"
+                        rules={[{ required: true }]}
+                        label={<LabelForm>{t('Max pen')}:</LabelForm>}
+                      >
+                        <InputComponent.Number min={1} readOnly />
+                      </FormItemComponent>
+                      <FormItemComponent
+                        name="numberInRow"
+                        rules={[
+                          {
+                            required: true,
+                          },
+                          {
+                            validator: (_, value) => {
+                              if (!numberInRowSuggested) {
+                                return Promise.resolve(); // No suggestion yet, allow anything
+                              }
+                              if (
+                                value === numberInRowSuggested ||
+                                value === numberInRowSuggested - 1 ||
+                                value === numberInRowSuggested - 2
+                              ) {
+                                return Promise.resolve();
+                              }
+                              return Promise.reject(
+                                new Error(
+                                  t(
+                                    'Please enter a value equal to suggested number or lower by at most 2'
+                                  )
+                                )
+                              );
+                            },
+                          },
+                        ]}
+                        label={
+                          <LabelForm>
+                            {t('Number in row')}{' '}
+                            {numberInRowSuggested > 0 &&
+                              t('(Suggested: ~{{number}})', {
+                                number: numberInRowSuggested,
+                              })}
+                            :
+                          </LabelForm>
+                        }
+                      >
+                        <InputComponent.Number min={1} />
+                      </FormItemComponent>
+                      {areaTypeSelected !== 'quarantine' && (
+                        <>
+                          <FormItemComponent
+                            rules={[
+                              {
+                                required: true,
+                              },
+                            ]}
+                            name="cowStatus"
+                            label={<LabelForm>{t('Cow Status')}:</LabelForm>}
+                          >
+                            <Select options={cowStatus()} />
+                          </FormItemComponent>
+                          <FormItemComponent
+                            rules={[
+                              {
+                                required: true,
+                              },
+                            ]}
+                            name="cowTypeId"
+                            label={<LabelForm>{t('Cow Type')}:</LabelForm>}
+                          >
+                            <Select options={cowTypeOptions} />
+                          </FormItemComponent>
+                        </>
+                      )}
+                    </div>
+                  )}
               </div>
               <FormItemComponent
                 rules={[{ required: true }, { validator: validateInput }]}
                 name="name"
                 label={<LabelForm>{t('Name')}:</LabelForm>}
+                hasFeedback
               >
                 <Input />
               </FormItemComponent>
@@ -371,38 +468,6 @@ const ModalCreateArea = ({ mutate, modal }: ModalCreateAreaProps) => {
             </p>
           )}
         </FormComponent>
-        <Divider />
-        <div className="mb-4 text-sm text-gray-700">
-          <p className="font-semibold">{t('Note')}:</p>
-          <p>
-            {t(
-              'The minimum dimensions required for each area type are as follows'
-            )}
-            :
-          </p>
-          <ul className="list-disc pl-5">
-            <li>
-              <span className="font-medium">{t('Cow Housing')}:</span>{' '}
-              {t('Minimum length 20m, minimum width 10m')}
-            </li>
-
-            <li>
-              <span className="font-medium">{t('Quarantine')}:</span>{' '}
-              {t('Minimum length 20m, minimum width 10m')}
-            </li>
-          </ul>
-          <p>
-            {t(
-              'Ensure that the dimensions you enter meet or exceed the minimum requirements for the selected area type.'
-            )}
-          </p>
-          <p className="mt-2 text-blue-600">
-            <strong>{t('Tip')}:</strong>{' '}
-            {t(
-              'You can refer to the required dimensions when filling in the length and width.'
-            )}
-          </p>
-        </div>
       </ModalComponent>
     </div>
   );

@@ -101,7 +101,7 @@ const IllNess = () => {
             </div>
           }
         >
-          <span className="text-500 ">{data?.name}</span>,
+          <span className="text-500 ">{data?.name}</span>
         </Tooltip>
       ),
       searchText: true,

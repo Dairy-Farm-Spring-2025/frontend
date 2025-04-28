@@ -431,7 +431,7 @@
   "Area map": "Sơ đồ khu vực",
   "Processing": "Đang thực hiện",
   "Closed": "Đóng",
-  "Not start": "Chưa bắt đầu",
+  "Not Start": "Chưa bắt đầu",
   "Task is not available to join": "Công việc chưa được phép tham gia",
   "Task is reported": "Công việc đã được báo cáo",
   "Review": "Đánh giá",
@@ -800,7 +800,7 @@
   "noUse": "Đang không sử dụng",
   "Updated successfully": "Cập nhật thành công",
   "Date of Birth must be at least 10 months before today for \"Milking Cow\"": "Ngày sinh bắt buộc phải trước 10 tháng kể từ hôm nay cho \"Bò Lấy Sữa\"",
-  "Date of Birth must be earlier than Date of Enter": "Ngày sinh buộc phải trước ngày nhập vào", 
+  "Date of Birth must be earlier than Date of Enter": "Ngày sinh buộc phải trước ngày nhập vào",
   "Error Message": "Các cột bị thiếu",
   "Please fix all errors before saving.": "Hãy điền các cột còn trống trước khi lưu",
   "Cow Origin is required": "Nguồn gốc bò bị thiếu",
@@ -820,4 +820,5 @@
   "Date of Birth is required":"Ngày sinh bị thiếu", 
   "Cow Status is required":"Trạng thái bò bị thiếu",
   "Area and Pen will be based on Cow Type and Cow Status": "Khu vực và chuồng sẽ dựa vào Loại bò và Trạng thái bò"
+
 }

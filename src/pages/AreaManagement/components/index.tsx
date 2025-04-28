@@ -13,8 +13,12 @@ import { Area } from '@model/Area';
 import { useEffect, useState } from 'react';
 
 const AreaAndPenTab = () => {
-  const { data, isLoading, mutate } = useFetcher<Pen[]>(PEN_PATH.PENS, 'GET');
-  const { data: dataArea } = useFetcher<Area[]>(AREA_PATH.AREAS, 'GET');
+  const { data } = useFetcher<Pen[]>(PEN_PATH.PENS, 'GET');
+  const {
+    data: dataArea,
+    mutate: mutateDataArea,
+    isLoading: isLoadingArea,
+  } = useFetcher<Area[]>(AREA_PATH.AREAS, 'GET');
   const [dataGroup, setDataGroup] = useState<DataGroupAreaPen[]>([]);
 
   useEffect(() => {
@@ -31,7 +35,11 @@ const AreaAndPenTab = () => {
       key: 'list-area',
       label: t('Area list'),
       children: (
-        <AreaList dataGroup={dataGroup} mutate={mutate} isLoading={isLoading} />
+        <AreaList
+          dataGroup={dataGroup}
+          mutate={mutateDataArea}
+          isLoading={isLoadingArea}
+        />
       ),
       icon: <UnorderedListOutlined />,
     },
