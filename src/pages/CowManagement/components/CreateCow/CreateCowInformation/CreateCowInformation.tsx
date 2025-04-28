@@ -12,7 +12,6 @@ import { CowType } from '@model/Cow/CowType';
 import { cowOrigin } from '@service/data/cowOrigin';
 import { cowStatusCreateCow } from '@service/data/cowStatus';
 import dayjs from 'dayjs';
-import InputComponent from '@components/Input/InputComponent';
 
 const CreateCowInformation = () => {
   const { data } = useFetcher<any[]>('cow-types', 'GET');
