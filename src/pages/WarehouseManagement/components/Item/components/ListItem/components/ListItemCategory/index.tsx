@@ -26,7 +26,6 @@ const ListItemCategory = ({
   const itemManagementWarehouse = useSelector(
     (state: RootState) => state.itemManagement
   );
-  console.log(id);
 
   useEffect(() => {
     const fetchData = async (id: number) => {

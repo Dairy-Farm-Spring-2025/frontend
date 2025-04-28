@@ -79,7 +79,6 @@ const ModalRequestMyApplication = ({
           : dayjs(values.toDate).format('YYYY-MM-DD'),
         typeId: values.typeId,
       };
-      console.log('Submitting payload:', payload);
       const response = await trigger({ body: payload });
       // mutate();
       toast.showSuccess(response.message);
@@ -108,7 +107,6 @@ const ModalRequestMyApplication = ({
         form={form}
         layout="vertical"
         onFinish={handleFinish}
-        onFinishFailed={(error) => console.log(error)}
       >
         <FormItemComponent
           name="typeId"

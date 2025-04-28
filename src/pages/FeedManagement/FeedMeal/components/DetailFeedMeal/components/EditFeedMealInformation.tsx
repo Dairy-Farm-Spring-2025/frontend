@@ -64,7 +64,6 @@ const EditFeedMealInformation = ({
         message.error(t('Failed to update feed meal'));
       }
     } catch (error: any) {
-      console.error('Error updating feed meal:', error);
       if (error.response) {
         const status = error.response.status;
         if (status === 400) {

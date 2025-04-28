@@ -141,7 +141,6 @@ const CardAreaImportTask = ({
         // Update last fetched data
         lastFetchedData.current[rowKey] = fetchKey;
       } catch (error) {
-        console.error(`Error fetching assignees for ${rowKey}:`, error);
         setAssigneeOptions((prev) => ({
           ...prev,
           [rowKey]: [],
@@ -214,7 +213,7 @@ const CardAreaImportTask = ({
         delete lastFetchedData.current[rowKey];
       })
       .catch((error) => {
-        console.log('Validation failed:', error);
+
       });
   };
   const handleCancel = (rowKey: string) => {

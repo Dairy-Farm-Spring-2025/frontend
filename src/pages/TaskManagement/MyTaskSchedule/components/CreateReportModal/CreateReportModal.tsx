@@ -68,7 +68,6 @@ const CreateReportModal = ({
     if (values.description) formData.append('description', values.description);
     if (values.imagesFile) {
       values.imagesFile.forEach((file: any) => {
-        console.log(file.originFileObj);
         formData.append(`imagesFile`, file.originFileObj);
       });
     }

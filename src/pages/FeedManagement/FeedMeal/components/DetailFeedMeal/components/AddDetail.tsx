@@ -40,7 +40,6 @@ const AddDetail = ({
 
   // Validate feedMealId before making the API call
   if (!feedMealId || isNaN(feedMealId)) {
-    console.error('Invalid feedMealId:', feedMealId);
     return null; // Or render an error message
   }
 

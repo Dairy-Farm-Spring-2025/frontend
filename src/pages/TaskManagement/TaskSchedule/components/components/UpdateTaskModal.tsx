@@ -77,7 +77,6 @@ const UpdateTaskModal = ({
   dataNightUser,
   dataVetAvailable,
 }: UpdateTaskModalProps) => {
-  console.log(day);
   const toast = useToast();
   const [form] = Form.useForm();
   const [formUpdateAssignee] = Form.useForm();
@@ -211,7 +210,6 @@ const UpdateTaskModal = ({
         dataTaskDetail?.taskTypeId?.name || 'default'
       ]?.() ?? fetchHandlers.default());
 
-      console.log(response);
       setAssignees(response);
     };
     if (modal.open && dataTaskDetail?.assignee === null) {

@@ -24,7 +24,6 @@ const ListUser = () => {
 
   // Hàm cập nhật role khi chọn trong dropdown
   const handleChangeRole = async (id: string, roleId: string) => {
-    console.log('check id role id: ', id, roleId);
     await updateRole({ url: `users/changerole/${id}/${roleId}` });
     toast.showSuccess('Update success');
     mutate(); // Cập nhật lại danh sách user

@@ -112,7 +112,6 @@ const DetailVaccineCycle = () => {
       setIdDetail(id as any);
     } else {
       const last = sortedDetails[sortedDetails.length - 1];
-      console.log(last);
       setPreviousInjectionMonth(last?.firstInjectionMonth || 0);
     }
 

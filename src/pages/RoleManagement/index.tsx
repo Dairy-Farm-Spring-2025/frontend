@@ -7,7 +7,7 @@ import useFetcher from '../../hooks/useFetcher';
 const ListRole = () => {
   const { data, isLoading } = useFetcher<any>('users/roles', 'GET');
 
-  console.log('check data: ', data);
+
 
   const { t } = useTranslation();
 
@@ -22,8 +22,6 @@ const ListRole = () => {
 
   return (
     <WhiteBackground>
-      {/* <ModalCreateRole modal={modalCreate} mutate={mutate} />
-      <Divider className="my-4" /> */}
       <TableComponent
         columns={columns}
         dataSource={data || []}
