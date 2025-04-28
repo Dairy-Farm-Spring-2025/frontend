@@ -140,7 +140,7 @@ const CardAreaImportTask = ({
 
         // Update last fetched data
         lastFetchedData.current[rowKey] = fetchKey;
-      } catch (error) {
+      } catch {
         setAssigneeOptions((prev) => ({
           ...prev,
           [rowKey]: [],
@@ -212,9 +212,7 @@ const CardAreaImportTask = ({
         delete fetchingStatus.current[rowKey];
         delete lastFetchedData.current[rowKey];
       })
-      .catch((error) => {
-
-      });
+      .catch(() => {});
   };
   const handleCancel = (rowKey: string) => {
     setEditingKeys((prev) => ({ ...prev, [rowKey]: false }));
