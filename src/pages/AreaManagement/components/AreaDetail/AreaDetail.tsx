@@ -172,7 +172,6 @@ const AreaDetail = () => {
         numberInRow,
         cowTypeId: area ? area.cowTypeEntity?.cowTypeId || null : null,
       };
-      console.log('Submit payload:', payload);
       const response = await triggerEditArea({
         url: AREA_PATH.AREA_EDIT(id as any),
         body: payload,
@@ -182,7 +181,6 @@ const AreaDetail = () => {
       toggleEdit();
     } catch (error: any) {
       toast.showError(error.message);
-      console.error('Edit area error:', error);
     }
   };
 

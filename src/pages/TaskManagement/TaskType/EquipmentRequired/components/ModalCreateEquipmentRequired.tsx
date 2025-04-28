@@ -97,7 +97,6 @@ const ModalCreateEquipmentRequired = ({
   };
   const handleFinish = async (values: any) => {
     try {
-      console.log(values);
       const response = await triggerCreate({ body: values });
       toast.showSuccess(response.message);
       handleCancel();

@@ -30,9 +30,7 @@ const ModalRequestApplication = ({
         toDate: dayjs(values.toDate).format('YYYY-MM-DD'),
         typeId: values.typeId,
       };
-      console.log('Submitting payload:', payload);
       const response = await trigger({ body: payload });
-      // mutate();
       toast.showSuccess(response.message);
       handleClose();
     } catch (error: any) {
@@ -60,7 +58,6 @@ const ModalRequestApplication = ({
         form={form}
         layout="vertical"
         onFinish={handleFinish}
-        onFinishFailed={(error) => console.log(error)}
       >
         <Form.Item name="typeId" label={t('Type')} rules={[{ required: true }]}>
           <SelectComponent options={typeApplication} />

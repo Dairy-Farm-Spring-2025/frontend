@@ -52,7 +52,6 @@ const ListItemBatch = () => {
         url: `itembatchs/update/${id}/${status}`,
       });
       toast.showSuccess(response.message);
-      console.log(response);
       mutate();
     } catch (error: any) {
       toast.showError(error.message);

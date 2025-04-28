@@ -25,7 +25,6 @@ const ModalAreaDetail: React.FC<ModalAreaDetailProps> = ({
 }) => {
   const { t } = useTranslation();
   const { data } = useFetcher<any>(`areas/${areaId}`, 'GET');
-  console.log('check data by areaId: ', data);
   const { trigger } = useFetcher<any>(
     `areas/${areaId}`,
     'PUT' // Or 'PATCH', depending on your API's convention
@@ -40,7 +39,6 @@ const ModalAreaDetail: React.FC<ModalAreaDetailProps> = ({
   useEffect(() => {
     if (data) {
       setAreaDetails(data);
-      console.log('this is datat', data);
     }
   }, [areaId, data, modal.open]);
 
@@ -112,7 +110,7 @@ const ModalAreaDetail: React.FC<ModalAreaDetailProps> = ({
       return updatedArea; // Return the updated data for SWR cache
     } catch (err) {
       toast.error('Error updating area. Please try again.');
-      console.error('Error updating area:', err);
+
     }
   };
 

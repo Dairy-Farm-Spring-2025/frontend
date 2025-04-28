@@ -30,7 +30,6 @@ const ReportTasksModal = ({ modal, taskId, day }: ReportTasksModalProps) => {
   );
   useEffect(() => {
     if (modal.open) {
-      console.log(dataTask);
     }
   }, [dataTask, modal.open]);
   return (

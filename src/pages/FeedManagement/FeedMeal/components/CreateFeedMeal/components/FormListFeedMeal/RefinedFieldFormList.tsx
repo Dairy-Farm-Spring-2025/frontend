@@ -107,7 +107,6 @@ const RefinedFieldFormList = ({
                 (acc: any, field: any) => acc + Number(field?.quantity || 0),
                 0
               );
-              console.log(totalQuantity === minValidate);
               if (totalQuantity < minValidate || totalQuantity > maxValidate) {
                 return (
                   <div style={{ color: 'red' }}>

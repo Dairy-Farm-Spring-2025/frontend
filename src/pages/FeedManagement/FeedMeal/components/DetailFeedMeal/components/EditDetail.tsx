@@ -59,7 +59,6 @@ const EditDetail = ({
         message.error(t('Failed to update'));
       }
     } catch (error: any) {
-      console.error('Error updating feed meal detail:', error);
       message.error(t('Error occurred while updating'));
     }
   };

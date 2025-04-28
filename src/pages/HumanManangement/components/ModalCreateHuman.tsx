@@ -19,7 +19,6 @@ const ModalCreateHuman = ({ mutate, modal, title, defaultValues }: any) => {
   const onFinish = async (values: CreateUser) => {
     try {
       const response = await trigger({ body: values });
-      console.log('Submitted values:', values);
       toast.showSuccess(response.message);
       onClose();
     } catch (error: any) {

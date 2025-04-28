@@ -156,7 +156,6 @@ const MilkBatchManagement = () => {
             <ButtonComponent
               danger
               type="primary"
-              onClick={() => console.log(record.milkBatchId)}
               style={{ marginLeft: 8 }}
               loading={isLoadingDelete}
             >
