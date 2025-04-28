@@ -8,9 +8,11 @@ import { useState } from 'react';
 import '../../index.scss';
 import ModalCreateArea from '../ModalCreateArea/ModalCreateArea';
 import CardAreaPen from './components/CardAreaPen';
+import { Pen } from '@model/Pen';
 
 export type DataGroupAreaPen = {
   area: Area;
+  pens: Pen[];
 };
 
 const ITEMS_PER_PAGE = 6;

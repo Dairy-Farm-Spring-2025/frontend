@@ -96,7 +96,7 @@ const PopoverTaskContent = ({
           ></span>
           {t(
             formatStatusWithCamel(
-              task?.reportTask ? task?.reportTask?.status : t('Not start')
+              task?.reportTask ? task?.reportTask?.status : 'notStart'
             )
           )}
         </p>
