@@ -37,7 +37,6 @@ const ModalDetailApplication = ({
     APPLICATION_PATH.APPLICATION_APPROVE(id),
     'PUT'
   );
-  // const { trigger: cancelRequest } = useFetcher(`application/cancel-request/${id}`, 'PUT');
   const {
     data,
     isLoading: isLoadingDetail,

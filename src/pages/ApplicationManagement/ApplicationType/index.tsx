@@ -22,7 +22,6 @@ const ApplicationType = () => {
       dataIndex: 'name',
       key: 'name',
       title: t('Name'),
-      // render: (element: string) => <TextLink to={""}>{element}</TextLink>,
     },
   ];
 
