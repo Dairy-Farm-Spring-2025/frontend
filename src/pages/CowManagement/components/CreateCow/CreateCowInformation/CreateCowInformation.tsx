@@ -17,7 +17,7 @@ import InputComponent from '@components/Input/InputComponent';
 const CreateCowInformation = () => {
   const { data } = useFetcher<any[]>('cow-types', 'GET');
   const [optionsCowType, setOptionsCowType] = useState<SelectProps['options']>([]);
-  const { t } = useTranslation();
+  const { t } = useTranslation(); 
 
   useEffect(() => {
     if (data) {

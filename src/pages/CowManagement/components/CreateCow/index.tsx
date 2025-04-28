@@ -84,8 +84,6 @@ const CreateCow = () => {
           healthRecord: healthData,
         };
 
-        // Log the payload for debugging
-        console.log('Payload:', payload);
 
         // Call the import-single API
         const response = await trigger({ body: payload });

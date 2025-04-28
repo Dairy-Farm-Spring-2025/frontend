@@ -18,7 +18,6 @@ import DailyMilk from './TabsItem/DailyMilk';
 import CowGeneralInformation from './TabsItem/GeneralInformation';
 import HealthRecordCow from './TabsItem/HealthRecordCow';
 import HistoryMoveCow from './TabsItem/HistoryMoveCow';
-import { formatStatusWithCamel } from '@utils/format';
 const CowDetail = () => {
   const { t } = useTranslation();
   const { id } = useParams();
@@ -37,10 +36,6 @@ const CowDetail = () => {
     mutate: mutateDetail,
   } = useFetcher<Cow>(COW_PATH.COW_DETAIL(id ? id : ''), 'GET');
 
-  // const { data: dataDetailQR, isLoading: isLoadingDetailQR } = useFetcher<any>(
-  //   `cows/qr/${id}`,
-  //   'GET'
-  // );
   const items: TabsItemProps['items'] = [
     {
       key: 'information',
