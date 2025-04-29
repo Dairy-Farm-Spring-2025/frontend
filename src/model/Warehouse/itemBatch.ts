@@ -5,7 +5,7 @@ export type ItemBatch = {
   quantity: number;
   importDate: string;
   expiryDate: string;
-  status: 'available' | 'inUse' | 'depleted' | 'expired' | 'quarantined';
+  status: ItemBatchStatus;
   itemEntity: {
     itemId: number;
     name: string;
@@ -31,6 +31,13 @@ export type ItemBatch = {
     email: string;
   };
 };
+
+export type ItemBatchStatus =
+  | 'available'
+  | 'inUse'
+  | 'depleted'
+  | 'expired'
+  | 'quarantined';
 
 export type ItemBatchCreate = {
   quantity: number;

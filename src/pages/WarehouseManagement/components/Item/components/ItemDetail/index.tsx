@@ -20,7 +20,11 @@ const ItemDetail = () => {
       <WhiteBackground>
         <div className="flex justify-end flex-wrap gap-5">
           <ItemInformation data={data as Item} />
-          <ButtonComponent onClick={modal.openModal} type="primary">
+          <ButtonComponent
+            onClick={modal.openModal}
+            type="primary"
+            buttonType="warning"
+          >
             {t('Edit')}
           </ButtonComponent>
           <ModalEditItem data={data as Item} modal={modal} mutate={mutate} />

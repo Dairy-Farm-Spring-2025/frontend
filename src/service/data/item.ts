@@ -79,3 +79,17 @@ export const ITEM_BATCH_OPTIONS = () => [
     value: 'quarantined',
   },
 ];
+
+export const ITEM_BATCH_FILTER = () => [
+  { text: t('Available', { defaultValue: 'Available' }), value: 'available' },
+  { text: t('In Use', { defaultValue: 'In Use' }), value: 'inUse' },
+  {
+    text: t('Depleted', { defaultValue: 'Depleted' }),
+    value: 'depleted',
+  },
+  { text: t('Expired', { defaultValue: 'Expired' }), value: 'expired' },
+  {
+    text: t('Quarantined', { defaultValue: 'Quarantined' }),
+    value: 'quarantined',
+  },
+];

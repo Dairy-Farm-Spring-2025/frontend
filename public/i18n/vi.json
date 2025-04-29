@@ -823,5 +823,6 @@
   "Date of Birth is required": "Ngày sinh bị thiếu",
   "Cow Status is required": "Trạng thái bò bị thiếu",
   "Area and Pen will be based on Cow Type and Cow Status": "Khu vực và chuồng sẽ dựa vào Loại bò và Trạng thái bò",
-  "Misssing": "Bị bỏ sót"
+  "Misssing": "Bị bỏ sót",
+  "Item batches of item {{item}}": "Các lô hàng của mặt hàng {{item}}"
 }
