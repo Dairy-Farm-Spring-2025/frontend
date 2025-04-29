@@ -14,6 +14,7 @@ export const statusColors: Record<any, string> = {
   reviewed: '#E9D5FF', // Light Purple
   processing: '#DBEAFE',
   closed: '#D1FAE5',
+  misssing: '#FFAFAF',
 };
 
 export const statusTaskBorder: Record<any, string> = {
@@ -23,4 +24,5 @@ export const statusTaskBorder: Record<any, string> = {
   reviewed: '#A855F7', // Tím đậm
   processing: '#2563EB', // Xanh dương trung bình
   closed: '#059669', // Xanh lá trung bình
+  misssing: '#E53935',
 };

@@ -119,6 +119,10 @@ const checkManager = (role: string) => {
   return role === 'Manager';
 };
 
+const checkAdmin = (role: string) => {
+  return role === 'Admin';
+};
+
 const AppDashboard: React.FC = React.memo(() => {
   const { t } = useTranslation();
   const location = useLocation();
@@ -444,21 +448,21 @@ const AppDashboard: React.FC = React.memo(() => {
               'dairy/task-management',
               <BiTask size={sizeIcon} />,
               [
-                !checkManager(roleName)
+                !checkManager(roleName) && !checkAdmin(roleName)
                   ? null
                   : getItem(
                       t('Task'),
                       'dairy/task-management/list',
                       <CiBoxList size={sizeIcon} />
                     ),
-                !checkManager(roleName)
+                !checkManager(roleName) && !checkAdmin(roleName)
                   ? null
                   : getItem(
                       t('Import task'),
                       'dairy/task-management/import',
                       <AiOutlineImport size={sizeIcon} />
                     ),
-                !checkManager(roleName)
+                !checkManager(roleName) && !checkAdmin(roleName)
                   ? null
                   : getItem(
                       t('Task type'),
@@ -480,7 +484,7 @@ const AppDashboard: React.FC = React.memo(() => {
               ]
             ),
 
-            !checkManager(roleName)
+            !checkManager(roleName) && !checkAdmin(roleName)
               ? null
               : getItem(
                   t('Application management'),
@@ -504,7 +508,7 @@ const AppDashboard: React.FC = React.memo(() => {
             //   'dairy/issue-management',
             //   <AiOutlineIssuesClose />
             // ),
-            checkManager(roleName)
+            checkManager(roleName) || checkAdmin(roleName)
               ? getItem(
                   t('Notification management'),
                   'dairy/notification-management',

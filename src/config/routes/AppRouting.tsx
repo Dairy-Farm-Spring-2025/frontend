@@ -399,7 +399,10 @@ const AppRouting = () => {
         {
           path: 'warehouse-management',
           element: (
-            <ProtectedRoute allowedRoles={['Manager']} userRole={user.roleName}>
+            <ProtectedRoute
+              allowedRoles={['Manager', 'Admin']}
+              userRole={user.roleName}
+            >
               {SuspenseWrapper(<WarehouseManagement />)}
             </ProtectedRoute>
           ),

@@ -66,7 +66,9 @@ const ListVaccineInjection = () => {
         if (status === 'inProgress') color = 'orange';
         if (status === 'completed') color = 'green';
         if (status === 'cancelled') color = 'red';
-        return <Tag color={color}>{t(formatStatusWithCamel(status))}</Tag>;
+        return (
+          <Tag color={color}>{t(formatStatusWithCamel(status)) || 'N/A'}</Tag>
+        );
       },
     },
     {

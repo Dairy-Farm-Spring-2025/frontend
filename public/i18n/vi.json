@@ -818,10 +818,10 @@
   "Body Temperature is required": "Nhiệt độ cơ thể bị thiếu",
   "Status is required": "Trạng thái bị thiếu",
   "Đực": "Đực",
-  "Cái": "Cái", 
-  "Date of Enter is required": "Ngày nhập bị thiếu", 
-  "Date of Birth is required":"Ngày sinh bị thiếu", 
-  "Cow Status is required":"Trạng thái bò bị thiếu",
-  "Area and Pen will be based on Cow Type and Cow Status": "Khu vực và chuồng sẽ dựa vào Loại bò và Trạng thái bò"
-
+  "Cái": "Cái",
+  "Date of Enter is required": "Ngày nhập bị thiếu",
+  "Date of Birth is required": "Ngày sinh bị thiếu",
+  "Cow Status is required": "Trạng thái bò bị thiếu",
+  "Area and Pen will be based on Cow Type and Cow Status": "Khu vực và chuồng sẽ dựa vào Loại bò và Trạng thái bò",
+  "Misssing": "Bị bỏ sót"
 }

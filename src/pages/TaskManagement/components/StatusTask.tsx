@@ -18,7 +18,11 @@ const StatusTask = () => {
       </div>
       <div className="flex gap-2 items-center">
         <div className="w-4 h-4 border-[1px] border-gray-400 rounded-xl bg-[#DEDEDE]"></div>
-        <Text>{t('Not start')}</Text>
+        <Text>{t('Not Start')}</Text>
+      </div>
+      <div className="flex gap-2 items-center">
+        <div className="w-4 h-4 border-[1px] border-red-400 rounded-xl bg-[#FFAFAF]"></div>
+        <Text>{t('Misssing')}</Text>
       </div>
     </div>
   );
