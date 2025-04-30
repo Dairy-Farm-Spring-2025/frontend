@@ -13,7 +13,7 @@ import { Divider, Form, Tag } from 'antd';
 import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { t } from 'i18next';
-import { InfoCircleOutlined } from '@ant-design/icons'; // Import an icon for the note
+import { InfoCircleOutlined } from '@ant-design/icons';
 
 // Define areaType function
 interface SelectOption {
@@ -77,10 +77,17 @@ const HistoryMoveCow = ({ id, isLoadingHistory, cowType, cowStatus }: HistoryMov
 
   const selectedAreaType = areaId || '';
 
+  // Conditionally construct the query based on areaType
+  const pensQuery = useMemo(() => {
+    if (!areaId) return '';
+    if (selectedAreaType === 'quarantine') {
+      return `pens/available/cow?areaType=${selectedAreaType}`;
+    }
+    return `pens/available/cow?areaType=${selectedAreaType}&cowStatus=${effectiveCowStatus}&cowTypeId=${cowTypeId}`;
+  }, [areaId, selectedAreaType, effectiveCowStatus, cowTypeId]);
+
   const { data: allPensInArea, mutate: mutatePens } = useFetcher<PenEntity[]>(
-    areaId
-      ? `pens/available/cow?areaType=${selectedAreaType}&cowStatus=${effectiveCowStatus}&cowTypeId=${cowTypeId}`
-      : '',
+    pensQuery,
     'GET'
   );
 
@@ -270,8 +277,8 @@ const HistoryMoveCow = ({ id, isLoadingHistory, cowType, cowStatus }: HistoryMov
                     <span className="text-primary">{effectiveCowType}</span> 
                   </p>
                   <p> 
-                  <span className="font-semibold">{t('Cow Status')}:</span>{' '}
-                  <span className="text-primary">{t(formatStatusWithCamel(effectiveCowStatus))}</span>
+                    <span className="font-semibold">{t('Cow Status')}:</span>{' '}
+                    <span className="text-primary">{t(formatStatusWithCamel(effectiveCowStatus))}</span>
                   </p>
                 </div>
               </div>
