@@ -90,7 +90,11 @@ const ReviewInformation = ({
           <Title className="!text-xl text-gray-700">{t('Illness Image')}</Title>
         </Space>
         <div>
-          <UploadComponent file={fileState.file} setFile={fileState.setFile} />
+          <UploadComponent
+            file={fileState.file}
+            setFile={fileState.setFile}
+            validateLengthFile={3}
+          />
         </div>
       </div>
 

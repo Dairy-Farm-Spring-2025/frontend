@@ -16,9 +16,11 @@ import Text from '@components/UI/Text';
 import { formatStatusWithCamel } from '@utils/format';
 import { IllnessDetail } from '@model/Cow/IllnessDetail';
 import IllnessDetailComponent from './IllnessDetailComponent';
-import { Divider, Empty } from 'antd';
+import { Divider, Empty, Image } from 'antd';
 import dayjs from 'dayjs';
 import QuillRender from '@components/UI/QuillRender';
+import EmptyComponent from '@components/Error/EmptyComponent';
+import { getIllnessImage } from '@utils/getImage';
 
 interface IllnessRecordFormProps {
   loading: boolean;
@@ -38,6 +40,18 @@ const IllnessRecordForm = ({ loading, data }: IllnessRecordFormProps) => {
             data?.veterinarian ? data?.veterinarian?.name : t('No veterinarian')
           }
         />
+      </div>
+      <div className="mt-5">
+        <Title>{t('Illness Image')}</Title>
+        <div className="flex gap-5 flex-wrap mt-2">
+          {data?.mediaList.length > 0 ? (
+            data?.mediaList?.map((element) => (
+              <Image width={150} src={getIllnessImage(element?.url as any)} />
+            ))
+          ) : (
+            <EmptyComponent />
+          )}
+        </div>
       </div>
       <div className="mt-5">
         <div className="grid grid-cols-3 gap-5">
