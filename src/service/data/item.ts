@@ -33,15 +33,6 @@ export const unitOptions = () => [
     value: 'milliliter',
     label: t('Milliliter (mL)', { defaultValue: 'Milliliter (mL)' }),
   },
-  { value: 'piece', label: t('Piece', { defaultValue: 'Piece' }) },
-  { value: 'pack', label: t('Pack', { defaultValue: 'Pack' }) },
-  {
-    value: 'squareMeter',
-    label: t('Square Meter (m²)', { defaultValue: 'Square Meter (m²)' }),
-  },
-  { value: 'bottle', label: t('Bottle', { defaultValue: 'Bottle' }) },
-  { value: 'bag', label: t('Bag', { defaultValue: 'Bag' }) },
-  { value: 'box', label: t('Box', { defaultValue: 'Box' }) },
 ];
 
 export const UNIT_FILTER = () => [
@@ -55,15 +46,6 @@ export const UNIT_FILTER = () => [
     value: 'milliliter',
     text: t('Milliliter (mL)', { defaultValue: 'Milliliter (mL)' }),
   },
-  { value: 'piece', text: t('Piece', { defaultValue: 'Piece' }) },
-  { value: 'pack', text: t('Pack', { defaultValue: 'Pack' }) },
-  {
-    value: 'squareMeter',
-    text: t('Square Meter (m²)', { defaultValue: 'Square Meter (m²)' }),
-  },
-  { value: 'bottle', text: t('Bottle', { defaultValue: 'Bottle' }) },
-  { value: 'bag', text: t('Bag', { defaultValue: 'Bag' }) },
-  { value: 'box', text: t('Box', { defaultValue: 'Box' }) },
 ];
 
 export const ITEM_BATCH_OPTIONS = () => [
