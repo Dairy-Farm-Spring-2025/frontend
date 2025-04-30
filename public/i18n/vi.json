@@ -474,7 +474,7 @@
   "cow": {
     "female": "Cái"
   },
-
+  "Female": "Cái",
   "male": "Nam",
   "Reset": "Đặt lại",
   "female": "Nữ",
@@ -824,5 +824,7 @@
   "Cow Status is required": "Trạng thái bò bị thiếu",
   "Area and Pen will be based on Cow Type and Cow Status": "Khu vực và chuồng sẽ dựa vào Loại bò và Trạng thái bò",
   "Misssing": "Bị bỏ sót",
-  "Item batches of item {{item}}": "Các lô hàng của mặt hàng {{item}}"
+  "Item batches of item {{item}}": "Các lô hàng của mặt hàng {{item}}",
+  "Cow {{cow}} is not in pen. Please navigate to detail and move cow to pen first": "Bò {{cow}} không trong chuồng. Đầu tiên hãy di chuyển tới chi tiết và di chuyển bò",
+  "Move to cow detail": "Di chuyển đến chi tiết bò"
 }

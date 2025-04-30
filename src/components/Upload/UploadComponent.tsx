@@ -16,8 +16,13 @@ const getBase64 = (file: FileType): Promise<string> =>
 interface UploadComponentProps {
   file?: UploadFile[];
   setFile?: any;
+  validateLengthFile?: number;
 }
-const UploadComponent = ({ file = [], setFile }: UploadComponentProps) => {
+const UploadComponent = ({
+  file = [],
+  setFile,
+  validateLengthFile,
+}: UploadComponentProps) => {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState('');
   const toast = useToast();
@@ -73,16 +78,17 @@ const UploadComponent = ({ file = [], setFile }: UploadComponentProps) => {
   return (
     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
       <Upload
-        action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload" // Đảm bảo URL API upload trả về đúng thông tin (URL)
+        action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
         listType="picture-card"
         fileList={file}
         onPreview={handlePreview}
-        onChange={handleChange} // Cập nhật list file khi có thay đổi
+        onChange={handleChange}
         beforeUpload={beforeUpload}
         accept="image/png, image/jpeg, image/jpg"
-        style={{ display: 'flex', flexWrap: 'wrap' }} // Thêm CSS để tự động xuống dòng
+        style={{ display: 'flex', flexWrap: 'wrap' }}
       >
-        {uploadButton}
+        {(!validateLengthFile || file.length < validateLengthFile) &&
+          uploadButton}
       </Upload>
       {previewImage && (
         <Image

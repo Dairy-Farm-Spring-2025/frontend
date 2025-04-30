@@ -15,6 +15,7 @@ import dayjs from 'dayjs';
 import IllnessInformationForm from './Form/IllnessInformationForm';
 import IllnessDetailsForm from './Form/IllnessDetailsForm';
 import ReviewInformation from './Form/ReviewInformation';
+import TagComponents from '@components/UI/TagComponents';
 
 interface ModalCreateIllNessProps {
   modal: any;
@@ -58,8 +59,17 @@ const ModalCreateIllNess = ({ modal, mutate }: ModalCreateIllNessProps) => {
   );
   const cowOptions = useMemo(
     () =>
-      dataCows?.map((cow: Cow) => ({ value: cow.cowId, label: cow.name })) ||
-      [],
+      dataCows?.map((cow: Cow) => ({
+        value: cow.cowId,
+        label: (
+          <div className="flex gap-2">
+            <p>{cow.name}</p>
+            <TagComponents color={cow.inPen ? 'green' : 'red'}>
+              {cow.inPen ? t('In pen') : t('Not in pen')}
+            </TagComponents>
+          </div>
+        ),
+      })) || [],
     [dataCows]
   );
   const itemOptions = useMemo(
@@ -72,8 +82,7 @@ const ModalCreateIllNess = ({ modal, mutate }: ModalCreateIllNessProps) => {
     [itemData]
   );
 
-  useEffect(() => {
-  }, [treatmentDetails]);
+  useEffect(() => {}, [treatmentDetails]);
 
   useEffect(() => {
     if (
@@ -106,27 +115,19 @@ const ModalCreateIllNess = ({ modal, mutate }: ModalCreateIllNessProps) => {
   };
 
   const handleNextIllness = async () => {
-    try {
-      const illnessValues = await illnessForm.validateFields();
-      setApiBody((prevState: any) => ({ ...prevState, ...illnessValues }));
-    } catch (error) {
-      throw error;
-    }
+    const illnessValues = await illnessForm.validateFields();
+    setApiBody((prevState: any) => ({ ...prevState, ...illnessValues }));
   };
 
   const handleNextDetails = async () => {
-    try {
-      detailsForm.submit();
-      const detailValues = detailsForm.getFieldsValue();
-      const treatments = detailValues.treatmentDetails || [];
-      const validTreatments = treatments.filter((treatment: any) =>
-        Object.values(treatment).some((value) => value !== undefined)
-      );
-      setTreatmentDetails(validTreatments);
-      await detailsForm.validateFields();
-    } catch (error) {
-      throw error;
-    }
+    detailsForm.submit();
+    const detailValues = detailsForm.getFieldsValue();
+    const treatments = detailValues.treatmentDetails || [];
+    const validTreatments = treatments.filter((treatment: any) =>
+      Object.values(treatment).some((value) => value !== undefined)
+    );
+    setTreatmentDetails(validTreatments);
+    await detailsForm.validateFields();
   };
 
   const handleSubmit = async () => {

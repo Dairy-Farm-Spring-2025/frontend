@@ -1,3 +1,4 @@
+import ButtonComponent from '@components/Button/ButtonComponent';
 import DescriptionComponent from '@components/Description/DescriptionComponent';
 import FormComponent from '@components/Form/FormComponent';
 import FormItemComponent from '@components/Form/Item/FormItemComponent';
@@ -7,8 +8,9 @@ import Title from '@components/UI/Title';
 import { Cow } from '@model/Cow/Cow';
 import { SEVERITY_OPTIONS } from '@service/data/severity';
 import { formatAreaType, formatDateHour } from '@utils/format';
-import { Col, Row, Select } from 'antd';
+import { Col, Divider, Row, Select } from 'antd';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 interface IllnessInformationFormProps {
   form: any;
@@ -28,6 +30,7 @@ const IllnessInformationForm = ({
   isLoadingCows,
 }: IllnessInformationFormProps) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   return (
     <FormComponent form={form} layout="vertical">
       <div className="p-6">
@@ -50,7 +53,6 @@ const IllnessInformationForm = ({
             </FormItemComponent>
           </Col>
         </Row>
-
         {isCowSelected && selectedCow && (
           <DescriptionComponent
             layout="horizontal"
@@ -83,8 +85,7 @@ const IllnessInformationForm = ({
             ]}
           />
         )}
-
-        {isCowSelected && (
+        {isCowSelected && selectedCow && selectedCow.inPen && (
           <>
             <Title className="!text-2xl w-1/2 mb-5 mt-6">
               {t('Illness Information')}
@@ -118,6 +119,26 @@ const IllnessInformationForm = ({
                 </FormItemComponent>
               </Col>
             </Row>
+          </>
+        )}
+        {isCowSelected && selectedCow && !selectedCow?.inPen && (
+          <>
+            <Divider className="!my-3" />
+            <div className="mt-5 flex flex-col gap-5">
+              <p className="text-lg text-red-600">
+                {t(
+                  `Cow {{cow}} is not in pen. Please navigate to detail and move cow to pen first`,
+                  {
+                    cow: selectedCow?.name,
+                  }
+                )}
+              </p>
+              <ButtonComponent
+                onClick={() => navigate(`../../${selectedCow?.cowId}`)}
+              >
+                {t('Move to cow detail')}
+              </ButtonComponent>
+            </div>
           </>
         )}
       </div>
