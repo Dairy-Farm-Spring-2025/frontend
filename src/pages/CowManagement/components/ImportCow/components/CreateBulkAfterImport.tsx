@@ -1,4 +1,4 @@
-import { Cow, CowStatus } from '@model/Cow/Cow';
+import { Cow } from '@model/Cow/Cow';
 import { Pen } from '@model/Pen';
 import TableComponent, { Column } from '@components/Table/TableComponent';
 import { Divider, Form, Alert, Badge, Tooltip, Row, Col } from 'antd';
