@@ -140,8 +140,6 @@ const ReviewImportCow = ({ onReviewData }: ReviewImportCowProps) => {
         })),
       ];
 
-      console.log('Combined successes:', combinedSuccesses);
-      console.log('Combined errors:', combinedErrors);
 
       onReviewData(combinedSuccesses, combinedErrors);
 
@@ -154,7 +152,7 @@ const ReviewImportCow = ({ onReviewData }: ReviewImportCowProps) => {
         message.success(`Đã review thành công ${combinedSuccesses.length} con bò`);
       }
     } catch (error: any) {
-      console.error('Lỗi khi review:', error);
+
 
       if (error?.code === 400 && error?.message === 'Invalid import times') {
         toast.error('Số lần import không hợp lệ. Hãy tải file Excel mới nhất!');

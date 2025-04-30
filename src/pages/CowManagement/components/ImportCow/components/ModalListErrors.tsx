@@ -96,8 +96,6 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
         };
       });
       setLocalData(formattedData);
-      console.log('Initialized localData:', formattedData);
-      console.log('Errors:', errors);
     }
   }, [visible, data, errors, t]);
 
