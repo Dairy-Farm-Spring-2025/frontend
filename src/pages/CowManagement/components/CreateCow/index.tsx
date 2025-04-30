@@ -9,6 +9,7 @@ import { Form, Steps } from 'antd';
 import dayjs from 'dayjs';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import CreateCowInformation from './CreateCowInformation/CreateCowInformation';
 import HealthRecordInformation from './CreateCowInformation/HealthRecordInformation';
 
@@ -25,6 +26,7 @@ const CreateCow = () => {
   const { trigger, isLoading } = useFetcher(COW_PATH.COW_CREATE_SINGLE, 'POST'); // Use the import-single endpoint
   const { t } = useTranslation();
   const toast = useToast();
+  const navigate = useNavigate(); // Initialize useNavigate
 
   const steps = [
     {
@@ -91,6 +93,16 @@ const CreateCow = () => {
         // Call the import-single API
         const response = await trigger({ body: payload });
         toast.showSuccess(response.message);
+
+        // Extract cowId from the response
+        const cowId = response.data?.cowId; // Adjust based on actual response structure
+        console.log("check cow id:", cowId); // For debugging
+        if (cowId) {
+          navigate(`/dairy/cow-management/${cowId}`); // Redirect to CowDetail page
+        } else {
+          navigate('/dairy/cow-management'); // Fallback to ListCow page
+        }
+
         setCurrentStep(0); // Reset to the first step
         setGeneralInfo(null); // Clear stored General Information
         handleClear(); // Clear the form

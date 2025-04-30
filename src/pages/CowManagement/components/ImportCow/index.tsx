@@ -19,7 +19,6 @@ import DatePickerComponent from '@components/DatePicker/DatePickerComponent';
 import InputComponent from '@components/Input/InputComponent';
 import SelectComponent from '@components/Select/SelectComponent';
 import { CowType } from '@model/Cow/CowType';
-
 import { COW_TYPE_PATH } from '@service/api/CowType/cowType';
 import { HEALTH_RECORD_STATUS } from '@service/data/healthRecordStatus';
 import { Divider, InputNumber, message, Modal, Popover } from 'antd';
@@ -32,7 +31,8 @@ import ConfirmImport from './components/ConfirmImport';
 import ReviewImportCow from './components/ReviewImportCow';
 import ModalListError from './components/ModalListErrors';
 import FloatButtonComponent from '@components/FloatButton/FloatButtonComponent';
-import CreateBulkModal from '../ModalCreateBulk/CreateBulk';
+import CreateBulkAfterImportCow from './components/CreateBulkAfterImport';
+
 
 const ListCowImport = () => {
   const { t } = useTranslation();
@@ -58,7 +58,7 @@ const ListCowImport = () => {
       const reviewCow = reviewData[index] || {};
       // Tìm cowType từ dataCowType dựa trên cowTypeName hoặc cowType.name
       const cowType = dataCowType?.find(
-        (type) => type.name === (reviewCow.cowTypeName || reviewCow.cowType?.name)
+        (type) => type.name.toLowerCase() === (reviewCow.cowTypeName || reviewCow.cowType?.name)?.toLowerCase()
       ) || {
         cowTypeId: 0,
         name: reviewCow.cowTypeName || 'Unknown',
@@ -272,6 +272,7 @@ const ListCowImport = () => {
           <SelectComponent
             value={t(data)}
             options={[
+              { value: 'male', label: 'Đực' },
               { value: 'female', label: 'Cái' },
             ]}
             onChange={(value) => handleChange(record.key, 'gender', value)}
@@ -303,7 +304,7 @@ const ListCowImport = () => {
             onChange={(value) => handleChange(record.key, 'cowStatus', value)}
           />
         ) : (
-         t(formatStatusWithCamel(data)) || '-'
+          t(formatStatusWithCamel(data)) || '-'
         ),
     },
     {
@@ -326,7 +327,7 @@ const ListCowImport = () => {
             }
           />
         ) : (
-         t(formatStatusWithCamel(data[0]?.health?.status)) || '-'
+          t(formatStatusWithCamel(data[0]?.health?.status)) || '-'
         ),
     },
     {
@@ -680,7 +681,7 @@ const ListCowImport = () => {
           </FloatButtonComponent.Group>
         )}
         {importSuccess && (
-          <CreateBulkModal
+          <CreateBulkAfterImportCow
             modal={modalControl}
             availableCows={availableCows}
             mutateCows={mutateCows}
