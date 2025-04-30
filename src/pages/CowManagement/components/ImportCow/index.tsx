@@ -172,8 +172,6 @@ const ListCowImport = () => {
       description: item.description || '',
       errorStrings: item.errorStrings || [],
     }));
-    console.log('Review data:', dataWithKeys);
-    console.log('Review errors:', errors);
     setReviewData(dataWithKeys);
     setReviewErrors(errors);
     setImportSuccess(false);
@@ -603,7 +601,6 @@ const ListCowImport = () => {
     setReviewData([]);
     setImportedCowIds([]);
     setImportSuccess(false);
-    console.log('Cows data mutated');
   };
 
   return (

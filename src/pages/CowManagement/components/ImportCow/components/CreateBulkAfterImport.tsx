@@ -116,7 +116,6 @@ const createPenColumns = (
     width: 80,
     render: (penId: string) => {
       if (!groupKey) {
-        console.error('groupKey is undefined in penColumns render');
         return null;
       }
       return (
@@ -287,7 +286,6 @@ const CreateBulkAfterImportCow = ({ availableCows, mutateCows, modal }: CreateBu
       modal.closeModal();
     } catch (error) {
       message.error(t('Failed to move cows'));
-      console.error(error);
     }
   };
 
@@ -320,11 +318,7 @@ const CreateBulkAfterImportCow = ({ availableCows, mutateCows, modal }: CreateBu
 
             dataPenInArea[groupKey] = availablePens?.filter((pen) => pen.penStatus === 'empty') || [];
 
-            // Debugging logs
-            console.log(`groupKey: ${groupKey}, cowTypeId: ${cowTypeId}`);
-            console.log(`availablePens for ${groupKey}:`, availablePens);
-            console.log(`dataPenInArea[${groupKey}]:`, dataPenInArea[groupKey]);
-            console.log(`selections[${groupKey}]:`, selections[groupKey]);
+        
 
             return (
               <div key={groupKey} className="mb-6">
