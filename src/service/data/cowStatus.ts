@@ -44,8 +44,6 @@ export const cowStatusCreateCow = () => {
       value: 'youngCow',
       label: i18n.t('Young cow', { defaultValue: 'Young cow' }),
     },
-
-
   ];
 };
 export const COW_STATUS_FILTER = () => {
@@ -127,6 +125,14 @@ export const COW_STATUS_FEED_MEALS = () => {
     {
       value: 'sickCow',
       text: i18n.t('Sick cow', { defaultValue: 'Sick cow' }),
+    },
+    {
+      value: 'seriousSickcow',
+      text: i18n.t('Serious Sick cow'),
+    },
+    {
+      value: 'youngCow',
+      text: i18n.t('Young cow'),
     },
   ];
 };

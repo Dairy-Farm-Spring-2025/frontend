@@ -380,12 +380,12 @@ const CreateVaccineCycleModal = ({
                                   if (
                                     value &&
                                     previousValue &&
-                                    value <= previousValue
+                                    value < previousValue
                                   ) {
                                     return Promise.reject(
                                       new Error(
                                         t(
-                                          'The first injection month must be greater than the previous one'
+                                          'The first injection month must be equal or greater than the previous one'
                                         )
                                       )
                                     );
