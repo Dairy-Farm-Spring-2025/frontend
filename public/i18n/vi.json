@@ -826,7 +826,8 @@
   "Misssing": "Bị bỏ sót",
   "Item batches of item {{item}}": "Các lô hàng của mặt hàng {{item}}",
   "Cow {{cow}} is not in pen. Please navigate to detail and move cow to pen first": "Bò {{cow}} không trong chuồng. Đầu tiên hãy di chuyển tới chi tiết và di chuyển bò",
-  "Move to cow detail": "Di chuyển đến chi tiết bò",
+  "Move to cow detail": "Di chuyển đến chi tiết bò", 
+  "Assign Cows to Pens":"Di chuyển số lượng lớn bò",
   "Serious Sickcow": "Bò bệnh nặng",
   "Now": "Gần đây"
 }

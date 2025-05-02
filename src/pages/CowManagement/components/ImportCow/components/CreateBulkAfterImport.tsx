@@ -15,6 +15,7 @@ import FormComponent from '@components/Form/FormComponent';
 import ModalComponent from '@components/Modal/ModalComponent';
 import { CowType } from '@model/Cow/CowType';
 import { COW_TYPE_PATH } from '@service/api/CowType/cowType';
+import { useNavigate } from 'react-router-dom';
 
 interface CreateBulkAfterImportCowProps {
   availableCows: Cow[];
@@ -157,7 +158,7 @@ const CreateBulkAfterImportCow = ({ availableCows, mutateCows, modal }: CreateBu
     [key: string]: { selectedCows: number[]; selectedPens: string[] };
   }>({});
   const { data: cowTypesData } = useFetcher<CowType[]>(COW_TYPE_PATH.COW_TYPES, 'GET');
-
+  const navigate = useNavigate(); 
   // Group cows by cowType and cowStatus
   const groupedCows = useMemo(() => {
     const groups: {
@@ -284,6 +285,7 @@ const CreateBulkAfterImportCow = ({ availableCows, mutateCows, modal }: CreateBu
       setSelections({});
       mutateCows();
       modal.closeModal();
+      navigate('/dairy/cow-management/list-cow'); 
     } catch (error) {
       message.error(t('Failed to move cows'));
     }
