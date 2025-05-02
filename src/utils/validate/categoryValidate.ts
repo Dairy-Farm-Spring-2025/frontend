@@ -5,6 +5,7 @@ export const validateNameCategory = (name: string) => {
     'Thức ăn ủ chua',
     'Khoáng chất',
     'Vắc-xin',
+    'Thuốc',
   ];
   if (validateCateogryName.includes(name)) return true;
   return false;

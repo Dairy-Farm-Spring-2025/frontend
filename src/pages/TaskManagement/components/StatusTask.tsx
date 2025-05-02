@@ -10,7 +10,7 @@ const StatusTask = () => {
       </div>
       <div className="flex gap-2 items-center">
         <div className="w-4 h-4 border-[1px] border-blue-400 rounded-xl bg-[#DBEAFE]"></div>
-        <Text>{t('In progress')}</Text>
+        <Text>{t('Processing')}</Text>
       </div>
       <div className="flex gap-2 items-center">
         <div className="w-4 h-4 border-[1px] border-green-400 rounded-xl bg-[#D1FAE5]"></div>
