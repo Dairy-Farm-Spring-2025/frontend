@@ -1,4 +1,5 @@
 import { Spin } from 'antd';
+import { t } from 'i18next';
 import { useParams } from 'react-router-dom';
 import ButtonComponent from '../../../../../../components/Button/ButtonComponent';
 import AnimationAppear from '../../../../../../components/UI/AnimationAppear';
@@ -8,7 +9,6 @@ import useModal from '../../../../../../hooks/useModal';
 import { Item } from '../../../../../../model/Warehouse/items';
 import ItemInformation from './components/ItemInformation';
 import ModalEditItem from './components/ModalEditItem';
-import { t } from 'i18next';
 
 const ItemDetail = () => {
   const { id } = useParams();
