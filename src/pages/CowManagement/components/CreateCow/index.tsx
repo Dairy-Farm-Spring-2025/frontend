@@ -60,6 +60,7 @@ const CreateCow = () => {
         description: stripHtml(values.description), // Strip HTML from description
       };
       setGeneralInfo(generalData); // Store the data from the first step
+      form.resetFields(['description']); // Reset the description field
       setCurrentStep((prev) => prev + 1); // Move to the next step
     } else {
       // Step 2: Combine General Information and Health Information, then call the API
