@@ -89,7 +89,7 @@ const CommentReport = ({ selectedTask, mutate }: CommentReportProps) => {
         <Title className="!text-orange-600">
           {t('Task do not processing')}
         </Title>
-      ) : selectedTask?.status === 'missing' ? (
+      ) : selectedTask?.status === 'misssing' ? (
         <Title className="!text-red-600">{t('Task is missing')}</Title>
       ) : (
         <FormComponent form={form} onFinish={handleFinish}>
