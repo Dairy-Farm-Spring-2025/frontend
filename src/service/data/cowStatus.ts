@@ -102,7 +102,7 @@ export const COW_STATUS_DRY_MATTER = () => {
       label: i18n.t('Sick cow', { defaultValue: 'Sick cow' }),
     },
     {
-      value: 'seriousSickCow',
+      value: 'seriousSickcow',
       label: i18n.t('Serious Sick cow', { defaultValue: 'Serious Sick cow' }),
     },
     {

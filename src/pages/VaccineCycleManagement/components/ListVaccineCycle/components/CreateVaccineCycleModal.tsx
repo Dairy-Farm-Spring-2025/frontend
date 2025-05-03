@@ -11,6 +11,7 @@ import StepsComponent, { StepItem } from '@components/Steps/StepsComponent';
 import TagComponents from '@components/UI/TagComponents';
 import Title from '@components/UI/Title';
 import useFetcher from '@hooks/useFetcher';
+import useRequiredForm from '@hooks/useRequiredForm';
 import useToast from '@hooks/useToast';
 import { CowType } from '@model/Cow/CowType';
 import { VaccineCyclePayload } from '@model/Vaccine/VaccineCycle/vaccineCycle';
@@ -49,8 +50,38 @@ const CreateVaccineCycleModal = ({
     VACCINE_CYCLE_PATH.CREATE_VACCINE_CYCLE,
     'POST'
   );
+  const [checkExistMessage, setCheckExistMessage] = useState('');
+  const cowTypeSelected = Form.useWatch(['cowTypeId'], generalForm);
+  const disabledButtonGeneral = useRequiredForm(generalForm, [
+    'name',
+    'cowTypeId',
+    'description',
+  ]);
+  const { trigger: triggerCheckExists } = useFetcher(
+    'check-exists',
+    'GET',
+    'application/json',
+    false
+  );
   const toast = useToast();
   const { t } = useTranslation();
+
+  useEffect(() => {
+    const fetchExists = async (cowTypeId: number) => {
+      try {
+        await triggerCheckExists({
+          url: VACCINE_CYCLE_PATH.CHECK_EXISTS(cowTypeId),
+        });
+        setCheckExistMessage('');
+      } catch (error: any) {
+        setCheckExistMessage(error.message);
+      }
+    };
+    if (cowTypeSelected) {
+      fetchExists(cowTypeSelected);
+    }
+  }, [cowTypeSelected]);
+
   useEffect(() => {
     if (data && modal.open && itemData) {
       setOptionsCowType(
@@ -163,6 +194,9 @@ const CreateVaccineCycleModal = ({
           >
             <SelectComponent options={optionsCowType} search={true} />
           </FormItemComponent>
+          <p className="!text-base text-red-500 font-semibold mb-3">
+            {checkExistMessage}
+          </p>
           <FormItemComponent
             rules={[{ required: true }]}
             name="description"
@@ -173,6 +207,7 @@ const CreateVaccineCycleModal = ({
         </FormComponent>
       ),
       onNext: handleNextGeneral,
+      disabledAction: checkExistMessage !== '' || disabledButtonGeneral,
     },
     {
       title: t('Detail Information'),

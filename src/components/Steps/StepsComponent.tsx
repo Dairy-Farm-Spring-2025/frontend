@@ -12,6 +12,7 @@ export interface StepItem {
   onNext?: () => Promise<void> | void;
   onDone?: () => Promise<void> | void;
   onPrevious?: () => Promise<void> | void;
+  disabledAction?: boolean;
 }
 
 interface StepsComponentProps extends StepProps {
@@ -26,8 +27,9 @@ const StepsComponent = ({
   setCurrent,
 }: StepsComponentProps) => {
   const [loading, setLoading] = useState(false); // Loading state for buttons
+  const currentStep = steps[current];
+
   const prev = () => {
-    const currentStep = steps[current];
     setCurrent(current - 1);
     if (currentStep.onPrevious) {
       currentStep.onPrevious();
@@ -40,7 +42,6 @@ const StepsComponent = ({
   }));
 
   const next = async () => {
-    const currentStep = steps[current];
     if (currentStep.onNext) {
       try {
         setLoading(true);
@@ -87,6 +88,7 @@ const StepsComponent = ({
         {current < steps.length - 1 && (
           <ButtonComponent
             type="primary"
+            disabled={currentStep.disabledAction}
             onClick={() => next()}
             loading={loading}
           >

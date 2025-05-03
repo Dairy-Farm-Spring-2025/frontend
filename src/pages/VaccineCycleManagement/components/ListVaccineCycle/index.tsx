@@ -73,7 +73,7 @@ const ListVaccineCycle = () => {
             onConfirm={() => handleDelete(data)}
             title={t('Are you sure to delete this?')}
           >
-            <ButtonComponent loading={isLoadingDelete} danger type="primary">
+            <ButtonComponent danger type="primary">
               {t('Delete')}
             </ButtonComponent>
           </PopconfirmComponent>
@@ -90,7 +90,7 @@ const ListVaccineCycle = () => {
         <Divider />
         <TableComponent
           columns={columns}
-          loading={isLoadingVaccine}
+          loading={isLoadingVaccine || isLoadingDelete}
           dataSource={vaccineCycle as VaccineCycle[]}
         />
         <CreateVaccineCycleModal modal={modal} mutate={mutate} />

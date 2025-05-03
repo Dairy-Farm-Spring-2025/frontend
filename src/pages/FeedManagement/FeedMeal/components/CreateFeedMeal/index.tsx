@@ -20,6 +20,7 @@ import { IoMdArrowRoundBack } from 'react-icons/io';
 import FeedMealForm from './components/FeedMealForm';
 import FeedMealReview from './components/FeedMealReview';
 import useRequiredForm from '@hooks/useRequiredForm';
+import { CowStatus } from '@model/Cow/Cow';
 
 const CreateFeedMeal = () => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -38,11 +39,15 @@ const CreateFeedMeal = () => {
     'GET'
   );
   const buttonDisabled = useRequiredForm(form, ['cowTypeId', 'cowStatus']);
+  const [messageCheckExist, setMessageCheckExist] = useState('');
 
   const { trigger: triggerDryMatter, isLoading: loadingDryMatter } = useFetcher(
     FEED_PATH.FEED_MEAL_DRY_MATTER,
     'POST'
   );
+
+  const { isLoading: isLoadingCheckExist, trigger: triggerCheckExists } =
+    useFetcher('check-exists', 'GET', 'application/json', false);
 
   useEffect(() => {
     if (cowType) {
@@ -58,6 +63,22 @@ const CreateFeedMeal = () => {
       );
     }
   }, [cowType]);
+
+  useEffect(() => {
+    const fetchExist = async (cowTypeId: number, cowStatus: CowStatus) => {
+      try {
+        await triggerCheckExists({
+          url: FEED_PATH.CHECK_EXISTS(cowTypeId, cowStatus),
+        });
+        setMessageCheckExist('');
+      } catch (error: any) {
+        setMessageCheckExist(error?.message || 'Something errors');
+      }
+    };
+    if (cowStatusSelected && cowStatusSelected) {
+      fetchExist(cowTypesSelected, cowStatusSelected as CowStatus);
+    }
+  }, [cowStatusSelected, cowTypesSelected]);
 
   const handleBack = async () => {
     setCurrentStep((prev) => prev - 1);
@@ -119,8 +140,8 @@ const CreateFeedMeal = () => {
               />
             </FormItemComponent>
             <ButtonComponent
-              disabled={buttonDisabled}
-              loading={loadingDryMatter}
+              disabled={buttonDisabled || messageCheckExist !== ''}
+              loading={loadingDryMatter || isLoadingCheckExist}
               className="mt-10"
               htmlType="submit"
               type="primary"
@@ -128,6 +149,9 @@ const CreateFeedMeal = () => {
               {t('Watch dry matter')}
             </ButtonComponent>
           </div>
+          <p className="!text-base text-red-500 font-semibold ml-1">
+            {messageCheckExist}
+          </p>
         </FormComponent>
       ),
     },
