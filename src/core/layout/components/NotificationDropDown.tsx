@@ -2,15 +2,19 @@ import useFetcher from '@hooks/useFetcher';
 import useToast from '@hooks/useToast';
 import { MyNotification } from '@model/Notification/Notification';
 import { NOTIFICATION_PATH } from '@service/api/Notification/notificationApi';
-import { Badge, Dropdown, Menu, Tooltip } from 'antd';
+import { Badge, Dropdown, Menu, Spin, Tooltip } from 'antd';
+import { t } from 'i18next';
 import { useEffect, useState } from 'react';
 import { IoIosNotifications } from 'react-icons/io';
+import { TbReload } from 'react-icons/tb';
 import { useNavigate } from 'react-router-dom';
 
 const NotificationDropDown = () => {
-  const { data: dataResponseNotification, mutate } = useFetcher<
-    MyNotification[]
-  >(NOTIFICATION_PATH.MY_NOTIFICATIONS, 'GET');
+  const {
+    data: dataResponseNotification,
+    mutate,
+    isLoading,
+  } = useFetcher<MyNotification[]>(NOTIFICATION_PATH.MY_NOTIFICATIONS, 'GET');
   const { trigger: triggerUpdate } = useFetcher('mark-read', 'PUT');
   const navigate = useNavigate();
   const toast = useToast();
@@ -56,42 +60,59 @@ const NotificationDropDown = () => {
         overflowY: 'auto',
       }}
     >
-      {dataNotification.map((element) => (
-        <Menu.Item
-          key={element.id.notificationId}
-          style={{ whiteSpace: 'normal' }}
-          className={`!border-b-[1px]`}
-          onClick={() =>
-            handleMarkAsRead(
-              element.id.notificationId,
-              element.id.userId,
-              element.read,
-              element.notification.link
-            )
-          }
-        >
-          <div className="flex justify-between items-center">
-            <div className="flex flex-col gap-1 w-[90%]">
-              <p className="font-bold">{element.notification.title}</p>
-              <p className="text-sm text-gray-500">
-                {element.notification.category}
-              </p>
-              <Tooltip title={element.notification.description} placement="top">
-                <p className="line-clamp-2 overflow-hidden text-ellipsis text-sm text-gray-700">
-                  {element.notification.description}
+      <div className="flex justify-end mb-1 px-2 !text-lg !text-blue-500">
+        <Tooltip title={t('Refresh')}>
+          <TbReload
+            onClick={() => mutate()}
+            className="hover:opacity-70 duration-150 cursor-pointer"
+          />
+        </Tooltip>
+      </div>
+      {isLoading ? (
+        <div className="w-full !h-[100px] flex justify-center items-center">
+          <Spin />
+        </div>
+      ) : (
+        dataNotification.map((element) => (
+          <Menu.Item
+            key={element.id.notificationId}
+            style={{ whiteSpace: 'normal' }}
+            className={`!border-b-[1px]`}
+            onClick={() =>
+              handleMarkAsRead(
+                element.id.notificationId,
+                element.id.userId,
+                element.read,
+                element.notification.link
+              )
+            }
+          >
+            <div className="flex justify-between items-center">
+              <div className="flex flex-col gap-1 w-[90%]">
+                <p className="font-bold">{element.notification.title}</p>
+                <p className="text-sm text-gray-500">
+                  {element.notification.category}
                 </p>
-              </Tooltip>
+                <Tooltip
+                  title={element.notification.description}
+                  placement="top"
+                >
+                  <p className="line-clamp-2 overflow-hidden text-ellipsis text-sm text-gray-700">
+                    {element.notification.description}
+                  </p>
+                </Tooltip>
+              </div>
+              <div className="w-[1%]">
+                {element.read ? (
+                  <div />
+                ) : (
+                  <div className="w-2 h-2 rounded-full bg-blue-500" />
+                )}
+              </div>
             </div>
-            <div className="w-[1%]">
-              {element.read ? (
-                <div />
-              ) : (
-                <div className="w-2 h-2 rounded-full bg-blue-500" />
-              )}
-            </div>
-          </div>
-        </Menu.Item>
-      ))}
+          </Menu.Item>
+        ))
+      )}
     </Menu>
   );
 

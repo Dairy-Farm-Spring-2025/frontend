@@ -150,28 +150,41 @@ const EditVaccineCycle = ({
       if (value === undefined || value === null) return Promise.resolve();
 
       if (nextInjectionMonth !== null) {
-        if (value > previousInjectionMonth && value < nextInjectionMonth) {
+        if (value >= previousInjectionMonth && value <= nextInjectionMonth) {
           return Promise.resolve();
         }
-        return Promise.reject(
-          new Error(
-            t(
-              `Injection month must be between {{previousInjectionMonth}} and {{nextInjectionMonth}}`,
-              {
-                previousInjectionMonth,
-                nextInjectionMonth,
-              }
+        if (previousInjectionMonth !== nextInjectionMonth) {
+          return Promise.reject(
+            new Error(
+              t(
+                `Injection month must be between {{previousInjectionMonth}} and {{nextInjectionMonth}}`,
+                {
+                  previousInjectionMonth,
+                  nextInjectionMonth,
+                }
+              )
             )
-          )
-        );
+          );
+        } else {
+          return Promise.reject(
+            new Error(
+              t(
+                `Injection month must be equal or greater than {{previousInjectionMonth}}`,
+                {
+                  previousInjectionMonth,
+                }
+              )
+            )
+          );
+        }
       } else {
-        if (value > previousInjectionMonth) {
+        if (value >= previousInjectionMonth) {
           return Promise.resolve();
         }
         return Promise.reject(
           new Error(
             t(
-              `Injection month must be greater than {{previousInjectionMonth}}`,
+              `Injection month must be equal or greater than {{previousInjectionMonth}}`,
               {
                 previousInjectionMonth,
               }

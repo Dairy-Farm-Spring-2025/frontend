@@ -776,7 +776,7 @@
   "Equipment status": "Trạng thái thiết bị",
   "View equipment": "Xem thiết bị",
   "Injection month must be between {{previousInjectionMonth}} and {{nextInjectionMonth}}": "Tháng tiêm phải nằm giữa {{previousInjectionMonth}} và {{nextInjectionMonth}}",
-  "Injection month must be greater than {{previousInjectionMonth}}": "Tháng tiêm phải lớn hơn {{previousInjectionMonth}}",
+  "Injection month must be equal or greater than {{previousInjectionMonth}}": "Tháng tiêm phải bằng hoặc lớn hơn {{previousInjectionMonth}}",
   "Illness Image": "Hình ảnh bệnh",
   "Feed meals and total cow type": "Bữa ăn và tổng loại bò",
   "Total cows": "Tổng bò",
@@ -829,5 +829,7 @@
   "Move to cow detail": "Di chuyển đến chi tiết bò",
   "Assign Cows to Pens": "Di chuyển số lượng lớn bò",
   "Serious Sickcow": "Bò bệnh nặng",
-  "Now": "Gần đây"
+  "Now": "Gần đây",
+  "The first injection month must be equal or greater than the previous one": "Tháng tiêm đầu tiên phải bằng hoặc lớn hơn tháng tiêm trước đó",
+  "Refresh": "Tải lại"
 }
