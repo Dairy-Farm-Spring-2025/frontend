@@ -4,7 +4,7 @@ import AnimationAppear from '@components/UI/AnimationAppear';
 import WhiteBackground from '@components/UI/WhiteBackground';
 import { Divider, Spin, message } from 'antd';
 import FeedMealInformation from './components/FeedMealInformation';
-import {  FeedMeals } from '@model/Feed/Feed';
+import { FeedMeals } from '@model/Feed/Feed';
 import Title from '@components/UI/Title';
 import FeedMealDetailsInformation from './components/FeedMealDetailsInformation';
 import { FEED_PATH } from '@service/api/Feed/feedApi';
@@ -14,6 +14,14 @@ const DetailFeedMeal = () => {
   const { t } = useTranslation();
   const { id } = useParams(); // id is string | undefined
 
+  const {
+    data: detailFeedMeal,
+    isLoading,
+    mutate,
+  } = useFetcher<FeedMeals>(
+    FEED_PATH.DETAIL_FEED_MEALS(id ? id : ''), // id is now guaranteed to be a string
+    'GET'
+  );
   // Validate and convert id to number
   if (!id) {
     message.error(t('Missing feed meal ID in URL'));
@@ -25,11 +33,6 @@ const DetailFeedMeal = () => {
     message.error(t('Invalid feed meal ID in URL'));
     return null;
   }
-
-  const { data: detailFeedMeal, isLoading, mutate } = useFetcher<FeedMeals>(
-    FEED_PATH.DETAIL_FEED_MEALS(id), // id is now guaranteed to be a string
-    'GET'
-  );
 
   if (isLoading) {
     return (

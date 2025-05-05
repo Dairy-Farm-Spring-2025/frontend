@@ -16,7 +16,11 @@ interface FeedMealInformationProps {
   mutate?: () => void;
 }
 
-const FeedMealInformation = ({ data, feedMealId, mutate }: FeedMealInformationProps) => {
+const FeedMealInformation = ({
+  data,
+  feedMealId,
+  mutate,
+}: FeedMealInformationProps) => {
   const { t } = useTranslation();
   const [editVisible, setEditVisible] = useState(false);
 
@@ -35,7 +39,9 @@ const FeedMealInformation = ({ data, feedMealId, mutate }: FeedMealInformationPr
     },
     {
       label: t('Cow Status'),
-      children: data.cowStatus ? formatAreaType(t(data.cowStatus)) : t('Unknown'),
+      children: data.cowStatus
+        ? t(formatAreaType(data.cowStatus))
+        : t('Unknown'),
       span: 3,
     },
   ];
