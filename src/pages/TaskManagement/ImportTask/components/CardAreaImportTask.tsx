@@ -303,7 +303,7 @@ const CardAreaImportTask = ({
 
     if (changedField === 'fromDate') {
       if (
-        allValues[rowKey].taskType === 'Khám định kì' ||
+        allValues[rowKey].taskType === 'Khám bệnh' ||
         allValues[rowKey].taskType === 'Trực ca đêm'
       ) {
         form.setFieldsValue({
@@ -400,8 +400,7 @@ const CardAreaImportTask = ({
             <DatePickerComponent
               disabledDate={(current) => disabledToDate(current, record.key)}
               disabled={
-                form.getFieldValue([record.key, 'taskType']) ===
-                  'Khám định kì' ||
+                form.getFieldValue([record.key, 'taskType']) === 'Khám bệnh' ||
                 form.getFieldValue([record.key, 'taskType']) === 'Trực ca đêm'
               }
             />

@@ -128,9 +128,7 @@ const ModalCreateArea = ({ mutate, modal }: ModalCreateAreaProps) => {
       changedValues.penLength ||
       changedValues.penWidth
     ) {
-      // Ví dụ: nếu bạn muốn tính toán maxPen, numberInRow tự động
       const { length, width, penLength, penWidth } = allValues;
-
       if (length && width && penLength && penWidth) {
         const maxPen = Math.floor(
           (width * length - 4 * length) / (penLength * penWidth)
@@ -218,6 +216,7 @@ const ModalCreateArea = ({ mutate, modal }: ModalCreateAreaProps) => {
               <div className="flex gap-5">
                 <div className="flex flex-col w-1/2">
                   <FormItemComponent
+                    dependencies={['length', 'width']}
                     rules={[
                       { required: true },
                       ({ getFieldValue }) => ({
@@ -227,17 +226,26 @@ const ModalCreateArea = ({ mutate, modal }: ModalCreateAreaProps) => {
                           if (
                             !areaType ||
                             !length ||
-                            validateDimensions(areaType, length, value)
+                            !validateDimensions(areaType, length, value)
                           ) {
-                            return Promise.resolve();
+                            return Promise.reject(
+                              new Error(
+                                t(`area_modal.minimun_width_area`, {
+                                  width: minDimensions[areaType].width,
+                                })
+                              )
+                            );
                           }
-                          return Promise.reject(
-                            new Error(
-                              t(`area_modal.minimun_width_area`, {
-                                width: minDimensions[areaType].width,
-                              })
-                            )
-                          );
+
+                          if (length < value) {
+                            return Promise.reject(
+                              new Error(
+                                t('Width must be equal or smaller than length')
+                              )
+                            );
+                          }
+
+                          return Promise.resolve();
                         },
                       }),
                     ]}
