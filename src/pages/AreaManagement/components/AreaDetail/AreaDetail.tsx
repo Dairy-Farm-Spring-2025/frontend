@@ -9,6 +9,7 @@ import TableComponent, { Column } from '@components/Table/TableComponent';
 import AnimationAppear from '@components/UI/AnimationAppear';
 import QuillRender from '@components/UI/QuillRender';
 import TagComponents from '@components/UI/TagComponents';
+import TextLink from '@components/UI/TextLink';
 import TextTitle from '@components/UI/TextTitle';
 import Title from '@components/UI/Title';
 import WhiteBackground from '@components/UI/WhiteBackground';
@@ -198,7 +199,14 @@ const AreaDetail = () => {
       dataIndex: 'name',
       key: 'name',
       title: t('Cow name'),
-      render: (name) => (name ? <p>{name}</p> : '-'),
+      render: (name, record) =>
+        name ? (
+          <TextLink to={`../../cow-management/${record.cowId}`}>
+            {name}
+          </TextLink>
+        ) : (
+          '-'
+        ),
       searchable: true,
     },
     {

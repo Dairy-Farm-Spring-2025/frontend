@@ -112,7 +112,6 @@ const ModalAddItem = ({ modal, mutate }: ModalAddItemProps) => {
         width={800}
       >
         <FormComponent onFinish={handleFinish} form={form}>
-
           <div className="grid grid-cols-2 gap-5">
             <FormItemComponent
               rules={[{ required: true }]}
@@ -131,7 +130,6 @@ const ModalAddItem = ({ modal, mutate }: ModalAddItemProps) => {
                 onChange={handleChangeUnit}
               />
             </FormItemComponent>
-
           </div>
           <div className="grid grid-cols-2 gap-5">
             <FormItemComponent

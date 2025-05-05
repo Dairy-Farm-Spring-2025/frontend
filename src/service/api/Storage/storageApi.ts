@@ -4,4 +4,6 @@ export const STORAGE_PATH = {
   STORAGE_CREATE: 'warehouses/create',
   UPDATE_STORAGE: (id: string) => `warehouses/${id}`,
   STORAGE_DETAIL: (id: string) => `warehouses/${id}`,
+  ITEMS_STORAGE: (id: string) => `items/location/${id}`,
+  EQUIPMENT_STORAGE: (id: string) => `equipment/location/${id}`,
 };

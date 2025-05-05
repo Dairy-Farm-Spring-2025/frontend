@@ -10,6 +10,7 @@ import {
 import { SiHappycow } from 'react-icons/si';
 import TaskTypeManagement from '@pages/TaskManagement/TaskType';
 import ProtectedRoute from './ProtectedRoute/ProtectedRoute';
+import DetailWarehouse from '@pages/WarehouseManagement/components/Warehouse/components/DetailWarehouse';
 const EquipmentRequired = lazy(
   () => import('@pages/TaskManagement/TaskType/EquipmentRequired')
 );
@@ -414,6 +415,10 @@ const AppRouting = () => {
             {
               path: 'warehouse',
               element: SuspenseWrapper(<Warehouse />),
+            },
+            {
+              path: 'warehouse/:id',
+              element: SuspenseWrapper(<DetailWarehouse />),
             },
             {
               path: 'category',

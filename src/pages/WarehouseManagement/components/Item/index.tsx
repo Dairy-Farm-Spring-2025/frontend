@@ -9,6 +9,8 @@ import { WarehouseType } from '@model/Warehouse/warehouse';
 import { CATEGORY_PATH } from '@service/api/Storage/categoryApi';
 import { EXPORT_PATH } from '@service/api/Storage/exportApi';
 import { STORAGE_PATH } from '@service/api/Storage/storageApi';
+import { formatStatusWithCamel } from '@utils/format';
+import { t } from 'i18next';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { Outlet } from 'react-router-dom';
@@ -32,7 +34,7 @@ const ItemManagement = () => {
     if (warehousesData) {
       const filteredData = warehousesData.map((element) => ({
         value: element.warehouseLocationId,
-        label: element.name,
+        label: `${element.name} - (${t(formatStatusWithCamel(element?.type))})`,
       }));
       dispatch(setWarehouses(filteredData));
     }

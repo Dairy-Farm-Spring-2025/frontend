@@ -62,21 +62,20 @@ const ModalDetailEquipment = ({
         type: data.type,
         status: data.status,
         quantity: data.quantity,
-        warehouseLocationEntity:
-          data.warehouseLocationEntity?.warehouseLocationId,
+        locationId: data.warehouseLocationEntity?.warehouseLocationId,
       });
     }
   }, [data, form, modal.open]);
 
   const handleFinish = async (values: any) => {
     try {
-      await trigger({ body: values });
-      toast.showSuccess('Update success');
+      const response = await trigger({ body: values });
+      toast.showSuccess(response?.message);
       mutate();
       mutateEdit();
       setEdit(false);
     } catch (error: any) {
-      toast.showSuccess(error.message);
+      toast.showError(error.message);
     }
   };
 
@@ -93,10 +92,7 @@ const ModalDetailEquipment = ({
       children: !edit ? (
         data?.warehouseLocationEntity?.name || ''
       ) : (
-        <FormItemComponent
-          name="warehouseLocationEntity"
-          rules={[{ required: true }]}
-        >
+        <FormItemComponent name="locationId" rules={[{ required: true }]}>
           <SelectComponent
             options={
               dataWarehouse

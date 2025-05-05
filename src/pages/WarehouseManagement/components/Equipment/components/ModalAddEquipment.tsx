@@ -32,7 +32,7 @@ const ModalAddEquipment = ({ modal, mutate }: ModalAddWarehouseProps) => {
       mutate();
       handleClose();
     } catch (error: any) {
-      toast.showSuccess(error.message);
+      toast.showError(error.message);
     }
   };
 
@@ -90,7 +90,7 @@ const ModalAddEquipment = ({ modal, mutate }: ModalAddWarehouseProps) => {
           label={<LabelForm>{t('Quantity')}</LabelForm>}
           rules={[{ required: true }]}
         >
-          <InputComponent />
+          <InputComponent.Number />
         </FormItemComponent>
         <FormItemComponent
           name="description"

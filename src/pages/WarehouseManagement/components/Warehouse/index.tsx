@@ -1,34 +1,32 @@
-import { useState } from 'react';
-import useFetcher from '../../../../hooks/useFetcher';
-import { WarehouseType } from '../../../../model/Warehouse/warehouse';
-import useToast from '../../../../hooks/useToast';
-import useModal from '../../../../hooks/useModal';
+import { STORAGE_PATH } from '@service/api/Storage/storageApi';
+import { formatStatusWithCamel } from '@utils/format';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import ButtonComponent from '../../../../components/Button/ButtonComponent';
+import PopconfirmComponent from '../../../../components/Popconfirm/PopconfirmComponent';
 import TableComponent, {
   Column,
 } from '../../../../components/Table/TableComponent';
-import PopconfirmComponent from '../../../../components/Popconfirm/PopconfirmComponent';
-import ButtonComponent from '../../../../components/Button/ButtonComponent';
 import AnimationAppear from '../../../../components/UI/AnimationAppear';
 import WhiteBackground from '../../../../components/UI/WhiteBackground';
+import useFetcher from '../../../../hooks/useFetcher';
+import useModal from '../../../../hooks/useModal';
+import useToast from '../../../../hooks/useToast';
+import { WarehouseType } from '../../../../model/Warehouse/warehouse';
 import ModalAddWarehouse from './components/ModalAddWarehouse';
-import ModalDetailWarehouse from './components/ModalDetailWarehouse';
-import { STORAGE_PATH } from '@service/api/Storage/storageApi';
-import { formatStatusWithCamel } from '@utils/format';
 
 const Warehouse = () => {
   const { data, isLoading, mutate } = useFetcher<WarehouseType[]>(
     STORAGE_PATH.STORAGES,
     'GET'
   );
-  const [id, setId] = useState('');
+  const navigate = useNavigate();
   const toast = useToast();
   const { trigger, isLoading: loadingDelete } = useFetcher(
     'warehouses',
     'DELETE'
   );
   const modal = useModal();
-  const modalDetail = useModal();
   const { t } = useTranslation();
   const onConfirm = async (id: string) => {
     try {
@@ -42,11 +40,6 @@ const Warehouse = () => {
 
   const handleOpenModalAdd = () => {
     modal.openModal();
-  };
-
-  const handleOpenModalDetail = (id: string) => {
-    setId(id);
-    modalDetail.openModal();
   };
 
   const column: Column[] = [
@@ -73,10 +66,7 @@ const Warehouse = () => {
       title: t('Action'),
       render: (data) => (
         <div className="flex gap-5">
-          <ButtonComponent
-            type="primary"
-            onClick={() => handleOpenModalDetail(data)}
-          >
+          <ButtonComponent type="primary" onClick={() => navigate(`${data}`)}>
             {t('View Detail')}
           </ButtonComponent>
           <PopconfirmComponent
@@ -110,9 +100,6 @@ const Warehouse = () => {
           />
         </div>
         <ModalAddWarehouse modal={modal} mutate={mutate} />
-        {id !== '' && (
-          <ModalDetailWarehouse id={id} modal={modalDetail} mutate={mutate} />
-        )}
       </WhiteBackground>
     </AnimationAppear>
   );
