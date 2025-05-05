@@ -181,6 +181,9 @@ const ListCowImport = () => {
   };
 
   const handleCloseErrorModal = () => {
+    // Clear reviewData and reviewErrors when closing the modal
+    setReviewData([]);
+    setReviewErrors([]);
     setIsErrorModalVisible(false);
   };
 
