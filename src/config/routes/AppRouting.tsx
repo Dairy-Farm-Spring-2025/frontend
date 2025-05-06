@@ -1,6 +1,6 @@
 import { RootState } from '@core/store/store';
 import { Spin } from 'antd';
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import {
   createBrowserRouter,
@@ -190,19 +190,41 @@ const IllNess = lazy(
 );
 // Add more components as needed...
 
-const AppRouting = () => {
-  const user = useSelector((state: RootState) => state.user);
-  const SuspenseWrapper = (Component: JSX.Element) => (
-    <Suspense
-      fallback={
+const SuspenseWrapper = (Component: JSX.Element, delay = 500) => {
+  const Wrapper = () => {
+    const [show, setShow] = useState(false);
+
+    useEffect(() => {
+      const timeout = setTimeout(() => setShow(true), delay);
+      return () => clearTimeout(timeout);
+    }, []);
+
+    if (!show) {
+      return (
         <div className="w-full h-full flex items-center justify-center">
           <Spin size="large" />
         </div>
-      }
-    >
-      {Component}
-    </Suspense>
-  );
+      );
+    }
+
+    return (
+      <Suspense
+        fallback={
+          <div className="w-full h-full flex items-center justify-center">
+            <Spin size="large" />
+          </div>
+        }
+      >
+        {Component}
+      </Suspense>
+    );
+  };
+
+  return <Wrapper />;
+};
+
+const AppRouting = () => {
+  const user = useSelector((state: RootState) => state.user);
 
   const AppWrapper = (Component: JSX.Element) => (
     <Suspense
