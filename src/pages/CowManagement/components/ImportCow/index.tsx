@@ -23,7 +23,7 @@ import { COW_TYPE_PATH } from '@service/api/CowType/cowType';
 import { HEALTH_RECORD_STATUS } from '@service/data/healthRecordStatus';
 import { Divider, InputNumber, message, Modal, Popover } from 'antd';
 import dayjs from 'dayjs';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IoMdFemale, IoMdMale } from 'react-icons/io';
 import { MdErrorOutline } from 'react-icons/md';
@@ -32,7 +32,55 @@ import ReviewImportCow from './components/ReviewImportCow';
 import ModalListError from './components/ModalListErrors';
 import FloatButtonComponent from '@components/FloatButton/FloatButtonComponent';
 import CreateBulkAfterImportCow from './components/CreateBulkAfterImport';
+import toast from 'react-hot-toast';
 
+interface ValidationError {
+  field: string;
+  message: string;
+}
+
+const validateCow = (cow: Cow, t: (key: string) => string): ValidationError[] => {
+  const errors: ValidationError[] = [];
+
+  if (!cow.dateOfBirth || cow.dateOfBirth === '2') {
+    errors.push({ field: 'dateOfBirth', message: t('Date of Birth is required') });
+  } else {
+    const dob = dayjs(cow.dateOfBirth, 'YYYY-MM-DD', true);
+    if (!dob.isValid() || dob.isAfter(dayjs().subtract(10, 'month'))) {
+      errors.push({ field: 'dateOfBirth', message: t('Cow must be at least 10 months old') });
+    }
+  }
+
+  if (!cow.dateOfEnter || cow.dateOfEnter === '2') {
+    errors.push({ field: 'dateOfEnter', message: t('Date of Enter is required') });
+  } else {
+    const doe = dayjs(cow.dateOfEnter, 'YYYY-MM-DD', true);
+    if (!doe.isValid() || doe.isBefore(dayjs().startOf('day'))) {
+      errors.push({ field: 'dateOfEnter', message: t('Date of Enter must be today or in the future') });
+    }
+  }
+
+  if (!cow.cowOrigin) errors.push({ field: 'cowOrigin', message: t('Cow Origin is required') });
+  if (!cow.cowTypeName) errors.push({ field: 'cowTypeName', message: t('Cow Type is required') });
+  if (!cow.cowStatus) errors.push({ field: 'cowStatus', message: t('Cow Status is required') });
+  if (!cow.healthInfoResponses[0]?.health?.heartRate) {
+    errors.push({ field: 'heartRate', message: t('Heart Rate is required') });
+  }
+  if (!cow.healthInfoResponses[0]?.health?.ruminateActivity) {
+    errors.push({ field: 'ruminateActivity', message: t('Ruminate Activity is required') });
+  }
+  if (!cow.healthInfoResponses[0]?.health?.chestCircumference) {
+    errors.push({ field: 'chestCircumference', message: t('Chest Circumference is required') });
+  }
+  if (!cow.healthInfoResponses[0]?.health?.bodyLength) {
+    errors.push({ field: 'bodyLength', message: t('Body Length is required') });
+  }
+  if (!cow.healthInfoResponses[0]?.health?.respiratoryRate) {
+    errors.push({ field: 'respiratoryRate', message: t('Respiratory Rate is required') });
+  }
+
+  return errors;
+};
 
 const ListCowImport = () => {
   const { t } = useTranslation();
@@ -52,11 +100,13 @@ const ListCowImport = () => {
     closeModal: () => setIsBulkModalOpen(false),
   };
 
-  // Tạo availableCows với cấu trúc đầy đủ theo Cow type
+  const successfulData = useMemo(() => {
+    return reviewData.filter(cow => !cow.errorStrings || cow.errorStrings.length === 0);
+  }, [reviewData]);
+
   const availableCows = useMemo((): Cow[] => {
     return importedCowIds.map((id, index) => {
-      const reviewCow = reviewData[index] || {};
-      // Tìm cowType từ dataCowType dựa trên cowTypeName hoặc cowType.name
+      const reviewCow = successfulData[index] || {};
       const cowType = dataCowType?.find(
         (type) => type.name.toLowerCase() === (reviewCow.cowTypeName || reviewCow.cowType?.name)?.toLowerCase()
       ) || {
@@ -69,7 +119,7 @@ const ListCowImport = () => {
       };
 
       return {
-        cowId: id, // Ensure this is a number as expected
+        cowId: id,
         name: reviewCow.name || `Cow ${id}`,
         cowStatus: (reviewCow.cowStatus || 'active') as CowStatus,
         cowType: {
@@ -92,15 +142,15 @@ const ListCowImport = () => {
         errorStrings: reviewCow.errorStrings || [],
         createdAt: reviewCow.createdAt || dayjs().toISOString(),
         updatedAt: reviewCow.updatedAt || dayjs().toISOString(),
-        inPen: reviewCow.inPen ?? false, // Use nullish coalescing to ensure boolean
+        inPen: reviewCow.inPen ?? false,
         penResponse: reviewCow.penResponse || null,
-        key: reviewCow.key || id.toString(), // Ensure key is a string
-      } as Cow; // Explicitly cast to Cow to help TypeScript
+        key: reviewCow.key || id.toString(),
+      } as Cow;
     });
-  }, [importedCowIds, reviewData, dataCowType]);
+  }, [importedCowIds, successfulData, dataCowType]);
 
   const { handleConfirmImport } = ConfirmImport({
-    reviewData,
+    reviewData: successfulData,
     dataCowType,
     onImportSuccess: (cowIds, success) => {
       setImportedCowIds(cowIds);
@@ -110,7 +160,7 @@ const ListCowImport = () => {
         okText: t('Tiếp theo'),
         okButtonProps: {
           style: { backgroundColor: '#15803D', borderColor: '#15803D' },
-          className: 'shadow-lg text-base px-5 !w-fit duration-300', // Green color to match other buttons
+          className: 'shadow-lg text-base px-5 !w-fit duration-300',
         },
         onOk: () => {
           setIsBulkModalOpen(true);
@@ -121,41 +171,34 @@ const ListCowImport = () => {
     onFetchImportTimes: fetchImportTimes,
   });
 
-  // Validation functions
   const validateCows = useMemo(() => {
-    if (reviewData.length === 0) return false;
-    const validCowOrigins = cowOrigin().map((origin: any) => origin.value);
-    const validCowStatuses = cowStatus().map((status: any) => status.value);
-    const validCowTypes = dataCowType?.map((type: any) => type.name) || [];
-
-    return reviewData.every((cow) => {
-      return (
-        cow.name?.trim() &&
-        cow.cowStatus &&
-        validCowStatuses.includes(cow.cowStatus) &&
-        cow.gender &&
-        ['male', 'female'].includes(cow.gender) &&
-        cow.cowOrigin &&
-        validCowOrigins.includes(cow.cowOrigin) &&
-        cow.cowTypeName &&
-        validCowTypes.includes(cow.cowTypeName)
-      );
+    if (successfulData.length === 0) return false;
+    return successfulData.every((cow) => {
+      const errors = validateCow(cow, t);
+      return errors.length === 0;
     });
-  }, [reviewData, dataCowType]);
+  }, [successfulData]);
 
   const validateHealthRecords = useMemo(() => {
-    if (reviewData.length === 0) return false;
-    return reviewData.every((cow) => {
+    if (successfulData.length === 0) return false;
+    return successfulData.every((cow) => {
       return (
         cow.healthInfoResponses[0]?.health?.status &&
         ['good', 'poor', 'critical', 'fair', 'recovering'].includes(cow.healthInfoResponses[0]?.health?.status)
       );
     });
-  }, [reviewData]);
+  }, [successfulData]);
 
   const hasReviewErrors = useMemo(() => {
     return reviewErrors.length === 0;
   }, [reviewErrors]);
+
+  useEffect(() => {
+    console.log('successfulData:', successfulData);
+    console.log('validateCows:', validateCows);
+    console.log('validateHealthRecords:', validateHealthRecords);
+    console.log('hasReviewErrors:', hasReviewErrors);
+  }, [successfulData, validateCows, validateHealthRecords, hasReviewErrors]);
 
   const handleReviewData = (data: Cow[], errors: { source: string; message: string }[]) => {
     const dataWithKeys = data.map((item, index) => ({
@@ -175,23 +218,19 @@ const ListCowImport = () => {
     setReviewData(dataWithKeys);
     setReviewErrors(errors);
     setImportSuccess(false);
-
-    // Only open ModalListError if there are errors
     setIsErrorModalVisible(errors.length > 0);
   };
 
   const handleCloseErrorModal = () => {
-    // Clear reviewData and reviewErrors when closing the modal
-    setReviewData([]);
-    setReviewErrors([]);
     setIsErrorModalVisible(false);
+    setReviewErrors([]);
   };
 
   const handleSaveErrorData = (updatedData: Cow[]) => {
     setReviewData((prev) =>
       prev.map((item) => {
         const updatedItem = updatedData.find((updated) => updated.key === item.key);
-        return updatedItem || item;
+        return updatedItem ? { ...updatedItem } : item;
       })
     );
     setReviewErrors([]);
@@ -213,15 +252,24 @@ const ListCowImport = () => {
       sorter: (a: any, b: any) => new Date(a.dateOfBirth).getTime() - new Date(b.dateOfBirth).getTime(),
       filteredDate: true,
       editable: true,
-      render: (data, record) =>
-        editingKey === record.key ? (
+      render: (data, record) => {
+        const errors = validateCow(record, t);
+        const hasError = errors.some(
+          (err) =>
+            err.field === 'dateOfBirth' &&
+            (err.message === t('Date of Birth is required') || err.message === t('Cow must be at least 10 months old'))
+        );
+        return editingKey === record.key ? (
           <DatePickerComponent
             value={data ? dayjs(data) : null}
             onChange={(date) => handleChange(record.key, 'dateOfBirth', date)}
+            disabledDate={(current) => current && current > dayjs().subtract(10, 'month').endOf('day')}
+            style={hasError ? { borderColor: 'red' } : {}}
           />
         ) : (
-          formatDateHour(data) || '-'
-        ),
+          <span style={hasError ? { color: 'red' } : {}}>{formatDateHour(data) || '-'}</span>
+        );
+      },
     },
     {
       dataIndex: 'dateOfEnter',
@@ -230,15 +278,25 @@ const ListCowImport = () => {
       sorter: (a: any, b: any) => new Date(a.dateOfEnter).getTime() - new Date(b.dateOfEnter).getTime(),
       filteredDate: true,
       editable: true,
-      render: (data, record) =>
-        editingKey === record.key ? (
+      render: (data, record) => {
+        const errors = validateCow(record, t);
+        const hasError = errors.some(
+          (err) =>
+            err.field === 'dateOfEnter' &&
+            (err.message === t('Date of Enter is required') ||
+              err.message === t('Date of Enter must be today or in the future'))
+        );
+        return editingKey === record.key ? (
           <DatePickerComponent
             value={data ? dayjs(data) : null}
             onChange={(date) => handleChange(record.key, 'dateOfEnter', date)}
+            disabledDate={(current) => current && current < dayjs().startOf('day')}
+            style={hasError ? { borderColor: 'red' } : {}}
           />
         ) : (
-          formatDateHour(data) || '-'
-        ),
+          <span style={hasError ? { color: 'red' } : {}}>{formatDateHour(data) || '-'}</span>
+        );
+      },
     },
     {
       dataIndex: 'cowOrigin',
@@ -247,16 +305,20 @@ const ListCowImport = () => {
       filterable: true,
       filterOptions: cowOriginFiltered(),
       editable: true,
-      render: (data, record) =>
-        editingKey === record.key ? (
+      render: (data, record) => {
+        const errors = validateCow(record, t);
+        const hasError = errors.some((err) => err.field === 'cowOrigin' && err.message === t('Cow Origin is required'));
+        return editingKey === record.key ? (
           <SelectComponent
             value={t(formatStatusWithCamel(data))}
             options={cowOrigin()}
             onChange={(value) => handleChange(record.key, 'cowOrigin', value)}
+            style={hasError ? { borderColor: 'red', minWidth: '120px' } : { minWidth: '120px' }}
           />
         ) : (
-          t(formatStatusWithCamel(data)) || '-'
-        ),
+          <span style={hasError ? { color: 'red' } : {}}>{t(formatStatusWithCamel(data)) || '-'}</span>
+        );
+      },
     },
     {
       dataIndex: 'gender',
@@ -288,7 +350,20 @@ const ListCowImport = () => {
       dataIndex: 'cowTypeName',
       key: 'cowType',
       title: t('Cow Type'),
-      render: (data) => data || '-',
+      render: (data, record) => {
+        const errors = validateCow(record, t);
+        const hasError = errors.some((err) => err.field === 'cowTypeName' && err.message === t('Cow Type is required'));
+        return editingKey === record.key ? (
+          <SelectComponent
+            value={data || ''}
+            options={dataCowType?.map((type) => ({ text: type.name, value: type.name })) || []}
+            onChange={(value) => handleChange(record.key, 'cowTypeName', value)}
+            style={hasError ? { borderColor: 'red', minWidth: '120px' } : { minWidth: '120px' }}
+          />
+        ) : (
+          <span style={hasError ? { color: 'red' } : {}}>{data || '-'}</span>
+        );
+      },
       filterable: true,
       filterOptions: dataCowType?.map((type) => ({ text: type.name, value: type.name })) || [],
     },
@@ -297,16 +372,20 @@ const ListCowImport = () => {
       key: 'cowStatus',
       title: t('Cow Status'),
       editable: true,
-      render: (data, record) =>
-        editingKey === record.key ? (
+      render: (data, record) => {
+        const errors = validateCow(record, t);
+        const hasError = errors.some((err) => err.field === 'cowStatus' && err.message === t('Cow Status is required'));
+        return editingKey === record.key ? (
           <SelectComponent
             value={t(formatStatusWithCamel(data))}
             options={cowStatus()}
             onChange={(value) => handleChange(record.key, 'cowStatus', value)}
+            style={hasError ? { borderColor: 'red', minWidth: '120px' } : { minWidth: '120px' }}
           />
         ) : (
-          t(formatStatusWithCamel(data)) || '-'
-        ),
+          <span style={hasError ? { color: 'red' } : {}}>{t(formatStatusWithCamel(data)) || '-'}</span>
+        );
+      },
     },
     {
       dataIndex: 'healthInfoResponses',
@@ -381,8 +460,10 @@ const ListCowImport = () => {
       dataIndex: 'healthInfoResponses',
       key: 'heartRate',
       title: t('Heart Rate (bpm)'),
-      render: (data: HealthResponse[], record) =>
-        editingKey === record.key ? (
+      render: (data: HealthResponse[], record) => {
+        const errors = validateCow(record, t);
+        const hasError = errors.some((err) => err.field === 'heartRate' && err.message === t('Heart Rate is required'));
+        return editingKey === record.key ? (
           <InputNumber
             min={0}
             value={data[0]?.health?.heartRate}
@@ -395,17 +476,23 @@ const ListCowImport = () => {
                 ...data.slice(1),
               ])
             }
+            style={hasError ? { borderColor: 'red' } : {}}
           />
         ) : (
-          data[0]?.health?.heartRate || '-'
-        ),
+          <span style={hasError ? { color: 'red' } : {}}>{data[0]?.health?.heartRate || '-'}</span>
+        );
+      },
     },
     {
       dataIndex: 'healthInfoResponses',
       key: 'respiratoryRate',
       title: t('Respiratory Rate (breaths/min)'),
-      render: (data: HealthResponse[], record) =>
-        editingKey === record.key ? (
+      render: (data: HealthResponse[], record) => {
+        const errors = validateCow(record, t);
+        const hasError = errors.some(
+          (err) => err.field === 'respiratoryRate' && err.message === t('Respiratory Rate is required')
+        );
+        return editingKey === record.key ? (
           <InputNumber
             min={0}
             value={data[0]?.health?.respiratoryRate}
@@ -418,17 +505,23 @@ const ListCowImport = () => {
                 ...data.slice(1),
               ])
             }
+            style={hasError ? { borderColor: 'red' } : {}}
           />
         ) : (
-          data[0]?.health?.respiratoryRate || '-'
-        ),
+          <span style={hasError ? { color: 'red' } : {}}>{data[0]?.health?.respiratoryRate || '-'}</span>
+        );
+      },
     },
     {
       dataIndex: 'healthInfoResponses',
       key: 'ruminateActivity',
       title: t('Ruminate Activity (min/day)'),
-      render: (data: HealthResponse[], record) =>
-        editingKey === record.key ? (
+      render: (data: HealthResponse[], record) => {
+        const errors = validateCow(record, t);
+        const hasError = errors.some(
+          (err) => err.field === 'ruminateActivity' && err.message === t('Ruminate Activity is required')
+        );
+        return editingKey === record.key ? (
           <InputNumber
             min={0}
             value={data[0]?.health?.ruminateActivity}
@@ -441,17 +534,23 @@ const ListCowImport = () => {
                 ...data.slice(1),
               ])
             }
+            style={hasError ? { borderColor: 'red' } : {}}
           />
         ) : (
-          data[0]?.health?.ruminateActivity || '-'
-        ),
+          <span style={hasError ? { color: 'red' } : {}}>{data[0]?.health?.ruminateActivity || '-'}</span>
+        );
+      },
     },
     {
       dataIndex: 'healthInfoResponses',
       key: 'chestCircumference',
       title: t('Chest Circumference (m)'),
-      render: (data: HealthResponse[], record) =>
-        editingKey === record.key ? (
+      render: (data: HealthResponse[], record) => {
+        const errors = validateCow(record, t);
+        const hasError = errors.some(
+          (err) => err.field === 'chestCircumference' && err.message === t('Chest Circumference is required')
+        );
+        return editingKey === record.key ? (
           <InputNumber
             min={0}
             value={data[0]?.health?.chestCircumference}
@@ -464,17 +563,21 @@ const ListCowImport = () => {
                 ...data.slice(1),
               ])
             }
+            style={hasError ? { borderColor: 'red' } : {}}
           />
         ) : (
-          data[0]?.health?.chestCircumference || '-'
-        ),
+          <span style={hasError ? { color: 'red' } : {}}>{data[0]?.health?.chestCircumference || '-'}</span>
+        );
+      },
     },
     {
       dataIndex: 'healthInfoResponses',
       key: 'bodyLength',
       title: t('Body Length (m)'),
-      render: (data: HealthResponse[], record) =>
-        editingKey === record.key ? (
+      render: (data: HealthResponse[], record) => {
+        const errors = validateCow(record, t);
+        const hasError = errors.some((err) => err.field === 'bodyLength' && err.message === t('Body Length is required'));
+        return editingKey === record.key ? (
           <InputNumber
             min={0}
             value={data[0]?.health?.bodyLength}
@@ -487,10 +590,12 @@ const ListCowImport = () => {
                 ...data.slice(1),
               ])
             }
+            style={hasError ? { borderColor: 'red' } : {}}
           />
         ) : (
-          data[0]?.health?.bodyLength || '-'
-        ),
+          <span style={hasError ? { color: 'red' } : {}}>{data[0]?.health?.bodyLength || '-'}</span>
+        );
+      },
     },
     {
       dataIndex: 'description',
@@ -517,7 +622,7 @@ const ListCowImport = () => {
           <>
             <ButtonComponent
               icon={<SaveOutlined />}
-              onClick={handleSave}
+              onClick={() => handleSave(record)}
               style={{ marginRight: 8 }}
               shape="circle"
               type="primary"
@@ -560,8 +665,17 @@ const ListCowImport = () => {
 
   const handleEdit = (key: string) => setEditingKey(key);
 
-  const handleSave = () => {
+  const handleSave = (record: Cow) => {
+    const errors = validateCow(record, t);
+    if (errors.length > 0) {
+      toast.error(errors[0].message);
+      return;
+    }
+    setReviewData((prev) =>
+      prev.map((item) => (item.key === record.key ? { ...item, ...record } : item))
+    );
     setEditingKey(null);
+    setReviewErrors([]);
     message.success('Đã lưu thay đổi!');
   };
 
@@ -590,6 +704,36 @@ const ListCowImport = () => {
                   : value,
               cowType: field === 'cowTypeName' ? { ...item.cowType, name: value } : item.cowType,
               cowTypeEntity: field === 'cowTypeName' ? { ...item.cowTypeEntity, name: value } : item.cowTypeEntity,
+              errorStrings: (item.errorStrings || []).filter((err) => {
+                if (field === 'cowOrigin' && value) return err !== t('Cow Origin is required');
+                if (field === 'cowTypeName' && value) return err !== t('Cow Type is required');
+                if (field === 'cowStatus' && value) return err !== t('Cow Status is required');
+                if (field === 'dateOfBirth' && value) {
+                  return err !== t('Date of Birth is required') && err !== t('Cow must be at least 10 months old');
+                }
+                if (field === 'dateOfEnter' && value) {
+                  return (
+                    err !== t('Date of Enter is required') &&
+                    err !== t('Date of Enter must be today or in the future')
+                  );
+                }
+                if (field === 'healthInfoResponses' && value[0]?.health?.heartRate) {
+                  return err !== t('Heart Rate is required');
+                }
+                if (field === 'healthInfoResponses' && value[0]?.health?.ruminateActivity) {
+                  return err !== t('Ruminate Activity is required');
+                }
+                if (field === 'healthInfoResponses' && value[0]?.health?.chestCircumference) {
+                  return err !== t('Chest Circumference is required');
+                }
+                if (field === 'healthInfoResponses' && value[0]?.health?.bodyLength) {
+                  return err !== t('Body Length is required');
+                }
+                if (field === 'healthInfoResponses' && value[0]?.health?.respiratoryRate) {
+                  return err !== t('Respiratory Rate is required');
+                }
+                return true;
+              }),
             }
           : item
       )
@@ -630,14 +774,14 @@ const ListCowImport = () => {
         <TableComponent
           loading={false}
           columns={columns}
-          dataSource={reviewData ? formatSTT(reviewData) : []}
+          dataSource={successfulData ? formatSTT(successfulData) : []}
           onDataChange={handleDataChange}
           scroll={{ x: 'max-content' }}
           pagination={{ pageSize: 10, position: ['bottomCenter'] }}
         />
-        {reviewData.length > 0 && (
+        {successfulData.length > 0 && (
           <FloatButtonComponent.Group>
-            {validateCows && validateHealthRecords && hasReviewErrors ? (
+            {validateCows && validateHealthRecords && (!isErrorModalVisible || successfulData.length > 0) ? (
               <FloatButtonComponent
                 tooltip={t('Confirm')}
                 type="primary"
@@ -652,7 +796,7 @@ const ListCowImport = () => {
                   <div className="flex flex-col gap-2 text-base bg-white">
                     {!validateCows && (
                       <span className="text-red-500">
-                        - {t('Some cows have invalid or missing fields (name, status, gender, origin, type)')}
+                        - {t('Some cows have invalid or missing fields (name, status, gender, origin, type, dates)')}
                       </span>
                     )}
                     {!validateHealthRecords && (
@@ -660,7 +804,7 @@ const ListCowImport = () => {
                         - {t('Some health records have invalid or missing statuses')}
                       </span>
                     )}
-                    {!hasReviewErrors && (
+                    {isErrorModalVisible && (
                       <span className="text-red-500">
                         - {t('Please resolve review errors before submitting')}
                       </span>

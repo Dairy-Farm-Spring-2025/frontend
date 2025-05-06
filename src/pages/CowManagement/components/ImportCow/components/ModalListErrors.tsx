@@ -32,9 +32,19 @@ interface ModalListErrorProps {
 
 const validateCow = (cow: Cow, t: (key: string) => string): ValidationError[] => {
   const errors: ValidationError[] = [];
+  
   if (!cow.cowOrigin) errors.push({ field: 'cowOrigin', message: t('Cow Origin is required') });
   if (!cow.cowTypeName) errors.push({ field: 'cowTypeName', message: t('Cow Type is required') });
-  if (!cow.gender) errors.push({ field: 'gender', message: t('Gender is required') });
+  if (!cow.cowStatus) errors.push({ field: 'cowStatus', message: t('Cow Status is required') });
+  if (cow.dateOfBirth) {
+    const dob = dayjs(cow.dateOfBirth);
+    const tenMonthsAgo = dayjs().subtract(10, 'month');
+    if (dob.isAfter(tenMonthsAgo)) {
+      errors.push({ field: 'dateOfBirth', message: t('Cow must be at least 10 months old') });
+    }
+  } else {
+    errors.push({ field: 'dateOfBirth', message: t('Date of Birth is required') });
+  }
   if (!cow.dateOfEnter) errors.push({ field: 'dateOfEnter', message: t('Date of Enter is required') });
   if (!cow.healthInfoResponses[0]?.health?.heartRate) {
     errors.push({ field: 'heartRate', message: t('Heart Rate is required') });
@@ -51,6 +61,15 @@ const validateCow = (cow: Cow, t: (key: string) => string): ValidationError[] =>
   if (!cow.healthInfoResponses[0]?.health?.respiratoryRate) {
     errors.push({ field: 'respiratoryRate', message: t('Respiratory Rate is required') });
   }
+
+  if (cow.dateOfEnter) {
+    const doe = dayjs(cow.dateOfEnter);
+    const today = dayjs().startOf('day');
+    if (doe.isBefore(today)) {
+      errors.push({ field: 'dateOfEnter', message: t('Date of Enter must be today or in the future') });
+    }
+  }
+
   return errors;
 };
 
@@ -63,34 +82,30 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
   useEffect(() => {
     if (visible) {
       const formattedData = data.map((item, index) => {
-        // Extract health errors for this cow from the errors prop
         const healthErrors = errors
           .filter((err) => err.source === 'health' && err.message.startsWith(`${item.name}:`))
           .flatMap((err) => {
             const errorMessage = err.message.split(':').slice(1).join(':').trim();
-            // Split the concatenated error messages into individual messages
             return errorMessage.split(',').map((msg) => {
               const trimmedMsg = msg.trim();
-              return t(trimmedMsg, trimmedMsg); // Translate each individual error message
+              return t(trimmedMsg, trimmedMsg);
             });
           });
 
-        // Extract cow errors for this cow from the errors prop
         const cowErrors = errors
           .filter((err) => err.source === 'cow' && err.message.startsWith(`${item.name}:`))
           .flatMap((err) => {
             const errorMessage = err.message.split(':').slice(1).join(':').trim();
-            // Split the concatenated error messages into individual messages
             return errorMessage.split(',').map((msg) => {
               const trimmedMsg = msg.trim();
-              return t(trimmedMsg, trimmedMsg); // Translate each individual error message
+              return t(trimmedMsg, trimmedMsg);
             });
           });
 
         return {
           ...item,
           key: item.key || index.toString(),
-          errorStrings: [...cowErrors, ...healthErrors], // Combine translated errors
+          errorStrings: [...cowErrors, ...healthErrors],
           healthInfoResponses: item.healthInfoResponses || [],
           cowTypeName: item.cowTypeName || item.cowType?.name || '',
         };
@@ -109,7 +124,7 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
       .filter((item) => errorCowNames.includes(item.name) || (item.errorStrings && item.errorStrings.length > 0))
       .map((item) => ({
         ...item,
-        errorMessage: [...new Set(item.errorStrings || [])].join('; ') || '-', // Use Set to remove duplicates
+        errorMessage: [...new Set(item.errorStrings || [])].join('; ') || '-',
       }));
   }, [localData, errors]);
 
@@ -119,10 +134,18 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
 
   const handleSave = (record: Cow) => {
     const errors = validateCow(record, t);
-    if (errors.length > 0) {
-      toast.error(errors[0].message); // The message is already translated via t in validateCow
+    const dateOfBirthError = errors.find((err) => err.field === 'dateOfBirth' && err.message === t('Cow must be at least 10 months old'));
+    if (dateOfBirthError) {
+      toast.error(dateOfBirthError.message);
       return;
     }
+    if (errors.length > 0) {
+      toast.error(errors[0].message);
+      return;
+    }
+    setLocalData((prev) =>
+      prev.map((item) => (item.key === record.key ? { ...record, errorStrings: [] } : item))
+    );
     setEditingKey(null);
   };
 
@@ -163,6 +186,12 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
                 if (field === 'healthInfoResponses' && value[0]?.health?.respiratoryRate) {
                   return err !== t('Respiratory Rate is required');
                 }
+                if (field === 'dateOfBirth' && value) {
+                  return err !== t('Date of Birth is required') && err !== t('Cow must be at least 10 months old');
+                }
+                if (field === 'dateOfEnter' && value) {
+                  return err !== t('Date of Enter must be today or in the future');
+                }
                 return true;
               }),
             }
@@ -179,7 +208,7 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
         toast.error(t('Please fix all errors before saving.'));
         return;
       }
-      await onSave(localData);
+      await onSave(localData.map(item => ({ ...item, errorStrings: validateCow(item, t).length === 0 ? [] : item.errorStrings })));
       setLocalData([]);
       onClose();
     } finally {
@@ -234,14 +263,12 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
           <SelectComponent
             value={t(data)}
             options={[
-          
               { value: 'female', label: t('Cái') },
             ]}
             onChange={(value) => handleChange(record.key, 'gender', value)}
             style={hasError ? { borderColor: 'red', minWidth: '120px' } : { minWidth: '120px' }}
           />
-        ) 
-         : data === 'female' ? (
+        ) : data === 'female' ? (
           <IoMdFemale className="text-pink-600" size={20} />
         ) : (
           <span style={hasError ? { color: 'red' } : {}}>-</span>
@@ -284,7 +311,7 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
             style={hasError ? { borderColor: 'red', minWidth: '120px' } : { minWidth: '120px' }}
           />
         ) : (
-          <span style={hasError ? { color: 'red' } : {}}>{t(formatStatusWithCamel(data))|| '-'}</span>
+          <span style={hasError ? { color: 'red' } : {}}>{t(formatStatusWithCamel(data)) || '-'}</span>
         );
       },
     },
@@ -293,16 +320,23 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
       key: 'dateOfBirth',
       title: t('Date of Birth'),
       editable: true,
-      render: (data, record) =>
-        editingKey === record.key ? (
+      render: (data, record) => {
+        const hasError = record.errorMessage?.includes(t('Date of Birth is required')) ||
+                         record.errorMessage?.includes(t('Cow must be at least 10 months old'));
+        return editingKey === record.key ? (
           <DatePicker
             value={data ? dayjs(data) : null}
             onChange={(value) => handleChange(record.key, 'dateOfBirth', value)}
             format="YYYY-MM-DD"
+            style={hasError ? { borderColor: 'red' } : {}}
+            disabledDate={(current) => current && current > dayjs().subtract(10, 'month').endOf('day')}
           />
         ) : (
-          data ? dayjs(data).format('YYYY-MM-DD') : '-'
-        ),
+          <span style={hasError ? { color: 'red' } : {}}>
+            {data ? dayjs(data).format('YYYY-MM-DD') : '-'}
+          </span>
+        );
+      },
     },
     {
       dataIndex: 'dateOfEnter',
@@ -310,12 +344,15 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
       title: t('Date Of Enter'),
       editable: true,
       render: (data, record) => {
-        const hasError = record.errorMessage?.includes(t('Date of Enter is required'));
+        const hasError = record.errorMessage?.includes(t('Date of Enter is required')) ||
+                         record.errorMessage?.includes(t('Date of Enter must be today or in the future'));
         return editingKey === record.key ? (
           <DatePicker
             value={data ? dayjs(data) : null}
             onChange={(value) => handleChange(record.key, 'dateOfEnter', value)}
             format="YYYY-MM-DD"
+            style={hasError ? { borderColor: 'red' } : {}}
+            disabledDate={(current) => current && current < dayjs().startOf('day')}
           />
         ) : (
           <span style={hasError ? { color: 'red' } : {}}>
