@@ -1,4 +1,3 @@
-
 import { UploadOutlined } from '@ant-design/icons';
 import ButtonComponent from '@components/Button/ButtonComponent';
 import useFetcher from '@hooks/useFetcher';
@@ -308,3 +307,5 @@ const ReviewImportCow = ({ onReviewData }: ReviewImportCowProps) => {
 };
 
 export default ReviewImportCow;
+
+
