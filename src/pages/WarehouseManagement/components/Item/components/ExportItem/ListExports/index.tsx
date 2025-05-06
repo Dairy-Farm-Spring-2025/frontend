@@ -1,5 +1,5 @@
 import { formatDate } from '@fullcalendar/core/index.js';
-import { Divider } from 'antd';
+import { Divider, Tooltip } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import ButtonComponent from '../../../../../../../components/Button/ButtonComponent';
 import TableComponent, {
@@ -77,7 +77,8 @@ const ListExports = () => {
       dataIndex: 'quantity',
       key: 'quantity',
       title: t('Quantity'),
-      render: (data) => `${data}`,
+      render: (data, record) =>
+        `${data} (${record.itemBatchEntity.itemEntity.unit || 'N/A'})`,
     },
     {
       dataIndex: 'itemBatchEntity',
@@ -85,10 +86,12 @@ const ListExports = () => {
       title: t('Item Details'),
       render: (data) => (
         <div>
-          <div>{data?.itemEntity?.name}</div>
-          <div className="text-sm text-gray-500">
-            {data?.itemEntity?.categoryEntity?.name}
-          </div>
+          <div className="font-bold">{data?.itemEntity?.name}</div>
+          <Tooltip title={t('Category')}>
+            <div className="text-sm text-gray-500">
+              {data?.itemEntity?.categoryEntity?.name}
+            </div>
+          </Tooltip>
         </div>
       ),
     },

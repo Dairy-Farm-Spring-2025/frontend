@@ -833,9 +833,17 @@
   "The first injection month must be equal or greater than the previous one": "Tháng tiêm đầu tiên phải bằng hoặc lớn hơn tháng tiêm trước đó",
   "Refresh": "Tải lại",
   "Detail information of": "Thông tin chi tiết",
+
   "Health Care": "Chăm sóc sức khỏe", 
   "Some cows have invalid or missing fields (name, status, gender, origin, type)": "Một số con bò có các trường không hợp lệ hoặc bị thiếu (tên, trạng thái, giới tính, nguồn gốc, loại)", 
   "Some health records have invalid or missing statuses":"Một số hồ sơ sức khỏe có trạng thái không hợp lệ hoặc bị thiếu", 
   "Please resolve review errors before submitting": "Vui lòng giải quyết lỗi đánh giá trước khi gửi",
-  "Some cows have invalid or missing fields (name, status, gender, origin, type, dates)": "Một số con bò có các trường không hợp lệ hoặc bị thiếu"
+  "Some cows have invalid or missing fields (name, status, gender, origin, type, dates)": "Một số con bò có các trường không hợp lệ hoặc bị thiếu",
+  "Width must be smaller than length": "Chiều rộng phải nhỏ hơn chiều dài",
+  "(Suggested: ~{{number}})": "(Gợi ý: ~{{number}})",
+  "note_info_area": "Một lối đi rộng 4 mét chạy dọc theo trung tâm, chia khu vực thành hai phần. Các chuồng được đặt ở hai bên, với chiều dài chuồng song song với chiều dài khu vực và chiều rộng chuồng vuông góc với chiều rộng khu vực.",
+  "Layout Info": "Thông tin bố trí",
+  "Pen Width must be less than or equal to the Pen Length": "Chiều rộng chuồng phải nhỏ hơn hoặc bằng chiều dài chuồng",
+  "Pen length must be smaller than or equal to {{width}}m to fit along the area width": "Chiều dài chuồng phải nhỏ hơn hoặc bằng {{width}}m để phù hợp với chiều rộng khu vực"
+
 }

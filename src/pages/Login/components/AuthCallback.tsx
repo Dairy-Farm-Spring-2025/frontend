@@ -8,7 +8,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 
 // Environment variable for redirect URL (configure in .env or similar)
 const MOBILE_REDIRECT_URL =
-  process.env.REACT_APP_MOBILE_REDIRECT_URL || 'exp://b_cbp6g-yusers-8081.exp.direct';
+  process.env.REACT_APP_MOBILE_REDIRECT_URL || 'exp://com.yusers.DairyFarmMobile.direct';
 
 // Function to detect mobile devices
 const isMobileDevice = (): boolean => {
