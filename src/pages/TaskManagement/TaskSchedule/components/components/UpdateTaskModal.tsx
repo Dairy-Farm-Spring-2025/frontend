@@ -188,6 +188,44 @@ const UpdateTaskModal = ({
               setAssignees([]);
               return [];
             }),
+            'Chữa bệnh': async () =>
+              dataVetAvailable
+                .triggerFetchingFreeUser({
+                  url: USER_PATH.VETERINARIANS_AVAILABLE(
+                    formatDate({ data: day, type: 'params' })
+                  ),
+                })
+                .then((response: UserProfileData[]) =>
+                  (response || []).map((user) => ({
+                    label: user?.name,
+                    value: user.id,
+                    desc: user,
+                    searchLabel: user?.name,
+                  }))
+                )
+                .catch(() => {
+                  setAssignees([]);
+                  return [];
+                }),
+                'Tiêm ngừa': async () =>
+                  dataVetAvailable
+                    .triggerFetchingFreeUser({
+                      url: USER_PATH.VETERINARIANS_AVAILABLE(
+                        formatDate({ data: day, type: 'params' })
+                      ),
+                    })
+                    .then((response: UserProfileData[]) =>
+                      (response || []).map((user) => ({
+                        label: user?.name,
+                        value: user.id,
+                        desc: user,
+                        searchLabel: user?.name,
+                      }))
+                    )
+                    .catch(() => {
+                      setAssignees([]);
+                      return [];
+                    }),
         default: async () =>
           dataFreeUser
             .triggerFetchingFreeUser({
