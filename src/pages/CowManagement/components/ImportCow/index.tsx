@@ -324,27 +324,8 @@ const ListCowImport = () => {
       dataIndex: 'gender',
       key: 'gender',
       title: t('Gender'),
-      filterable: true,
-      filterOptions: [
-        { text: 'Đực', value: 'male' },
-        { text: 'Cái', value: 'female' },
-      ],
-      editable: true,
-      render: (data, record) =>
-        editingKey === record.key ? (
-          <SelectComponent
-            value={t(data)}
-            options={[
-              { value: 'male', label: 'Đực' },
-              { value: 'female', label: 'Cái' },
-            ]}
-            onChange={(value) => handleChange(record.key, 'gender', value)}
-          />
-        ) : data === 'male' ? (
-          <IoMdMale className="text-blue-600" size={20} />
-        ) : (
+      render: () =>
           <IoMdFemale className="text-pink-600" size={20} />
-        ),
     },
     {
       dataIndex: 'cowTypeName',

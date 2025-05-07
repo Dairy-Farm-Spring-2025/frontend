@@ -252,28 +252,9 @@ const ModalListError = ({ visible, errors, data, onClose, onSave }: ModalListErr
       dataIndex: 'gender',
       key: 'gender',
       title: t('Gender'),
-      filterable: true,
-      filterOptions: [
-        { text: t('Cái'), value: 'female' },
-      ],
-      editable: true,
-      render: (data, record) => {
-        const hasError = record.errorMessage?.includes(t('Gender is required'));
-        return editingKey === record.key ? (
-          <SelectComponent
-            value={t(data)}
-            options={[
-              { value: 'female', label: t('Cái') },
-            ]}
-            onChange={(value) => handleChange(record.key, 'gender', value)}
-            style={hasError ? { borderColor: 'red', minWidth: '120px' } : { minWidth: '120px' }}
-          />
-        ) : data === 'female' ? (
+      editable: false,
+      render: () => 
           <IoMdFemale className="text-pink-600" size={20} />
-        ) : (
-          <span style={hasError ? { color: 'red' } : {}}>-</span>
-        );
-      },
     },
     {
       dataIndex: 'cowTypeName',
