@@ -25,7 +25,7 @@ import { Divider, InputNumber, message, Modal, Popover } from 'antd';
 import dayjs from 'dayjs';
 import { useState, useMemo, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IoMdFemale, IoMdMale } from 'react-icons/io';
+import { IoMdFemale } from 'react-icons/io';
 import { MdErrorOutline } from 'react-icons/md';
 import ConfirmImport from './components/ConfirmImport';
 import ReviewImportCow from './components/ReviewImportCow';
