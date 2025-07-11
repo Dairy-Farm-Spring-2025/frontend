@@ -134,7 +134,7 @@ const handleFinish = async (values: any) => {
 
 ## TableComponent
 
-- 1. Define columns for table (dataIndex, key, title is required)
+- Define columns for table (dataIndex, key, title is required)
   - dataIndex is important, it will be match with property (such as data.name, dataIndex is name)
   - key is define for unique of column
   - title is header of column
@@ -142,7 +142,7 @@ const handleFinish = async (values: any) => {
   - sorter will enable the sort for column
   - filterable and filterOptions if need to filter base on select
   - filterDate will enable filter by date
-- 2. Call table with column and dataSource is required props
+- Call table with column and dataSource is required props
      **_For example_**
 
 ```jsx
@@ -266,10 +266,10 @@ return (
 
 ## ModalComponent
 
-- 1. open is required to handle state status of modal (open or close)
+- Open is required to handle state status of modal (open or close)
   - Modal will have 2 default action (onOk, onCancel), can be replaced by using footer props
   - Have disabledButtonOk if you don't want allow click Confirm if it's condition
-- 2. Using useModal custom hook to easy handle state of modal
+- Using useModal custom hook to easy handle state of modal
      **_For example_**
 
 ```jsx
@@ -318,10 +318,10 @@ return <ModalCreateUser modal={modalCreate} mutate={mutate} />;
 
 # FormComponent
 
-- 1. Handle form base on Form of antd, have FormItemComponent
-- 2. Parse form (to handle data of form) and onFinish (function when submit form)
-- 3. Must have FormItemComponent (with name: defined form element, rules: validate form field, label: title of form element), children is input component (Input, InputNumber, DatePicker, Select, ...)
-- 4. Must be called with useForm hooks of antd
+1. Handle form base on Form of antd, have FormItemComponent
+2. Parse form (to handle data of form) and onFinish (function when submit form)
+3. Must have FormItemComponent (with name: defined form element, rules: validate form field, label: title of form element), children is input component (Input, InputNumber, DatePicker, Select, ...)
+4. Must be called with useForm hooks of antd
 
 **_For example_**
 
