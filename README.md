@@ -130,7 +130,7 @@ const handleFinish = async (values: any) => {
 - i18n
 - xyflow
 
-# ♻️ How to use important component reusable
+# ♻️ How to use important reusable components
 
 ## TableComponent
 
