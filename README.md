@@ -48,15 +48,15 @@ storage, and daily tasks.
 
 # 📚 Tech Stack
 
-- |🚀Technology|📝Description|
-- | :—– | :———- |
-- | **Frontend** | ReactJS + Vite + Typescript |
-- | **UI library** | Antd |
-- | **API call** | Axios + Swr |
-- | **State management** | Redux/Redux Toolkit + Redux Persist |
-- | **Style library** | Tailwind, scss |
-- | **Multi language** | i18n |
-- | **Other** | Firebase, xyflow, dayjs,... |
+| 🚀 Technology      | 📝 Description                          |
+|--------------------|-----------------------------------------|
+| **Frontend**       | ReactJS + Vite + TypeScript             |
+| **UI Library**     | Antd                                   |
+| **API Call**       | Axios + SWR                            |
+| **State Management** | Redux / Redux Toolkit + Redux Persist |
+| **Style Library**  | Tailwind, SCSS                         |
+| **Multi-language** | i18n                                   |
+| **Other**          | Firebase, xyflow, dayjs,...             |
 
 # 📖 Installation
 
