@@ -1,4 +1,87 @@
-# Frontend Rules
+# 🐮🏡 DFMS - Dairy Farm Management System
+
+## ℹ️ Introduction
+
+The dairy farm management system is a web-based and mobile application to simplify and optimize dairy farm operations.
+The system provides functions for managing cows, health records, diseases, areas, feed meals, vaccines, vaccine cycles,
+storage, and daily tasks.
+
+## 🚀 Key features
+
+- **Cow management**: Manage information of cow includes: General information, Qr of cow ,health record, disease, milking, history of pen. Create new cow, import the bulk of cow and move the bulk cow to pens.
+- **Area management**: Manage information of area includes: General information and pen
+- **Vaccine management**: Manage vaccine cycle and vaccine injection, create a vaccine injection process for cow.
+- **Storage management**: Manage the storage, category, item, export item, item batch and suppliers
+- **Task management**: Manage the task of worker and veterinarian includes: create task, import tasks, review tasks for worker/veterinarian. Worker/Veterinarian do the task then update the status of task.
+
+# 📌 Main features:
+
+## 💻 Web application with admin role:
+
+- User management (Create new user, ban user)
+- Dashboard
+- View dairy farm (cow, cow type, vaccine,...) list
+- View storage
+- View task
+
+## 💻 Web application with manager role:
+
+- Cow management (Create new cow, import cow, move cows to pens, ...)
+- Vaccine management (Create new vaccine cycle, view list of vaccine injection)
+- Area management (Create new area)
+- Storage management (Create new storage, category, item, item batch and supplier)
+- Task management (Create task, import task, review and check task)
+
+## 📱 Mobile application with veterinarian role:
+
+- View dairy information (cow, cow type,...)
+- Vaccine management (Create new vaccine cycle, create vaccine injection)
+- Health record (Update health record, Check daily health record and update the disease status of cow)
+- Check out task
+
+## 📱 Mobile application with worker role:
+
+- View dairy information
+- Do the daily task (Update status of task, export the item need to this task)
+- Raise the issue for cow if needed (Create the report disease cow)
+- Check out task
+
+# 📚 Tech Stack
+
+|🚀Technology|📝Description|
+| :—– | :———- |
+| **Frontend** | ReactJS + Vite + Typescript |
+| **UI library** | Antd |
+| **API call** | Axios + Swr |
+| **State management** | Redux/Redux Toolkit + Redux Persist |
+| **Style library** | Tailwind, scss |
+| **Multi language** | i18n |
+| **Other** | Firebase, xyflow, dayjs,... |
+
+# 📖 Installation
+
+## 🌐 Frontend
+
+```bash
+# Clone project
+git clone https://github.com/Dairy-Farm-Spring-2025/frontend.git
+
+# Directory
+cd frontend
+
+# Install dependency
+npm install
+
+# Run the application
+npm run dev
+
+# Build the application
+npm run build
+```
+
+# Welcome to DFMS Project--
+
+# 📜 Frontend development rules
 
 - Using general components (like button, table, modal,...) from folder components
 - Split components in a big component to manage folder code
@@ -37,14 +120,13 @@
 export const COW_PATH = {
   COWS: 'cows',
   COW_DETAIL: (id: string) => `cows/${id}`,
-  COW_UPDATE: (id: string) => `cows/${id}`,
-  COW_CREATE: 'cows/create',
 };
 ```
 
 - [x] Method Call
 -       ├─GET: Call with data, mutate (Mutate will refetch api get when do action method) with method 'GET'
-  **_Example of call api GET method_**
+
+**_Example of call api GET method_**
 
 ```js
 const {
@@ -56,85 +138,23 @@ const {
 ```
 
 -      └─Action Method (POST, PUT, DELETE): Call with trigger for do action of this api with method action
-  **_Example of call action api method_**
+
+**_Example of call action api method_**
 
 ```js
 const { trigger, isLoading } = useFetcher(COW_PATH.COW_CREATE_SINGLE, 'POST');
 const handleFinish = async (values: any) => {
-  if (currentStep < steps.length - 1) {
-      const generalData = {
-        cowStatus: values.cowStatus,
-        dateOfBirth: dayjs(values.dateOfBirth).format('YYYY-MM-DD'),
-        dateOfEnter: dayjs(values.dateOfEnter).format('YYYY-MM-DD'),
-        cowOrigin: values.cowOrigin,
-        gender: values.gender,
-        cowTypeId: parseInt(values.cowTypeId, 10),
-        description: stripHtml(values.description),
-      };
-      setGeneralInfo(generalData);
-      form.resetFields(['description']);
-      setCurrentStep((prev) => prev + 1);
-    } else {
-      try {
-        const healthData = {
-          status: values.status,
-          description: stripHtml(values.description),
-          size: parseFloat(values.size) || 0,
-          bodyLength: parseFloat(values.bodyLength) || 0,
-          bodyTemperature: parseFloat(values.bodyTemperature) || 0,
-          chestCircumference: parseFloat(values.chestCircumference) || 0,
-          heartRate: parseFloat(values.heartRate) || 0,
-          respiratoryRate: parseFloat(values.respiratoryRate) || 0,
-          ruminateActivity: parseFloat(values.ruminateActivity) || 0,
-        };
-        const payload = {
-          cow: {
-            cowStatus: generalInfo.cowStatus,
-            dateOfBirth: generalInfo.dateOfBirth,
-            dateOfEnter: generalInfo.dateOfEnter,
-            cowOrigin: generalInfo.cowOrigin,
-            gender: generalInfo.gender,
-            cowTypeId: generalInfo.cowTypeId,
-            description: generalInfo.description,
-          },
-          healthRecord: healthData,
-        };
+  ...
         const response = await trigger({ body: payload }); /// This is call API Post after handle form
-        toast.showSuccess(response.message);
-        const cowId = response.data?.cowId;
-        if (cowId) {
-          navigate(`/dairy/cow-management/${cowId}`);
-        } else {
-          navigate('/dairy/cow-management');
-        }
-
-        setCurrentStep(0);
-        setGeneralInfo(null);
-        handleClear();
-      } catch (error: any) {
-        toast.showError(error.message);
-      }
-    }
+  ...
 }
 ```
 
-# 📚 Tech Stack
-
-- React + Vite + Typescript
-- Antd
-- SWR
-- Firebase
-- Axios
-- Tailwind, SCSS
-- Redux Toolkit + Redux Persist
-- i18n
-- xyflow
-
-# ♻️ How to use important reusable components
+# ♻️ How to use important component reusable
 
 ## TableComponent
 
-- Define columns for table (dataIndex, key, title is required)
+- 1. Define columns for table (dataIndex, key, title is required)
   - dataIndex is important, it will be match with property (such as data.name, dataIndex is name)
   - key is define for unique of column
   - title is header of column
@@ -142,7 +162,7 @@ const handleFinish = async (values: any) => {
   - sorter will enable the sort for column
   - filterable and filterOptions if need to filter base on select
   - filterDate will enable filter by date
-- Call table with column and dataSource is required props
+- 2. Call table with column and dataSource is required props
      **_For example_**
 
 ```jsx
@@ -161,99 +181,7 @@ const columns: Column[] = [
     ),
     searchText: true,
   },
-  {
-    dataIndex: 'dateOfBirth',
-    key: 'dateOfBirth',
-    title: t('Date Of Birth'),
-    render: (data) => formatDateHour(data),
-    sorter: (a: any, b: any) =>
-      new Date(a.dateOfBirth).getTime() - new Date(b.dateOfBirth).getTime(),
-    filteredDate: true,
-  },
-  {
-    dataIndex: 'dateOfEnter',
-    key: 'dateOfEnter',
-    title: t('Date Of Enter'),
-    render: (data) => formatDateHour(data),
-    sorter: (a: any, b: any) =>
-      new Date(a.dateOfEnter).getTime() - new Date(b.dateOfEnter).getTime(),
-    filteredDate: true,
-  },
-  {
-    dataIndex: 'dateOfOut',
-    key: 'dateOfOut',
-    title: t('Date Of Out'),
-    render: (data) => (data ? formatDateHour(data) : '-'),
-    sorter: (a: any, b: any) =>
-      new Date(a.dateOfEnter).getTime() - new Date(b.dateOfEnter).getTime(),
-    filteredDate: true,
-  },
-  {
-    dataIndex: 'cowOrigin',
-    key: 'cowOrigin',
-    title: t('Origin'),
-    render: (data) => getLabelByValue(data, cowOrigin()),
-    filterable: true,
-    filterOptions: cowOriginFiltered(),
-  },
-  {
-    dataIndex: 'gender',
-    key: 'gender',
-    title: t('Gender'),
-    render: (data) => (
-      <div className="flex justify-center items-center">
-        {data === 'male' ? (
-          <IoMdMale className="text-blue-600" size={20} />
-        ) : (
-          <IoMdFemale className="text-pink-600" size={20} />
-        )}
-      </div>
-    ),
-    filterable: true, // Enables dropdown filter
-    filterOptions: [
-      { text: t('Male'), value: 'male' },
-      { text: t('Female'), value: 'female' },
-    ],
-  },
-  {
-    dataIndex: 'cowType',
-    key: 'cowType',
-    title: t('Cow Type'),
-    render: (data) => <p>{data.name}</p>,
-    filterable: true,
-    filterOptions: optionsCowTypes,
-    objectKeyFilter: 'name',
-  },
-  {
-    dataIndex: 'cowStatus',
-    key: 'cowStatus',
-    title: t('Cow Status'),
-    render: (data) => getLabelByValue(data, cowStatus()),
-    filterable: true,
-    filterOptions: COW_STATUS_FILTER(),
-  },
-  {
-    dataIndex: 'inPen',
-    key: 'inPen',
-    title: t('In Pen'),
-    render: (data) =>
-      data ? (
-        <CheckCircleOutlined style={{ color: 'green' }} />
-      ) : (
-        <CloseCircleOutlined style={{ color: 'red' }} />
-      ),
-    filterable: true,
-    filterOptions: [
-      {
-        text: t('In pen'),
-        value: true,
-      },
-      {
-        text: t('Not in pen'),
-        value: false,
-      },
-    ],
-  },
+  ...
 ];
 return (
   <TableComponent
@@ -266,10 +194,10 @@ return (
 
 ## ModalComponent
 
-- Open is required to handle state status of modal (open or close)
+- 1. open is required to handle state status of modal (open or close)
   - Modal will have 2 default action (onOk, onCancel), can be replaced by using footer props
   - Have disabledButtonOk if you don't want allow click Confirm if it's condition
-- Using useModal custom hook to easy handle state of modal
+- 2. Using useModal custom hook to easy handle state of modal
      **_For example_**
 
 ```jsx
@@ -318,10 +246,10 @@ return <ModalCreateUser modal={modalCreate} mutate={mutate} />;
 
 # FormComponent
 
-1. Handle form base on Form of antd, have FormItemComponent
-2. Parse form (to handle data of form) and onFinish (function when submit form)
-3. Must have FormItemComponent (with name: defined form element, rules: validate form field, label: title of form element), children is input component (Input, InputNumber, DatePicker, Select, ...)
-4. Must be called with useForm hooks of antd
+- 1. Handle form base on Form of antd, have FormItemComponent
+- 2. Parse form (to handle data of form) and onFinish (function when submit form)
+- 3. Must have FormItemComponent (with name: defined form element, rules: validate form field, label: title of form element), children is input component (Input, InputNumber, DatePicker, Select, ...)
+- 4. Must be called with useForm hooks of antd
 
 **_For example_**
 
@@ -351,20 +279,7 @@ return (
     >
       <Input />
     </FormItemComponent>
-    <FormItemComponent
-      rules={[{ required: true }]}
-      name="email"
-      label={<LabelForm>{t('Email')}:</LabelForm>}
-    >
-      <Input />
-    </FormItemComponent>
-
-    <FormItemComponent
-      rules={[{ required: true }]}
-      name="roleId"
-      label={<LabelForm>{t('role')}:</LabelForm>}
-    >
-      <Select options={role()} />
-    </FormItemComponent>
+    ...
+  </FormComponent>
 )
 ```
